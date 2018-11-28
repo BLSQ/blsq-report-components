@@ -1,0 +1,11 @@
+[
+  {
+    "code": "demo-chc",
+    "name": "demo-chc",
+    "facilityLabel": "demo-chcs",
+    "orientation": "landscape",
+    "frequency": "quarterly",
+    "dataSets": [],
+    "dataElementGroups": ["oDkJh5Ddh7d"]
+  }
+]

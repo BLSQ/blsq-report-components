@@ -1,22 +1,27 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+require("babel-polyfill");
 
-import styles from './styles.css'
+import BrowseDataContainer from "./components/browsedata/BrowseDataContainer";
+import IncentiveContainer from "./components/incentives/IncentiveContainer";
+import InvoiceBuilder from "./components/invoices/InvoiceBuilder";
 
-export default class ExampleComponent extends Component {
-  static propTypes = {
-    text: PropTypes.string
-  }
+import BrowseDataPage from "./pages/BrowseDataPage";
+import IncentivePage from "./pages/IncentivePage";
+import InvoicePage from "./pages/InvoicePage";
+import Dhis2 from "./lib/Dhis2";
+import DatePeriods from "./lib/DatePeriods";
 
-  render() {
-    const {
-      text
-    } = this.props
+import { indexBy } from "./lib/Arrays";
 
-    return (
-      <div className={styles.test}>
-        Example Component: {text}
-      </div>
-    )
-  }
-}
+export {
+  BrowseDataContainer,
+  IncentiveContainer,
+  InvoiceBuilder,
+  BrowseDataPage,
+  IncentivePage,
+  InvoicePage,
+  Dhis2,
+  DatePeriods,
+  indexBy
+};
+
+debugger;

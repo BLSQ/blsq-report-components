@@ -5,11 +5,16 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^3.6.0",
+    "@material-ui/icons": "^3.0.1",
+    "babel-polyfill": "^6.26.0",
+    "blsq-report-components": "file:..",
+    "d2": "^31.2.1",
     "prop-types": "^15.6.2",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
-    "react-scripts": "^1.1.4",
-    "blsq-report-components": "file:.."
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "^1.1.4"
   },
   "scripts": {
     "start": "react-scripts start",

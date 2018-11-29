@@ -5,6 +5,8 @@ import { withStyles } from "@material-ui/core/styles";
 import Dhis2 from "../../support/Dhis2";
 import Cell from "../shared/Cell";
 
+import Loader from "../shared/Loader";
+
 Array.prototype.eachSlice = function(size, callback) {
   for (var i = 0, l = this.length; i < l; i += size) {
     callback.call(this, this.slice(i, i + size));
@@ -54,7 +56,6 @@ const orgUnitComparator = (a, b) => {
   return 0;
 };
 
-
 class BrowseDataContainer extends Component {
   constructor(props) {
     super(props);
@@ -80,7 +81,7 @@ class BrowseDataContainer extends Component {
     if (this.props.currentUser === undefined) {
       return;
     }
-
+    debugger;
     const dataElementGroup = await Dhis2.getDataElementGroup(
       this.props.dataElementGroupId
     );
@@ -122,7 +123,7 @@ class BrowseDataContainer extends Component {
   }
   render() {
     if (this.state.data == undefined) {
-      return <h1>Loading</h1>;
+      return <Loader>Loading</Loader>;
     }
 
     const classes = this.props.classes;
@@ -183,23 +184,24 @@ class BrowseDataContainer extends Component {
           <br />
           <br />
           <br />
-          {this.props.groups && this.props.groups.map(group => (
-            <li>
-              <Link
-                to={
-                  "/data/" +
-                  this.props.period +
-                  "/deg/" +
-                  group.id +
-                  "/" +
-                  this.props.orgUnitId +
-                  "/children"
-                }
-              >
-                {group.name}
-              </Link>
-            </li>
-          ))}
+          {this.props.groups &&
+            this.props.groups.map(group => (
+              <li>
+                <Link
+                  to={
+                    "/data/" +
+                    this.props.period +
+                    "/deg/" +
+                    group.id +
+                    "/" +
+                    this.props.orgUnitId +
+                    "/children"
+                  }
+                >
+                  {group.name}
+                </Link>
+              </li>
+            ))}
         </div>
       </div>
     );

@@ -1,4 +1,4 @@
-import { init, getInstance, getManifest } from "d2";
+import { init, getInstance, getManifest } from "d2/lib/d2";
 import DatePeriods from "./DatePeriods";
 
 const API_URL = process.env.REACT_APP_DHIS2_URL;

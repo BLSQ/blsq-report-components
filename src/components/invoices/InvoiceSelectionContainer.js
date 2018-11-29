@@ -24,7 +24,7 @@ const styles = theme => ({
   }
 });
 
-class InvoiceBuilder extends Component {
+class InvoiceSelectionContainer extends Component {
   constructor(props) {
     super(props);
     this.state = { orgUnits: [] };
@@ -119,8 +119,8 @@ class InvoiceBuilder extends Component {
   }
 }
 
-InvoiceBuilder.propTypes = {
+InvoiceSelectionContainer.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(InvoiceBuilder);
+export default withStyles(styles)(InvoiceSelectionContainer);

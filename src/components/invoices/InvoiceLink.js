@@ -37,7 +37,7 @@ class InvoiceLink extends Component {
             {DatePeriods.split(this.props.period, "monthly").map(
               monthPeriod => (
                 <Button
-                  variant="flat"
+                  variant="text"
                   color="primary"
                   size="small"
                   component={Link}
@@ -51,7 +51,7 @@ class InvoiceLink extends Component {
         )}
         {invoiceType.frequency === "quarterly" && (
           <Button
-            variant="flat"
+            variant="text"
             color="primary"
             size="small"
             component={Link}

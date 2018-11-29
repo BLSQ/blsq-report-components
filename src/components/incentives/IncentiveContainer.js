@@ -319,7 +319,6 @@ class IncentiveContainer extends Component {
     const nonAllowedSee = dsi.dataSet.organisationUnits.filter(
       ou => !allowedSeeOrgunitIds.includes(ou.id)
     );
-    debugger;
     return (
       <React.Fragment>
         <IncentiveNavigationBar

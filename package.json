@@ -1,6 +1,6 @@
 {
   "name": "blsq-report-components",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "blsq-report-components",
   "author": "BLSQ",
   "license": "MIT",
@@ -28,7 +28,7 @@
     "@material-ui/core": "3.6.0",
     "@material-ui/icons": "3.0.1",
     "react-router-dom": "^4.3.1",
-    "d2": "^31.2.1"
+    "d2": "30.0.2"
   },
   "devDependencies": {
     "@svgr/rollup": "^2.4.1",

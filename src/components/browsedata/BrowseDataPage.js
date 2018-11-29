@@ -3,10 +3,13 @@ import BrowseDataContainer from "./BrowseDataContainer";
 
 class BrowseDataPage extends Component {
   componentWillReceiveProps(props) {
-    props.onPeriodChange(props.match.params.period);
+    if (props.onPeriodChange) {
+      props.onPeriodChange(props.match.params.period);
+    }
   }
 
   render() {
+    debugger;
     return (
       <BrowseDataContainer
         period={this.props.match.params.period}

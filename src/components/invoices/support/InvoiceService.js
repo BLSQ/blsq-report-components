@@ -1,4 +1,4 @@
-import Dhis2 from "./Dhis2";
+import Dhis2 from "../../../support/Dhis2";
 import Values from "./Values";
 
 class InvoiceService {

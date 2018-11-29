@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-
-import Dhis2 from "../../lib/Dhis2";
-import { withStyles } from "@material-ui/core/styles";
-import Cell from "../Cell";
 import { Link } from "react-router-dom";
+import { withStyles } from "@material-ui/core/styles";
+
+import Dhis2 from "../../support/Dhis2";
+import Cell from "../shared/Cell";
 
 Array.prototype.eachSlice = function(size, callback) {
   for (var i = 0, l = this.length; i < l; i += size) {

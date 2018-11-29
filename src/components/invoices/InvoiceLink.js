@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
-import DatePeriods from "../lib/DatePeriods";
-
 import { withStyles } from "@material-ui/core/styles";
+
+import DatePeriods from "../../support/DatePeriods";
+
 
 const styles = theme => ({
   buttonLike: {

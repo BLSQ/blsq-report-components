@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import IncentiveContainer from "../components/incentives/IncentiveContainer";
+import IncentiveContainer from "./IncentiveContainer";
 
 class IncentivePage extends Component {
   componentWillReceiveProps(props) {

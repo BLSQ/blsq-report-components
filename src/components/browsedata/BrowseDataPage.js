@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import BrowseDataContainer from "../components/browsedata/BrowseDataContainer";
+import BrowseDataContainer from "./BrowseDataContainer";
 
 class BrowseDataPage extends Component {
   componentWillReceiveProps(props) {

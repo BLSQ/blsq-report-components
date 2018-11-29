@@ -8,10 +8,10 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import PeriodPicker from "../PeriodPicker";
 
-import Dhis2 from "../../lib/Dhis2";
-import InvoiceLink from "../InvoiceLink";
+import PeriodPicker from "./PeriodPicker";
+import InvoiceLink from "./InvoiceLink";
+import Dhis2 from "../../support/Dhis2";
 
 const styles = theme => ({
   paper: theme.mixins.gutters({

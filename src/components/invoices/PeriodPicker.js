@@ -5,7 +5,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import DatePeriods from "../lib/DatePeriods";
+import DatePeriods from "../../support/DatePeriods";
 
 const styles = theme => ({
   formControl: {

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import InvoiceContainer from "../components/invoices/InvoiceContainer";
+import InvoiceContainer from "./InvoiceContainer";
 
 class InvoicePage extends Component {
   componentWillReceiveProps(props) {

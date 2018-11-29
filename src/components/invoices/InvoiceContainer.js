@@ -1,10 +1,12 @@
 import React, { Component } from "react";
-import Loader from "../Loader";
-import Warning from "../Warning";
-import PageOrientation from "../PageOrientation";
-import InvoiceService from "../../lib/InvoiceService";
-import InvoiceToolBar from "../InvoiceToolBar";
-import Orbf2 from "../../lib/Orbf2";
+import Loader from "../shared/Loader";
+import Warning from "../shared/Warning";
+import PageOrientation from "../shared/PageOrientation";
+import InvoiceService from "./support/InvoiceService";
+
+import Orbf2 from "../../support/Orbf2";
+
+import InvoiceToolBar from "./InvoiceToolBar";
 
 class InvoiceContainer extends Component {
   constructor(props) {

@@ -9,9 +9,9 @@ import { withStyles } from "@material-ui/core/styles";
 
 import IncentiveNavigationBar from "./IncentiveNavigationBar";
 import IncentiveSupport from "./IncentiveSupport";
-import Loader from "../Loader";
-import Warning from "../Warning";
-import Dhis2 from "../../lib/Dhis2";
+import Loader from "../shared/Loader";
+import Warning from "../shared/Warning";
+import Dhis2 from "../../support/Dhis2";
 
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";

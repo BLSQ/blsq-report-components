@@ -13,18 +13,27 @@ npm install --save blsq-report-components
 ## Usage
 
 ```jsx
-import React, { Component } from 'react'
 
-import MyComponent from 'blsq-report-components'
-
-class Example extends Component {
-  render () {
-    return (
-      <MyComponent />
-    )
-  }
-}
 ```
+
+
+# Development
+
+```
+git clone git@github.com:BLSQ/blsq-report-components.git
+cd blsq-report-components
+npm install
+```
+
+```
+npm start
+```
+
+```
+cd example
+npm start
+```
+
 
 ## License
 

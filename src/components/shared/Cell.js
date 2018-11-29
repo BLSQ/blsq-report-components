@@ -6,7 +6,7 @@ import {
   roundedAmountOrInteger,
   roundedPercent,
   labelize
-} from "../lib/NumberFormatter";
+} from "../../support/NumberFormatter";
 
 const styles = theme => ({
   cellOrder: {

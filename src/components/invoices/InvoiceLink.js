@@ -81,7 +81,6 @@ class InvoiceLink extends Component {
 
 InvoiceLink.propTypes = {
   classes: PropTypes.object.isRequired,
-  invoices: PropTypes.object.isRequired
 };
 
 

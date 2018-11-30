@@ -5,6 +5,7 @@ import { Route } from "react-router-dom";
 const incentiveRoute = props => {
   return (
     <Route
+      key="incentiveRoute"
       path="/incentives/:period/:incentiveCode"
       component={routerProps => (
         <IncentivePage

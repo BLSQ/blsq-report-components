@@ -9,6 +9,7 @@ const IncentiveNavigationBar = props => {
       <Tabs value={props.incentiveCode}>
         {props.incentivesDescriptors.map(descriptor => (
           <Tab
+            key={descriptor.dataSet}
             value={descriptor.dataSet}
             label={descriptor.name}
             component={Link}

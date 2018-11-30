@@ -30,7 +30,6 @@ class InvoiceSelectionContainer extends Component {
     this.state = { orgUnits: [] };
     this.searchOrgunit = this.searchOrgunit.bind(this);
     this.searchOrgunitEvent = this.searchOrgunitEvent.bind(this);
-    debugger;
   }
 
   async componentWillReceiveProps(nextProps) {

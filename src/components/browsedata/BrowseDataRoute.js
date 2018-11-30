@@ -5,6 +5,7 @@ import { Route } from "react-router-dom";
 const browseDataRoute = props => {
   return (
     <Route
+      key="browseDataRoute"
       path="/data/:period/:type/:dataElementGroupId/:orgUnitId"
       component={routerProps => (
         <BrowseDataPage

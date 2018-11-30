@@ -157,16 +157,18 @@ class BrowseDataContainer extends Component {
         </h1>
         <table className={classes.table}>
           <thead>
-            <th>Level 2</th>
-            <th>Level 3</th>
-            <th>Org Unit</th>
-            {dataElements.map(de => (
-              <th>{de.name}</th>
-            ))}
+            <tr>
+              <th>Level 2</th>
+              <th>Level 3</th>
+              <th>Org Unit</th>
+              {dataElements.map(de => (
+                <th>{de.name}</th>
+              ))}
+            </tr>
           </thead>
           <tbody>
             {orgUnits.map(ou => (
-              <tr>
+              <tr key={ou.id}>
                 <td>{ou.ancestors[1].name}</td>
                 <td>{ou.ancestors[2].name}</td>
                 <td>{ou.name}</td>
@@ -184,6 +186,7 @@ class BrowseDataContainer extends Component {
                   };
                   return (
                     <Cell
+                      key={ou.id + de.name}
                       value={val}
                       field="sample"
                       variant="percentage"

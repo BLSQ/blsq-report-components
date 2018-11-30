@@ -285,7 +285,7 @@ class App extends React.Component {
                   invoiceRoute(params),
                   invoiceSelectionRoute(params)
                 ]}
-                {this.props.routes}
+                {this.props.routes && this.props.routes(params)}
               </Switch>
             </main>
           </div>

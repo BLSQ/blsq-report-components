@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
@@ -18,6 +19,7 @@ const styles = theme => ({
 class InvoiceLink extends Component {
   render() {
     const orgUnit = this.props.orgUnit;
+
     const codes = this.props.invoices.getInvoiceTypeCodes(orgUnit);
 
     if (codes === undefined || codes.length === 0) {
@@ -76,5 +78,11 @@ class InvoiceLink extends Component {
     );
   }
 }
+
+InvoiceLink.propTypes = {
+  classes: PropTypes.object.isRequired,
+  invoices: PropTypes.object.isRequired
+};
+
 
 export default withStyles(styles)(InvoiceLink);

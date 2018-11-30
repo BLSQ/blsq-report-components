@@ -81,49 +81,64 @@ class BrowseDataContainer extends Component {
     if (this.props.currentUser === undefined) {
       return;
     }
-    debugger;
-    const dataElementGroup = await Dhis2.getDataElementGroup(
-      this.props.dataElementGroupId
-    );
 
-    const dataElementGroupValues = await Dhis2.getDataElementGroupValues(
-      this.props.orgUnitId,
-      this.props.dataElementGroupId,
-      [this.props.period]
-    );
+    try {
+      const dataElementGroup = await Dhis2.getDataElementGroup(
+        this.props.dataElementGroupId
+      );
 
-    const values = (dataElementGroupValues.dataValues || []).filter(
-      v => v.value
-    );
+      const dataElementGroupValues = await Dhis2.getDataElementGroupValues(
+        this.props.orgUnitId,
+        this.props.dataElementGroupId,
+        [this.props.period]
+      );
 
-    const dataElements = dataElementGroup.dataElements;
-    dataElements.sort(dataElementsComparator);
-    const orgUnitIds = values.map(val => val.orgUnit);
+      const values = (dataElementGroupValues.dataValues || []).filter(
+        v => v.value
+      );
 
-    const orgUnitResponses = await Dhis2.getOrgUnitsUnder(this.props.orgUnitId);
-    const orgUnits = orgUnitResponses.organisationUnits.filter(ou =>
-      orgUnitIds.includes(ou.id)
-    );
-    orgUnits.sort(orgUnitComparator);
-    const indexedValues = {};
-    if (dataElementGroupValues.dataValues) {
-      dataElementGroupValues.dataValues.forEach(dataValue => {
-        const key = [
-          dataValue.dataElement,
-          dataValue.period,
-          dataValue.orgUnit
-        ];
-        indexedValues[key] = dataValue.value;
+      const dataElements = dataElementGroup.dataElements;
+      dataElements.sort(dataElementsComparator);
+      const orgUnitIds = values.map(val => val.orgUnit);
+
+      const orgUnitResponses = await Dhis2.getOrgUnitsUnder(
+        this.props.orgUnitId
+      );
+      const orgUnits = orgUnitResponses.organisationUnits.filter(ou =>
+        orgUnitIds.includes(ou.id)
+      );
+      orgUnits.sort(orgUnitComparator);
+      const indexedValues = {};
+      if (dataElementGroupValues.dataValues) {
+        dataElementGroupValues.dataValues.forEach(dataValue => {
+          const key = [
+            dataValue.dataElement,
+            dataValue.period,
+            dataValue.orgUnit
+          ];
+          indexedValues[key] = dataValue.value;
+        });
+      }
+
+      this.setState({
+        data: { dataElementGroup, indexedValues, dataElements, orgUnits }
       });
+    } catch (error) {
+      this.setState({
+        generatedAt: new Date(),
+        error:
+          "Sorry something went wrong, try refreshing or contact the support : " +
+          error.message
+      });
+      throw error;
     }
-
-    this.setState({
-      data: { dataElementGroup, indexedValues, dataElements, orgUnits }
-    });
   }
   render() {
     if (this.state.data == undefined) {
       return <Loader>Loading</Loader>;
+    }
+    if (this.state.error !== undefined) {
+      return <Warning message={this.state.error} />;
     }
 
     const classes = this.props.classes;

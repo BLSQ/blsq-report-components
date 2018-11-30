@@ -5,14 +5,16 @@ import { Route } from "react-router-dom";
 const invoiceRoute = props => (
   <Route
     path="/invoices/:period/:orgUnitId/:invoiceCode"
-    component={routerProps => (
+    component={routerProps => {
+      return(
       <InvoicePage
         {...routerProps}
         invoices={props.invoices}
         currentUser={props.currentUser}
         onPeriodChange={props.onPeriodChange}
       />
-    )}
+      )
+    }}
   />
 );
 

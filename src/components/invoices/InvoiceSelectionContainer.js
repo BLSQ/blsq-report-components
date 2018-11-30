@@ -30,6 +30,7 @@ class InvoiceSelectionContainer extends Component {
     this.state = { orgUnits: [] };
     this.searchOrgunit = this.searchOrgunit.bind(this);
     this.searchOrgunitEvent = this.searchOrgunitEvent.bind(this);
+    debugger;
   }
 
   async componentWillReceiveProps(nextProps) {
@@ -120,7 +121,8 @@ class InvoiceSelectionContainer extends Component {
 }
 
 InvoiceSelectionContainer.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  invoices: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(InvoiceSelectionContainer);

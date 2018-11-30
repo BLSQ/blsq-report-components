@@ -4,11 +4,12 @@ import { Route } from "react-router-dom";
 
 const invoiceSelectionRoute = props => (
   <Route
-    path="/"
+    path="/select"
+    exact
     component={routerProps => (
       <InvoiceSelectionContainer
         {...routerProps}
-        invoices={props.innvoices}
+        invoices={props.invoices}
         currentUser={props.currentUser}
         onPeriodChange={props.onPeriodChange}
         period={props.period}

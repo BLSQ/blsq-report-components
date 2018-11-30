@@ -9,7 +9,6 @@ class BrowseDataPage extends Component {
   }
 
   render() {
-    debugger;
     return (
       <BrowseDataContainer
         period={this.props.match.params.period}

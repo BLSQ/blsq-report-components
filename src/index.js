@@ -19,10 +19,12 @@ import * as NumberFormatter from "./support/NumberFormatter";
 
 import Cell from "./components/shared/Cell";
 import Warning from "./components/shared/Warning";
+import AppDrawer from "./components/AppDrawer"
 
 import { indexBy } from "./support/Arrays";
 
 export {
+  AppDrawer,
   BrowseDataContainer,
   BrowseDataPage,
   browseDataRoute,

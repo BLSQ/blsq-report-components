@@ -11,6 +11,8 @@ import incentiveRoute from "./components/incentives/IncentiveRoute";
 import InvoicePage from "./components/invoices/InvoicePage";
 import invoiceRoute from "./components/invoices/InvoiceRoute";
 import invoiceSelectionRoute from "./components/invoices/InvoiceSelectionRoute";
+import Values from "./components/invoices/support/Values";
+
 
 import Dhis2 from "./support/Dhis2";
 import Orbf2 from "./support/Orbf2";
@@ -36,6 +38,7 @@ export {
   invoiceRoute,
   Dhis2,
   Orbf2,
+  Values,
   DatePeriods,
   indexBy,
   NumberFormatter,

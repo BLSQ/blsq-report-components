@@ -3,8 +3,7 @@ import Values from "./Values";
 
 class InvoiceService {
   async fetchInvoiceData(orgUnitId, period, invoiceType, mapper) {
-
-
+    let mainOrgUnit;
     let orgUnits = [];
 
     if (invoiceType.contractGroupSet) {
@@ -12,21 +11,27 @@ class InvoiceService {
         orgUnitId,
         invoiceType.contractGroupSet
       );
+      mainOrgUnit = await Dhis2.getOrgunit(orgUnitId);
     } else if (invoiceType.organisationUnitGroup) {
       orgUnits = await Dhis2.getOrgunitsForGroup(
         orgUnitId,
         invoiceType.organisationUnitGroup
       );
       orgUnits = orgUnits.organisationUnits;
+      mainOrgUnit = await Dhis2.getOrgunit(orgUnitId);
     } else {
-      orgUnits = [await Dhis2.getOrgunit(orgUnitId)];
+      mainOrgUnit = await Dhis2.getOrgunit(orgUnitId);
+      orgUnits = [mainOrgUnit];
     }
+
     const request = Dhis2.buildInvoiceRequest(
       orgUnits,
       period,
       invoiceType,
       orgUnitId
     );
+
+    request.mainOrgUnit = mainOrgUnit;
 
     const rawValues = await Dhis2.getInvoiceValues(request);
     const dataElementsNames = await this.getDataElementsNames(request);

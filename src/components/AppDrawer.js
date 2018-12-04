@@ -199,6 +199,7 @@ class App extends React.Component {
     );
 
     const params = {
+      config: this.props.config,
       period: DatePeriods.split(this.state.period, "quarterly")[0],
       onPeriodChange: this.onPeriodChange,
       invoices: this.props.invoices,

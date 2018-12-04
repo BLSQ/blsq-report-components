@@ -182,6 +182,7 @@ class InvoiceContainer extends Component {
           onRecalculate={calculable && this.recalculate}
           calculateState={this.state.calculateState}
           warning={this.state.warning}
+          periodFormat={this.props.periodFormat}
         />
 
         <SelectedInvoice
@@ -198,6 +199,7 @@ class InvoiceContainer extends Component {
           onRecalculate={calculable && this.recalculate}
           calculateState={this.state.calculateState}
           warning={this.state.warning}
+          periodFormat={this.props.periodFormat}
         />
       </div>
     );

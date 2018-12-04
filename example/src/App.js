@@ -15,13 +15,24 @@ const incentivesDescriptors = [
 ];
 const customRoutes = params => {
   return [customRoute(params)];
-}
+};
 const App = () => (
   <AppDrawer
     incentivesDescriptors={incentivesDescriptors}
     drawerLinks={DrawerLinks}
     invoices={Invoices}
     routes={customRoutes}
+    config={{
+      global: {
+        periodFormat: "fyJulyQuarter",
+        levels: [
+          "Country",
+          "Region",
+          "District",
+          "Facility"
+        ]
+      }
+    }}
   />
 );
 

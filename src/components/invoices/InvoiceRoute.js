@@ -13,6 +13,7 @@ const invoiceRoute = props => (
           invoices={props.invoices}
           currentUser={props.currentUser}
           onPeriodChange={props.onPeriodChange}
+          {...props.config.global}
         />
       );
     }}

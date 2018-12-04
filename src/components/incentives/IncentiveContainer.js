@@ -25,12 +25,12 @@ const CustomTableCell = withStyles(theme => ({
     color: theme.palette.common.white,
     textAlign: "center",
     fontWeight: "bold",
-    fontSize:"18px"
+    fontSize: "18px"
   },
   root: {
     textAlign: "left",
     align: "center"
-  },
+  }
 }))(TableCell);
 
 const OrgUnitLine = props => {
@@ -161,7 +161,7 @@ class IncentiveContainer extends Component {
   constructor(props) {
     super(props);
     this.loadData = this.loadData.bind(this);
-    this.state = { date: new Date(), errors: {}, valids: {} };
+    this.state = { errors: {}, valids: {} };
 
     this.setDataValue = debounce(this.setDataValue, 500);
   }
@@ -207,7 +207,6 @@ class IncentiveContainer extends Component {
   async componentWillReceiveProps(nextProps) {
     this.props = nextProps;
     this.setState({
-      date: new Date(),
       dataSetInfos: undefined,
       error: undefined,
       errors: {}
@@ -263,7 +262,6 @@ class IncentiveContainer extends Component {
       });
     } catch (error) {
       this.setState({
-        generatedAt: new Date(),
         error:
           "Sorry something went wrong, try refreshing or contact the support : " +
           error.message

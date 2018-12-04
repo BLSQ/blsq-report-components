@@ -125,7 +125,6 @@ class BrowseDataContainer extends Component {
       });
     } catch (error) {
       this.setState({
-        generatedAt: new Date(),
         error:
           "Sorry something went wrong, try refreshing or contact the support : " +
           error.message

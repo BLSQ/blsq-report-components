@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
+import InputLabel from "@material-ui/core/InputLabel";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -12,6 +13,7 @@ import TableRow from "@material-ui/core/TableRow";
 import PeriodPicker from "./PeriodPicker";
 import InvoiceLink from "./InvoiceLink";
 import Dhis2 from "../../support/Dhis2";
+import { FormControl } from "@material-ui/core";
 
 const styles = theme => ({
   paper: theme.mixins.gutters({
@@ -25,6 +27,14 @@ const styles = theme => ({
 });
 
 class InvoiceSelectionContainer extends Component {
+  static defaultProps = {
+    periodFormat: {
+      quarterly: "quarter",
+      monthly: "yearMonth"
+    }
+
+  };
+
   constructor(props) {
     super(props);
     this.state = { orgUnits: [] };
@@ -51,20 +61,20 @@ class InvoiceSelectionContainer extends Component {
         <PeriodPicker
           period={this.props.period}
           onPeriodChange={this.props.onPeriodChange}
+          periodFormat={this.props.periodFormat}
         />
         <TextField
-          label="Organisation Unit"
+          label="Organisation Unit name"
           onChange={this.searchOrgunitEvent}
-          placeholder="Search by Organisation Unit name"
-          style={{ width: 400 }}
+          style={{ width: 400, marginTop: 9 }}
           margin="normal"
         />
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell>County</TableCell>
-              <TableCell>District</TableCell>
+              <TableCell>{this.props.levels[1]}</TableCell>
+              <TableCell>{this.props.levels[2]}</TableCell>
               <TableCell>Invoice</TableCell>
             </TableRow>
           </TableHead>
@@ -109,8 +119,8 @@ class InvoiceSelectionContainer extends Component {
     if (searchvalue && searchvalue.length > 0 && this.props.currentUser) {
       const orgUnitsResp = await Dhis2.searchOrgunits(
         searchvalue,
-        this.props.ouLevel,
-        this.props.currentUser.dataViewOrganisationUnits
+        this.props.currentUser.dataViewOrganisationUnits,
+        this.props.contractedOrgUnitGroupId
       );
       this.setState({
         orgUnits: orgUnitsResp.organisationUnits

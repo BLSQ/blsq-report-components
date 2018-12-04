@@ -16,6 +16,7 @@ class InvoicePage extends Component {
         invoiceCode={this.props.match.params.invoiceCode}
         currentUser={this.props.currentUser}
         invoices={this.props.invoices}
+        {...this.props}
       />
     );
   }

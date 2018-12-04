@@ -44,8 +44,9 @@ class InvoiceLink extends Component {
                   size="small"
                   component={Link}
                   to={this.linkTo(invoiceType, monthPeriod)}
+                  title={monthPeriod}
                 >
-                  {monthPeriod}
+                  {DatePeriods.displayName(monthPeriod, "monthYear")}
                 </Button>
               )
             )}
@@ -58,6 +59,7 @@ class InvoiceLink extends Component {
             size="small"
             component={Link}
             to={this.linkTo(invoiceType, this.props.period)}
+            title={this.props.period}
           >
             {invoiceType.name}
           </Button>

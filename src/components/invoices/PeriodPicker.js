@@ -10,7 +10,7 @@ import DatePeriods from "../../support/DatePeriods";
 const styles = theme => ({
   formControl: {
     margin: theme.spacing.unit,
-    minWidth: 120
+    minWidth: 120,
   }
 });
 
@@ -27,6 +27,26 @@ class PeriodPicker extends Component {
   render() {
     const classes = this.props.classes;
     const period = this.props.period;
+    const periods = this.buildPeriods(period);
+    return (
+      <FormControl className={classes.formControl}>
+        <InputLabel>Period</InputLabel>
+        <Select
+          value={this.props.period}
+          onChange={this.handleChange}
+          title={this.props.period}
+        >
+          {periods.map(dhis2period => (
+            <MenuItem key={dhis2period} value={dhis2period} title={dhis2period}>
+              {DatePeriods.displayName(dhis2period, this.props.periodFormat.quarterly)}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    );
+  }
+
+  buildPeriods(period) {
     const nextPeriod = DatePeriods.nextQuarter(period);
     const nextPeriod2 = DatePeriods.nextQuarter(nextPeriod);
     const previous = DatePeriods.previousQuarter(period);
@@ -34,21 +54,16 @@ class PeriodPicker extends Component {
     const previous3 = DatePeriods.previousQuarter(previous2);
     const previous4 = DatePeriods.previousQuarter(previous3);
     const previous5 = DatePeriods.previousQuarter(previous4);
-    return (
-      <FormControl className={classes.formControl}>
-        <InputLabel>Period</InputLabel>
-        <Select value={this.props.period} onChange={this.handleChange}>
-          <MenuItem value={previous5}>{previous5}</MenuItem>
-          <MenuItem value={previous4}>{previous4}</MenuItem>
-          <MenuItem value={previous3}>{previous3}</MenuItem>
-          <MenuItem value={previous2}>{previous2}</MenuItem>
-          <MenuItem value={previous}>{previous}</MenuItem>
-          <MenuItem value={period}>{period}</MenuItem>
-          <MenuItem value={nextPeriod}>{nextPeriod}</MenuItem>
-          <MenuItem value={nextPeriod2}>{nextPeriod2}</MenuItem>
-        </Select>
-      </FormControl>
-    );
+    return [
+      previous5,
+      previous4,
+      previous3,
+      previous2,
+      previous,
+      period,
+      nextPeriod,
+      nextPeriod2
+    ];
   }
 }
 

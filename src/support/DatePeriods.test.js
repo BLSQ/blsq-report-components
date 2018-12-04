@@ -125,9 +125,70 @@ it("monthsNamesInQuarter", () => {
   ]);
 });
 
+it("period2QuarterName", () => {
+  expect(
+    DatePeriods.split("2014", "quarterly").map(q =>
+      DatePeriods.displayName(q, "quarter")
+    )
+  ).toEqual([
+    "January - March 2014",
+    "April - June 2014",
+    "July - September 2014",
+    "October - December 2014"
+  ]);
+});
+
+it("period2FinancialYearJulyQuarterName", () => {
+  expect(
+    DatePeriods.split("2018", "quarterly").map(q =>
+      DatePeriods.displayName(q, "fyJulyQuarter")
+    )
+  ).toEqual([
+    "FY 2017/2018 Quarter 3 (January - March 2018)",
+    "FY 2017/2018 Quarter 4 (April - June 2018)",
+    "FY 2018/2019 Quarter 1 (July - September 2018)",
+    "FY 2018/2019 Quarter 2 (October - December 2018)"
+  ]);
+});
+
+it("monthYear", () => {
+  expect(
+    DatePeriods.split("2014", "monthly").map(q =>
+      DatePeriods.displayName(q, "monthYear")
+    )
+  ).toEqual([
+    "January 2014",
+    "February 2014",
+    "March 2014",
+    "April 2014",
+    "May 2014",
+    "June 2014",
+    "July 2014",
+    "August 2014",
+    "September 2014",
+    "October 2014",
+    "November 2014",
+    "December 2014"
+  ]);
+});
+
+it("monthYear 2 ", () => {
+  expect(
+    DatePeriods.split("2014", "quarterly").map(q =>
+      DatePeriods.displayName(q, "monthYear")
+    )
+  ).toEqual(["March 2014", "June 2014", "September 2014", "December 2014"]);
+});
+
+it("month", () => {
+  expect(
+    DatePeriods.split("2014", "quarterly").map(q =>
+      DatePeriods.displayName(q, "month")
+    )
+  ).toEqual(["March", "June", "September", "December"]);
+});
 
 it("monthName", () => {
-expect(DatePeriods.monthName("2016Q4")).toEqual("December")
-expect(DatePeriods.monthName("201611")).toEqual("November")
-
+  expect(DatePeriods.monthName("2016Q4")).toEqual("December");
+  expect(DatePeriods.monthName("201611")).toEqual("November");
 });

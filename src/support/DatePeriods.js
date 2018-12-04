@@ -47,6 +47,18 @@ const MONTHLY = "monthly";
 const QUARTERLY = "quarterly";
 const SIX_MONTHLY = "sixMonthly";
 
+const FORMAT_FY_JULY_QUARTER = "fyJulyQuarter";
+const FORMAT_QUARTER = "quarter";
+const FORMAT_MONTH = "month";
+const FORMAT_MONTH_YEAR = "monthYear";
+
+const SUPPORTED_FORMATS = [
+  FORMAT_FY_JULY_QUARTER,
+  FORMAT_QUARTER,
+  FORMAT_MONTH,
+  FORMAT_MONTH_YEAR
+];
+
 class DatePeriods {
   static padMonth(n) {
     return n < 10 ? "0" + n : n;
@@ -98,9 +110,73 @@ class DatePeriods {
   static monthName(period) {
     const year_months = this.split(period, MONTHLY);
     const year_month = year_months[year_months.length - 1];
-    const month = year_month.slice(4)
-    const monthNumber = parseInt(month , 0);
-    return MONTH_NAMES[monthNumber -1 ];
+    const month = year_month.slice(4);
+    const monthNumber = parseInt(month, 0);
+    return MONTH_NAMES[monthNumber - 1];
+  }
+
+  static monthNameYear(period) {
+    const year_months = this.split(period, MONTHLY);
+    const year_month = year_months[year_months.length - 1];
+    const year = year_month.slice(0, 4);
+    const month = year_month.slice(4);
+    const monthNumber = parseInt(month, 0);
+    return MONTH_NAMES[monthNumber - 1] + " " + year;
+  }
+
+  static displayName(dhis2period, format) {
+    if (format === FORMAT_FY_JULY_QUARTER) {
+      return this.period2FinancialYearJulyQuarterName(dhis2period);
+    } else if (format === FORMAT_QUARTER) {
+      return this.period2QuarterName(dhis2period);
+    } else if (format === FORMAT_MONTH) {
+      return this.monthName(dhis2period);
+    } else if (format === FORMAT_MONTH_YEAR) {
+      return this.monthNameYear(dhis2period);
+    }
+
+    throw new Error(
+      "unsupported format '" + format + "' see " + SUPPORTED_FORMATS.join(",")
+    );
+  }
+
+  static period2QuarterName(dhis2period) {
+    const yearPeriod = this.split(dhis2period, YEARLY)[0];
+    const quarterPeriod = this.split(dhis2period, QUARTERLY)[0];
+    const monthsPeriod = this.split(quarterPeriod, MONTHLY);
+    return (
+      [monthsPeriod[0], monthsPeriod[2]]
+        .map(monthPeriod => this.monthName(monthPeriod))
+        .join(" - ") +
+      " " +
+      yearPeriod
+    );
+  }
+
+  static period2FinancialYearJulyQuarterName(dhis2period) {
+    return (
+      this.financialJulyQuarterName(dhis2period) +
+      " (" +
+      this.period2QuarterName(dhis2period) +
+      ")"
+    );
+  }
+
+  static financialJulyQuarterName(dhis2period) {
+    const yearPeriod = this.split(dhis2period, YEARLY)[0];
+    const quarterPeriod = this.split(dhis2period, QUARTERLY)[0];
+
+    let year = parseInt(yearPeriod, 0);
+    let quarter = parseInt(quarterPeriod.slice(5), 0);
+
+    if (quarter <= 2) {
+      year = year - 1;
+      quarter = quarter + 2;
+    } else {
+      quarter = quarter - 2;
+    }
+
+    return "FY " + year + "/" + (year + 1) + " Quarter " + quarter;
   }
 
   static next(period) {
@@ -124,6 +200,18 @@ class DatePeriods {
     }
     if (period.length === 4) {
       return this.previousYear(period);
+    }
+  }
+
+  static detect(dhis2Period) {
+    if (dhis2Period.includes("Q")) {
+      return QUARTERLY;
+    }
+    if (dhis2Period.length === 6) {
+      return MONTHLY;
+    }
+    if (dhis2Period.length === 4) {
+      return YEARLY;
     }
   }
 

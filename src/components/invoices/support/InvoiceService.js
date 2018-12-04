@@ -37,9 +37,11 @@ class InvoiceService {
     const dataElementsNames = await this.getDataElementsNames(request);
     const values = new Values(rawValues, dataElementsNames);
     const invoice = mapper.mapValues(request, values);
+    const systemInfo = await Dhis2.systemInfoRaw();
 
     invoice.invoiceType = invoiceType;
     invoice.period = period;
+    invoice.generatedAt = new Date(systemInfo.serverDate);
     return invoice;
   }
 

@@ -11,7 +11,7 @@ import InvoiceToolBar from "./InvoiceToolBar";
 class InvoiceContainer extends Component {
   constructor(props) {
     super(props);
-    this.state = { date: new Date() };
+    this.state = {};
     this.recalculate = this.recalculate.bind(this);
     this.loadData = this.loadData.bind(this);
     this.fetchInvoicingJobs = this.fetchInvoicingJobs.bind(this);
@@ -31,7 +31,6 @@ class InvoiceContainer extends Component {
   async componentWillReceiveProps(nextProps) {
     this.props = nextProps;
     this.setState({
-      date: new Date(),
       invoice: undefined
     });
     this.loadData();
@@ -53,7 +52,6 @@ class InvoiceContainer extends Component {
       );
     } catch (error) {
       this.setState({
-        generatedAt: new Date(),
         warning: "Sorry was not able to contact ORBF2 backend: " + error.message
       });
       throw error;
@@ -112,14 +110,11 @@ class InvoiceContainer extends Component {
         this.props.currentUser
       );
       invoice.calculations = calculations;
-      invoice.generatedAt = new Date();
       this.setState({
-        generatedAt: new Date(),
         invoice: invoice
       });
     } catch (error) {
       this.setState({
-        generatedAt: new Date(),
         error:
           "Sorry something went wrong, try refreshing or contact the support : " +
           error.message
@@ -137,7 +132,6 @@ class InvoiceContainer extends Component {
       this.nextReq(100);
     } catch (error) {
       this.setState({
-        generatedAt: new Date(),
         error:
           "Sorry something went wrong, when triggering calculation try refreshing or contact the support : " +
             error.message || error

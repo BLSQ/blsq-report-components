@@ -75,6 +75,10 @@ class Dhis2 {
     return getInstance().then(d2 => d2.currentUser);
   }
 
+  systemInfoRaw() {
+    return getInstance().then(d2 => d2.system.systemInfo);
+  }
+
   currentUserRaw() {
     return getInstance().then(d2 =>
       d2.Api.getApi().get(

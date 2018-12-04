@@ -17,6 +17,7 @@ class Invoice extends Component {
       <div className={classes.invoiceFrame} id="invoiceFrame">
         <h1>Demo</h1>
         <p>{this.props.invoice.orgUnit.name}</p>
+        <p>Generated at: {this.props.invoice.generatedAt.toLocaleString()}</p>
       </div>
     );
   }

@@ -231,13 +231,15 @@ class Dhis2 {
     return getInstance().then(d2 => d2.Api.getApi().get(url));
   }
 
-  searchOrgunits(name, level, orgunits) {
+  searchOrgunits(name, orgunits, contractGroup) {
     var searchOuUrl =
       "organisationUnits?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]" +
       "&pageSize=50" +
       "&filter=name:ilike:" +
       name;
-
+    if (contractGroup) {
+      searchOuUrl += "&filter=organisationUnitGroups.id:eq:" + contractGroup;
+    }
     if (orgunits && orgunits.length === 1) {
       searchOuUrl += "&filter=path:like:" + orgunits[0].id;
     } else if (orgunits && orgunits.length > 0) {

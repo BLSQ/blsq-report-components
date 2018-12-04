@@ -30,8 +30,6 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Dashboard from "@material-ui/icons/Dashboard";
 import FileIcon from "@material-ui/icons/InsertDriveFile";
 
-
-
 const drawerWidth = 240;
 
 const styles = theme => ({
@@ -162,7 +160,7 @@ class App extends React.Component {
   render() {
     const { classes } = this.props;
     const { open } = this.state;
-    const DrawerLinks = this.props.drawerLinks
+    const DrawerLinks = this.props.drawerLinks;
     const drawer = (
       <Drawer
         variant="persistent"
@@ -193,7 +191,7 @@ class App extends React.Component {
             <ListItemText primary="Invoices & Reports" />
           </ListItem>
           <Divider />
-          <DrawerLinks period={this.state.period}/>
+          <DrawerLinks period={this.state.period} />
         </List>
       </Drawer>
     );

@@ -69,8 +69,8 @@ class InvoiceSelectionContainer extends Component {
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell>County</TableCell>
-              <TableCell>District</TableCell>
+              <TableCell>{this.props.levels[1]}</TableCell>
+              <TableCell>{this.props.levels[2]}</TableCell>
               <TableCell>Invoice</TableCell>
             </TableRow>
           </TableHead>
@@ -115,8 +115,8 @@ class InvoiceSelectionContainer extends Component {
     if (searchvalue && searchvalue.length > 0 && this.props.currentUser) {
       const orgUnitsResp = await Dhis2.searchOrgunits(
         searchvalue,
-        this.props.ouLevel,
-        this.props.currentUser.dataViewOrganisationUnits
+        this.props.currentUser.dataViewOrganisationUnits,
+        this.props.contractedOrgUnitGroupId
       );
       this.setState({
         orgUnits: orgUnitsResp.organisationUnits

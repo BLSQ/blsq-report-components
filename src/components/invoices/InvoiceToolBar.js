@@ -94,7 +94,12 @@ class InvoiceToolBar extends Component {
           <ArrowBack />
         </Button>
         &nbsp;
-        <span title={period}>{DatePeriods.displayName(period, this.props.periodFormat)}</span>
+        <span title={period}>
+          {DatePeriods.displayName(
+            period,
+            this.props.periodFormat[DatePeriods.detect(period)]
+          )}
+        </span>
         &nbsp;
         <Button component={Link} to={next}>
           <ArrowForward />

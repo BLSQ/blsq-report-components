@@ -203,6 +203,18 @@ class DatePeriods {
     }
   }
 
+  static detect(dhis2Period) {
+    if (dhis2Period.includes("Q")) {
+      return QUARTERLY;
+    }
+    if (dhis2Period.length === 6) {
+      return MONTHLY;
+    }
+    if (dhis2Period.length === 4) {
+      return YEARLY;
+    }
+  }
+
   static nextYearMonth(period) {
     let year = parseInt(period.slice(0, 4), 0);
     let month = parseInt(period.slice(4, 6), 0);

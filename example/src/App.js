@@ -24,7 +24,10 @@ const App = () => (
     routes={customRoutes}
     config={{
       global: {
-        periodFormat: "quarter",
+        periodFormat: {
+          quarterly: "quarter",
+          monthly: "monthYear"
+        },
         levels: ["Country", "Territory", "Land", "Facility"],
         contractedOrgUnitGroupId: "GGghZsfu7qV"
       }

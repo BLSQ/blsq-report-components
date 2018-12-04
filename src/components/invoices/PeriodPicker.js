@@ -38,7 +38,7 @@ class PeriodPicker extends Component {
         >
           {periods.map(dhis2period => (
             <MenuItem key={dhis2period} value={dhis2period} title={dhis2period}>
-              {DatePeriods.displayName(dhis2period, this.props.periodFormat)}
+              {DatePeriods.displayName(dhis2period, this.props.periodFormat.quarterly)}
             </MenuItem>
           ))}
         </Select>

@@ -28,7 +28,11 @@ const styles = theme => ({
 
 class InvoiceSelectionContainer extends Component {
   static defaultProps = {
-    periodFormat: "quarter"
+    periodFormat: {
+      quarterly: "quarter",
+      monthly: "yearMonth"
+    }
+
   };
 
   constructor(props) {

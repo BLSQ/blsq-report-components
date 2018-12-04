@@ -1,14 +1,23 @@
 import invoiceDescriptors from "./invoice-descriptors.json";
 import DemoMapper from "./demo-chc/Mapper";
 import DemoInvoice from "./demo-chc/Invoice";
+import DemoMonthlyMapper from "./demo-chc-monthly/Mapper";
+import DemoMonthlyInvoice from "./demo-chc-monthly/Invoice";
+
+
 import { indexBy } from "blsq-report-components";
 
 const INVOICE_DEMO_CHT = "demo-chc";
+const INVOICE_DEMO_CHT_MONTHLY ="demo-chc-monthly"
 
 const INVOICES = {
   [INVOICE_DEMO_CHT]: {
     component: DemoInvoice,
     mapper: DemoMapper
+  },
+  [INVOICE_DEMO_CHT_MONTHLY]: {
+    component: DemoMonthlyInvoice,
+    mapper: DemoMonthlyMapper
   }
 };
 
@@ -16,7 +25,7 @@ const DESCRIPTOR_BY_CODE = indexBy(invoiceDescriptors, e => e.code);
 
 class Invoices {
   static getInvoiceTypeCodes(orgUnit) {
-    const invoiceCodes = [INVOICE_DEMO_CHT];
+    const invoiceCodes = [INVOICE_DEMO_CHT, INVOICE_DEMO_CHT_MONTHLY];
 
     return invoiceCodes;
   }

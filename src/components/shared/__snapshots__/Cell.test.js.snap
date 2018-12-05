@@ -3,9 +3,20 @@
 exports[`Cell renders amount with provided field 1`] = `
 <td
   className="Cell-cellAmount-5"
-  title="super (demo code)  undefined 15564.524"
+  title="super (demo code)  2016Q3 15564.524"
 >
   15,564.52
+</td>
+`;
+
+exports[`Cell renders percentage with provided field 1`] = `
+<td
+  className="Cell-cellQuantity-4"
+  title="super (demo code)  2016Q3 15564.524"
+>
+  <b>
+    15564.52
+  </b>
 </td>
 `;
 

@@ -1,7 +1,7 @@
-import ExampleComponent from './'
+import Cell from "./components/shared/Cell";
 
-describe('ExampleComponent', () => {
-  it('is truthy', () => {
-    expect(ExampleComponent).toBeTruthy()
-  })
-})
+describe("Cell", () => {
+  it("is truthy", () => {
+    expect(Cell).toBeTruthy();
+  });
+});

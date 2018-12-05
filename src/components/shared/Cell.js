@@ -38,6 +38,29 @@ const styles = theme => ({
   }
 });
 
+const VARIANT_MONEY = "money";
+const VARIANT_QUANTITY = "quantity";
+const VARIANT_ROUNDED = "rounded";
+
+const VARIANT_TEXT = "text";
+const VARIANT_LARGE_TEXT = "largeText";
+
+const VARIANT_TEXTDE = "textde"
+const VARIANT_ORDER = "order"
+const VARIANT_PERCENTAGE = "percentage"
+const VARIANT_ROUNDED_AMOUNT_OR_INTEGER = "roundedAmountOrInteger"
+const VARIANTS = [
+  VARIANT_MONEY,
+  VARIANT_QUANTITY,
+  VARIANT_ROUNDED,
+  VARIANT_TEXT,
+  VARIANT_LARGE_TEXT,
+  VARIANT_TEXTDE,
+  VARIANT_ORDER,
+  VARIANT_PERCENTAGE,
+  VARIANT_ROUNDED_AMOUNT_OR_INTEGER
+];
+
 function resolve(path, obj, separator = ".") {
   if (path === "self") {
     return obj;
@@ -47,50 +70,53 @@ function resolve(path, obj, separator = ".") {
 }
 
 const Cell = props => {
-  const { classes, variant, field, value, bold, ...other } = props;
+  const { classes, variant, field, value, bold, decimals, ...other } = props;
   const amount = resolve(field, value);
   let className = null;
   let label = labelize(amount);
   let displayedValue = amount;
+  let displayedDecimals = decimals || 2
 
-  if (variant === undefined || variant === "quantity") {
+  if (variant === undefined || variant === VARIANT_QUANTITY) {
     if (amount === undefined) {
       displayedValue = "";
     } else {
       displayedValue = amount.value;
     }
     className = classes.cellQuantity;
-  } else if (variant === "money") {
-    displayedValue = numberWithCommas(roundedAmount(amount.value));
+  } else if (variant === VARIANT_MONEY) {
+    displayedValue = numberWithCommas(roundedAmount(amount.value, displayedDecimals));
     className = classes.cellAmount;
-  } else if (variant === "rounded") {
-    displayedValue = roundedAmount(amount.value);
+  } else if (variant === VARIANT_ROUNDED) {
+    displayedValue = roundedAmount(amount.value, displayedDecimals);
     className = classes.cellQuantity;
-  } else if (variant === "text") {
+  } else if (variant === VARIANT_TEXT) {
     label = "";
     displayedValue = amount;
     className = classes.cellText;
-  } else if (variant === "largeText") {
+  } else if (variant === VARIANT_LARGE_TEXT) {
     label = "";
     displayedValue = amount;
     className = classes.cellLargeText;
-  } else if (variant === "textde") {
+  } else if (variant === VARIANT_TEXTDE) {
     if (amount !== undefined) {
       displayedValue = amount.value;
     }
     className = classes.cellText;
-  } else if (variant === "order") {
+  } else if (variant === VARIANT_ORDER) {
     label = "";
     displayedValue = amount;
     className = classes.cellOrder;
-  } else if (props.variant === "percentage") {
-    displayedValue = roundedPercent(amount.value);
+  } else if (props.variant === VARIANT_PERCENTAGE) {
+    displayedValue = roundedPercent(amount.value, displayedDecimals);
     className = classes.cellQuantity;
-  } else if (props.variant === "roundedAmountOrInteger") {
-    displayedValue = roundedAmountOrInteger(amount.value);
+  } else if (props.variant === VARIANT_ROUNDED_AMOUNT_OR_INTEGER) {
+    displayedValue = roundedAmountOrInteger(amount.value, displayedDecimals);
     className = classes.cellQuantity;
   } else {
-    throw new Error("not supported variant : " + variant);
+    throw new Error(
+      "not supported variant : " + variant + " vs " + VARIANTS.join(", ")
+    );
   }
 
   const boldValue = bold === true;

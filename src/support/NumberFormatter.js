@@ -1,4 +1,4 @@
-export function roundedAmount(number) {
+export function roundedAmount(number, decimals = 2) {
   if (number === " " || number === undefined) {
     return "";
   }
@@ -6,18 +6,18 @@ export function roundedAmount(number) {
     return number;
   }
 
-  return number.toFixed(2);
+  return number.toFixed(decimals);
 }
 
-export function roundedPercent(number) {
+export function roundedPercent(number, decimals = 2) {
   if (number === " " || number === undefined) {
     return "";
   }
 
-  return number.toFixed(2);
+  return number.toFixed(decimals);
 }
 
-export function roundedAmountOrInteger(number) {
+export function roundedAmountOrInteger(number, decimals = 2) {
   if (number === " " || number === undefined) {
     return "";
   }
@@ -25,7 +25,7 @@ export function roundedAmountOrInteger(number) {
     return number;
   }
   if (number) {
-    return number.toFixed(2);
+    return number.toFixed(decimals);
   }
   return "";
 }

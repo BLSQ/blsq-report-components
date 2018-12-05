@@ -2,7 +2,7 @@
 
 > blsq-report-components
 
-[![NPM](https://img.shields.io/npm/v/blsq-report-components.svg)](https://www.npmjs.com/package/blsq-report-components) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/@blsq/blsq-report-components.svg)](https://www.npmjs.com/package/@blsq/blsq-report-components) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com) [![Build Status](https://travis-ci.com/BLSQ/blsq-report-components.svg?branch=master)](https://travis-ci.com/BLSQ/blsq-report-components)
 
 ## Install
 

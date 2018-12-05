@@ -9,6 +9,7 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import Typography from "@material-ui/core/Typography";
 
 import PeriodPicker from "./PeriodPicker";
 import InvoiceLink from "./InvoiceLink";
@@ -23,6 +24,13 @@ const styles = theme => ({
   }),
   table: {
     minWidth: "100%"
+  },
+  formControl: {
+    margin: theme.spacing.unit,
+    minWidth: 120
+  },
+  ouSearch: {
+    width: 400
   }
 });
 
@@ -32,7 +40,6 @@ class InvoiceSelectionContainer extends Component {
       quarterly: "quarter",
       monthly: "yearMonth"
     }
-
   };
 
   constructor(props) {
@@ -58,17 +65,24 @@ class InvoiceSelectionContainer extends Component {
     const classes = this.props.classes;
     return (
       <Paper className={classes.paper} square>
-        <PeriodPicker
-          period={this.props.period}
-          onPeriodChange={this.props.onPeriodChange}
-          periodFormat={this.props.periodFormat}
-        />
+        <Typography variant="title" component="h5" gutterBottom>
+          Invoices & Reports
+        </Typography>
+        <FormControl className={classes.formControl}>
+          <PeriodPicker
+            period={this.props.period}
+            onPeriodChange={this.props.onPeriodChange}
+            periodFormat={this.props.periodFormat}
+          />
+        </FormControl>
+
         <TextField
           label="Organisation Unit name"
           onChange={this.searchOrgunitEvent}
-          style={{ width: 400, marginTop: 9 }}
+          className={classes.ouSearch}
           margin="normal"
         />
+
         <Table>
           <TableHead>
             <TableRow>

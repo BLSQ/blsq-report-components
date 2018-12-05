@@ -75,7 +75,7 @@ const Cell = props => {
   let className = null;
   let label = labelize(amount);
   let displayedValue = amount;
-  let displayedDecimals = decimals || 2
+  let displayedDecimals = decimals !== undefined ? decimals : 2
 
   if (variant === undefined || variant === VARIANT_QUANTITY) {
     if (amount === undefined) {

@@ -177,7 +177,7 @@ class App extends React.Component {
           </IconButton>
         </div>
         <Divider />
-        <List>
+        <List onClick={this.handleDrawerClose}>
           <ListItem button component="a" href="/">
             <ListItemIcon>
               <Dashboard />

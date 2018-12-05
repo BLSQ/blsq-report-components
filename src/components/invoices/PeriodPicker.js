@@ -10,7 +10,7 @@ import DatePeriods from "../../support/DatePeriods";
 const styles = theme => ({
   formControl: {
     margin: theme.spacing.unit,
-    minWidth: 120,
+    minWidth: 120
   }
 });
 
@@ -38,7 +38,10 @@ class PeriodPicker extends Component {
         >
           {periods.map(dhis2period => (
             <MenuItem key={dhis2period} value={dhis2period} title={dhis2period}>
-              {DatePeriods.displayName(dhis2period, this.props.periodFormat.quarterly)}
+              {DatePeriods.displayName(
+                dhis2period,
+                this.props.periodFormat.quarterly
+              )}
             </MenuItem>
           ))}
         </Select>

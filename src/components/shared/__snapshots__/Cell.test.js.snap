@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Cell renders amount with provided field 1`] = `
+<td
+  className="Cell-cellAmount-5"
+  title="super (demo code)  undefined 15564.524"
+>
+  15,564.52
+</td>
+`;
+
+exports[`Cell renders text with self field 1`] = `
+<td
+  className="Cell-cellText-2"
+  title=""
+>
+  demo text
+</td>
+`;

@@ -45,10 +45,10 @@ const VARIANT_ROUNDED = "rounded";
 const VARIANT_TEXT = "text";
 const VARIANT_LARGE_TEXT = "largeText";
 
-const VARIANT_TEXTDE = "textde"
-const VARIANT_ORDER = "order"
-const VARIANT_PERCENTAGE = "percentage"
-const VARIANT_ROUNDED_AMOUNT_OR_INTEGER = "roundedAmountOrInteger"
+const VARIANT_TEXTDE = "textde";
+const VARIANT_ORDER = "order";
+const VARIANT_PERCENTAGE = "percentage";
+const VARIANT_ROUNDED_AMOUNT_OR_INTEGER = "roundedAmountOrInteger";
 const VARIANTS = [
   VARIANT_MONEY,
   VARIANT_QUANTITY,
@@ -75,7 +75,7 @@ const Cell = props => {
   let className = null;
   let label = labelize(amount);
   let displayedValue = amount;
-  let displayedDecimals = decimals !== undefined ? decimals : 2
+  let displayedDecimals = decimals !== undefined ? decimals : 2;
 
   if (variant === undefined || variant === VARIANT_QUANTITY) {
     if (amount === undefined) {
@@ -85,7 +85,9 @@ const Cell = props => {
     }
     className = classes.cellQuantity;
   } else if (variant === VARIANT_MONEY) {
-    displayedValue = numberWithCommas(roundedAmount(amount.value, displayedDecimals));
+    displayedValue = numberWithCommas(
+      roundedAmount(amount.value, displayedDecimals)
+    );
     className = classes.cellAmount;
   } else if (variant === VARIANT_ROUNDED) {
     displayedValue = roundedAmount(amount.value, displayedDecimals);

@@ -63,8 +63,5 @@
   },
   "files": [
     "dist"
-  ],
-  "dependencies": {
-    "blsq-report-components": "1.0.7"
-  }
+  ]
 }

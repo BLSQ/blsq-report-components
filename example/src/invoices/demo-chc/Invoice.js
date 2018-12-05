@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { Cell } from "blsq-report-components";
+import { Cell } from "@blsq/blsq-report-components";
 
 const styles = {
   invoiceFrame: {

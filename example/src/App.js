@@ -1,7 +1,7 @@
 import React from "react";
 
 import DrawerLinks from "./DrawerLinks";
-import { AppDrawer } from "blsq-report-components";
+import { AppDrawer } from "@blsq/blsq-report-components";
 
 import Invoices from "./invoices/Invoices";
 

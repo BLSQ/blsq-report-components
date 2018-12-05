@@ -5,7 +5,7 @@ import DemoMonthlyMapper from "./demo-chc-monthly/Mapper";
 import DemoMonthlyInvoice from "./demo-chc-monthly/Invoice";
 
 
-import { indexBy } from "blsq-report-components";
+import { indexBy } from "@blsq/blsq-report-components";
 
 const INVOICE_DEMO_CHT = "demo-chc";
 const INVOICE_DEMO_CHT_MONTHLY ="demo-chc-monthly"

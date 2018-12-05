@@ -23,6 +23,8 @@ npm install --save blsq-report-components
 git clone git@github.com:BLSQ/blsq-report-components.git
 cd blsq-report-components
 npm install
+./install_peer.sh
+npm test
 ```
 
 ```

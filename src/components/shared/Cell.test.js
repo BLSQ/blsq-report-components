@@ -37,4 +37,17 @@ describe("Cell", () => {
     );
     expect(tree.toJSON()).toMatchSnapshot();
   });
+
+  it("renders text with link", () => {
+    const tree = TestRenderer.create(
+      <Cell
+        variant="percentage"
+        field="demo.name"
+        value={value}
+        href="https://google.com"
+        bold
+      />
+    );
+    expect(tree.toJSON()).toMatchSnapshot();
+  });
 });

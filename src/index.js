@@ -1,4 +1,4 @@
-require("babel-polyfill");
+
 
 import BrowseDataContainer from "./components/browsedata/BrowseDataContainer";
 import BrowseDataPage from "./components/browsedata/BrowseDataPage";

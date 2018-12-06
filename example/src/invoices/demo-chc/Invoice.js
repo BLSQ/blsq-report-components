@@ -17,13 +17,13 @@ const activity = {
     code: "code",
     value: 4565.45698921323,
     name: "my super element",
-    period:"2016Q4"
+    period: "2016Q4"
   },
   score: {
     code: "code",
     value: 94.45698921323,
     name: "my super element",
-    period:"2016Q4"
+    period: "2016Q4"
   }
 };
 
@@ -86,6 +86,24 @@ class Invoice extends Component {
                 value={activity}
                 field="score"
                 decimals={0}
+              />
+            </tr>
+            <tr>
+              <Cell
+                variant="text"
+                field="self"
+                value={"link to google"}
+                href="https://google.com"
+                bold
+                colSpan={4}
+              />
+              <Cell
+                variant="text"
+                field="self"
+                value={"link to to invoice"}
+                href="./index.html#/invoices/2017Q1/cDw53Ej8rju/demo-chc"
+                bold
+                colSpan={4}
               />
             </tr>
           </tbody>

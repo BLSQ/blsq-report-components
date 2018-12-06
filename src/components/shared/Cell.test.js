@@ -38,10 +38,10 @@ describe("Cell", () => {
     expect(tree.toJSON()).toMatchSnapshot();
   });
 
-  it("renders text with link", () => {
+  it("renders text from nested field with link", () => {
     const tree = TestRenderer.create(
       <Cell
-        variant="percentage"
+        variant="text"
         field="demo.name"
         value={value}
         href="https://google.com"

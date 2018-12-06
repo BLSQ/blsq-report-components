@@ -20,17 +20,17 @@ exports[`Cell renders percentage with provided field 1`] = `
 </td>
 `;
 
-exports[`Cell renders text with link 1`] = `
+exports[`Cell renders text from nested field with link 1`] = `
 <td
-  className="Cell-cellQuantity-4"
-  title="undefined (undefined)  undefined undefined"
+  className="Cell-cellText-2"
+  title=""
 >
   <a
     className="Cell-customLink-6"
     href="https://google.com"
   >
     <b>
-      
+      super
     </b>
   </a>
 </td>

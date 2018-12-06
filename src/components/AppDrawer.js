@@ -202,7 +202,8 @@ class App extends React.Component {
       onPeriodChange: this.onPeriodChange,
       invoices: this.props.invoices,
       currentUser: this.state.currentUser,
-      incentivesDescriptors: this.props.incentivesDescriptors
+      incentivesDescriptors: this.props.incentivesDescriptors,
+      dataElementGroups: this.props.dataElementGroups
     };
 
     const toolbar = (

@@ -37,4 +37,17 @@ describe("Cell", () => {
     );
     expect(tree.toJSON()).toMatchSnapshot();
   });
+
+  it("renders text from nested field with link", () => {
+    const tree = TestRenderer.create(
+      <Cell
+        variant="text"
+        field="demo.name"
+        value={value}
+        href="https://google.com"
+        bold
+      />
+    );
+    expect(tree.toJSON()).toMatchSnapshot();
+  });
 });

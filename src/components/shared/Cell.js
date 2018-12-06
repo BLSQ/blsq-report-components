@@ -1,4 +1,4 @@
-import React from "react";
+import  React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import {
   numberWithCommas,
@@ -35,6 +35,10 @@ const styles = theme => ({
     textAlign: "right",
     padding: "0px 3px 0px 3px",
     border: "0.5pt solid black"
+  },
+  customLink: {
+    color: "inherit",
+    textDecoration: "inherit"
   }
 });
 
@@ -70,7 +74,16 @@ function resolve(path, obj, separator = ".") {
 }
 
 const Cell = props => {
-  const { classes, variant, field, value, bold, decimals, ...other } = props;
+  const {
+    classes,
+    variant,
+    field,
+    value,
+    bold,
+    decimals,
+    href,
+    ...other
+  } = props;
   const amount = resolve(field, value);
   let className = null;
   let label = labelize(amount);
@@ -122,10 +135,24 @@ const Cell = props => {
   }
 
   const boldValue = bold === true;
+  let renderedValue;
+  if (boldValue) {
+    renderedValue = <b>{displayedValue}</b>;
+  } else {
+    renderedValue = <React.Fragment>{displayedValue}</React.Fragment>;
+  }
+
+  if (href) {
+    renderedValue = (
+      <a className={classes.customLink} href={href}>
+        {renderedValue}
+      </a>
+    );
+  }
+
   return (
     <td className={className} title={label} {...other}>
-      {boldValue && <b>{displayedValue}</b>}
-      {!boldValue && <React.Fragment>{displayedValue}</React.Fragment>}
+      {renderedValue}
     </td>
   );
 };

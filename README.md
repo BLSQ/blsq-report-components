@@ -20,7 +20,11 @@ yarn add https://github.com/BLSQ/blsq-report-components
 
 Sorry we don't have yet documentation.
 
-Your best chance is to look at the running example : https://github.com/BLSQ/blsq-report-components/blob/master/example/src/App.js
+This is a skeleton app component where you can contribute custom routes, invoices & reports.
+
+![Sample invoice app](./doc/sample-invoice.png)
+
+Your best chance is to look at the code and running the example app: https://github.com/BLSQ/blsq-report-components/blob/master/example/src/App.js
 
 
 # Development

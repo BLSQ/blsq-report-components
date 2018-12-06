@@ -1,11 +1,13 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+
 import { withStyles } from "@material-ui/core/styles";
 
+import DatePeriods from "../../support/DatePeriods";
 import Dhis2 from "../../support/Dhis2";
 import Cell from "../shared/Cell";
 
 import Loader from "../shared/Loader";
+import DegNavigationBar from "./DegNavigationBar";
 
 Array.prototype.eachSlice = function(size, callback) {
   for (var i = 0, l = this.length; i < l; i += size) {
@@ -133,8 +135,22 @@ class BrowseDataContainer extends Component {
     }
   }
   render() {
+    const navigation = this.props.dataElementGroups && (
+      <DegNavigationBar
+        dataElementGroups={this.props.dataElementGroups}
+        period={this.props.period}
+        dataElementGroupId={this.props.dataElementGroupId}
+        orgUnitId={this.props.orgUnitId}
+      />
+    );
+
     if (this.state.data == undefined) {
-      return <Loader>Loading</Loader>;
+      return (
+        <div>
+          {navigation}
+          <Loader>Loading</Loader>
+        </div>
+      );
     }
     if (this.state.error !== undefined) {
       return <Warning message={this.state.error} />;
@@ -150,15 +166,20 @@ class BrowseDataContainer extends Component {
 
     return (
       <div>
+        {navigation}
         <h1>
           {dataElementGroup.name} ({orgUnits.length} org units, period &nbsp;
-          {this.props.period})
+          {DatePeriods.displayName(
+            this.props.period,
+            this.props.periodFormat[DatePeriods.detect(this.props.period)]
+          )}
+          )
         </h1>
         <table className={classes.table}>
           <thead>
             <tr>
-              <th>Level 2</th>
-              <th>Level 3</th>
+              <th>{this.props.levels[1]}</th>
+              <th>{this.props.levels[2]}</th>
               <th>Org Unit</th>
               {dataElements.map(de => (
                 <th>{de.name}</th>
@@ -201,24 +222,6 @@ class BrowseDataContainer extends Component {
           <br />
           <br />
           <br />
-          {this.props.groups &&
-            this.props.groups.map(group => (
-              <li>
-                <Link
-                  to={
-                    "/data/" +
-                    this.props.period +
-                    "/deg/" +
-                    group.id +
-                    "/" +
-                    this.props.orgUnitId +
-                    "/children"
-                  }
-                >
-                  {group.name}
-                </Link>
-              </li>
-            ))}
         </div>
       </div>
     );

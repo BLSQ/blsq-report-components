@@ -10,11 +10,17 @@
 npm install --save blsq-report-components
 ```
 
+or if you are more extreme, living on the edge, use the github repo and yarn
+
+```bash
+yarn add https://github.com/BLSQ/blsq-report-components
+```
+
 ## Usage
 
-```jsx
+Sorry we don't have yet documentation.
 
-```
+Your best chance is to look at the running example : https://github.com/BLSQ/blsq-report-components/blob/master/example/src/App.js
 
 
 # Development

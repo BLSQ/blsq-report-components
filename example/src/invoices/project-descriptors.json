@@ -1,0 +1,104 @@
+{
+  "payment_rules": {
+    "rbf_payment_for": {
+      "name": "RBF Payment",
+      "formulas": {
+        "demo": {
+          "de_id": "notfiled"
+        }
+      },
+      "packages": {
+        "quantity": {
+          "name": "Quantity",
+          "code": "quantity",
+          "frequency": "monthly",
+          "kind": "single",
+          "activities": [
+            {
+              "name": "Number of new U5 OPD visits",
+              "code": "quant01",
+              "reported": "HLPuaFB7Frw",
+              "declared": "yqBkn9CWKih",
+              "validated": "jmWyJFtE7Af",
+              "sample_verified": "eMyVanycQSC",
+              "verified": "P3jJH5Tu5VC",
+              "amount_before_verification": "M62VHgYT2n0",
+              "unit_price": "RUv0hqER0zV",
+              "amount_after_verification": "QkRxrfn3vRg",
+              "amount_after_validation": "hjDg1pCOVTL"
+            },
+            {
+              "name": "Number of new OPD visits > 5 years",
+              "code": "quant02",
+              "reported": "S07EIEBEiCF",
+              "declared": "eND4WAhPBvk",
+              "validated": "SHWIbkMhyKV",
+              "sample_verified": "onNheIjBjHT",
+              "verified": "cyIV2mSrodB",
+              "amount_before_verification": "s1Zkayrsvre",
+              "unit_price": "Lq30H52xeqe",
+              "amount_after_verification": "b7NTuXjGC1g",
+              "amount_after_validation": "Hz5EEEfnJKS"
+            }
+          ],
+          "data_set_ids": [],
+          "data_element_group_ids": ["oDkJh5Ddh7d", "KmwPVkjp7yl"],
+          "main_org_unit_group_ids": ["GGghZsfu7qV"],
+          "target_org_unit_group_ids": [],
+          "groupset_ext_id": null,
+          "matching_groupset_ids": [],
+          "formulas": {
+            "amount": {
+              "de_id": "notfiled"
+            }
+          }
+        },
+        "quality": {
+          "name": "Quality",
+          "code": "quality",
+          "frequency": "quarterly",
+          "kind": "single",
+          "activities": [
+            {
+              "name": "Following procedures",
+              "code": "quant01",
+              "reported": "HLPuaFB7Frw",
+              "declared": "FQ2o8UBlcrS",
+              "validated": "jmWyJFtE7Af",
+              "sample_verified": "eMyVanycQSC",
+              "verified": "P3jJH5Tu5VC",
+              "amount_before_verification": "M62VHgYT2n0",
+              "unit_price": "RUv0hqER0zV",
+              "amount_after_verification": "QkRxrfn3vRg",
+              "amount_after_validation": "hjDg1pCOVTL"
+            },
+            {
+              "name": "Quarterly meeting held",
+              "code": "quant02",
+              "reported": "S07EIEBEiCF",
+              "declared": "eND4WAhPBvk",
+              "validated": "SHWIbkMhyKV",
+              "sample_verified": "onNheIjBjHT",
+              "verified": "cyIV2mSrodB",
+              "amount_before_verification": "s1Zkayrsvre",
+              "unit_price": "Lq30H52xeqe",
+              "amount_after_verification": "b7NTuXjGC1g",
+              "amount_after_validation": "Hz5EEEfnJKS"
+            }
+          ],
+          "data_set_ids": [],
+          "data_element_group_ids": ["oDkJh5Ddh7d"],
+          "main_org_unit_group_ids": ["GGghZsfu7qV"],
+          "target_org_unit_group_ids": [],
+          "groupset_ext_id": null,
+          "matching_groupset_ids": [],
+          "formulas": {
+            "score": {
+              "de_id": "notfiled"
+            }
+          }
+        }
+      }
+    }
+  }
+}

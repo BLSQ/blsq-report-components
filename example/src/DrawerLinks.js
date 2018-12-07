@@ -1,4 +1,3 @@
-
 import React from "react";
 
 import { Link } from "react-router-dom";
@@ -27,12 +26,15 @@ const DrawerLinks = props => (
       <ListItemText primary="Sample invoice" />
     </ListItem>
 
-        <ListItem
+    <ListItem button component={Link} to="/custom/2018Q1/demo">
+      <ListItemText primary="Custom Route and Page" />
+    </ListItem>
+    <ListItem
       button
       component={Link}
-      to="/custom/2018Q1/demo"
+      to="/invoices/2018Q3/DqfiI6NVnB1/rbf_payment_for"
     >
-      <ListItemText primary="Custom Route and Page" />
+      Auto generated invoice from orbf2 descriptor
     </ListItem>
   </React.Fragment>
 );

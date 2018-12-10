@@ -1,3 +1,10 @@
 exclude_patterns:
 - "src/**/*.test.js"
 - "example/**/*.*"
+checks:
+  similar-code:
+    config:
+      threshold: 100
+  identical-code:
+    config:
+      threshold: 50

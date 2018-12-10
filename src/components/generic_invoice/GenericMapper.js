@@ -1,4 +1,4 @@
-import { DatePeriods } from "@blsq/blsq-report-components";
+import DatePeriods from "../../support/DatePeriods";
 
 class GenericMapper {
   mapValues(request, values) {
@@ -29,6 +29,8 @@ class GenericMapper {
 
     return {
       request: request,
+      orgUnit: request.mainOrgUnit,
+      period: request.period,
       values: values.values.dataValues,
       invoices: invoices
     };

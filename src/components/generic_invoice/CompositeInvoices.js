@@ -27,7 +27,6 @@ class CompositeInvoices {
     if (invoiceType) {
       return invoiceType;
     }
-    debugger;
     throw new Error("unsupported code '" + code + "'" + errors.join(","));
   }
 

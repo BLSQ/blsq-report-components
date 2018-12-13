@@ -160,7 +160,8 @@ class App extends React.Component {
   render() {
     const { classes } = this.props;
     const { open } = this.state;
-    const DrawerLinks = this.props.drawerLinks;
+    const DrawerLinks = this.props.drawerLinks || React.Fragment;
+
     const drawer = (
       <Drawer
         variant="persistent"

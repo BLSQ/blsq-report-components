@@ -40,15 +40,23 @@ export function numberWithCommas(x) {
 }
 
 export function labelize(descriptor) {
-  if (descriptor !== undefined) {
-    return (
-      descriptor.name +
-      " (" +
-      descriptor.code +
-      ")  " +
-      descriptor.period +
-      " " +
+  if (
+    [
+      descriptor.name,
+      descriptor.code,
+      descriptor.period,
       descriptor.value
-    );
+    ].every(el => el === undefined)
+  ) {
+    return "";
   }
+  return (
+    descriptor.name +
+    " (" +
+    descriptor.code +
+    ")  " +
+    descriptor.period +
+    " " +
+    (descriptor.value !== undefined ? descriptor.value : "")
+  );
 }

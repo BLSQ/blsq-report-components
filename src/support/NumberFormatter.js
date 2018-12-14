@@ -40,16 +40,15 @@ export function numberWithCommas(x) {
 }
 
 export function labelize(descriptor) {
-  if (descriptor === undefined) {
-    return "";
+  if (descriptor !== undefined) {
+    return (
+      descriptor.name +
+      " (" +
+      descriptor.code +
+      ")  " +
+      descriptor.period +
+      " " +
+      descriptor.value
+    );
   }
-  return (
-    descriptor.name +
-    " (" +
-    descriptor.code +
-    ")  " +
-    descriptor.period +
-    " " +
-    descriptor.value
-  );
 }

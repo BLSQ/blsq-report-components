@@ -16,6 +16,7 @@ const invoiceSelectionRoute = props => {
           onPeriodChange={props.onPeriodChange}
           period={props.period}
           {...props.config.global}
+          dhis2={props.dhis2}
         />
       )}
     />

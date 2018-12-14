@@ -131,7 +131,7 @@ class InvoiceSelectionContainer extends Component {
   }
   async searchOrgunit(searchvalue) {
     if (searchvalue && searchvalue.length > 0 && this.props.currentUser) {
-      const orgUnitsResp = await Dhis2.searchOrgunits(
+      const orgUnitsResp = await this.props.dhis2.searchOrgunits(
         searchvalue,
         this.props.currentUser.dataViewOrganisationUnits,
         this.props.contractedOrgUnitGroupId

@@ -98,8 +98,10 @@ class InvoiceContainer extends Component {
       const orgUnitId = this.props.orgUnitId;
       const invoiceTypeCode = this.props.invoiceCode;
       const invoiceType = this.props.invoices.getInvoiceType(invoiceTypeCode);
+      const dhis2 = this.props.dhis2;
 
       const invoice = await new InvoiceService().fetchInvoiceData(
+        dhis2,
         orgUnitId,
         period,
         invoiceType,

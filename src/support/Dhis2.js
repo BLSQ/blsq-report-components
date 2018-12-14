@@ -12,13 +12,16 @@ class Dhis2 {
    * @param url API endpoint url
    * @param auth Authentication HTTP header content
    */
-  constructor(url) {
-    this.url = url;
+  constructor(argOptions) {
+    const options = argOptions || {};
+    this.url = options.url || API_URL;
     this.cache = [];
     this.userId = "";
     this.baseUrl = "..";
     this.ignoredStores = [""];
     this.version = "";
+    this.forceHttps = options.forceHttps;
+    this.initialize = this.initialize();
   }
 
   /**
@@ -45,7 +48,10 @@ class Dhis2 {
           process.env.NODE_ENV === "production"
             ? manifest.getBaseUrl()
             : this.url;
-        baseUrl = baseUrl.replace("http://", "https://");
+        if(this.forceHttps){
+          baseUrl =  baseUrl.replace("http://", "https://");
+        }
+
         console.info("Using URL: " + baseUrl);
         console.info(`Loading: ${manifest.name} ${manifest.version}`);
         console.info(`Built ${manifest.manifest_generated_at}`);
@@ -359,4 +365,4 @@ class Dhis2 {
   }
 }
 
-export default (() => new Dhis2(API_URL).initialize())();
+export default Dhis2;

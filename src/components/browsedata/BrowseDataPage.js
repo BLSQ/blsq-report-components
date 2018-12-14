@@ -17,6 +17,7 @@ class BrowseDataPage extends Component {
         withChildren={this.props.match.params.withChildren}
         currentUser={this.props.currentUser}
         dataElementGroups={this.props.dataElementGroups}
+        dhis2={this.props.dhis2}
         {...this.props}
       />
     );

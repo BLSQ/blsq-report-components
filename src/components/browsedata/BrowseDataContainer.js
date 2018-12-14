@@ -85,11 +85,11 @@ class BrowseDataContainer extends Component {
     }
 
     try {
-      const dataElementGroup = await Dhis2.getDataElementGroup(
+      const dataElementGroup = await this.props.dhis2.getDataElementGroup(
         this.props.dataElementGroupId
       );
 
-      const dataElementGroupValues = await Dhis2.getDataElementGroupValues(
+      const dataElementGroupValues = await this.props.dhis2.getDataElementGroupValues(
         this.props.orgUnitId,
         this.props.dataElementGroupId,
         [this.props.period]
@@ -103,7 +103,7 @@ class BrowseDataContainer extends Component {
       dataElements.sort(dataElementsComparator);
       const orgUnitIds = values.map(val => val.orgUnit);
 
-      const orgUnitResponses = await Dhis2.getOrgUnitsUnder(
+      const orgUnitResponses = await this.props.dhis2.getOrgUnitsUnder(
         this.props.orgUnitId
       );
       const orgUnits = orgUnitResponses.organisationUnits.filter(ou =>

@@ -13,6 +13,7 @@ const browseDataRoute = props => {
           currentUser={props.currentUser}
           onPeriodChange={props.onPeriodChange}
           dataElementGroups={props.dataElementGroups}
+          dhis2={props.dhis2}
           {...props.config.global}
         />
       )}

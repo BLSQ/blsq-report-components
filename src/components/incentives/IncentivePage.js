@@ -16,6 +16,7 @@ class IncentivePage extends Component {
         incentivesDescriptors={this.props.incentivesDescriptors}
         currentUser={this.props.currentUser}
         groups={this.props.groups}
+        dhis2={this.props.dhis2}
       />
     );
   }

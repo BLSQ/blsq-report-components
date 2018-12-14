@@ -30,6 +30,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Dashboard from "@material-ui/icons/Dashboard";
 import FileIcon from "@material-ui/icons/InsertDriveFile";
 
+
 const drawerWidth = 240;
 
 const styles = theme => ({
@@ -135,7 +136,7 @@ class App extends React.Component {
   }
 
   async fetchCurrentUser() {
-    const user = await Dhis2.currentUserRaw();
+    const user = await this.props.dhis2.currentUserRaw();
     this.setState({
       currentUser: user
     });
@@ -199,6 +200,7 @@ class App extends React.Component {
 
     const params = {
       config: this.props.config,
+      dhis2: this.props.dhis2,
       period: DatePeriods.split(this.state.period, "quarterly")[0],
       onPeriodChange: this.onPeriodChange,
       invoices: this.props.invoices,

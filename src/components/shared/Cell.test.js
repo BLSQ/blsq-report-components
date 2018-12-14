@@ -38,6 +38,13 @@ describe("Cell", () => {
     expect(tree.toJSON()).toMatchSnapshot();
   });
 
+  it("renders title with self field", () => {
+    const tree = TestRenderer.create(
+      <Cell variant="title" field="self" value="demo title" />
+    );
+    expect(tree.toJSON()).toMatchSnapshot();
+  });
+
   it("renders text from nested field with link", () => {
     const tree = TestRenderer.create(
       <Cell

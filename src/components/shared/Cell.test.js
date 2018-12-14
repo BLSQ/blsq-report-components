@@ -38,6 +38,13 @@ describe("Cell", () => {
     expect(tree.toJSON()).toMatchSnapshot();
   });
 
+  it("renders rounded percentage with provided field", () => {
+    const tree = TestRenderer.create(
+      <Cell variant="roundedPercentage" field="demo" value={value} bold />
+    );
+    expect(tree.toJSON()).toMatchSnapshot();
+  });
+
   it("renders title with self field", () => {
     const tree = TestRenderer.create(
       <Cell variant="title" field="self" value="demo title" />

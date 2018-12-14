@@ -53,6 +53,8 @@ const VARIANT_TEXTDE = "textde";
 const VARIANT_ORDER = "order";
 const VARIANT_PERCENTAGE = "percentage";
 const VARIANT_ROUNDED_AMOUNT_OR_INTEGER = "roundedAmountOrInteger";
+const VARIANT_TITLE = "title";
+
 const VARIANTS = [
   VARIANT_MONEY,
   VARIANT_QUANTITY,
@@ -62,7 +64,8 @@ const VARIANTS = [
   VARIANT_TEXTDE,
   VARIANT_ORDER,
   VARIANT_PERCENTAGE,
-  VARIANT_ROUNDED_AMOUNT_OR_INTEGER
+  VARIANT_ROUNDED_AMOUNT_OR_INTEGER,
+  VARIANT_TITLE
 ];
 
 function resolve(path, obj, separator = ".") {
@@ -128,6 +131,9 @@ const Cell = props => {
   } else if (props.variant === VARIANT_ROUNDED_AMOUNT_OR_INTEGER) {
     displayedValue = roundedAmountOrInteger(amount.value, displayedDecimals);
     className = classes.cellQuantity;
+  } else if(variant === VARIANT_TITLE){
+    displayedValue = amount;
+    className = classes.cellCenter;
   } else {
     throw new Error(
       "not supported variant : " + variant + " vs " + VARIANTS.join(", ")

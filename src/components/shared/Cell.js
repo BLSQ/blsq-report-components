@@ -39,6 +39,12 @@ const styles = theme => ({
   customLink: {
     color: "inherit",
     textDecoration: "inherit"
+  },
+  cellCenter: {
+    textAlign: "center",
+    height: "21px",
+    padding: "0px 3px 0px 3px",
+    border: "0.5pt solid black"
   }
 });
 

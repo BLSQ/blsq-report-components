@@ -310,7 +310,7 @@ class IncentiveContainer extends Component {
       indexedValues: this.state.indexedValues,
       valids: this.state.valids
     };
-    const allowedSeeOrgunitIds = dhis2.allowedSeeOrgunits(
+    const allowedSeeOrgunitIds = this.props.dhis2.allowedSeeOrgunits(
       this.props.currentUser,
       dsi.dataSet
     ).map(ou => ou.id);

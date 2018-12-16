@@ -33,14 +33,7 @@ describe("Cell", () => {
 
   it("renders percentage with provided field", () => {
     const tree = TestRenderer.create(
-      <Cell variant="percentage" field="demo" value={value} bold />
-    );
-    expect(tree.toJSON()).toMatchSnapshot();
-  });
-
-  it("renders rounded percentage with provided field", () => {
-    const tree = TestRenderer.create(
-      <Cell variant="roundedPercentage" field="demo" value={value} bold />
+      <Cell variant="percentage" field="demo" value={value} unit="%" bold />
     );
     expect(tree.toJSON()).toMatchSnapshot();
   });

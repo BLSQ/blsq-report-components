@@ -44,6 +44,9 @@ export function numberWithCommas(x) {
 }
 
 export function labelize(descriptor) {
+  if (descriptor === undefined) {
+    return "";
+  }
   if (
     [
       descriptor.name,

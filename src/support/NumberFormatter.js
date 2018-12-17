@@ -1,5 +1,9 @@
+const isUndefinedOrEmpty = number => {
+  return number === "" || number === " " || number === undefined;
+};
+
 export function roundedAmount(number, decimals = 2) {
-  if (number === " " || number === undefined) {
+  if (isUndefinedOrEmpty(number)) {
     return "";
   }
   if (typeof number === "string" || number instanceof String) {
@@ -10,7 +14,7 @@ export function roundedAmount(number, decimals = 2) {
 }
 
 export function roundedPercent(number, decimals = 2) {
-  if (number === " " || number === undefined) {
+  if (isUndefinedOrEmpty(number)) {
     return "";
   }
 
@@ -18,7 +22,7 @@ export function roundedPercent(number, decimals = 2) {
 }
 
 export function roundedAmountOrInteger(number, decimals = 2) {
-  if (number === " " || number === undefined) {
+  if (isUndefinedOrEmpty(number)) {
     return "";
   }
   if (Number.isInteger(number)) {

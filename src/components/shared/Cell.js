@@ -1,4 +1,4 @@
-import  React from "react";
+import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import {
   numberWithCommas,
@@ -91,6 +91,7 @@ const Cell = props => {
     bold,
     decimals,
     href,
+    unit,
     ...other
   } = props;
   const amount = resolve(field, value);
@@ -132,12 +133,12 @@ const Cell = props => {
     displayedValue = amount;
     className = classes.cellOrder;
   } else if (props.variant === VARIANT_PERCENTAGE) {
-    displayedValue = amount.value !== undefined && amount.value !== " " ? (roundedPercent(amount.value, displayedDecimals) + (props.unit !== undefined ? props.unit : "")) : "";
+    displayedValue = roundedPercent(amount.value, displayedDecimals);
     className = classes.cellQuantity;
   } else if (props.variant === VARIANT_ROUNDED_AMOUNT_OR_INTEGER) {
     displayedValue = roundedAmountOrInteger(amount.value, displayedDecimals);
     className = classes.cellQuantity;
-  } else if(variant === VARIANT_TITLE){
+  } else if (variant === VARIANT_TITLE) {
     displayedValue = amount;
     className = classes.cellCenter;
   } else {
@@ -148,6 +149,10 @@ const Cell = props => {
 
   const boldValue = bold === true;
   let renderedValue;
+
+  if (displayedValue && unit) {
+    displayedValue = displayedValue + unit;
+  }
   if (boldValue) {
     renderedValue = <b>{displayedValue}</b>;
   } else {

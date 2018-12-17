@@ -9,14 +9,52 @@ exports[`Cell renders amount with provided field 1`] = `
 </td>
 `;
 
+exports[`Cell renders amount with provided field and unit 1`] = `
+<td
+  className="Cell-cellAmount-5"
+  title="super (demo code)  2016Q3 15564.524"
+>
+  15,564.52$
+</td>
+`;
+
+exports[`Cell renders empty percentage with provided field 1`] = `
+<td
+  className="Cell-cellQuantity-4"
+  title="super (demo code)  2016Q3 "
+>
+  
+</td>
+`;
+
 exports[`Cell renders percentage with provided field 1`] = `
 <td
   className="Cell-cellQuantity-4"
   title="super (demo code)  2016Q3 15564.524"
 >
   <b>
-    15564.52
+    15564.52%
   </b>
+</td>
+`;
+
+exports[`Cell renders percentage with provided field 2`] = `
+<td
+  className="Cell-cellQuantity-4"
+  title="super (demo code)  2016Q3 15564.524"
+>
+  <b>
+    15564.52%
+  </b>
+</td>
+`;
+
+exports[`Cell renders percentage with provided field 3`] = `
+<td
+  className="Cell-cellQuantity-4"
+  title="super (demo code)  2016Q3 33.333333333333336"
+>
+  33.33%
 </td>
 `;
 
@@ -42,5 +80,23 @@ exports[`Cell renders text with self field 1`] = `
   title=""
 >
   demo text
+</td>
+`;
+
+exports[`Cell renders title with self field 1`] = `
+<td
+  className="Cell-cellCenter-7"
+  title=""
+>
+  demo title
+</td>
+`;
+
+exports[`Cell renders undefined percentage with provided field 1`] = `
+<td
+  className="Cell-cellQuantity-4"
+  title="super (demo code)  2016Q3 "
+>
+  
 </td>
 `;

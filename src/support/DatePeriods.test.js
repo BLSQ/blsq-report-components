@@ -1,5 +1,4 @@
 import DatePeriods from "./DatePeriods";
-import { equal } from "uri-js";
 
 it("calculates next quarter", () => {
   expect(DatePeriods.nextQuarter("2016Q1")).toEqual("2016Q2");

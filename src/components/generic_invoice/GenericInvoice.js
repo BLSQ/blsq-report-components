@@ -1,6 +1,7 @@
 import React, { Component } from "react";
+import  Cell from "../shared/Cell";
 
-import { Cell, DatePeriods } from "@blsq/blsq-report-components";
+import DatePeriods  from "../../support/DatePeriods";
 import { withStyles } from "@material-ui/core/styles";
 const styles = theme => ({
   root: {

@@ -13,6 +13,7 @@ const incentiveRoute = props => {
           currentUser={props.currentUser}
           onPeriodChange={props.onPeriodChange}
           incentivesDescriptors={props.incentivesDescriptors}
+          dhis2={props.dhis2}
         />
       )}
     />

@@ -1,9 +1,6 @@
 import { init, getInstance, getManifest } from "d2/lib/d2";
 import DatePeriods from "./DatePeriods";
 
-const API_URL = process.env.REACT_APP_DHIS2_URL;
-const CONTRACT_OU_GROUP = process.env.REACT_APP_CONTRACT_OU_GROUP;
-
 const ORGUNIT_FIELDS =
   "[id,name,ancestors[id,name],organisationUnitGroups[id,name,code]]";
 
@@ -12,13 +9,20 @@ class Dhis2 {
    * @param url API endpoint url
    * @param auth Authentication HTTP header content
    */
-  constructor(url) {
-    this.url = url;
+  constructor(argOptions) {
+    const options = argOptions || {};
+    this.url = options.url || process.env.REACT_APP_DHIS2_URL;
+    this.user = options.user || process.env.REACT_APP_USER;
+    this.password = options.password || process.env.REACT_APP_PASSWORD;
+    this.contractGroupId =
+      options.contractGroupId || process.env.REACT_APP_CONTRACT_OU_GROUP;
     this.cache = [];
     this.userId = "";
     this.baseUrl = "..";
     this.ignoredStores = [""];
     this.version = "";
+    this.forceHttps = options.forceHttps;
+    this.initialize = this.initialize();
   }
 
   /**
@@ -29,13 +33,7 @@ class Dhis2 {
     let headers =
       process.env.NODE_ENV === "development"
         ? {
-            Authorization:
-              "Basic " +
-              btoa(
-                process.env.REACT_APP_USER +
-                  ":" +
-                  process.env.REACT_APP_PASSWORD
-              )
+            Authorization: "Basic " + btoa(this.user + ":" + this.password)
           }
         : null;
     const mydhis2 = this;
@@ -45,7 +43,10 @@ class Dhis2 {
           process.env.NODE_ENV === "production"
             ? manifest.getBaseUrl()
             : this.url;
-        baseUrl = baseUrl.replace("http://", "https://");
+        if (this.forceHttps) {
+          baseUrl = baseUrl.replace("http://", "https://");
+        }
+
         console.info("Using URL: " + baseUrl);
         console.info(`Loading: ${manifest.name} ${manifest.version}`);
         console.info(`Built ${manifest.manifest_generated_at}`);
@@ -211,7 +212,7 @@ class Dhis2 {
       });
   }
 
-  getOrgunitsByAncestor(ancestorId, level) {
+  getOrgunitsByAncestor(ancestorId, level, contractGroupId) {
     const Url =
       "organisationUnits?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]" +
       "&pageSize=500" +
@@ -220,7 +221,7 @@ class Dhis2 {
       "&filter=ancestors.id:eq:" +
       ancestorId +
       "&filter=organisationUnitGroups.id:eq:" +
-      CONTRACT_OU_GROUP;
+      contractGroupId;
     return getInstance().then(d2 => d2.Api.getApi().get(Url));
   }
 
@@ -359,4 +360,4 @@ class Dhis2 {
   }
 }
 
-export default (() => new Dhis2(API_URL).initialize())();
+export default Dhis2;

@@ -94,7 +94,7 @@ const OrgUnitValues = props => {
           <a
             target="_blank"
             href={
-              Dhis2.url +
+              dhis2.url +
               "/dhis-web-maintenance/#/edit/dataElementSection/dataElement/" +
               de.dataElement.id
             }
@@ -188,7 +188,7 @@ class IncentiveContainer extends Component {
 
   setDataValue = async (key, value) => {
     try {
-      await Dhis2.setDataValue(value);
+      await dhis2.setDataValue(value);
       this.setState({ valids: { ...this.state.valids, [key]: true } });
       this.setState({ errors: { ...this.state.errors, [key]: undefined } });
     } catch (error) {
@@ -220,17 +220,18 @@ class IncentiveContainer extends Component {
     }
     //TODO display also last changes : http://liberia.dhis2.org/dhis/api/audits/dataValue?ds=Ouqnlj54RY4&period=2017July&period=2018July
     try {
-      const dataSet = await Dhis2.getDataSet(this.props.incentiveCode);
+      const dataSet = await this.props.dhis2.getDataSet(this.props.incentiveCode);
+      console.info("DATASET :", dataSet);
       const periods = IncentiveSupport.computePeriods(
         dataSet.periodType,
         this.props.period
       );
-      const values = await Dhis2.getValues(
+      const values = await this.props.dhis2.getValues(
         this.props.currentUser,
         dataSet,
         periods
       );
-      const defaultCategoryCombo = await Dhis2.getDefaultCategoryCombo();
+      const defaultCategoryCombo = await this.props.dhis2.getDefaultCategoryCombo();
       const indexedValues = {};
 
       dataSet.dataSetElements.sort(function(a, b) {
@@ -309,7 +310,7 @@ class IncentiveContainer extends Component {
       indexedValues: this.state.indexedValues,
       valids: this.state.valids
     };
-    const allowedSeeOrgunitIds = Dhis2.allowedSeeOrgunits(
+    const allowedSeeOrgunitIds = this.props.dhis2.allowedSeeOrgunits(
       this.props.currentUser,
       dsi.dataSet
     ).map(ou => ou.id);

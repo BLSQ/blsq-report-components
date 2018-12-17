@@ -2,29 +2,29 @@ import Dhis2 from "../../../support/Dhis2";
 import Values from "./Values";
 
 class InvoiceService {
-  async fetchInvoiceData(orgUnitId, period, invoiceType, mapper) {
+  async fetchInvoiceData(dhis2, orgUnitId, period, invoiceType, mapper) {
     let mainOrgUnit;
     let orgUnits = [];
 
     if (invoiceType.contractGroupSet) {
-      orgUnits = await Dhis2.getOrgunitsForContract(
+      orgUnits = await dhis2.getOrgunitsForContract(
         orgUnitId,
         invoiceType.contractGroupSet
       );
-      mainOrgUnit = await Dhis2.getOrgunit(orgUnitId);
+      mainOrgUnit = await dhis2.getOrgunit(orgUnitId);
     } else if (invoiceType.organisationUnitGroup) {
-      orgUnits = await Dhis2.getOrgunitsForGroup(
+      orgUnits = await dhis2.getOrgunitsForGroup(
         orgUnitId,
         invoiceType.organisationUnitGroup
       );
       orgUnits = orgUnits.organisationUnits;
-      mainOrgUnit = await Dhis2.getOrgunit(orgUnitId);
+      mainOrgUnit = await dhis2.getOrgunit(orgUnitId);
     } else {
-      mainOrgUnit = await Dhis2.getOrgunit(orgUnitId);
+      mainOrgUnit = await dhis2.getOrgunit(orgUnitId);
       orgUnits = [mainOrgUnit];
     }
 
-    const request = Dhis2.buildInvoiceRequest(
+    const request = dhis2.buildInvoiceRequest(
       orgUnits,
       period,
       invoiceType,
@@ -33,11 +33,11 @@ class InvoiceService {
 
     request.mainOrgUnit = mainOrgUnit;
 
-    const rawValues = await Dhis2.getInvoiceValues(request);
-    const dataElementsNames = await this.getDataElementsNames(request);
+    const rawValues = await dhis2.getInvoiceValues(request);
+    const dataElementsNames = await this.getDataElementsNames(dhis2, request);
     const values = new Values(rawValues, dataElementsNames);
     const invoice = mapper.mapValues(request, values);
-    const systemInfo = await Dhis2.systemInfoRaw();
+    const systemInfo = await dhis2.systemInfoRaw();
 
     invoice.invoiceType = invoiceType;
     invoice.period = period;
@@ -45,11 +45,11 @@ class InvoiceService {
     return invoice;
   }
 
-  async getDataElementsNames(request) {
-    const dataElementsFromGroups = await Dhis2.getDataElementNamesByGroups(
+  async getDataElementsNames(dhis2, request) {
+    const dataElementsFromGroups = await dhis2.getDataElementNamesByGroups(
       request.invoiceType.dataElementGroups
     );
-    const dataElementsFromDataSet = await Dhis2.getDataElementNamesByDataSets(
+    const dataElementsFromDataSet = await dhis2.getDataElementNamesByDataSets(
       request.invoiceType.dataSets
     );
     var names = {};

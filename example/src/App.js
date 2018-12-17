@@ -1,7 +1,7 @@
 import React from "react";
 
 import DrawerLinks from "./DrawerLinks";
-import { AppDrawer } from "@blsq/blsq-report-components";
+import { AppDrawer, Dhis2 } from "@blsq/blsq-report-components";
 
 import Invoices from "./invoices/Invoices";
 
@@ -45,6 +45,7 @@ const App = () => (
         contractedOrgUnitGroupId: "GGghZsfu7qV"
       }
     }}
+    dhis2={new Dhis2()}
   />
 );
 

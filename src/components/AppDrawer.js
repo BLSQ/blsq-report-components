@@ -132,7 +132,8 @@ class App extends React.Component {
       currentUser: this.props.user
     };
     this.onPeriodChange = this.onPeriodChange.bind(this);
-    this.fetchCurrentUser();
+    //this.fetchCurrentUser();
+    this.fetchCurrentUser = this.fetchCurrentUser.bind(this);
   }
 
   async fetchCurrentUser() {

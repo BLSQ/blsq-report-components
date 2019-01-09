@@ -32,14 +32,14 @@ class InvoiceLink extends Component {
       <React.Fragment key={this.linkTo(invoiceType)}>
         {invoiceType.frequency === "monthly" && (
           <React.Fragment>
-            <span class={this.props.classes.buttonLike}>
+            <span className={this.props.classes.buttonLike}>
               {invoiceType.name}
             </span>
 
             {DatePeriods.split(this.props.period, "monthly").map(
               monthPeriod => (
                 <Button
-                  variant="text"
+                  variant="flat"
                   color="primary"
                   size="small"
                   component={Link}
@@ -54,7 +54,7 @@ class InvoiceLink extends Component {
         )}
         {invoiceType.frequency === "quarterly" && (
           <Button
-            variant="text"
+            variant="flat"
             color="primary"
             size="small"
             component={Link}

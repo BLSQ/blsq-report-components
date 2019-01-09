@@ -39,6 +39,7 @@ class InvoiceLink extends Component {
             {DatePeriods.split(this.props.period, "monthly").map(
               monthPeriod => (
                 <Button
+                  key={invoiceType.code+"-"+monthPeriod+"-"+orgUnit.id}
                   variant="flat"
                   color="primary"
                   size="small"

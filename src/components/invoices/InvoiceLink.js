@@ -69,7 +69,7 @@ class InvoiceLink extends Component {
             <span className={this.props.classes.buttonLike}>
               {invoiceType.name}
             </span>
-            {DatePeriods.splitYearQuarter(this.props.period, 'sixMonthly').map(
+            {DatePeriods.split(this.props.period, 'sixMonthly').map(
               monthPeriod => (
                 <Button
                   key={invoiceType.code + '-' + monthPeriod + '-' + orgUnit.id}
@@ -80,7 +80,7 @@ class InvoiceLink extends Component {
                   to={this.linkTo(invoiceType, monthPeriod)}
                   title={monthPeriod}
                 >
-                  {DatePeriods.displayName(monthPeriod, 'quarter')}
+                  {DatePeriods.displayName(monthPeriod, 'sixMonth')}
                 </Button>
               )
             )}

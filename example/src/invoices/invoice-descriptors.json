@@ -16,5 +16,14 @@
     "frequency": "monthly",
     "dataSets": [],
     "dataElementGroups": ["oDkJh5Ddh7d"]
+  },
+  {
+    "code": "demo-chc-semiannually",
+    "name": "demo-chc-semiannually",
+    "facilityLabel": "demo-chcs",
+    "orientation": "landscape",
+    "frequency": "semiannually",
+    "dataSets": [],
+    "dataElementGroups": ["oDkJh5Ddh7d"]
   }
 ]

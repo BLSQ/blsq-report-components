@@ -7,8 +7,8 @@ import DemoMapper from "./demo-chc/Mapper";
 import DemoInvoice from "./demo-chc/Invoice";
 import DemoMonthlyMapper from "./demo-chc-monthly/Mapper";
 import DemoMonthlyInvoice from "./demo-chc-monthly/Invoice";
-import DemoSemiannuallyMapper from "./demo-chc-semiannually/Mapper";
-import DemoSemiannuallyInvoice from "./demo-chc-semiannually/Invoice";
+import DemoSixMonthlyMapper from "./demo-chc-sixmonthly/Mapper";
+import DemoSixMonthlyInvoice from "./demo-chc-sixmonthly/Invoice";
 
 import {
   indexBy,
@@ -18,7 +18,7 @@ import {
 
 const INVOICE_DEMO_CHT = "demo-chc";
 const INVOICE_DEMO_CHT_MONTHLY = "demo-chc-monthly";
-const INVOICE_DEMO_CHT_SEMIANNUALLY = "demo-chc-semiannually";
+const INVOICE_DEMO_CHT_SEMIANNUALLY = "demo-chc-sixMonthly";
 
 const INVOICES = {
   [INVOICE_DEMO_CHT]: {
@@ -30,8 +30,8 @@ const INVOICES = {
     mapper: DemoMonthlyMapper
   },
   [INVOICE_DEMO_CHT_SEMIANNUALLY]: {
-    component: DemoSemiannuallyInvoice,
-    mapper: DemoSemiannuallyMapper
+    component: DemoSixMonthlyInvoice,
+    mapper: DemoSixMonthlyMapper
   }
 };
 

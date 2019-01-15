@@ -18,11 +18,11 @@
     "dataElementGroups": ["oDkJh5Ddh7d"]
   },
   {
-    "code": "demo-chc-semiannually",
-    "name": "demo-chc-semiannually",
+    "code": "demo-chc-sixMonthly",
+    "name": "demo-chc-sixMonthly",
     "facilityLabel": "demo-chcs",
     "orientation": "landscape",
-    "frequency": "semiannually",
+    "frequency": "sixMonthly",
     "dataSets": [],
     "dataElementGroups": ["oDkJh5Ddh7d"]
   }

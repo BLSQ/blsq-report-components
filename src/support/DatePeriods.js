@@ -18,6 +18,11 @@ const SIX_MONTHLY_TO_MONTHS = {
   2: [7, 8, 9, 10, 11, 12]
 }
 
+const QUARTER_BY_SIX_MONTHLY = {
+  1: [1, 2],
+  2: [3, 4]
+}
+
 const MONTH_NAMES_BY_QUARTER = {
   '1': ['January', 'February', 'March'],
   '2': ['April', 'May', 'June'],
@@ -204,6 +209,9 @@ class DatePeriods {
     if (period.includes('Q')) {
       return this.nextQuarter(period)
     }
+    if (period.includes('S')) {
+      return this.nextSixMonth(period)
+    }
     if (period.length === 6) {
       return this.nextYearMonth(period)
     }
@@ -216,6 +224,9 @@ class DatePeriods {
     if (period.includes('Q')) {
       return this.previousQuarter(period)
     }
+    if (period.includes('S')) {
+      return this.previousSixMonth(period)
+    }
     if (period.length === 6) {
       return this.previousYearMonth(period)
     }
@@ -227,6 +238,9 @@ class DatePeriods {
   static detect(dhis2Period) {
     if (dhis2Period.includes('Q')) {
       return QUARTERLY
+    }
+    if (dhis2Period.includes('S')) {
+      return SIX_MONTHLY
     }
     if (dhis2Period.length === 6) {
       return MONTHLY
@@ -282,6 +296,18 @@ class DatePeriods {
     return year + 'Q' + quarter
   }
 
+  static nextSixMonth(period) {
+    let year = parseInt(period.slice(0, 4), 0)
+    let sixMonth = parseInt(period.slice(5, 6), 0)
+    if (sixMonth === 2) {
+      year += 1
+      sixMonth = 1
+    } else if (sixMonth < 2) {
+      sixMonth += 1
+    }
+    return year + 'S' + sixMonth
+  }
+
   static sixMonthlyQuarters(year, quarterStr) {
     let quarter = parseInt(quarterStr, 0)
     let quarters = []
@@ -314,6 +340,18 @@ class DatePeriods {
       quarter -= 1
     }
     return year + 'Q' + quarter
+  }
+
+  static previousSixMonth(period) {
+    let year = parseInt(period.slice(0, 4), 0)
+    let sixMonth = parseInt(period.slice(5, 6), 0)
+    if (sixMonth === 1) {
+      year -= 1
+      sixMonth = 2
+    } else if (sixMonth > 1) {
+      sixMonth -= 1
+    }
+    return year + 'S' + sixMonth
   }
 
   static quarterByMonth(month) {
@@ -439,6 +477,12 @@ class DatePeriods {
     if (splitType === YEARLY) {
       return ['' + year]
     }
+  }
+
+  static sixMonthlyIntoQuarter(period) {
+    let year = parseInt(period.slice(0, 4), 0)
+    let sixMonth = parseInt(period.slice(5, 6), 0)
+    return year + 'Q' + QUARTER_BY_SIX_MONTHLY[sixMonth][0]
   }
 
   static splitYearMonth(period, splitType) {

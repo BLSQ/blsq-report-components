@@ -39,7 +39,8 @@ const App = () => (
       global: {
         periodFormat: {
           quarterly: "quarter",
-          monthly: "monthYear"
+          monthly: "monthYear",
+          sixMonthly: "sixMonth"
         },
         levels: ["Country", "Territory", "Land", "Facility"],
         contractedOrgUnitGroupId: "GGghZsfu7qV"

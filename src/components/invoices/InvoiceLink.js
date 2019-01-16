@@ -69,21 +69,24 @@ class InvoiceLink extends Component {
             <span className={this.props.classes.buttonLike}>
               {invoiceType.name}
             </span>
-            {DatePeriods.split(this.props.period, 'sixMonthly').map(
-              monthPeriod => (
-                <Button
-                  key={invoiceType.code + '-' + monthPeriod + '-' + orgUnit.id}
-                  variant='text'
-                  color='primary'
-                  size='small'
-                  component={Link}
-                  to={this.linkTo(invoiceType, monthPeriod)}
-                  title={monthPeriod}
-                >
-                  {DatePeriods.displayName(monthPeriod, 'sixMonth')}
-                </Button>
-              )
-            )}
+            {
+              <Button
+                variant='text'
+                color='primary'
+                size='small'
+                component={Link}
+                to={this.linkTo(
+                  invoiceType,
+                  DatePeriods.split(this.props.period, 'sixMonthly')[0]
+                )}
+                title={DatePeriods.split(this.props.period, 'sixMonthly')[0]}
+              >
+                {DatePeriods.displayName(
+                  DatePeriods.split(this.props.period, 'sixMonthly')[0],
+                  'sixMonth'
+                )}
+              </Button>
+            }
           </React.Fragment>
         )}
         <br />

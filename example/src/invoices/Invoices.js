@@ -7,8 +7,6 @@ import DemoMapper from "./demo-chc/Mapper";
 import DemoInvoice from "./demo-chc/Invoice";
 import DemoMonthlyMapper from "./demo-chc-monthly/Mapper";
 import DemoMonthlyInvoice from "./demo-chc-monthly/Invoice";
-import DemoSixMonthlyMapper from "./demo-chc-sixmonthly/Mapper";
-import DemoSixMonthlyInvoice from "./demo-chc-sixmonthly/Invoice";
 
 import {
   indexBy,
@@ -30,8 +28,8 @@ const INVOICES = {
     mapper: DemoMonthlyMapper
   },
   [INVOICE_DEMO_CHT_SEMIANNUALLY]: {
-    component: DemoSixMonthlyInvoice,
-    mapper: DemoSixMonthlyMapper
+    component: DemoInvoice,
+    mapper: DemoMapper
   }
 };
 

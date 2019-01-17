@@ -27,68 +27,39 @@ class InvoiceLink extends Component {
 
     const invoiceTypes = this.props.invoices.getInvoiceTypes(codes);
 
+    const quarterPeriod = DatePeriods.split(this.props.period, "quarterly")[0];
+
     return invoiceTypes.map(invoiceType => (
       <React.Fragment key={this.linkTo(invoiceType)}>
-        {invoiceType.frequency === "monthly" && (
-          <React.Fragment>
-            <span className={this.props.classes.buttonLike}>
-              {invoiceType.name}
-            </span>
-
-            {DatePeriods.split(this.props.period, "monthly").map(
-              monthPeriod => (
-                <Button
-                  key={invoiceType.code + "-" + monthPeriod + "-" + orgUnit.id}
-                  variant="text"
-                  color="primary"
-                  size="small"
-                  component={Link}
-                  to={this.linkTo(invoiceType, monthPeriod)}
-                  title={monthPeriod}
-                >
-                  {DatePeriods.displayName(monthPeriod, "monthYear")}
-                </Button>
-              )
-            )}
-          </React.Fragment>
-        )}
-        {invoiceType.frequency === "quarterly" && (
-          <Button
-            variant="text"
-            color="primary"
-            size="small"
-            component={Link}
-            to={this.linkTo(invoiceType, this.props.period)}
-            title={this.props.period}
-          >
+        <React.Fragment>
+          <span className={this.props.classes.buttonLike}>
             {invoiceType.name}
-          </Button>
-        )}
-        {invoiceType.frequency === "sixMonthly" && (
-          <React.Fragment>
-            <span className={this.props.classes.buttonLike}>
-              {invoiceType.name}
-            </span>
-            {
+          </span>
+
+          {DatePeriods.split(quarterPeriod, invoiceType.frequency).map(
+            subPeriod => (
               <Button
+                key={invoiceType.code + "-" + subPeriod + "-" + orgUnit.id}
                 variant="text"
                 color="primary"
                 size="small"
                 component={Link}
-                to={this.linkTo(
-                  invoiceType,
-                  DatePeriods.split(this.props.period, "sixMonthly")[0]
-                )}
-                title={DatePeriods.split(this.props.period, "sixMonthly")[0]}
+                to={this.linkTo(invoiceType, subPeriod)}
+                title={subPeriod}
               >
                 {DatePeriods.displayName(
-                  DatePeriods.split(this.props.period, "sixMonthly")[0],
-                  "sixMonth"
+                  subPeriod,
+                  invoiceType.frequency == "quarterly"
+                    ? "quarter"
+                    : invoiceType.frequency == "sixMonthly"
+                    ? "sixMonth"
+                    : "monthYear"
                 )}
               </Button>
-            }
-          </React.Fragment>
-        )}
+            )
+          )}
+        </React.Fragment>
+
         <br />
       </React.Fragment>
     ));

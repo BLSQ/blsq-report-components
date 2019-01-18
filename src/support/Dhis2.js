@@ -291,9 +291,6 @@ class Dhis2 {
   }
 
   buildInvoiceRequest(orgUnits, period, invoiceType, orgUnitId) {
-    period = period.includes("S")
-      ? DatePeriods.sixMonthlyIntoQuarter(period)
-      : period;
     const year = period.slice(0, 4);
     const quarter = DatePeriods.split(period, "quarterly")[0].slice(5, 6);
 
@@ -302,7 +299,7 @@ class Dhis2 {
       orgUnits: orgUnits,
       period: period,
       quarterPeriod: period,
-      quarterPeriods: DatePeriods.split(period, invoiceType.frequency),
+      quarterPeriods: DatePeriods.split(period, "quarterly"),
       monthlyPeriods: DatePeriods.split(period, "monthly"),
       year: year,
       quarter: quarter,

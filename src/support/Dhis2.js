@@ -48,10 +48,10 @@ class Dhis2 {
         }
 
         console.info("Using URL: " + baseUrl);
-        console.info(`Loading: ${manifest.name} ${manifest.version}`);
-        console.info(`Built ${manifest.manifest_generated_at}`);
-        mydhis2.version = manifest.version;
-        console.log("mydhis2.version " + mydhis2.version);
+        // console.info(`Loading: ${manifest.name} ${manifest.version}`);
+        // console.info(`Built ${manifest.manifest_generated_at}`);
+        // mydhis2.version = manifest.version;
+        // console.log("mydhis2.version " + mydhis2.version);
         this.baseUrl = baseUrl;
         return baseUrl + "/api";
       })

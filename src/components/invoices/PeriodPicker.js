@@ -10,7 +10,8 @@ import DatePeriods from "../../support/DatePeriods";
 const styles = theme => ({
   formControl: {
     margin: theme.spacing.unit,
-    minWidth: 120
+    minWidth: 120,
+    verticalAlign: "bottom"
   }
 });
 

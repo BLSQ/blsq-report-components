@@ -30,7 +30,6 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Dashboard from "@material-ui/icons/Dashboard";
 import FileIcon from "@material-ui/icons/InsertDriveFile";
 
-
 const drawerWidth = 240;
 
 const styles = theme => ({
@@ -128,10 +127,14 @@ class App extends React.Component {
     super(props);
     this.state = {
       period: DatePeriods.currentQuarter(),
+      ouSearchValue: "",
       open: false,
+      orgUnits: [],
       currentUser: this.props.user
     };
     this.onPeriodChange = this.onPeriodChange.bind(this);
+    this.searchOrgunit = this.searchOrgunit.bind(this);
+    this.onOuSearchChange = this.onOuSearchChange.bind(this);
     this.fetchCurrentUser();
   }
 
@@ -148,6 +151,30 @@ class App extends React.Component {
     }
     console.log("Changing period to " + period);
     this.setState({ period: period });
+  }
+
+  onOuSearchChange(event) {
+    let ouSearchValue = event.target.value;
+    if (ouSearchValue === this.state.ouSearchValue) {
+      return;
+    }
+    console.log("Searching for " + ouSearchValue);
+    this.setState({ ouSearchValue: ouSearchValue });
+    this.searchOrgunit(ouSearchValue);
+  }
+
+  async searchOrgunit(searchvalue) {
+    searchvalue = searchvalue.trim();
+    if (searchvalue && searchvalue.length > 0 && this.state.currentUser) {
+      const orgUnitsResp = await this.props.dhis2.searchOrgunits(
+        searchvalue,
+        this.state.currentUser.dataViewOrganisationUnits,
+        this.props.config.global.contractedOrgUnitGroupId
+      );
+      this.setState({
+        orgUnits: orgUnitsResp.organisationUnits
+      });
+    }
   }
 
   handleDrawerOpen = () => {
@@ -203,6 +230,9 @@ class App extends React.Component {
       dhis2: this.props.dhis2,
       period: DatePeriods.split(this.state.period, "quarterly")[0],
       onPeriodChange: this.onPeriodChange,
+      onOuSearchChange: this.onOuSearchChange,
+      ouSearchValue: this.state.ouSearchValue,
+      orgUnits: this.state.orgUnits,
       invoices: this.props.invoices,
       currentUser: this.state.currentUser,
       incentivesDescriptors: this.props.incentivesDescriptors,

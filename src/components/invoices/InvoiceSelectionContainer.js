@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
-import InputLabel from "@material-ui/core/InputLabel";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -10,8 +8,10 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
+import Grid from "@material-ui/core/Grid";
 
 import PeriodPicker from "./PeriodPicker";
+import OuPicker from "./OuPicker";
 import InvoiceLink from "./InvoiceLink";
 import Dhis2 from "../../support/Dhis2";
 import { FormControl } from "@material-ui/core";
@@ -24,13 +24,6 @@ const styles = theme => ({
   }),
   table: {
     minWidth: "100%"
-  },
-  formControl: {
-    margin: theme.spacing.unit,
-    minWidth: 120
-  },
-  ouSearch: {
-    width: 400
   }
 });
 
@@ -44,43 +37,40 @@ class InvoiceSelectionContainer extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { orgUnits: [] };
-    this.searchOrgunit = this.searchOrgunit.bind(this);
-    this.searchOrgunitEvent = this.searchOrgunitEvent.bind(this);
   }
 
-  async componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     this.props = nextProps;
     const user = this.props.currentUser;
     if (
-      this.state.orgUnits.length === 0 &&
+      this.props.orgUnits.length === 0 &&
       user &&
       user.organisationUnits.length > 0
     ) {
-      this.searchOrgunit(this.props.currentUser.organisationUnits[0].name);
+      this.props.searchOrgunit(
+        this.props.currentUser.organisationUnits[0].name
+      );
     }
   }
 
   render() {
     const classes = this.props.classes;
+
     return (
       <Paper className={classes.paper} square>
         <Typography variant="title" component="h5" gutterBottom>
           Invoices & Reports
         </Typography>
-        <FormControl className={classes.formControl}>
-          <PeriodPicker
-            period={this.props.period}
-            onPeriodChange={this.props.onPeriodChange}
-            periodFormat={this.props.periodFormat}
-          />
-        </FormControl>
 
-        <TextField
-          label="Organisation Unit name"
-          onChange={this.searchOrgunitEvent}
-          className={classes.ouSearch}
-          margin="normal"
+        <OuPicker
+          ouSearchValue={this.props.ouSearchValue}
+          onOuSearchChange={this.props.onOuSearchChange}
+        />
+
+        <PeriodPicker
+          period={this.props.period}
+          onPeriodChange={this.props.onPeriodChange}
+          periodFormat={this.props.periodFormat}
         />
 
         <Table>
@@ -93,9 +83,9 @@ class InvoiceSelectionContainer extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {this.state.orgUnits &&
-              this.state.orgUnits.map(orgUnit => (
-                <TableRow key={orgUnit.id + this.props.period}>
+            {this.props.orgUnits &&
+              this.props.orgUnits.map((orgUnit, index) => (
+                <TableRow key={orgUnit.id + index}>
                   <TableCell
                     component="th"
                     scope="row"
@@ -124,22 +114,6 @@ class InvoiceSelectionContainer extends Component {
         </Table>
       </Paper>
     );
-  }
-  async searchOrgunitEvent(event) {
-    var searchvalue = event.target.value.trim();
-    this.searchOrgunit(searchvalue);
-  }
-  async searchOrgunit(searchvalue) {
-    if (searchvalue && searchvalue.length > 0 && this.props.currentUser) {
-      const orgUnitsResp = await this.props.dhis2.searchOrgunits(
-        searchvalue,
-        this.props.currentUser.dataViewOrganisationUnits,
-        this.props.contractedOrgUnitGroupId
-      );
-      this.setState({
-        orgUnits: orgUnitsResp.organisationUnits
-      });
-    }
   }
 }
 

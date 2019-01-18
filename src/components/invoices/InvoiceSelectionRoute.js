@@ -14,6 +14,9 @@ const invoiceSelectionRoute = props => {
           invoices={props.invoices}
           currentUser={props.currentUser}
           onPeriodChange={props.onPeriodChange}
+          onOuSearchChange={props.onOuSearchChange}
+          ouSearchValue={props.ouSearchValue}
+          orgUnits={props.orgUnits}
           period={props.period}
           {...props.config.global}
           dhis2={props.dhis2}

@@ -6,7 +6,6 @@ import { withStyles } from "@material-ui/core/styles";
 
 import DatePeriods from "../../support/DatePeriods";
 
-
 const styles = theme => ({
   buttonLike: {
     ...theme.typography.button,
@@ -39,7 +38,7 @@ class InvoiceLink extends Component {
             {DatePeriods.split(this.props.period, "monthly").map(
               monthPeriod => (
                 <Button
-                  key={invoiceType.code+"-"+monthPeriod+"-"+orgUnit.id}
+                  key={invoiceType.code + "-" + monthPeriod + "-" + orgUnit.id}
                   variant="flat"
                   color="primary"
                   size="small"
@@ -83,8 +82,7 @@ class InvoiceLink extends Component {
 }
 
 InvoiceLink.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
-
 
 export default withStyles(styles)(InvoiceLink);

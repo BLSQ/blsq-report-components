@@ -1,8 +1,8 @@
-import { init, getInstance, getManifest } from 'd2/lib/d2'
-import DatePeriods from './DatePeriods'
+import { init, getInstance, getManifest } from "d2/lib/d2";
+import DatePeriods from "./DatePeriods";
 
 const ORGUNIT_FIELDS =
-  '[id,name,ancestors[id,name],organisationUnitGroups[id,name,code]]'
+  "[id,name,ancestors[id,name],organisationUnitGroups[id,name,code]]";
 
 class Dhis2 {
   /**
@@ -10,19 +10,19 @@ class Dhis2 {
    * @param auth Authentication HTTP header content
    */
   constructor(argOptions) {
-    const options = argOptions || {}
-    this.url = options.url || process.env.REACT_APP_DHIS2_URL
-    this.user = options.user || process.env.REACT_APP_USER
-    this.password = options.password || process.env.REACT_APP_PASSWORD
+    const options = argOptions || {};
+    this.url = options.url || process.env.REACT_APP_DHIS2_URL;
+    this.user = options.user || process.env.REACT_APP_USER;
+    this.password = options.password || process.env.REACT_APP_PASSWORD;
     this.contractGroupId =
-      options.contractGroupId || process.env.REACT_APP_CONTRACT_OU_GROUP
-    this.cache = []
-    this.userId = ''
-    this.baseUrl = '..'
-    this.ignoredStores = ['']
-    this.version = ''
-    this.forceHttps = options.forceHttps
-    this.initialize = this.initialize()
+      options.contractGroupId || process.env.REACT_APP_CONTRACT_OU_GROUP;
+    this.cache = [];
+    this.userId = "";
+    this.baseUrl = "..";
+    this.ignoredStores = [""];
+    this.version = "";
+    this.forceHttps = options.forceHttps;
+    this.initialize = this.initialize();
   }
 
   /**
@@ -31,268 +31,271 @@ class Dhis2 {
    */
   initialize() {
     let headers =
-      process.env.NODE_ENV === 'development'
+      process.env.NODE_ENV === "development"
         ? {
-          Authorization: 'Basic ' + btoa(this.user + ':' + this.password)
-        }
-        : null
-    const mydhis2 = this
-    this.d2 = getManifest('./manifest.webapp')
+            Authorization: "Basic " + btoa(this.user + ":" + this.password)
+          }
+        : null;
+    const mydhis2 = this;
+    this.d2 = getManifest("./manifest.webapp")
       .then(manifest => {
         let baseUrl =
-          process.env.NODE_ENV === 'production'
+          process.env.NODE_ENV === "production"
             ? manifest.getBaseUrl()
-            : this.url
+            : this.url;
         if (this.forceHttps) {
-          baseUrl = baseUrl.replace('http://', 'https://')
+          baseUrl = baseUrl.replace("http://", "https://");
         }
 
-        console.info('Using URL: ' + baseUrl)
-        console.info(`Loading: ${manifest.name} ${manifest.version}`)
-        console.info(`Built ${manifest.manifest_generated_at}`)
-        mydhis2.version = manifest.version
-        console.log('mydhis2.version ' + mydhis2.version)
-        this.baseUrl = baseUrl
-        return baseUrl + '/api'
+        console.info("Using URL: " + baseUrl);
+        console.info(`Loading: ${manifest.name} ${manifest.version}`);
+        console.info(`Built ${manifest.manifest_generated_at}`);
+        mydhis2.version = manifest.version;
+        console.log("mydhis2.version " + mydhis2.version);
+        this.baseUrl = baseUrl;
+        return baseUrl + "/api";
       })
       .catch(e => {
-        return this.url
+        return this.url;
       })
       .then(baseUrl =>
         init({ baseUrl, headers }).then(d2 => {
-          this.user = d2.currentUser
-          this.userId = d2.currentUser.id
+          this.user = d2.currentUser;
+          this.userId = d2.currentUser.id;
         })
-      )
-    return this
+      );
+    return this;
   }
 
   appVersion() {
-    return getManifest('./manifest.webapp').then(manifest => {
-      return manifest.version
-    })
+    return getManifest("./manifest.webapp").then(manifest => {
+      return manifest.version;
+    });
   }
   currentUser() {
-    return getInstance().then(d2 => d2.currentUser)
+    return getInstance().then(d2 => d2.currentUser);
   }
 
   systemInfoRaw() {
-    return getInstance().then(d2 => d2.system.systemInfo)
+    return getInstance().then(d2 => d2.system.systemInfo);
   }
 
   currentUserRaw() {
     return getInstance().then(d2 =>
       d2.Api.getApi().get(
-        '/me?fields=:all,organisationUnits' +
+        "/me?fields=:all,organisationUnits" +
           ORGUNIT_FIELDS +
-          ',dataViewOrganisationUnits' +
+          ",dataViewOrganisationUnits" +
           ORGUNIT_FIELDS
       )
-    )
+    );
   }
 
   setDataValue(value) {
     const url =
-      '/dataValues?' +
-      'de=' +
+      "/dataValues?" +
+      "de=" +
       value.de +
-      '&co=' +
+      "&co=" +
       value.co +
-      '&ds=' +
+      "&ds=" +
       value.ds +
-      '&ou=' +
+      "&ou=" +
       value.ou +
-      '&pe=' +
+      "&pe=" +
       value.pe +
-      '&value=' +
-      value.value
-    return getInstance().then(d2 => d2.Api.getApi().post(url))
+      "&value=" +
+      value.value;
+    return getInstance().then(d2 => d2.Api.getApi().post(url));
   }
 
   getDefaultCategoryCombo() {
     var categoryUrl =
-      'categoryCombos?filter=name:eq:default&fields=id,name,categoryOptionCombos[id,name]'
-    return getInstance().then(d2 => d2.Api.getApi().get(categoryUrl))
+      "categoryCombos?filter=name:eq:default&fields=id,name,categoryOptionCombos[id,name]";
+    return getInstance().then(d2 => d2.Api.getApi().get(categoryUrl));
   }
 
   getDataSet(dataSetId) {
     var dataSetUrl =
-      '/dataSets/' +
+      "/dataSets/" +
       dataSetId +
-      '?fields=:all,organisationUnits[id,path,name,ancestors[id,name],organisationUnitGroups[id,name]],dataSetElements[categoryCombo[id,name,categoryOptionCombos[id,name]],dataElement[id,name,code,shortName,valueType]]'
-    return getInstance().then(d2 => d2.Api.getApi().get(dataSetUrl))
+      "?fields=:all,organisationUnits[id,path,name,ancestors[id,name],organisationUnitGroups[id,name]],dataSetElements[categoryCombo[id,name,categoryOptionCombos[id,name]],dataElement[id,name,code,shortName,valueType]]";
+    return getInstance().then(d2 => d2.Api.getApi().get(dataSetUrl));
   }
 
   getDataElementGroup(dataElementGroupId) {
     var dataElementGroupUrl =
-      '/dataElementGroups/' +
+      "/dataElementGroups/" +
       dataElementGroupId +
-      '?fields=:all,dataElements[id,name,shortName]'
-    return getInstance().then(d2 => d2.Api.getApi().get(dataElementGroupUrl))
+      "?fields=:all,dataElements[id,name,shortName]";
+    return getInstance().then(d2 => d2.Api.getApi().get(dataElementGroupUrl));
   }
 
   allowedSeeOrgunits(user, dataSet) {
-    const userOrgUnitIds = user.dataViewOrganisationUnits.map(ou => ou.id)
+    const userOrgUnitIds = user.dataViewOrganisationUnits.map(ou => ou.id);
     const allowedOrgunitIds = dataSet.organisationUnits.filter(ou =>
       userOrgUnitIds.some(id => ou.path.includes(id))
-    )
-    return allowedOrgunitIds
+    );
+    return allowedOrgunitIds;
   }
 
   allowedEditOrgunitIds(user, dataSet) {
-    const userOrgUnitIds = user.organisationUnits.map(ou => ou.id)
+    const userOrgUnitIds = user.organisationUnits.map(ou => ou.id);
     const allowedOrgunitIds = dataSet.organisationUnits.filter(ou =>
       userOrgUnitIds.some(id => ou.path.includes(id))
-    )
-    return allowedOrgunitIds
+    );
+    return allowedOrgunitIds;
   }
 
   getValues(user, dataSet, periods) {
-    const allowedOrgunitIds = this.allowedSeeOrgunits(user, dataSet)
+    const allowedOrgunitIds = this.allowedSeeOrgunits(user, dataSet);
 
     if (allowedOrgunitIds.length === 0) {
       throw new Error(
-        'sorry you are not allowed to see values from at least one of the following organisation units : ' +
-          dataSet.organisationUnits.map(ou => ou.name).join(' , ')
-      )
+        "sorry you are not allowed to see values from at least one of the following organisation units : " +
+          dataSet.organisationUnits.map(ou => ou.name).join(" , ")
+      );
     }
     const allowedOrgunitQuery = allowedOrgunitIds
-      .map(ou => '&orgUnit=' + ou.id)
-      .join('')
+      .map(ou => "&orgUnit=" + ou.id)
+      .join("");
     var dataSetUrl =
-      '/dataValueSets?dataSet=' +
+      "/dataValueSets?dataSet=" +
       dataSet.id +
-      periods.map(pe => '&period=' + pe).join('') +
-      allowedOrgunitQuery
-    return getInstance().then(d2 => d2.Api.getApi().get(dataSetUrl))
+      periods.map(pe => "&period=" + pe).join("") +
+      allowedOrgunitQuery;
+    return getInstance().then(d2 => d2.Api.getApi().get(dataSetUrl));
   }
 
   getDataElementGroupValues(orgUnitId, dataElementGroupId, periods) {
     var dataValueSetsUrl =
-      '/dataValueSets?dataElementGroup=' +
+      "/dataValueSets?dataElementGroup=" +
       dataElementGroupId +
-      periods.map(pe => '&period=' + pe).join('') +
-      '&orgUnit=' +
+      periods.map(pe => "&period=" + pe).join("") +
+      "&orgUnit=" +
       orgUnitId +
-      '&children=true'
-    return getInstance().then(d2 => d2.Api.getApi().get(dataValueSetsUrl))
+      "&children=true";
+    return getInstance().then(d2 => d2.Api.getApi().get(dataValueSetsUrl));
   }
 
   getOrgunit(orgunitid) {
     var getOuUrl =
-      'organisationUnits/' +
+      "organisationUnits/" +
       orgunitid +
-      '?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]'
-    return getInstance().then(d2 => d2.Api.getApi().get(getOuUrl))
+      "?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]";
+    return getInstance().then(d2 => d2.Api.getApi().get(getOuUrl));
   }
 
   getOrgunitByUser(orgunitid, userId) {
     var getOuUrl =
-      'organisationUnits/' +
+      "organisationUnits/" +
       orgunitid +
-      '?fields=[*],ancestors[id,name],organisationUnitGroups[id,name]&filter=user.id:eq:' +
+      "?fields=[*],ancestors[id,name],organisationUnitGroups[id,name]&filter=user.id:eq:" +
       userId +
-      ''
-    return getInstance().then(d2 => d2.Api.getApi().get(getOuUrl))
+      "";
+    return getInstance().then(d2 => d2.Api.getApi().get(getOuUrl));
   }
 
   getOrgunitsForContract(orgUnitId, contractGroupSetId) {
     var getOuUrl =
-      'organisationUnitGroupSets/' +
+      "organisationUnitGroupSets/" +
       contractGroupSetId +
-      '?fields=[*],organisationUnitGroups[:all,organisationUnits[id,name,ancestors[id,name],organisationUnitGroups[id,name,code]]'
+      "?fields=[*],organisationUnitGroups[:all,organisationUnits[id,name,ancestors[id,name],organisationUnitGroups[id,name,code]]";
     return getInstance()
       .then(d2 => d2.Api.getApi().get(getOuUrl))
       .then(response => {
         const contractGroup = response.organisationUnitGroups.find(
           orgUnitgroup =>
             orgUnitgroup.organisationUnits.some(ou => ou.id === orgUnitId)
-        )
-        return contractGroup.organisationUnits
-      })
+        );
+        return contractGroup.organisationUnits;
+      });
   }
 
   getOrgunitsByAncestor(ancestorId, level, contractGroupId) {
     const Url =
-      'organisationUnits?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]' +
-      '&pageSize=500' +
-      '&filter=level:eq:' +
+      "organisationUnits?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]" +
+      "&pageSize=500" +
+      "&filter=level:eq:" +
       level +
-      '&filter=ancestors.id:eq:' +
+      "&filter=ancestors.id:eq:" +
       ancestorId +
-      '&filter=organisationUnitGroups.id:eq:' +
-      contractGroupId
-    return getInstance().then(d2 => d2.Api.getApi().get(Url))
+      "&filter=organisationUnitGroups.id:eq:" +
+      contractGroupId;
+    return getInstance().then(d2 => d2.Api.getApi().get(Url));
   }
 
   getOrgunitsForGroup(ancestorId, groupId) {
     const url =
-      'organisationUnits?fields=id,name,ancestors[id,name],organisationUnitGroups[id,name,code]' +
-      '&pageSize=500' +
-      '&filter=organisationUnitGroups.id:eq:' +
+      "organisationUnits?fields=id,name,ancestors[id,name],organisationUnitGroups[id,name,code]" +
+      "&pageSize=500" +
+      "&filter=organisationUnitGroups.id:eq:" +
       groupId +
-      '&filter=ancestors.id:eq:' +
-      ancestorId
-    return getInstance().then(d2 => d2.Api.getApi().get(url))
+      "&filter=ancestors.id:eq:" +
+      ancestorId;
+    return getInstance().then(d2 => d2.Api.getApi().get(url));
   }
 
   searchOrgunits(name, orgunits, contractGroup) {
     var searchOuUrl =
-      'organisationUnits?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]' +
-      '&pageSize=50' +
-      '&filter=name:ilike:' +
-      name
+      "organisationUnits?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]" +
+      "&pageSize=50" +
+      "&filter=name:ilike:" +
+      name;
     if (contractGroup) {
-      searchOuUrl += '&filter=organisationUnitGroups.id:eq:' + contractGroup
+      searchOuUrl += "&filter=organisationUnitGroups.id:eq:" + contractGroup;
     }
     if (orgunits && orgunits.length === 1) {
-      searchOuUrl += '&filter=path:like:' + orgunits[0].id
+      searchOuUrl += "&filter=path:like:" + orgunits[0].id;
     } else if (orgunits && orgunits.length > 0) {
       searchOuUrl +=
-        '&filter=ancestors.id:in:[' + orgunits.map(ou => ou.id).join(',') + ']'
+        "&filter=ancestors.id:in:[" + orgunits.map(ou => ou.id).join(",") + "]";
     }
-    return getInstance().then(d2 => d2.Api.getApi().get(searchOuUrl))
+    return getInstance().then(d2 => d2.Api.getApi().get(searchOuUrl));
   }
 
   getAllDataElements(userIds) {
     var dataElementsUrl =
-      '/dataElements.json?fields=id,name,valueType,domainType,user[id,name]&paging=false&filter=user.id:in:[' +
-      userIds.join(',') +
-      ']'
+      "/dataElements.json?fields=id,name,valueType,domainType,user[id,name]&paging=false&filter=user.id:in:[" +
+      userIds.join(",") +
+      "]";
 
-    return getInstance().then(d2 => d2.Api.getApi().get(dataElementsUrl))
+    return getInstance().then(d2 => d2.Api.getApi().get(dataElementsUrl));
   }
 
   getDataElementNames(dataElementGroup) {
     var dataElementsUrl =
-      'dataElementGroups/' +
+      "dataElementGroups/" +
       dataElementGroup +
-      '.json?fields=dataElements[id,name]'
+      ".json?fields=dataElements[id,name]";
 
-    return getInstance().then(d2 => d2.Api.getApi().get(dataElementsUrl))
+    return getInstance().then(d2 => d2.Api.getApi().get(dataElementsUrl));
   }
 
   getDataElementNamesByGroups(dataElementGroupIds) {
     var dataElementsUrl =
-      'dataElements.json?pageSize=1000&filter=dataElementGroups.id:in:[' +
-      dataElementGroupIds.join(',') +
-      ']'
+      "dataElements.json?pageSize=1000&filter=dataElementGroups.id:in:[" +
+      dataElementGroupIds.join(",") +
+      "]";
 
-    return getInstance().then(d2 => d2.Api.getApi().get(dataElementsUrl))
+    return getInstance().then(d2 => d2.Api.getApi().get(dataElementsUrl));
   }
 
   getDataElementNamesByDataSets(dataSetIds) {
     var dataElementsUrl =
-      'dataElements.json?pageSize=1000&filter=dataSetElements.dataSet.id:in:[' +
-      dataSetIds.join(',') +
-      ']'
+      "dataElements.json?pageSize=1000&filter=dataSetElements.dataSet.id:in:[" +
+      dataSetIds.join(",") +
+      "]";
 
-    return getInstance().then(d2 => d2.Api.getApi().get(dataElementsUrl))
+    return getInstance().then(d2 => d2.Api.getApi().get(dataElementsUrl));
   }
 
   buildInvoiceRequest(orgUnits, period, invoiceType, orgUnitId) {
-    const year = period.slice(0, 4)
-    const quarter = DatePeriods.split(period, 'quarterly')[0].slice(5, 6)
+    period = period.includes("S")
+      ? DatePeriods.sixMonthlyIntoQuarter(period)
+      : period;
+    const year = period.slice(0, 4);
+    const quarter = DatePeriods.split(period, "quarterly")[0].slice(5, 6);
 
     return {
       orgUnit: orgUnits.filter(orgUnit => orgUnit.id === orgUnitId)[0],
@@ -300,52 +303,52 @@ class Dhis2 {
       period: period,
       quarterPeriod: period,
       quarterPeriods: DatePeriods.split(period, invoiceType.frequency),
-      monthlyPeriods: DatePeriods.split(period, 'monthly'),
+      monthlyPeriods: DatePeriods.split(period, "monthly"),
       year: year,
       quarter: quarter,
       invoiceType: invoiceType
-    }
+    };
   }
 
   getOrgUnitsUnder(under) {
     const url =
-      'organisationUnits?fields=id,name,ancestors[id,name],organisationUnitGroups[id,name,code]' +
-      '&paging=false' +
-      '&filter=path:ilike:' +
-      under
-    return getInstance().then(d2 => d2.Api.getApi().get(url))
+      "organisationUnits?fields=id,name,ancestors[id,name],organisationUnitGroups[id,name,code]" +
+      "&paging=false" +
+      "&filter=path:ilike:" +
+      under;
+    return getInstance().then(d2 => d2.Api.getApi().get(url));
   }
 
   getInvoiceValues(request) {
-    let orgUnits = [request.orgUnit]
+    let orgUnits = [request.orgUnit];
     if (request.orgUnits) {
-      orgUnits = request.orgUnits
+      orgUnits = request.orgUnits;
     }
 
     const orgUnitsQuery = orgUnits
-      .map(orgUnit => 'orgUnit=' + orgUnit.id)
-      .join('&')
+      .map(orgUnit => "orgUnit=" + orgUnit.id)
+      .join("&");
     const degQuery = request.invoiceType.dataElementGroups
-      .map(deg => 'dataElementGroup=' + deg)
-      .join('&')
+      .map(deg => "dataElementGroup=" + deg)
+      .join("&");
     const dsQuery = request.invoiceType.dataSets
-      .map(ds => 'dataSet=' + ds)
-      .join('&')
+      .map(ds => "dataSet=" + ds)
+      .join("&");
     const periods = [request.year]
       .concat(request.monthlyPeriods)
-      .concat(request.quarterPeriods)
-    const periodsQuery = periods.map(p => '&period=' + p).join('')
+      .concat(request.quarterPeriods);
+    const periodsQuery = periods.map(p => "&period=" + p).join("");
 
     const dataValuesUrl =
-      'dataValueSets?' +
+      "dataValueSets?" +
       orgUnitsQuery +
-      '&' +
+      "&" +
       degQuery +
-      '&' +
+      "&" +
       dsQuery +
-      periodsQuery
+      periodsQuery;
 
-    return getInstance().then(d2 => d2.Api.getApi().get(dataValuesUrl))
+    return getInstance().then(d2 => d2.Api.getApi().get(dataValuesUrl));
   }
 
   /**
@@ -354,10 +357,10 @@ class Dhis2 {
    */
   successOnly(response) {
     if (response.status >= 200 && response.status < 300) {
-      return Promise.resolve(response)
+      return Promise.resolve(response);
     }
-    return Promise.reject(response)
+    return Promise.reject(response);
   }
 }
 
-export default Dhis2
+export default Dhis2;

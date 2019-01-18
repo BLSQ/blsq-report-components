@@ -16,5 +16,14 @@
     "frequency": "monthly",
     "dataSets": [],
     "dataElementGroups": ["oDkJh5Ddh7d"]
+  },
+  {
+    "code": "demo-chc-sixMonthly",
+    "name": "demo-chc-sixMonthly",
+    "facilityLabel": "demo-chcs",
+    "orientation": "landscape",
+    "frequency": "sixMonthly",
+    "dataSets": [],
+    "dataElementGroups": ["oDkJh5Ddh7d"]
   }
 ]

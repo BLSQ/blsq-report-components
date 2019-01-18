@@ -299,7 +299,7 @@ class Dhis2 {
       orgUnits: orgUnits,
       period: period,
       quarterPeriod: period,
-      quarterPeriods: DatePeriods.split(period, invoiceType.frequency),
+      quarterPeriods: DatePeriods.split(period, "quarterly"),
       monthlyPeriods: DatePeriods.split(period, "monthly"),
       year: year,
       quarter: quarter,

@@ -16,6 +16,7 @@ import {
 
 const INVOICE_DEMO_CHT = "demo-chc";
 const INVOICE_DEMO_CHT_MONTHLY = "demo-chc-monthly";
+const INVOICE_DEMO_CHT_SEMIANNUALLY = "demo-chc-sixMonthly";
 
 const INVOICES = {
   [INVOICE_DEMO_CHT]: {
@@ -25,6 +26,10 @@ const INVOICES = {
   [INVOICE_DEMO_CHT_MONTHLY]: {
     component: DemoMonthlyInvoice,
     mapper: DemoMonthlyMapper
+  },
+  [INVOICE_DEMO_CHT_SEMIANNUALLY]: {
+    component: DemoInvoice,
+    mapper: DemoMapper
   }
 };
 
@@ -32,7 +37,11 @@ const DESCRIPTOR_BY_CODE = indexBy(invoiceDescriptors, e => e.code);
 
 class Invoices {
   getInvoiceTypeCodes(orgUnit) {
-    const invoiceCodes = [INVOICE_DEMO_CHT, INVOICE_DEMO_CHT_MONTHLY];
+    const invoiceCodes = [
+      INVOICE_DEMO_CHT,
+      INVOICE_DEMO_CHT_MONTHLY,
+      INVOICE_DEMO_CHT_SEMIANNUALLY
+    ];
     return invoiceCodes;
   }
 

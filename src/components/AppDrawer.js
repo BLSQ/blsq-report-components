@@ -30,7 +30,6 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Dashboard from "@material-ui/icons/Dashboard";
 import FileIcon from "@material-ui/icons/InsertDriveFile";
 
-
 const drawerWidth = 240;
 
 const styles = theme => ({
@@ -198,10 +197,14 @@ class App extends React.Component {
       </Drawer>
     );
 
+    const frequency = this.state.period.includes("S")
+      ? "sixMonthly"
+      : "quarterly";
+    console.log(this.props);
     const params = {
       config: this.props.config,
       dhis2: this.props.dhis2,
-      period: DatePeriods.split(this.state.period, "quarterly")[0],
+      period: DatePeriods.split(this.state.period, frequency)[0],
       onPeriodChange: this.onPeriodChange,
       invoices: this.props.invoices,
       currentUser: this.state.currentUser,

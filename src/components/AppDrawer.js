@@ -122,6 +122,63 @@ const styles = theme => ({
   }
 });
 
+class AppToolBar extends React.Component {
+  shouldComponentUpdate(nextProps) {
+    return this.props.currentUser !== nextProps.currentUser;
+  }
+
+  render() {
+    const { classes, open, currentUser, handleDrawerOpen } = this.props;
+    return (
+      <Toolbar disableGutters={!open}>
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          onClick={handleDrawerOpen}
+          className={classNames(classes.menuButton, open && classes.hide)}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Button aria-label="Menu" href="/">
+          <img
+            src="https://www.dhis2.org/sites/all/themes/dhis/logo.png"
+            className={classes.imageStyle}
+            alt="dhis2"
+          />
+        </Button>
+        <Typography variant="title" color="inherit" className={classes.flex}>
+          ORBF2 - Invoices & Reports
+        </Typography>
+
+        <Typography
+          variant="title"
+          color="inherit"
+          title={
+            currentUser &&
+            "manage " +
+              currentUser.organisationUnits.map(ou => ou.name).join(", ") +
+              " and view " +
+              currentUser.dataViewOrganisationUnits
+                .map(ou => ou.name)
+                .join(", ")
+          }
+        >
+          {currentUser && currentUser.name}
+        </Typography>
+        <div>
+          <IconButton
+            aria-owns="menu-appbar"
+            aria-haspopup="true"
+            color="inherit"
+          >
+            <AccountCircle />
+          </IconButton>
+        </div>
+      </Toolbar>
+    );
+  }
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -239,56 +296,6 @@ class App extends React.Component {
       dataElementGroups: this.props.dataElementGroups
     };
 
-    const toolbar = (
-      <Toolbar disableGutters={!open}>
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          onClick={this.handleDrawerOpen}
-          className={classNames(classes.menuButton, open && classes.hide)}
-        >
-          <MenuIcon />
-        </IconButton>
-        <Button aria-label="Menu" href="/">
-          <img
-            src="https://www.dhis2.org/sites/all/themes/dhis/logo.png"
-            className={classes.imageStyle}
-            alt="dhis2"
-          />
-        </Button>
-        <Typography variant="title" color="inherit" className={classes.flex}>
-          ORBF2 - Invoices & Reports
-        </Typography>
-
-        <Typography
-          variant="title"
-          color="inherit"
-          title={
-            this.state.currentUser &&
-            "manage " +
-              this.state.currentUser.organisationUnits
-                .map(ou => ou.name)
-                .join(", ") +
-              " and view " +
-              this.state.currentUser.dataViewOrganisationUnits
-                .map(ou => ou.name)
-                .join(", ")
-          }
-        >
-          {this.state.currentUser && this.state.currentUser.name}
-        </Typography>
-        <div>
-          <IconButton
-            aria-owns="menu-appbar"
-            aria-haspopup="true"
-            color="inherit"
-          >
-            <AccountCircle />
-          </IconButton>
-        </div>
-      </Toolbar>
-    );
-
     return (
       <Router>
         <div className={classes.root}>
@@ -301,7 +308,12 @@ class App extends React.Component {
                 }) + " no-print"
               }
             >
-              {toolbar}
+              <AppToolBar
+                classes={classes}
+                open={open}
+                currentUser={this.state.currentUser}
+                handleDrawerOpen={this.handleDrawerOpen}
+              />
             </AppBar>
             {drawer}
             <main

@@ -15,7 +15,6 @@ class Invoice extends Component {
   render() {
     const classes = this.props.classes;
     const totals = this.props.invoice.totals;
-    const values = this.props.invoice.values;
     return (
       <div className={classes.invoiceFrame} id="invoiceFrame">
         <h1>Demo</h1>
@@ -47,19 +46,16 @@ class Invoice extends Component {
                     variant="text"
                     value={orgUnit.orgUnit.ancestors[0].name}
                     field="self"
-                    bold
                   />
                   <Cell
                     variant="text"
                     value={orgUnit.orgUnit.ancestors[1].name}
                     field="self"
-                    bold
                   />
                   <Cell
                     variant="text"
                     value={orgUnit.orgUnit.ancestors[2].name}
                     field="self"
-                    bold
                   />
                   <Cell
                     variant="text"
@@ -71,7 +67,7 @@ class Invoice extends Component {
                     variant="money"
                     value={orgUnit}
                     field="total"
-                    decimals={4}
+                    decimals={0}
                   />
                 </tr>
               );

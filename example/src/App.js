@@ -42,8 +42,7 @@ const App = () => (
           monthly: "monthYear",
           sixMonthly: "sixMonth"
         },
-        levels: ["Country", "Territory", "Land", "Facility"],
-        contractedOrgUnitGroupId: "GGghZsfu7qV"
+        levels: ["Country", "Territory", "Land", "Facility"]
       }
     }}
     dhis2={new Dhis2()}

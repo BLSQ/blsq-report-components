@@ -200,7 +200,6 @@ class App extends React.Component {
     const frequency = this.state.period.includes("S")
       ? "sixMonthly"
       : "quarterly";
-    console.log(this.props);
     const params = {
       config: this.props.config,
       dhis2: this.props.dhis2,

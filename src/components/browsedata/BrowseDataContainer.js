@@ -9,12 +9,6 @@ import Cell from "../shared/Cell";
 import Loader from "../shared/Loader";
 import DegNavigationBar from "./DegNavigationBar";
 
-Array.prototype.eachSlice = function(size, callback) {
-  for (var i = 0, l = this.length; i < l; i += size) {
-    callback.call(this, this.slice(i, i + size));
-  }
-};
-
 const styles = {
   table: {
     borderCollapse: "collapse",

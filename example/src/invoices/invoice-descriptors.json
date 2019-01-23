@@ -25,5 +25,15 @@
     "frequency": "sixMonthly",
     "dataSets": [],
     "dataElementGroups": ["oDkJh5Ddh7d"]
+  },
+  {
+    "code": "demo-chc-consolidated",
+    "name": "demo-chc-consolidated",
+    "facilityLabel": "demo-consolidated",
+    "orientation": "landscape",
+    "frequency": "quarterly",
+    "dataSets": [],
+    "dataElementGroups": ["oDkJh5Ddh7d"],
+    "organisationUnitGroup": "oRVt7g429ZO"
   }
 ]

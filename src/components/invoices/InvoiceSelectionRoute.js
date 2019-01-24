@@ -10,12 +10,11 @@ const invoiceSelectionRoute = props => {
       exact
       component={routerProps => (
         <InvoiceSelectionContainer
+          key="InvoiceSelectionContainer"
           {...routerProps}
           invoices={props.invoices}
           currentUser={props.currentUser}
           onPeriodChange={props.onPeriodChange}
-          onOuSearchChange={props.onOuSearchChange}
-          ouSearchValue={props.ouSearchValue}
           orgUnits={props.orgUnits}
           period={props.period}
           {...props.config.global}

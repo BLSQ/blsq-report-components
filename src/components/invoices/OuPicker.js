@@ -27,7 +27,6 @@ class OuPicker extends Component {
         onChange={this.handleChange}
         margin="normal"
         value={this.props.ouSearchValue}
-        autoFocus={true}
         className={classes.formControl}
       />
     );

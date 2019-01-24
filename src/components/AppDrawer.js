@@ -19,7 +19,6 @@ import incentiveRoute from "./incentives/IncentiveRoute";
 import invoiceRoute from "./invoices/InvoiceRoute";
 import invoiceSelectionRoute from "./invoices/InvoiceSelectionRoute";
 
-import Dhis2 from "../support/Dhis2";
 import DatePeriods from "../support/DatePeriods";
 
 import { Typography } from "@material-ui/core";
@@ -122,6 +121,44 @@ const styles = theme => ({
   }
 });
 
+const AppDrawer = props => {
+  const DrawerLinks = props.drawerLinks || React.Fragment;
+  return (
+    <Drawer
+      variant="persistent"
+      anchor="left"
+      open={props.open}
+      className="no-print"
+      classes={{
+        paper: props.classes.drawerPaper
+      }}
+    >
+      <div className={props.classes.drawerHeader}>
+        <IconButton onClick={props.handleDrawerClose}>
+          <ChevronLeftIcon />
+        </IconButton>
+      </div>
+      <Divider />
+      <List onClick={props.handleDrawerClose}>
+        <ListItem button component="a" href="/">
+          <ListItemIcon>
+            <Dashboard />
+          </ListItemIcon>
+          <ListItemText primary="Dashboard" />
+        </ListItem>
+        <ListItem button component="a" href="./index.html#/select">
+          <ListItemIcon>
+            <FileIcon />
+          </ListItemIcon>
+          <ListItemText primary="Invoices & Reports" />
+        </ListItem>
+        <Divider />
+        <DrawerLinks period={props.period} />
+      </List>
+    </Drawer>
+  );
+};
+
 class AppToolBar extends React.Component {
   shouldComponentUpdate(nextProps) {
     return this.props.currentUser !== nextProps.currentUser;
@@ -184,14 +221,12 @@ class App extends React.Component {
     super(props);
     this.state = {
       period: DatePeriods.currentQuarter(),
-      ouSearchValue: "",
+
       open: false,
       orgUnits: [],
       currentUser: this.props.user
     };
     this.onPeriodChange = this.onPeriodChange.bind(this);
-    this.searchOrgunit = this.searchOrgunit.bind(this);
-    this.onOuSearchChange = this.onOuSearchChange.bind(this);
     this.fetchCurrentUser();
   }
 
@@ -210,30 +245,6 @@ class App extends React.Component {
     this.setState({ period: period });
   }
 
-  onOuSearchChange(event) {
-    let ouSearchValue = event.target.value;
-    if (ouSearchValue === this.state.ouSearchValue) {
-      return;
-    }
-    console.log("Searching for " + ouSearchValue);
-    this.setState({ ouSearchValue: ouSearchValue });
-    this.searchOrgunit(ouSearchValue);
-  }
-
-  async searchOrgunit(searchvalue) {
-    searchvalue = searchvalue.trim();
-    if (searchvalue && searchvalue.length > 0 && this.state.currentUser) {
-      const orgUnitsResp = await this.props.dhis2.searchOrgunits(
-        searchvalue,
-        this.state.currentUser.dataViewOrganisationUnits,
-        this.props.config.global.contractedOrgUnitGroupId
-      );
-      this.setState({
-        orgUnits: orgUnitsResp.organisationUnits
-      });
-    }
-  }
-
   handleDrawerOpen = () => {
     this.setState({ open: true });
   };
@@ -245,42 +256,6 @@ class App extends React.Component {
   render() {
     const { classes } = this.props;
     const { open } = this.state;
-    const DrawerLinks = this.props.drawerLinks || React.Fragment;
-
-    const drawer = (
-      <Drawer
-        variant="persistent"
-        anchor="left"
-        open={open}
-        className="no-print"
-        classes={{
-          paper: classes.drawerPaper
-        }}
-      >
-        <div className={classes.drawerHeader}>
-          <IconButton onClick={this.handleDrawerClose}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </div>
-        <Divider />
-        <List onClick={this.handleDrawerClose}>
-          <ListItem button component="a" href="/">
-            <ListItemIcon>
-              <Dashboard />
-            </ListItemIcon>
-            <ListItemText primary="Dashboard" />
-          </ListItem>
-          <ListItem button component="a" href="./index.html#/select">
-            <ListItemIcon>
-              <FileIcon />
-            </ListItemIcon>
-            <ListItemText primary="Invoices & Reports" />
-          </ListItem>
-          <Divider />
-          <DrawerLinks period={this.state.period} />
-        </List>
-      </Drawer>
-    );
 
     const params = {
       config: this.props.config,
@@ -315,7 +290,13 @@ class App extends React.Component {
                 handleDrawerOpen={this.handleDrawerOpen}
               />
             </AppBar>
-            {drawer}
+            <AppDrawer
+              classes={classes}
+              open={open}
+              handleDrawerClose={this.handleDrawerClose}
+              drawerLinks={this.props.drawerLinks}
+              period={this.state.period}
+            />
             <main
               className={classNames(classes.content, classes[`content-left`], {
                 [classes.contentShift]: open,

@@ -8,13 +8,12 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
 
 import PeriodPicker from "./PeriodPicker";
 import OuPicker from "./OuPicker";
 import InvoiceLink from "./InvoiceLink";
-import Dhis2 from "../../support/Dhis2";
-import { FormControl } from "@material-ui/core";
+
+import debounce from "lodash/debounce";
 
 const styles = theme => ({
   paper: theme.mixins.gutters({
@@ -37,6 +36,54 @@ class InvoiceSelectionContainer extends Component {
 
   constructor(props) {
     super(props);
+    const params = new URLSearchParams(props.location.search.substring(1));
+    const query = params.get("q");
+
+    this.searchOrgunit = debounce(this.searchOrgunit.bind(this), 500);
+    this.onOuSearchChange = this.onOuSearchChange.bind(this);
+    this.state = { ouSearchValue: query || "" }
+  }
+
+  componentDidMount() {
+    this.searchOrgunit()
+  }
+
+  setParams({ query = "" }) {
+    const searchParams = new URLSearchParams();
+    searchParams.set("q", query);
+    return searchParams.toString();
+  }
+
+  onOuSearchChange(event) {
+    let ouSearchValue = event.target.value;
+
+    this.props.history.replace({
+      pathname: "/select",
+      search: "?q=" + ouSearchValue
+    });
+    this.setState({ ouSearchValue: ouSearchValue }, this.searchOrgunit);
+  }
+
+  async searchOrgunit() {
+    let searchvalue = this.state.ouSearchValue ? this.state.ouSearchValue.trim() : undefined;
+    if (searchvalue && searchvalue.length > 0 && this.props.currentUser) {
+      console.log("Searching for " + searchvalue);
+      const user = this.props.currentUser;
+      const orgUnitsResp = await this.props.dhis2.searchOrgunits(
+        searchvalue,
+        user.dataViewOrganisationUnits,
+        this.props.contractedOrgUnitGroupId
+      );
+      console.log(
+        "Searching for " +
+          searchvalue +
+          " => " +
+          orgUnitsResp.organisationUnits.length
+      );
+      this.setState({
+        orgUnits: orgUnitsResp.organisationUnits
+      });
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -47,9 +94,7 @@ class InvoiceSelectionContainer extends Component {
       user &&
       user.organisationUnits.length > 0
     ) {
-      this.props.searchOrgunit(
-        this.props.currentUser.organisationUnits[0].name
-      );
+      this.searchOrgunit(this.props.currentUser.organisationUnits[0].name);
     }
   }
 
@@ -63,8 +108,8 @@ class InvoiceSelectionContainer extends Component {
         </Typography>
 
         <OuPicker
-          ouSearchValue={this.props.ouSearchValue}
-          onOuSearchChange={this.props.onOuSearchChange}
+          ouSearchValue={this.state.ouSearchValue}
+          onOuSearchChange={this.onOuSearchChange}
         />
 
         <PeriodPicker
@@ -83,8 +128,8 @@ class InvoiceSelectionContainer extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {this.props.orgUnits &&
-              this.props.orgUnits.map((orgUnit, index) => (
+            {this.state.orgUnits &&
+              this.state.orgUnits.map((orgUnit, index) => (
                 <TableRow key={orgUnit.id + index}>
                   <TableCell
                     component="th"

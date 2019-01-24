@@ -39,7 +39,7 @@ class InvoiceLink extends Component {
               monthPeriod => (
                 <Button
                   key={invoiceType.code + "-" + monthPeriod + "-" + orgUnit.id}
-                  variant="flat"
+                  variant="text"
                   color="primary"
                   size="small"
                   component={Link}
@@ -54,7 +54,7 @@ class InvoiceLink extends Component {
         )}
         {invoiceType.frequency === "quarterly" && (
           <Button
-            variant="flat"
+            variant="text"
             color="primary"
             size="small"
             component={Link}

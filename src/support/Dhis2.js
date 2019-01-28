@@ -200,7 +200,7 @@ class Dhis2 {
     var getOuUrl =
       "organisationUnitGroupSets/" +
       contractGroupSetId +
-      "?fields=[*],organisationUnitGroups[:all,organisationUnits[id,name,ancestors[id,name],organisationUnitGroups[id,name,code]]";
+      "?fields=[*],organisationUnitGroups[:all,organisationUnits[id,name,ancestors[id,name],organisationUnitGroups[id,name,code]]&pageSize=1500";
     return getInstance()
       .then(d2 => d2.Api.getApi().get(getOuUrl))
       .then(response => {
@@ -228,7 +228,7 @@ class Dhis2 {
   getOrgunitsForGroup(ancestorId, groupId) {
     const url =
       "organisationUnits?fields=id,name,ancestors[id,name],organisationUnitGroups[id,name,code]" +
-      "&pageSize=500" +
+      "&pageSize=1500" +
       "&filter=organisationUnitGroups.id:eq:" +
       groupId +
       "&filter=ancestors.id:eq:" +

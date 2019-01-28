@@ -215,7 +215,7 @@ class Dhis2 {
   getOrgunitsByAncestor(ancestorId, level, contractGroupId) {
     const Url =
       "organisationUnits?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]" +
-      "&pageSize=500" +
+      "&pageSize=1500" +
       "&filter=level:eq:" +
       level +
       "&filter=ancestors.id:eq:" +

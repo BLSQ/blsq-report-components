@@ -4,18 +4,23 @@ class Values {
     this.names = names;
   }
 
-  amount(code, selectedPeriod) {
+  amount(code, optionComboCode, selectedPeriod) {
     if (this.values.dataValues === undefined) {
-      return{
+      return {
         code: code,
-        name: this.names[code] ? this.names[code] : "",
+        name: this.names[code]
+          ? this.names[code]
+          : this.names[optionComboCode]
+          ? this.names[optionComboCode]
+          : "",
         value: undefined,
         period: selectedPeriod
       };
     }
     var amounts = this.values.dataValues.filter(function(row) {
       return (
-        row.dataElement === code &&
+        (row.dataElement === code ||
+          row.categoryOptionCombo === optionComboCode) &&
         row.period === selectedPeriod &&
         row.value !== undefined
       );
@@ -24,24 +29,33 @@ class Values {
 
     return {
       code: code,
-      name: this.names[code] ? this.names[code] : "",
+      name: this.names[code]
+        ? this.names[code]
+        : this.names[optionComboCode]
+        ? this.names[optionComboCode]
+        : "",
       value: value,
       period: selectedPeriod
     };
   }
 
-  amountByOrgUnit(code, orgUnitCode, selectedPeriod) {
+  amountByOrgUnit(code, optionComboCode, orgUnitCode, selectedPeriod) {
     if (this.values.dataValues === undefined) {
       return {
         code: code,
-        name: this.names[code] ? this.names[code] : "",
+        name: this.names[code]
+          ? this.names[code]
+          : this.names[optionComboCode]
+          ? this.names[optionComboCode]
+          : "",
         value: undefined,
         period: selectedPeriod
       };
     }
     const amounts = this.values.dataValues.filter(function(row) {
       return (
-        row.dataElement === code &&
+        (row.dataElement === code ||
+          row.categoryOptionCombo === optionComboCode) &&
         row.period === selectedPeriod &&
         row.value !== undefined &&
         row.orgUnit === orgUnitCode
@@ -51,37 +65,50 @@ class Values {
 
     return {
       code: code,
-      name: this.names[code] ? this.names[code] : "",
+      name: this.names[code]
+        ? this.names[code]
+        : this.names[optionComboCode]
+        ? this.names[optionComboCode]
+        : "",
       value: value,
       period: selectedPeriod
     };
   }
 
-  textByOrgUnit(code, orgUnitCode, selectedPeriod) {
+  textByOrgUnit(code, optionComboCode, orgUnitCode, selectedPeriod) {
     if (this.values.dataValues === undefined) {
       return {
         code: code,
-        name: this.names[code] ? this.names[code] : "",
+        name: this.names[code]
+          ? this.names[code]
+          : this.names[optionComboCode]
+          ? this.names[optionComboCode]
+          : "",
         value: undefined,
         period: selectedPeriod
       };
     }
     const amounts = this.values.dataValues.filter(function(row) {
       return (
-        row.dataElement === code &&
+        (row.dataElement === code ||
+          row.categoryOptionCombo === optionComboCode) &&
         row.period === selectedPeriod &&
         row.value !== undefined &&
         row.orgUnit === orgUnitCode
       );
     });
-    let value = undefined
+    let value = undefined;
     if (amounts.length > 0) {
-      value = amounts[0].value
+      value = amounts[0].value;
     }
 
     return {
       code: code,
-      name: this.names[code] ? this.names[code] : "",
+      name: this.names[code]
+        ? this.names[code]
+        : this.names[optionComboCode]
+        ? this.names[optionComboCode]
+        : "",
       value: value,
       period: selectedPeriod
     };

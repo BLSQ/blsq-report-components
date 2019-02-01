@@ -5,6 +5,7 @@ class Mapper {
       // reuse the data element from project descriptor
       let total = values.amountByOrgUnit(
         "HLPuaFB7Frw",
+        "S34ULMcHMca",
         orgUnit.id,
         request.monthlyPeriods[2]
       );

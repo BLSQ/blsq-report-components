@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
+import { withNamespaces } from "react-i18next";
 import InputLabel from "@material-ui/core/InputLabel";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -62,11 +63,11 @@ class InvoiceSelectionContainer extends Component {
   }
 
   render() {
-    const classes = this.props.classes;
+    const {classes, t} = this.props;
     return (
       <Paper className={classes.paper} square>
         <Typography variant="title" component="h5" gutterBottom>
-          Invoices & Reports
+          {t('report_and_invoices')}
         </Typography>
         <FormControl className={classes.formControl}>
           <PeriodPicker
@@ -147,4 +148,4 @@ InvoiceSelectionContainer.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(InvoiceSelectionContainer);
+export default withStyles(styles)(withNamespaces()(InvoiceSelectionContainer));

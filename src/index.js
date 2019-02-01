@@ -24,7 +24,7 @@ import Warning from "./components/shared/Warning";
 import AppDrawer from "./components/AppDrawer";
 
 import { indexBy } from "./support/Arrays";
-
+import configureI18N from "./support/configureI18N";
 export {
   AppDrawer,
   BrowseDataContainer,
@@ -45,5 +45,6 @@ export {
   Cell,
   Warning,
   GenericInvoices,
-  CompositeInvoices
+  CompositeInvoices,
+  configureI18N
 };

@@ -16,10 +16,8 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 
 import browseDataRoute from "./browsedata/BrowseDataRoute";
 import incentiveRoute from "./incentives/IncentiveRoute";
-import invoiceRoute from "./invoices/InvoiceRoute";
-import invoiceSelectionRoute from "./invoices/InvoiceSelectionRoute";
+import invoiceRoutes from "./invoices/invoiceRoutes";
 
-import Dhis2 from "../support/Dhis2";
 import DatePeriods from "../support/DatePeriods";
 
 import { Typography } from "@material-ui/core";
@@ -29,7 +27,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Dashboard from "@material-ui/icons/Dashboard";
 import FileIcon from "@material-ui/icons/InsertDriveFile";
-
+import { withNamespaces } from "react-i18next";
 const drawerWidth = 240;
 
 const styles = theme => ({
@@ -158,10 +156,9 @@ class App extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, t } = this.props;
     const { open } = this.state;
     const DrawerLinks = this.props.drawerLinks || React.Fragment;
-
     const drawer = (
       <Drawer
         variant="persistent"
@@ -189,7 +186,7 @@ class App extends React.Component {
             <ListItemIcon>
               <FileIcon />
             </ListItemIcon>
-            <ListItemText primary="Invoices & Reports" />
+            <ListItemText primary={t("report_and_invoices")} />
           </ListItem>
           <Divider />
           <DrawerLinks period={this.state.period} />
@@ -229,7 +226,7 @@ class App extends React.Component {
           />
         </Button>
         <Typography variant="title" color="inherit" className={classes.flex}>
-          ORBF2 - Invoices & Reports
+          {t("app_name")}
         </Typography>
 
         <Typography
@@ -284,12 +281,8 @@ class App extends React.Component {
             >
               <div className={classes.drawerHeader + " no-print"} />
               <Switch>
-                {[
-                  browseDataRoute(params),
-                  incentiveRoute(params),
-                  invoiceRoute(params),
-                  invoiceSelectionRoute(params)
-                ]}
+                {[browseDataRoute(params), incentiveRoute(params)]}
+                {invoiceRoutes(params)}
                 {this.props.routes && this.props.routes(params)}
               </Switch>
             </main>
@@ -305,4 +298,4 @@ App.propTypes = {
   theme: PropTypes.object.isRequired
 };
 
-export default withStyles(styles, { withTheme: true })(App);
+export default withStyles(styles, { withTheme: true })(withNamespaces()(App));

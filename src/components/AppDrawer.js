@@ -16,8 +16,7 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 
 import browseDataRoute from "./browsedata/BrowseDataRoute";
 import incentiveRoute from "./incentives/IncentiveRoute";
-import invoiceRoute from "./invoices/InvoiceRoute";
-import invoiceSelectionRoute from "./invoices/InvoiceSelectionRoute";
+import invoiceRoutes from "./invoices/invoiceRoutes";
 
 import Dhis2 from "../support/Dhis2";
 import DatePeriods from "../support/DatePeriods";
@@ -284,12 +283,8 @@ class App extends React.Component {
             >
               <div className={classes.drawerHeader + " no-print"} />
               <Switch>
-                {[
-                  browseDataRoute(params),
-                  incentiveRoute(params),
-                  invoiceRoute(params),
-                  invoiceSelectionRoute(params)
-                ]}
+                {[browseDataRoute(params), incentiveRoute(params)]}
+                {invoiceRoutes(params)}
                 {this.props.routes && this.props.routes(params)}
               </Switch>
             </main>

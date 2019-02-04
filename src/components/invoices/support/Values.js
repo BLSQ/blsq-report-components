@@ -6,7 +6,7 @@ class Values {
 
   amount(code, selectedPeriod) {
     if (this.values.dataValues === undefined) {
-      return{
+      return {
         code: code,
         name: this.names[code] ? this.names[code] : "",
         value: undefined,
@@ -20,7 +20,12 @@ class Values {
         row.value !== undefined
       );
     });
-    const value = amounts.length === 0 ? " " : Number(amounts[0].value);
+    const value =
+      amounts.length === 0
+        ? " "
+        : amounts
+            .map(amount => Number(amount.value))
+            .reduce((pv, cv) => pv + cv, 0);
 
     return {
       code: code,
@@ -47,7 +52,12 @@ class Values {
         row.orgUnit === orgUnitCode
       );
     });
-    const value = amounts.length === 0 ? " " : Number(amounts[0].value);
+    const value =
+      amounts.length === 0
+        ? " "
+        : amounts
+            .map(amount => Number(amount.value))
+            .reduce((pv, cv) => pv + cv, 0);
 
     return {
       code: code,
@@ -74,9 +84,9 @@ class Values {
         row.orgUnit === orgUnitCode
       );
     });
-    let value = undefined
+    let value = undefined;
     if (amounts.length > 0) {
-      value = amounts[0].value
+      value = amounts[0].value;
     }
 
     return {

@@ -62,7 +62,7 @@ it("handle data element with a coc", () => {
     value: 5
   });
   expect(values.amountByOrgUnit("de.coc", "orgunit2", "2016Q1")).toEqual({
-    code: "de",
+    code: "de.coc",
     name: "Vaccination - under 5 year",
     period: "2016Q1",
     value: 10

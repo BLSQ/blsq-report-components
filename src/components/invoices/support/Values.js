@@ -36,22 +36,38 @@ class Values {
   }
 
   amountByOrgUnit(code, orgUnitCode, selectedPeriod) {
+    let categoryOptionCombo = code.includes(".")
+      ? code.split(".")[1]
+      : undefined;
+    let dataElementcode = code.includes(".") ? code.split(".")[0] : code;
+
     if (this.values.dataValues === undefined) {
       return {
-        code: code,
+        code: dataElementcode,
         name: this.names[code] ? this.names[code] : "",
         value: undefined,
         period: selectedPeriod
       };
     }
     const amounts = this.values.dataValues.filter(function(row) {
-      return (
-        row.dataElement === code &&
-        row.period === selectedPeriod &&
-        row.value !== undefined &&
-        row.orgUnit === orgUnitCode
-      );
+      if (categoryOptionCombo === undefined) {
+        return (
+          row.dataElement === dataElementcode &&
+          row.period === selectedPeriod &&
+          row.value !== undefined &&
+          row.orgUnit === orgUnitCode
+        );
+      } else {
+        return (
+          row.dataElement === dataElementcode &&
+          row.categoryOptionCombo === categoryOptionCombo &&
+          row.period === selectedPeriod &&
+          row.value !== undefined &&
+          row.orgUnit === orgUnitCode
+        );
+      }
     });
+
     const value =
       amounts.length === 0
         ? " "

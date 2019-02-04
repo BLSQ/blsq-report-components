@@ -6,50 +6,87 @@ class Values {
 
   amount(code, selectedPeriod) {
     if (this.values.dataValues === undefined) {
-      return this.undefinedValue(code, selectedPeriod);
+      return noValueAmount(code, selectedPeriod);
     }
-    var amounts = this.values.dataValues.filter(function(row) {
-      return (
-        row.dataElement === code &&
-        row.period === selectedPeriod &&
-        row.value !== undefined
-      );
-    });
-    const value = this.getAmount(amounts);
+    const amounts = this.getFilteredValues(
+      this.getFilterCriteria(code, selectedPeriod)
+    );
+    const value = this.sumValues(amounts);
 
+    return this.asAmount(code, selectedPeriod, value);
+  }
+
+  amountByOrgUnit(code, orgUnit, selectedPeriod) {
+    if (this.values.dataValues === undefined) {
+      return this.noValueAmount(code, selectedPeriod);
+    }
+
+    const amounts = this.getFilteredValues(
+      this.getFilterCriteria(code, selectedPeriod, orgUnit)
+    );
+    const value = this.sumValues(amounts);
+
+    return this.asAmount(code, selectedPeriod, value);
+  }
+
+  getFilterCriteria(code, period, orgUnit) {
+    let categoryOptionCombo = this.codeType(code, "de.coc");
+    let dataElement = this.codeType(code, "de");
     return {
       code: code,
-      name: this.names[code] ? this.names[code] : "",
-      value: value,
-      period: selectedPeriod
+      dataElement: dataElement,
+      orgUnit: orgUnit,
+      period: period,
+      categoryOptionCombo: categoryOptionCombo
     };
   }
 
-  amountByOrgUnit(code, orgUnitCode, selectedPeriod) {
-    let categoryOptionCombo = this.codeType(code, "de.coc");
-    let dataElementcode = this.codeType(code, "de");
-    if (this.values.dataValues === undefined) {
-      return this.undefinedValue(code, selectedPeriod);
-    }
-    const amounts = this.values.dataValues.filter(function(row) {
+  getFilteredValues(filterCriteria) {
+    const amounts = this.values.dataValues.filter(row => {
+      let matchElement = row.dataElement === filterCriteria.dataElement;
+      if (filterCriteria.categoryOptionCombo !== undefined) {
+        matchElement =
+          matchElement &&
+          row.categoryOptionCombo === filterCriteria.categoryOptionCombo;
+      }
+
+      let matchOu = true;
+      if (filterCriteria.orgUnit) {
+        matchOu = row.orgUnit === filterCriteria.orgUnit;
+      }
+
       return (
-        ((categoryOptionCombo === undefined &&
-          row.dataElement === dataElementcode) ||
-          (categoryOptionCombo !== undefined &&
-            (row.dataElement === dataElementcode &&
-              row.categoryOptionCombo === categoryOptionCombo))) &&
-        row.period === selectedPeriod &&
+        matchElement &&
+        row.period === filterCriteria.period &&
         row.value !== undefined &&
-        row.orgUnit === orgUnitCode
+        matchOu
       );
     });
 
-    const value = this.getAmount(amounts);
+    return amounts;
+  }
 
+  asAmount(code, period, value) {
     return {
       code: code,
       name: this.names[code] ? this.names[code] : "",
       value: value,
+      period: period
+    };
+  }
+
+  sumValues(amounts) {
+    if (amounts.length === 0) return " ";
+    return amounts
+      .map(amount => Number(amount.value))
+      .reduce((pv, cv) => pv + cv, 0);
+  }
+
+  noValueAmount(code, selectedPeriod) {
+    return {
+      code: code,
+      name: this.names[code] ? this.names[code] : "",
+      value: undefined,
       period: selectedPeriod
     };
   }
@@ -66,29 +103,19 @@ class Values {
     }
   }
 
-  textByOrgUnit(code, orgUnitCode, selectedPeriod) {
+  textByOrgUnit(code, orgUnit, selectedPeriod) {
     if (this.values.dataValues === undefined) {
-      return this.undefinedValue(code, selectedPeriod);
+      return noValueAmount(code, selectedPeriod);
     }
-    const amounts = this.values.dataValues.filter(function(row) {
-      return (
-        row.dataElement === code &&
-        row.period === selectedPeriod &&
-        row.value !== undefined &&
-        row.orgUnit === orgUnitCode
-      );
-    });
+    const amounts = this.getFilteredValues(
+      this.getFilterCriteria(code, selectedPeriod, orgUnit)
+    );
     let value = undefined;
     if (amounts.length > 0) {
       value = amounts[0].value;
     }
 
-    return {
-      code: code,
-      name: this.names[code] ? this.names[code] : "",
-      value: value,
-      period: selectedPeriod
-    };
+    return asAmount(code, selectedPeriod, value);
   }
 
   assignFormulaAmounts(total, descriptor, period, normalizeAttrib) {
@@ -96,23 +123,6 @@ class Values {
       total[attribute] = this.amount(descriptor[attribute].de_id, period);
     });
     return total;
-  }
-
-  undefinedValue(code, selectedPeriod) {
-    return {
-      code: code,
-      name: this.names[code] ? this.names[code] : "",
-      value: undefined,
-      period: selectedPeriod
-    };
-  }
-
-  getAmount(amounts) {
-    return amounts.length === 0
-      ? " "
-      : amounts
-          .map(amount => Number(amount.value))
-          .reduce((pv, cv) => pv + cv, 0);
   }
 
   assignFormulaAmountsOrgUnit(

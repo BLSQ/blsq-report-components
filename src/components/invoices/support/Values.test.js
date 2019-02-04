@@ -39,6 +39,14 @@ const values = new Values(
   }
 );
 
+const noValueAmounts = new Values(
+  { dataValues: undefined },
+  {
+    de: "Vaccination",
+    "de.coc": "Vaccination - under 5 year"
+  }
+);
+
 it("handle data element (sum all coc)", () => {
   expect(values.amountByOrgUnit("de", "orgunit1", "2016Q1")).toEqual({
     code: "de",
@@ -66,5 +74,22 @@ it("handle data element with a coc", () => {
     name: "Vaccination - under 5 year",
     period: "2016Q1",
     value: 10
+  });
+});
+
+it("handle no values and empty values", () => {
+  expect(
+    noValueAmounts.amountByOrgUnit("de.coc", "orgunit1", "2016Q1")
+  ).toEqual({
+    code: "de.coc",
+    name: "Vaccination - under 5 year",
+    period: "2016Q1",
+    value: undefined
+  });
+  expect(values.amountByOrgUnit("de.coc", "orgunit5", "2016Q1")).toEqual({
+    code: "de.coc",
+    name: "Vaccination - under 5 year",
+    period: "2016Q1",
+    value: " "
   });
 });

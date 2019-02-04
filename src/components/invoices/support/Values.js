@@ -36,36 +36,27 @@ class Values {
   }
 
   amountByOrgUnit(code, orgUnitCode, selectedPeriod) {
-    let categoryOptionCombo = code.includes(".")
-      ? code.split(".")[1]
-      : undefined;
-    let dataElementcode = code.includes(".") ? code.split(".")[0] : code;
-
+    let categoryOptionCombo = this.codeType(code, "de.coc");
+    let dataElementcode = this.codeType(code, "de");
     if (this.values.dataValues === undefined) {
       return {
-        code: dataElementcode,
+        code: code,
         name: this.names[code] ? this.names[code] : "",
         value: undefined,
         period: selectedPeriod
       };
     }
     const amounts = this.values.dataValues.filter(function(row) {
-      if (categoryOptionCombo === undefined) {
-        return (
-          row.dataElement === dataElementcode &&
-          row.period === selectedPeriod &&
-          row.value !== undefined &&
-          row.orgUnit === orgUnitCode
-        );
-      } else {
-        return (
-          row.dataElement === dataElementcode &&
-          row.categoryOptionCombo === categoryOptionCombo &&
-          row.period === selectedPeriod &&
-          row.value !== undefined &&
-          row.orgUnit === orgUnitCode
-        );
-      }
+      return (
+        ((categoryOptionCombo === undefined &&
+          row.dataElement === dataElementcode) ||
+          (categoryOptionCombo !== undefined &&
+            row.dataElement === dataElementcode &&
+            row.categoryOptionCombo === categoryOptionCombo)) &&
+        row.period === selectedPeriod &&
+        row.value !== undefined &&
+        row.orgUnit === orgUnitCode
+      );
     });
 
     const value =
@@ -81,6 +72,18 @@ class Values {
       value: value,
       period: selectedPeriod
     };
+  }
+
+  codeType(code, codeType) {
+    switch (codeType) {
+      case "de":
+        return code.includes(".") ? code.split(".")[0] : code;
+        break;
+      case "de.coc":
+        return code.includes(".") ? code.split(".")[1] : undefined;
+        break;
+      default:
+    }
   }
 
   textByOrgUnit(code, orgUnitCode, selectedPeriod) {

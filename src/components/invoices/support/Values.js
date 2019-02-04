@@ -15,12 +15,7 @@ class Values {
         row.value !== undefined
       );
     });
-    const value =
-      amounts.length === 0
-        ? " "
-        : amounts
-            .map(amount => Number(amount.value))
-            .reduce((pv, cv) => pv + cv, 0);
+    const value = this.getAmount(amounts);
 
     return {
       code: code,
@@ -49,12 +44,7 @@ class Values {
       );
     });
 
-    const value =
-      amounts.length === 0
-        ? " "
-        : amounts
-            .map(amount => Number(amount.value))
-            .reduce((pv, cv) => pv + cv, 0);
+    const value = this.getAmount(amounts);
 
     return {
       code: code,
@@ -115,6 +105,14 @@ class Values {
       value: undefined,
       period: selectedPeriod
     };
+  }
+
+  getAmount(amounts) {
+    return amounts.length === 0
+      ? " "
+      : amounts
+          .map(amount => Number(amount.value))
+          .reduce((pv, cv) => pv + cv, 0);
   }
 
   assignFormulaAmountsOrgUnit(

@@ -6,12 +6,7 @@ class Values {
 
   amount(code, selectedPeriod) {
     if (this.values.dataValues === undefined) {
-      return {
-        code: code,
-        name: this.names[code] ? this.names[code] : "",
-        value: undefined,
-        period: selectedPeriod
-      };
+      return this.undefinedValue(code, selectedPeriod);
     }
     var amounts = this.values.dataValues.filter(function(row) {
       return (
@@ -39,20 +34,15 @@ class Values {
     let categoryOptionCombo = this.codeType(code, "de.coc");
     let dataElementcode = this.codeType(code, "de");
     if (this.values.dataValues === undefined) {
-      return {
-        code: code,
-        name: this.names[code] ? this.names[code] : "",
-        value: undefined,
-        period: selectedPeriod
-      };
+      return this.undefinedValue(code, selectedPeriod);
     }
     const amounts = this.values.dataValues.filter(function(row) {
       return (
         ((categoryOptionCombo === undefined &&
           row.dataElement === dataElementcode) ||
           (categoryOptionCombo !== undefined &&
-            row.dataElement === dataElementcode &&
-            row.categoryOptionCombo === categoryOptionCombo)) &&
+            (row.dataElement === dataElementcode &&
+              row.categoryOptionCombo === categoryOptionCombo))) &&
         row.period === selectedPeriod &&
         row.value !== undefined &&
         row.orgUnit === orgUnitCode
@@ -88,12 +78,7 @@ class Values {
 
   textByOrgUnit(code, orgUnitCode, selectedPeriod) {
     if (this.values.dataValues === undefined) {
-      return {
-        code: code,
-        name: this.names[code] ? this.names[code] : "",
-        value: undefined,
-        period: selectedPeriod
-      };
+      return this.undefinedValue(code, selectedPeriod);
     }
     const amounts = this.values.dataValues.filter(function(row) {
       return (
@@ -121,6 +106,15 @@ class Values {
       total[attribute] = this.amount(descriptor[attribute].de_id, period);
     });
     return total;
+  }
+
+  undefinedValue(code, selectedPeriod) {
+    return {
+      code: code,
+      name: this.names[code] ? this.names[code] : "",
+      value: undefined,
+      period: selectedPeriod
+    };
   }
 
   assignFormulaAmountsOrgUnit(

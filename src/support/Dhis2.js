@@ -149,9 +149,9 @@ class Dhis2 {
 
   getTopLevels(levels) {
     const url =
-      "/organisationUnits?level:in:[" +
+      "/organisationUnits?filter=level:in:[" +
       levels.join(",") +
-      "]&fields=id,path,level";
+      "]&fields=id,name,path,level,ancestors[id,name]";
     return getInstance().then(d2 => d2.Api.getApi().get(url));
   }
 

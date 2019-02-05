@@ -25,6 +25,7 @@ const invoiceSelectionRoute = props => {
             period={period || props.period}
             {...props.config.global}
             dhis2={props.dhis2}
+            topLevelsOrgUnits={props.topLevelsOrgUnits}
           />
         );
       }}

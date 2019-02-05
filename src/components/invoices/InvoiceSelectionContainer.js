@@ -4,12 +4,13 @@ import { withStyles } from "@material-ui/core/styles";
 import { withNamespaces } from "react-i18next";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
+import Button from "@material-ui/core/Button";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
-
+import OrgAutoComplete from "./OrgAutoComplete";
 import PeriodPicker from "./PeriodPicker";
 import OuPicker from "./OuPicker";
 import InvoiceLink from "./InvoiceLink";
@@ -120,16 +121,24 @@ class InvoiceSelectionContainer extends Component {
           {t("report_and_invoices")}
         </Typography>
 
-        <OuPicker
-          ouSearchValue={this.state.ouSearchValue}
-          onOuSearchChange={this.onOuSearchChange}
-        />
+        <div>
+          <OuPicker
+            ouSearchValue={this.state.ouSearchValue}
+            onOuSearchChange={this.onOuSearchChange}
+          />
 
-        <PeriodPicker
-          period={this.props.period}
-          onPeriodChange={this.onPeriodChange}
-          periodFormat={this.props.periodFormat}
-        />
+          <PeriodPicker
+            period={this.props.period}
+            onPeriodChange={this.onPeriodChange}
+            periodFormat={this.props.periodFormat}
+          />
+
+          <OrgAutoComplete organisationUnits={this.props.topLevelsOrgUnits} />
+        </div>
+        <br />
+        <Button variant="outlined" color="primary" className={classes.button}>
+          Search
+        </Button>
 
         <Table>
           <TableHead>

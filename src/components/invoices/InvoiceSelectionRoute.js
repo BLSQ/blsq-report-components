@@ -13,6 +13,7 @@ const invoiceSelectionRoute = props => {
           routerProps.location.search.substring(1)
         );
         const period = params.get("period");
+        const parent = params.get("parent");
 
         return (
           <InvoiceSelectionContainer
@@ -26,6 +27,7 @@ const invoiceSelectionRoute = props => {
             {...props.config.global}
             dhis2={props.dhis2}
             topLevelsOrgUnits={props.topLevelsOrgUnits}
+            parent={parent}
           />
         );
       }}

@@ -10,7 +10,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
-import OrgAutoComplete from "./OrgAutoComplete";
+import OrgUnitAutoComplete from "./OrgUnitAutoComplete";
 import PeriodPicker from "./PeriodPicker";
 import OuPicker from "./OuPicker";
 import InvoiceLink from "./InvoiceLink";
@@ -21,7 +21,8 @@ const styles = theme => ({
   paper: theme.mixins.gutters({
     paddingTop: 16,
     paddingBottom: 16,
-    marginTop: theme.spacing.unit * 3
+    marginTop: theme.spacing.unit * 3,
+    minHeight: "600px"
   }),
   table: {
     minWidth: "100%"
@@ -44,6 +45,7 @@ class InvoiceSelectionContainer extends Component {
     this.onOuSearchChange = this.onOuSearchChange.bind(this);
     this.onPeriodChange = this.onPeriodChange.bind(this);
     this.synchronizeUrl = this.synchronizeUrl.bind(this);
+    this.onParentOrganisationUnit = this.onParentOrganisationUnit.bind(this);
     this.state = { ouSearchValue: query || "" };
   }
 
@@ -57,9 +59,15 @@ class InvoiceSelectionContainer extends Component {
   }
 
   synchronizeUrl() {
+    const stateParam = this.props.parent ? "&parent=" + this.props.parent : "";
     this.props.history.replace({
       pathname: "/select",
-      search: "?q=" + this.state.ouSearchValue + "&period=" + this.props.period
+      search:
+        "?q=" +
+        this.state.ouSearchValue +
+        "&period=" +
+        this.props.period +
+        stateParam
     });
   }
   synchronizeUrlAndSearch() {
@@ -67,7 +75,21 @@ class InvoiceSelectionContainer extends Component {
     this.searchOrgunit();
   }
 
+  onParentOrganisationUnit(orgUnit) {
+    const stateParam = orgUnit ? "&parent=" + orgUnit : "";
+    this.props.history.replace({
+      pathname: "/select",
+      search:
+        "?q=" +
+        this.state.ouSearchValue +
+        "&period=" +
+        this.props.period +
+        stateParam
+    });
+  }
+
   onPeriodChange(period) {
+    const stateParam = this.props.parent ? "&parent=" + this.props.parent : "";
     this.props.history.replace({
       pathname: "/select",
       search: "?q=" + this.state.ouSearchValue + "&period=" + period
@@ -105,7 +127,7 @@ class InvoiceSelectionContainer extends Component {
     this.props = nextProps;
     const user = this.props.currentUser;
     if (
-      this.props.orgUnits.length === 0 &&
+      (this.state.orgUnits == undefined || this.state.orgUnits.length === 0) &&
       user &&
       user.organisationUnits.length > 0
     ) {
@@ -133,13 +155,16 @@ class InvoiceSelectionContainer extends Component {
             periodFormat={this.props.periodFormat}
           />
 
-          <OrgAutoComplete organisationUnits={this.props.topLevelsOrgUnits} />
+          <OrgUnitAutoComplete
+            organisationUnits={this.props.topLevelsOrgUnits}
+            onChange={this.onParentOrganisationUnit}
+            selected={this.props.parent}
+          />
         </div>
         <br />
-        <Button variant="outlined" color="primary" className={classes.button}>
-          Search
-        </Button>
 
+        <br />
+        <br />
         <Table>
           <TableHead>
             <TableRow>

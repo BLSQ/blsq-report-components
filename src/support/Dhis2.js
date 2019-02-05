@@ -151,7 +151,7 @@ class Dhis2 {
     const url =
       "/organisationUnits?filter=level:in:[" +
       levels.join(",") +
-      "]&fields=id,name,path,level,ancestors[id,name]";
+      "]&fields=id,name,path,level,ancestors[id,name]&paging=false";
     return getInstance().then(d2 => d2.Api.getApi().get(url));
   }
 

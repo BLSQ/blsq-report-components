@@ -24,6 +24,7 @@ class OuPicker extends Component {
     return (
       <TextField
         label="Organisation Unit name"
+        InputLabelProps={{ shrink: true }}
         onChange={this.handleChange}
         margin="normal"
         value={this.props.ouSearchValue}

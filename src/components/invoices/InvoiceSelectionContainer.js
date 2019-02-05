@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
+import { withNamespaces } from "react-i18next";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -41,11 +42,11 @@ class InvoiceSelectionContainer extends Component {
 
     this.searchOrgunit = debounce(this.searchOrgunit.bind(this), 500);
     this.onOuSearchChange = this.onOuSearchChange.bind(this);
-    this.state = { ouSearchValue: query || "" }
+    this.state = { ouSearchValue: query || "" };
   }
 
   componentDidMount() {
-    this.searchOrgunit()
+    this.searchOrgunit();
   }
 
   setParams({ query = "" }) {
@@ -65,7 +66,9 @@ class InvoiceSelectionContainer extends Component {
   }
 
   async searchOrgunit() {
-    let searchvalue = this.state.ouSearchValue ? this.state.ouSearchValue.trim() : undefined;
+    let searchvalue = this.state.ouSearchValue
+      ? this.state.ouSearchValue.trim()
+      : undefined;
     if (searchvalue && searchvalue.length > 0 && this.props.currentUser) {
       console.log("Searching for " + searchvalue);
       const user = this.props.currentUser;
@@ -99,12 +102,11 @@ class InvoiceSelectionContainer extends Component {
   }
 
   render() {
-    const classes = this.props.classes;
-
+    const { classes, t } = this.props;
     return (
       <Paper className={classes.paper} square>
         <Typography variant="title" component="h5" gutterBottom>
-          Invoices & Reports
+          {t("report_and_invoices")}
         </Typography>
 
         <OuPicker
@@ -166,4 +168,4 @@ InvoiceSelectionContainer.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(InvoiceSelectionContainer);
+export default withStyles(styles)(withNamespaces()(InvoiceSelectionContainer));

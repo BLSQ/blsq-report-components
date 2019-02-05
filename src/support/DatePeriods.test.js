@@ -1,17 +1,32 @@
 import DatePeriods from "./DatePeriods";
 
 it("calculates next quarter", () => {
-  expect(DatePeriods.nextQuarter("2016Q1")).toEqual("2016Q2");
-  expect(DatePeriods.nextQuarter("2016Q2")).toEqual("2016Q3");
-  expect(DatePeriods.nextQuarter("2016Q3")).toEqual("2016Q4");
-  expect(DatePeriods.nextQuarter("2016Q4")).toEqual("2017Q1");
+  expect(DatePeriods.next("2016Q1")).toEqual("2016Q2");
+  expect(DatePeriods.next("2016Q2")).toEqual("2016Q3");
+  expect(DatePeriods.next("2016Q3")).toEqual("2016Q4");
+  expect(DatePeriods.next("2016Q4")).toEqual("2017Q1");
 });
 
 it("calculates previous quarter", () => {
-  expect(DatePeriods.previousQuarter("2016Q1")).toEqual("2015Q4");
-  expect(DatePeriods.previousQuarter("2016Q2")).toEqual("2016Q1");
-  expect(DatePeriods.previousQuarter("2016Q3")).toEqual("2016Q2");
-  expect(DatePeriods.previousQuarter("2016Q4")).toEqual("2016Q3");
+  expect(DatePeriods.previous("2016Q1")).toEqual("2015Q4");
+  expect(DatePeriods.previous("2016Q2")).toEqual("2016Q1");
+  expect(DatePeriods.previous("2016Q3")).toEqual("2016Q2");
+  expect(DatePeriods.previous("2016Q4")).toEqual("2016Q3");
+});
+
+it("calculates previous sixMonth period", () => {
+  expect(DatePeriods.previous("2016S1")).toEqual("2015S2");
+  expect(DatePeriods.previous("2016S2")).toEqual("2016S1");
+});
+
+it("calculates next sixMonth period", () => {
+  expect(DatePeriods.next("2016S1")).toEqual("2016S2");
+  expect(DatePeriods.next("2016S2")).toEqual("2017S1");
+});
+
+it("calculates previous sixMonth period", () => {
+  expect(DatePeriods.previous("2016S1")).toEqual("2015S2");
+  expect(DatePeriods.previous("2016S2")).toEqual("2016S1");
 });
 
 it("split a quarter in monthly periods", () => {
@@ -48,6 +63,37 @@ it("split monthly in quarterly periods", () => {
 
 it("split monthly in yearly periods", () => {
   expect(DatePeriods.split("201611", "yearly")).toEqual(["2016"]);
+});
+
+it("split year into in sixMonthly periods", () => {
+  expect(DatePeriods.split("2016", "sixMonthly")).toEqual(["2016S1","2016S2"]);
+});
+
+it("split quarter into in sixMonthly periods", () => {
+  expect(DatePeriods.split("2016Q1", "sixMonthly")).toEqual(["2016S1"]);
+  expect(DatePeriods.split("2016Q2", "sixMonthly")).toEqual(["2016S1"]);
+  expect(DatePeriods.split("2016Q3", "sixMonthly")).toEqual(["2016S2"]);
+  expect(DatePeriods.split("2016Q4", "sixMonthly")).toEqual(["2016S2"]);
+});
+
+it("split sixMonthly into in quarter periods", () => {
+  expect(DatePeriods.split("2016S1", "quarterly")).toEqual(["2016Q1","2016Q2"]);
+  expect(DatePeriods.split("2016S2", "quarterly")).toEqual(["2016Q3","2016Q4"]);
+});
+
+it("split sixMonthly into in sixMonthly periods", () => {
+  expect(DatePeriods.split("2016S1", "sixMonthly")).toEqual(["2016S1"]);
+});
+
+it("split sixMonth period into in months", () => {
+  expect(DatePeriods.split("2016S1", "monthly")).toEqual(["201601", "201602", "201603", "201604", "201605", "201606"]);
+  expect(DatePeriods.split("2016S2", "monthly")).toEqual(["201607", "201608", "201609", "201610", "201611", "201612"]);
+});
+
+it("split monthly in sixMonthly period", () => {
+  expect(DatePeriods.split("201611", "sixMonthly")).toEqual(["2016S2"]);
+  expect(DatePeriods.split("201607", "sixMonthly")).toEqual(["2016S2"]);
+  expect(DatePeriods.split("201606", "sixMonthly")).toEqual(["2016S1"]);
 });
 
 it("split monthly in yearly periods", () => {
@@ -190,4 +236,10 @@ it("month", () => {
 it("monthName", () => {
   expect(DatePeriods.monthName("2016Q4")).toEqual("December");
   expect(DatePeriods.monthName("201611")).toEqual("November");
+});
+
+
+it("sixMonth", () => {
+  expect(DatePeriods.displayName("2016S1", "sixMonth")).toEqual("January - June 2016")
+  expect(DatePeriods.displayName("2016S2", "sixMonth")).toEqual("July - December 2016")
 });

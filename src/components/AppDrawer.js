@@ -16,8 +16,7 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 
 import browseDataRoute from "./browsedata/BrowseDataRoute";
 import incentiveRoute from "./incentives/IncentiveRoute";
-import invoiceRoute from "./invoices/InvoiceRoute";
-import invoiceSelectionRoute from "./invoices/InvoiceSelectionRoute";
+import invoiceRoutes from "./invoices/invoiceRoutes";
 
 import DatePeriods from "../support/DatePeriods";
 
@@ -28,7 +27,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Dashboard from "@material-ui/icons/Dashboard";
 import FileIcon from "@material-ui/icons/InsertDriveFile";
-
+import { withNamespaces } from "react-i18next";
 const drawerWidth = 240;
 
 const styles = theme => ({
@@ -121,7 +120,7 @@ const styles = theme => ({
   }
 });
 
-const AppDrawer = props => {
+const RawAppDrawer = props => {
   const DrawerLinks = props.drawerLinks || React.Fragment;
   return (
     <Drawer
@@ -150,7 +149,7 @@ const AppDrawer = props => {
           <ListItemIcon>
             <FileIcon />
           </ListItemIcon>
-          <ListItemText primary="Invoices & Reports" />
+          <ListItemText primary={props.t("report_and_invoices")} />
         </ListItem>
         <Divider />
         <DrawerLinks period={props.period} />
@@ -158,14 +157,15 @@ const AppDrawer = props => {
     </Drawer>
   );
 };
+const AppDrawer = withNamespaces()(RawAppDrawer);
 
-class AppToolBar extends React.Component {
+class RawAppToolBar extends React.Component {
   shouldComponentUpdate(nextProps) {
     return this.props.currentUser !== nextProps.currentUser;
   }
 
   render() {
-    const { classes, open, currentUser, handleDrawerOpen } = this.props;
+    const { classes, open, currentUser, handleDrawerOpen, t } = this.props;
     return (
       <Toolbar disableGutters={!open}>
         <IconButton
@@ -184,7 +184,7 @@ class AppToolBar extends React.Component {
           />
         </Button>
         <Typography variant="title" color="inherit" className={classes.flex}>
-          ORBF2 - Invoices & Reports
+          {t("app_name")}
         </Typography>
 
         <Typography
@@ -215,6 +215,8 @@ class AppToolBar extends React.Component {
     );
   }
 }
+
+const AppToolBar = withNamespaces()(RawAppToolBar);
 
 class App extends React.Component {
   constructor(props) {
@@ -254,13 +256,16 @@ class App extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, t } = this.props;
     const { open } = this.state;
 
+    const frequency = this.state.period.includes("S")
+      ? "sixMonthly"
+      : "quarterly";
     const params = {
       config: this.props.config,
       dhis2: this.props.dhis2,
-      period: DatePeriods.split(this.state.period, "quarterly")[0],
+      period: DatePeriods.split(this.state.period, frequency)[0],
       onPeriodChange: this.onPeriodChange,
       onOuSearchChange: this.onOuSearchChange,
       ouSearchValue: this.state.ouSearchValue,
@@ -305,12 +310,8 @@ class App extends React.Component {
             >
               <div className={classes.drawerHeader + " no-print"} />
               <Switch>
-                {[
-                  browseDataRoute(params),
-                  incentiveRoute(params),
-                  invoiceRoute(params),
-                  invoiceSelectionRoute(params)
-                ]}
+                {[browseDataRoute(params), incentiveRoute(params)]}
+                {invoiceRoutes(params)}
                 {this.props.routes && this.props.routes(params)}
               </Switch>
             </main>
@@ -326,4 +327,4 @@ App.propTypes = {
   theme: PropTypes.object.isRequired
 };
 
-export default withStyles(styles, { withTheme: true })(App);
+export default withStyles(styles, { withTheme: true })(withNamespaces()(App));

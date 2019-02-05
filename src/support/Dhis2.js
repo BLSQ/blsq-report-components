@@ -200,7 +200,7 @@ class Dhis2 {
     var getOuUrl =
       "organisationUnitGroupSets/" +
       contractGroupSetId +
-      "?fields=[*],organisationUnitGroups[:all,organisationUnits[id,name,ancestors[id,name],organisationUnitGroups[id,name,code]]";
+      "?fields=[*],organisationUnitGroups[:all,organisationUnits[id,name,ancestors[id,name],organisationUnitGroups[id,name,code]]&pageSize=1500";
     return getInstance()
       .then(d2 => d2.Api.getApi().get(getOuUrl))
       .then(response => {
@@ -215,7 +215,7 @@ class Dhis2 {
   getOrgunitsByAncestor(ancestorId, level, contractGroupId) {
     const Url =
       "organisationUnits?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]" +
-      "&pageSize=500" +
+      "&pageSize=1500" +
       "&filter=level:eq:" +
       level +
       "&filter=ancestors.id:eq:" +
@@ -228,7 +228,7 @@ class Dhis2 {
   getOrgunitsForGroup(ancestorId, groupId) {
     const url =
       "organisationUnits?fields=id,name,ancestors[id,name],organisationUnitGroups[id,name,code]" +
-      "&pageSize=500" +
+      "&pageSize=1500" +
       "&filter=organisationUnitGroups.id:eq:" +
       groupId +
       "&filter=ancestors.id:eq:" +
@@ -299,7 +299,7 @@ class Dhis2 {
       orgUnits: orgUnits,
       period: period,
       quarterPeriod: period,
-      quarterPeriods: DatePeriods.split(period, invoiceType.frequency),
+      quarterPeriods: DatePeriods.split(period, "quarterly"),
       monthlyPeriods: DatePeriods.split(period, "monthly"),
       year: year,
       quarter: quarter,
@@ -322,9 +322,6 @@ class Dhis2 {
       orgUnits = request.orgUnits;
     }
 
-    const orgUnitsQuery = orgUnits
-      .map(orgUnit => "orgUnit=" + orgUnit.id)
-      .join("&");
     const degQuery = request.invoiceType.dataElementGroups
       .map(deg => "dataElementGroup=" + deg)
       .join("&");
@@ -337,15 +334,29 @@ class Dhis2 {
     const periodsQuery = periods.map(p => "&period=" + p).join("");
 
     const dataValuesUrl =
-      "dataValueSets?" +
-      orgUnitsQuery +
-      "&" +
-      degQuery +
-      "&" +
-      dsQuery +
-      periodsQuery;
+      "dataValueSets?" + degQuery + "&" + dsQuery + periodsQuery;
 
-    return getInstance().then(d2 => d2.Api.getApi().get(dataValuesUrl));
+    return getInstance()
+      .then(d2 => {
+        const queries = [];
+        orgUnits.eachSlice(200, orgUnitsSlice => {
+          const orgUnitsQuery = orgUnitsSlice
+            .map(orgUnit => "orgUnit=" + orgUnit.id)
+            .join("&");
+          queries.push(dataValuesUrl + "&" + orgUnitsQuery);
+        });
+
+        return Promise.all(queries.map(query => d2.Api.getApi().get(query)));
+      })
+      .then(results => {
+        let dataValues = [];
+        results.forEach(result => {
+          if (result.dataValues) {
+            dataValues = dataValues.concat(result.dataValues);
+          }
+        });
+        return { dataValues };
+      });
   }
 
   /**

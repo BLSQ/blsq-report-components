@@ -234,8 +234,10 @@ class App extends React.Component {
 
   async fetchCurrentUser() {
     const user = await this.props.dhis2.currentUserRaw();
+    const topLevels = await this.props.dhis2.getTopLevels([2, 3]);
     this.setState({
-      currentUser: user
+      currentUser: user,
+      topLevels: topLevels
     });
   }
 
@@ -267,8 +269,6 @@ class App extends React.Component {
       dhis2: this.props.dhis2,
       period: DatePeriods.split(this.state.period, frequency)[0],
       onPeriodChange: this.onPeriodChange,
-      onOuSearchChange: this.onOuSearchChange,
-      ouSearchValue: this.state.ouSearchValue,
       orgUnits: this.state.orgUnits,
       invoices: this.props.invoices,
       currentUser: this.state.currentUser,

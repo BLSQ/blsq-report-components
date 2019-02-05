@@ -60,7 +60,9 @@ class InvoiceSelectionContainer extends Component {
       pathname: "/select",
       search: "?q=" + this.state.ouSearchValue + "&period=" + this.props.period
     });
-
+  }
+  synchronizeUrlAndSearch() {
+    synchronizeUrl();
     this.searchOrgunit();
   }
 

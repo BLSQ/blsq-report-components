@@ -147,6 +147,14 @@ class Dhis2 {
     return allowedOrgunitIds;
   }
 
+  getTopLevels(levels) {
+    const url =
+      "/organisationUnits?level:in:[" +
+      levels.join(",") +
+      "]&fields=id,path,level";
+    return getInstance().then(d2 => d2.Api.getApi().get(url));
+  }
+
   getValues(user, dataSet, periods) {
     const allowedOrgunitIds = this.allowedSeeOrgunits(user, dataSet);
 

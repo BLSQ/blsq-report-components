@@ -8,19 +8,26 @@ const invoiceSelectionRoute = props => {
       key="invoiceSelectionRoute"
       path="/select"
       exact
-      component={routerProps => (
-        <InvoiceSelectionContainer
-          key="InvoiceSelectionContainer"
-          {...routerProps}
-          invoices={props.invoices}
-          currentUser={props.currentUser}
-          onPeriodChange={props.onPeriodChange}
-          orgUnits={props.orgUnits}
-          period={props.period}
-          {...props.config.global}
-          dhis2={props.dhis2}
-        />
-      )}
+      component={routerProps => {
+        const params = new URLSearchParams(
+          routerProps.location.search.substring(1)
+        );
+        const period = params.get("period");
+
+        return (
+          <InvoiceSelectionContainer
+            key="InvoiceSelectionContainer"
+            {...routerProps}
+            invoices={props.invoices}
+            currentUser={props.currentUser}
+            onPeriodChange={props.onPeriodChange}
+            orgUnits={props.orgUnits}
+            period={period || props.period}
+            {...props.config.global}
+            dhis2={props.dhis2}
+          />
+        );
+      }}
     />
   );
 };

@@ -39,9 +39,10 @@ class InvoiceSelectionContainer extends Component {
     super(props);
     const params = new URLSearchParams(props.location.search.substring(1));
     const query = params.get("q");
-
     this.searchOrgunit = debounce(this.searchOrgunit.bind(this), 500);
     this.onOuSearchChange = this.onOuSearchChange.bind(this);
+    this.onPeriodChange = this.onPeriodChange.bind(this);
+    this.synchronizeUrl = this.synchronizeUrl.bind(this);
     this.state = { ouSearchValue: query || "" };
   }
 
@@ -49,20 +50,27 @@ class InvoiceSelectionContainer extends Component {
     this.searchOrgunit();
   }
 
-  setParams({ query = "" }) {
-    const searchParams = new URLSearchParams();
-    searchParams.set("q", query);
-    return searchParams.toString();
-  }
-
   onOuSearchChange(event) {
     let ouSearchValue = event.target.value;
+    this.setState({ ouSearchValue: ouSearchValue }, this.synchronizeUrl);
+  }
 
+  synchronizeUrl() {
     this.props.history.replace({
       pathname: "/select",
-      search: "?q=" + ouSearchValue
+      search: "?q=" + this.state.ouSearchValue + "&period=" + this.props.period
     });
-    this.setState({ ouSearchValue: ouSearchValue }, this.searchOrgunit);
+
+    this.searchOrgunit();
+  }
+
+  onPeriodChange(period) {
+    this.props.history.replace({
+      pathname: "/select",
+      search: "?q=" + this.state.ouSearchValue + "&period=" + period
+    });
+
+    this.props.onPeriodChange(period);
   }
 
   async searchOrgunit() {
@@ -79,6 +87,7 @@ class InvoiceSelectionContainer extends Component {
       );
       console.log(
         "Searching for " +
+          this.props.period +
           searchvalue +
           " => " +
           orgUnitsResp.organisationUnits.length
@@ -116,7 +125,7 @@ class InvoiceSelectionContainer extends Component {
 
         <PeriodPicker
           period={this.props.period}
-          onPeriodChange={this.props.onPeriodChange}
+          onPeriodChange={this.onPeriodChange}
           periodFormat={this.props.periodFormat}
         />
 

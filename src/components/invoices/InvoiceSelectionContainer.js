@@ -26,6 +26,9 @@ const styles = theme => ({
   }),
   table: {
     minWidth: "100%"
+  },
+  filters: {
+    marginLeft: "30px"
   }
 });
 
@@ -101,8 +104,8 @@ class InvoiceSelectionContainer extends Component {
   async searchOrgunit() {
     let searchvalue = this.state.ouSearchValue
       ? this.state.ouSearchValue.trim()
-      : undefined;
-    if (searchvalue && searchvalue.length > 0 && this.props.currentUser) {
+      : "";
+    if (this.props.currentUser) {
       console.log("Searching for " + searchvalue);
       const user = this.props.currentUser;
       const orgUnitsResp = await this.props.dhis2.searchOrgunits(
@@ -143,7 +146,7 @@ class InvoiceSelectionContainer extends Component {
           {t("report_and_invoices")}
         </Typography>
 
-        <div>
+        <div className={classes.filters}>
           <OuPicker
             ouSearchValue={this.state.ouSearchValue}
             onOuSearchChange={this.onOuSearchChange}

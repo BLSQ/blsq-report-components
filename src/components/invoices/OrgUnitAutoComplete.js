@@ -8,7 +8,6 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
-import { emphasize } from "@material-ui/core/styles/colorManipulator";
 
 const full_name = suggestion => {
   const ancestorsWithoutCountry = suggestion.ancestors
@@ -34,17 +33,6 @@ const styles = theme => ({
     flex: 1,
     alignItems: "center",
     overflow: "hidden"
-  },
-  chip: {
-    margin: `${theme.spacing.unit / 2}px ${theme.spacing.unit / 4}px`
-  },
-  chipFocused: {
-    backgroundColor: emphasize(
-      theme.palette.type === "light"
-        ? theme.palette.grey[300]
-        : theme.palette.grey[700],
-      0.08
-    )
   },
   noOptionsMessage: {
     padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`
@@ -206,7 +194,7 @@ class IntegrationReactSelect extends React.Component {
       ? options.find(ou => ou.value === this.props.selected)
       : undefined;
 
-   
+
 
     return (
       <div className={classes.root}>

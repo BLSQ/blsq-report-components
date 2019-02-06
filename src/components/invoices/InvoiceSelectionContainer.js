@@ -54,51 +54,45 @@ class InvoiceSelectionContainer extends Component {
 
   componentDidMount() {
     this.searchOrgunit();
+    console.log("InvoiceSelectionContainer did mount");
   }
 
   onOuSearchChange(event) {
     let ouSearchValue = event.target.value;
-    this.setState({ ouSearchValue: ouSearchValue }, this.synchronizeUrl);
+    this.setState({ ouSearchValue: ouSearchValue }, this.searchOrgunit);
   }
 
   synchronizeUrl() {
-    const stateParam = this.props.parent ? "&parent=" + this.props.parent : "";
+    synchronizeHistory(
+      this.props.parent,
+      this.state.ouSearchValue,
+      this.props.period
+    );
+  }
+
+  synchronizeHistory(parent, ouSearchValue, period) {
+    const stateParam = parent ? "&parent=" + parent : "";
     this.props.history.replace({
       pathname: "/select",
-      search:
-        "?q=" +
-        this.state.ouSearchValue +
-        "&period=" +
-        this.props.period +
-        stateParam
+      search: "?q=" + ouSearchValue + "&period=" + period + stateParam
     });
-  }
-  synchronizeUrlAndSearch() {
-    synchronizeUrl();
-    this.searchOrgunit();
   }
 
   onParentOrganisationUnit(orgUnit) {
-    const stateParam = orgUnit ? "&parent=" + orgUnit : "";
-    this.props.history.replace({
-      pathname: "/select",
-      search:
-        "?q=" +
-        this.state.ouSearchValue +
-        "&period=" +
-        this.props.period +
-        stateParam
-    });
+    this.synchronizeHistory(orgUnit, this.state.ouSearchValue, this.props.period);
+    this.searchOrgunit();
+  }
+
+  handleSubmit(event) {
+    this.synchronizeUrl();
+    this.searchOrgunit();
+    event.preventDefault();
   }
 
   onPeriodChange(period) {
-    const stateParam = this.props.parent ? "&parent=" + this.props.parent : "";
-    this.props.history.replace({
-      pathname: "/select",
-      search: "?q=" + this.state.ouSearchValue + "&period=" + period
-    });
+    this.synchronizeHistory(this.props.parent, this.state.ouSearchValue, period);
 
-    this.props.onPeriodChange(period);
+    //this.props.onPeriodChange(period);
   }
 
   async searchOrgunit() {
@@ -111,7 +105,8 @@ class InvoiceSelectionContainer extends Component {
       const orgUnitsResp = await this.props.dhis2.searchOrgunits(
         searchvalue,
         user.dataViewOrganisationUnits,
-        this.props.contractedOrgUnitGroupId
+        this.props.contractedOrgUnitGroupId,
+        this.props.parent
       );
       console.log(
         "Searching for " +
@@ -129,12 +124,8 @@ class InvoiceSelectionContainer extends Component {
   componentWillReceiveProps(nextProps) {
     this.props = nextProps;
     const user = this.props.currentUser;
-    if (
-      (this.state.orgUnits == undefined || this.state.orgUnits.length === 0) &&
-      user &&
-      user.organisationUnits.length > 0
-    ) {
-      this.searchOrgunit(this.props.currentUser.organisationUnits[0].name);
+    if (user) {
+      //this.searchOrgunit();
     }
   }
 
@@ -145,25 +136,27 @@ class InvoiceSelectionContainer extends Component {
         <Typography variant="title" component="h5" gutterBottom>
           {t("report_and_invoices")}
         </Typography>
+        <form onSubmit={this.handleSubmit}>
+          <div className={classes.filters}>
+            <OrgUnitAutoComplete
+              organisationUnits={this.props.topLevelsOrgUnits}
+              onChange={this.onParentOrganisationUnit}
+              selected={this.props.parent}
+            />
 
-        <div className={classes.filters}>
-          <OuPicker
-            ouSearchValue={this.state.ouSearchValue}
-            onOuSearchChange={this.onOuSearchChange}
-          />
+            <OuPicker
+              ouSearchValue={this.state.ouSearchValue}
+              onOuSearchChange={this.onOuSearchChange}
+            />
 
-          <PeriodPicker
-            period={this.props.period}
-            onPeriodChange={this.onPeriodChange}
-            periodFormat={this.props.periodFormat}
-          />
-
-          <OrgUnitAutoComplete
-            organisationUnits={this.props.topLevelsOrgUnits}
-            onChange={this.onParentOrganisationUnit}
-            selected={this.props.parent}
-          />
-        </div>
+            <PeriodPicker
+              period={this.props.period}
+              onPeriodChange={this.onPeriodChange}
+              periodFormat={this.props.periodFormat}
+            />
+          </div>
+          <input type="submit" />
+        </form>
         <br />
 
         <br />

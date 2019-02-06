@@ -244,12 +244,14 @@ class Dhis2 {
     return getInstance().then(d2 => d2.Api.getApi().get(url));
   }
 
-  searchOrgunits(name, orgunits, contractGroup) {
+  searchOrgunits(name, orgunits, contractGroup, parentid) {
     var searchOuUrl =
       "organisationUnits?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]" +
-      "&pageSize=50" +
-      "&filter=name:ilike:" +
-      name;
+      "&pageSize=50";
+
+    if (name && name != "") {
+      searchOuUrl += "&filter=name:ilike:" + name;
+    }
     if (contractGroup) {
       searchOuUrl += "&filter=organisationUnitGroups.id:eq:" + contractGroup;
     }
@@ -258,6 +260,9 @@ class Dhis2 {
     } else if (orgunits && orgunits.length > 0) {
       searchOuUrl +=
         "&filter=ancestors.id:in:[" + orgunits.map(ou => ou.id).join(",") + "]";
+    }
+    if (parentid) {
+      searchOuUrl += "&filter=path:like:" + parentid;
     }
     return getInstance().then(d2 => d2.Api.getApi().get(searchOuUrl));
   }

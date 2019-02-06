@@ -39,6 +39,7 @@ class InvoiceService {
       dhis2,
       request
     );
+
     const values = new Values(
       rawValues,
       dataElementsNames,
@@ -80,52 +81,36 @@ class InvoiceService {
     );
     var names = {};
 
-    await Promise.all(
-      dataElementsFromGroups.dataElements.forEach(
-        async function(de) {
-          var dataElementNamesFromGroup = await this.getCategoryOptionComboByDataElement(
-            de.id
-          );
-          names = {
-            ...names,
-            ...dataElementNamesFromGroup
-          };
-        }.bind(this)
+    names = {
+      ...names,
+      ...this.getCategoryOptionComboByDataElement(
+        dataElementsFromGroups.dataElements
       )
-    );
+    };
 
-    await Promise.all(
-      dataElementsFromDataSet.dataElements.forEach(
-        async function(de) {
-          var dataElementNamesFromDataSet = await this.getCategoryOptionComboByDataElement(
-            de.id
-          );
-          names = {
-            ...names,
-            ...dataElementNamesFromDataSet
-          };
-        }.bind(this)
+    names = {
+      ...names,
+      ...this.getCategoryOptionComboByDataElement(
+        dataElementsFromDataSet.dataElements
       )
-    );
+    };
+
     return names;
   }
 
-  async getCategoryOptionComboByDataElement(dataElementId) {
-    const categoryOptionComboNames = await dhis2.getCategoryOptionComboByDataElement(
-      dataElementId
-    );
+  getCategoryOptionComboByDataElement(dataElements) {
     var names = {};
-    const categoryOptionCombos =
-      categoryOptionComboNames.categoryCombo.categoryOptionCombos;
-    if (categoryOptionCombos.length > 1) {
-      categoryOptionCombos.forEach(function(catOptionCombo) {
-        names[categoryOptionComboNames.id + "." + catOptionCombo.id] =
-          categoryOptionComboNames.name + "-" + catOptionCombo.name;
-      });
-    } else {
-      names[categoryOptionComboNames.id + "." + catOptionCombo.id] =
-        categoryOptionComboNames.name;
-    }
+    dataElements.forEach(function(de) {
+      const categoryOptionCombos = de.categoryCombo.categoryOptionCombos;
+      if (categoryOptionCombos.length > 1) {
+        categoryOptionCombos.forEach(function(catOptionCombo) {
+          names[de.id + "." + catOptionCombo.id] =
+            de.name + " - " + catOptionCombo.name;
+        });
+      } else if (categoryOptionCombos.length != 0) {
+        names[de.id + "." + categoryOptionCombos[0].name] = de.name;
+      }
+    });
     return names;
   }
 }

@@ -34,17 +34,17 @@ const values = new Values(
     ]
   },
   {
-    de: "Vaccination",
-    "de.coc": "Vaccination - under 5 year"
-  }
+    de: "Vaccination"
+  },
+  { "de.coc": "Vaccination - under 5 year" }
 );
 
 const noValueAmounts = new Values(
   { dataValues: undefined },
   {
-    de: "Vaccination",
-    "de.coc": "Vaccination - under 5 year"
-  }
+    de: "Vaccination"
+  },
+  { "de.coc": "Vaccination - under 5 year" }
 );
 
 it("handle data element (sum all coc)", () => {

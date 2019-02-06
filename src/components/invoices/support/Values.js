@@ -2,7 +2,7 @@ class Values {
   constructor(values, names, dataCatOptionComboNames) {
     this.values = values;
     this.names = names;
-    this.dataCatOptionComboNames = DataCatOptionComboNames;
+    this.dataCatOptionComboNames = dataCatOptionComboNames;
   }
 
   amount(code, selectedPeriod) {

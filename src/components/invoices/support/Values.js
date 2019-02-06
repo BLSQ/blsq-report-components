@@ -1,7 +1,8 @@
 class Values {
-  constructor(values, names) {
+  constructor(values, names, dataCatOptionComboNames) {
     this.values = values;
     this.names = names;
+    this.dataCatOptionComboNames = DataCatOptionComboNames;
   }
 
   amount(code, selectedPeriod) {
@@ -69,7 +70,13 @@ class Values {
   asAmount(code, period, value) {
     return {
       code: code,
-      name: this.names[code] ? this.names[code] : "",
+      name: code.includes(".")
+        ? this.dataCatOptionComboNames[code]
+          ? this.dataCatOptionComboNames[code]
+          : ""
+        : this.names[code]
+        ? this.names[code]
+        : "",
       value: value,
       period: period
     };
@@ -85,7 +92,13 @@ class Values {
   noValueAmount(code, selectedPeriod) {
     return {
       code: code,
-      name: this.names[code] ? this.names[code] : "",
+      name: code.includes(".")
+        ? this.dataCatOptionComboNames[code]
+          ? this.dataCatOptionComboNames[code]
+          : ""
+        : this.names[code]
+        ? this.names[code]
+        : "",
       value: undefined,
       period: selectedPeriod
     };

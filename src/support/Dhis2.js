@@ -115,6 +115,14 @@ class Dhis2 {
     return getInstance().then(d2 => d2.Api.getApi().get(categoryUrl));
   }
 
+  getCategoryOptionComboByDataElement(dataElementId) {
+    var dataElementUrl =
+      "/dataElements/" +
+      dataElementId +
+      "?fields=id,name,categoryCombo[id,name,categoryOptionCombos[id,name]]";
+    return getInstance().then(d2 => d2.Api.getApi().get(dataElementUrl));
+  }
+
   getDataSet(dataSetId) {
     var dataSetUrl =
       "/dataSets/" +

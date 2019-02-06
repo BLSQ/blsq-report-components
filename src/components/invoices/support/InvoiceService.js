@@ -79,30 +79,33 @@ class InvoiceService {
       request.invoiceType.dataSets
     );
     var names = {};
-    var dataElementNamesFromGroup = {};
-    var dataElementNamesFromDataSet = {};
+
     await Promise.all(
-      dataElementsFromGroups.dataElements.forEach(async function(de) {
-        dataElementNamesFromGroup = await getCategoryOptionComboByDataElement(
-          de.id
-        );
-        names = {
-          ...names,
-          ...dataElementNamesFromGroup
-        };
-      })
+      dataElementsFromGroups.dataElements.forEach(
+        async function(de) {
+          var dataElementNamesFromGroup = await this.getCategoryOptionComboByDataElement(
+            de.id
+          );
+          names = {
+            ...names,
+            ...dataElementNamesFromGroup
+          };
+        }.bind(this)
+      )
     );
 
     await Promise.all(
-      dataElementsFromDataSet.dataElements.forEach(async function(de) {
-        dataElementNamesFromDataSet = await getCategoryOptionComboByDataElement(
-          de.id
-        );
-        names = {
-          ...names,
-          ...dataElementNamesFromDataSet
-        };
-      })
+      dataElementsFromDataSet.dataElements.forEach(
+        async function(de) {
+          var dataElementNamesFromDataSet = await this.getCategoryOptionComboByDataElement(
+            de.id
+          );
+          names = {
+            ...names,
+            ...dataElementNamesFromDataSet
+          };
+        }.bind(this)
+      )
     );
     return names;
   }

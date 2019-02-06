@@ -7,7 +7,7 @@ class Mapper {
         value.dataElement + "." + value.categoryOptionCombo,
         period
       );
-      totals.push(total);
+      totals.push({ total: total });
     });
 
     const invoice = {

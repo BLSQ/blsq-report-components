@@ -1,10 +1,6 @@
 import React, { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
+import { Cell } from "@blsq/blsq-report-components";
 const styles = {
   invoiceFrame: {
     backgroundColor: "#ffffff",
@@ -22,26 +18,38 @@ class Invoice extends Component {
       <div className={classes.invoiceFrame} id="invoiceFrame">
         <h1>Demo</h1>
         <p>{this.props.invoice.orgUnit.name}</p>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Order</TableCell>
-              <TableCell>DataElement</TableCell>
-              <TableCell>Value</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+        <table
+          style={{
+            borderCollapse: "collapse",
+            fontSize: "11px",
+            border: "0.5pt solid black"
+          }}
+        >
+          <thead>
+            <tr>
+              <Cell variant="text" value="Order" field="self" />
+              <Cell variant="text" value="dataElement" field="self" />
+              <Cell variant="text" value="Value" field="self" />
+            </tr>
+          </thead>
+          <tbody>
             {this.props.invoice.totals.map((de, index) => {
+              console.log(de);
               return (
-                <TableRow key={index}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{de.name}</TableCell>
-                  <TableCell>{de.value}</TableCell>
-                </TableRow>
+                <tr key={index}>
+                  <Cell variant="order" value={index} field="self" />
+                  <Cell
+                    variant="text"
+                    value={de.total.name}
+                    field="self"
+                    bold
+                  />
+                  <Cell variant="money" value={de} field="total" decimals={0} />
+                </tr>
               );
             })}
-          </TableBody>
-        </Table>
+          </tbody>
+        </table>
       </div>
     );
   }

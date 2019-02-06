@@ -83,7 +83,7 @@ class InvoiceService {
     var dataElementNamesFromDataSet = {};
     await Promise.all(
       dataElementsFromGroups.dataElements.forEach(async function(de) {
-        dataElementNamesFromGroup = await this.getCategoryOptionComboByDataElement(
+        dataElementNamesFromGroup = await getCategoryOptionComboByDataElement(
           de.id
         );
         names = {
@@ -95,7 +95,7 @@ class InvoiceService {
 
     await Promise.all(
       dataElementsFromDataSet.dataElements.forEach(async function(de) {
-        dataElementNamesFromDataSet = await this.getCategoryOptionComboByDataElement(
+        dataElementNamesFromDataSet = await getCategoryOptionComboByDataElement(
           de.id
         );
         names = {

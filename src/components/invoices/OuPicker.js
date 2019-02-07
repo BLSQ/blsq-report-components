@@ -23,11 +23,11 @@ class OuPicker extends Component {
     const classes = this.props.classes;
     return (
       <TextField
+        autoFocus
         label="Organisation Unit name"
         InputLabelProps={{ shrink: true }}
         onChange={this.handleChange}
         margin="normal"
-        value={this.props.ouSearchValue}
         className={classes.formControl}
       />
     );

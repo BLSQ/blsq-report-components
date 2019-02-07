@@ -4,7 +4,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { withNamespaces } from "react-i18next";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
-import Button from "@material-ui/core/Button";
+import LinearProgress from '@material-ui/core/LinearProgress';
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
@@ -42,90 +42,96 @@ class InvoiceSelectionContainer extends Component {
 
   constructor(props) {
     super(props);
-    const params = new URLSearchParams(props.location.search.substring(1));
-    const query = params.get("q");
-    this.searchOrgunit = debounce(this.searchOrgunit.bind(this), 500);
+    this.searchOrgunit = debounce(this.searchOrgunit.bind(this), 1000);
     this.onOuSearchChange = this.onOuSearchChange.bind(this);
     this.onPeriodChange = this.onPeriodChange.bind(this);
-    this.synchronizeUrl = this.synchronizeUrl.bind(this);
+    this.synchronizeUrl = debounce(this.synchronizeUrl.bind(this),200);
     this.onParentOrganisationUnit = this.onParentOrganisationUnit.bind(this);
-    this.state = { ouSearchValue: query || "" };
+    this.state = {};
   }
 
   componentDidMount() {
     this.searchOrgunit();
-    console.log("InvoiceSelectionContainer did mount");
   }
 
   onOuSearchChange(event) {
     let ouSearchValue = event.target.value;
-    this.setState({ ouSearchValue: ouSearchValue }, this.searchOrgunit);
+    this.synchronizeHistory(
+      this.props.parent,
+      ouSearchValue,
+      this.props.period
+    );
   }
 
   synchronizeUrl() {
+    this.setState({loading: true})
     synchronizeHistory(
       this.props.parent,
-      this.state.ouSearchValue,
+      this.props.ouSearchValue,
       this.props.period
     );
   }
 
   synchronizeHistory(parent, ouSearchValue, period) {
-    const stateParam = parent ? "&parent=" + parent : "";
+    const parentParam = parent ? "&parent=" + parent : "";
     this.props.history.replace({
       pathname: "/select",
-      search: "?q=" + ouSearchValue + "&period=" + period + stateParam
+      search: "?q=" + ouSearchValue + "&period=" + period + parentParam
     });
   }
 
   onParentOrganisationUnit(orgUnit) {
-    this.synchronizeHistory(orgUnit, this.state.ouSearchValue, this.props.period);
-    this.searchOrgunit();
-  }
-
-  handleSubmit(event) {
-    this.synchronizeUrl();
-    this.searchOrgunit();
-    event.preventDefault();
+    this.synchronizeHistory(
+      orgUnit,
+      this.props.ouSearchValue,
+      this.props.period
+    );
   }
 
   onPeriodChange(period) {
-    this.synchronizeHistory(this.props.parent, this.state.ouSearchValue, period);
-
-    //this.props.onPeriodChange(period);
+    this.synchronizeHistory(
+      this.props.parent,
+      this.props.ouSearchValue,
+      period
+    );
   }
 
   async searchOrgunit() {
-    let searchvalue = this.state.ouSearchValue
-      ? this.state.ouSearchValue.trim()
+    let searchvalue = this.props.ouSearchValue
+      ? this.props.ouSearchValue.trim()
       : "";
     if (this.props.currentUser) {
-      console.log("Searching for " + searchvalue);
-      const user = this.props.currentUser;
-      const orgUnitsResp = await this.props.dhis2.searchOrgunits(
-        searchvalue,
-        user.dataViewOrganisationUnits,
-        this.props.contractedOrgUnitGroupId,
-        this.props.parent
-      );
-      console.log(
-        "Searching for " +
-          this.props.period +
-          searchvalue +
-          " => " +
-          orgUnitsResp.organisationUnits.length
-      );
-      this.setState({
-        orgUnits: orgUnitsResp.organisationUnits
-      });
+      this.setState({loading: true})
+        const user = this.props.currentUser;
+        const orgUnitsResp = await this.props.dhis2.searchOrgunits(
+          searchvalue,
+          user.dataViewOrganisationUnits,
+          this.props.contractedOrgUnitGroupId,
+          this.props.parent
+        );
+        console.log(
+          "Searching for " +
+            this.props.period +
+            searchvalue +
+            " => " +
+            orgUnitsResp.organisationUnits.length
+        );
+        this.setState({
+          orgUnits: orgUnitsResp.organisationUnits,
+          loading: false
+        });
     }
   }
 
   componentWillReceiveProps(nextProps) {
+    const dirty =
+      nextProps.ouSearchValue !== this.props.ouSearchValue ||
+      nextProps.parent != this.props.parent;
     this.props = nextProps;
+
     const user = this.props.currentUser;
-    if (user) {
-      //this.searchOrgunit();
+    if (user && dirty) {
+      this.searchOrgunit();
     }
   }
 
@@ -136,27 +142,28 @@ class InvoiceSelectionContainer extends Component {
         <Typography variant="title" component="h5" gutterBottom>
           {t("report_and_invoices")}
         </Typography>
-        <form onSubmit={this.handleSubmit}>
-          <div className={classes.filters}>
-            <OrgUnitAutoComplete
-              organisationUnits={this.props.topLevelsOrgUnits}
-              onChange={this.onParentOrganisationUnit}
-              selected={this.props.parent}
-            />
+        <div className={classes.filters}>
+          <OrgUnitAutoComplete
+            organisationUnits={this.props.topLevelsOrgUnits}
+            onChange={this.onParentOrganisationUnit}
+            selected={this.props.parent}
+          />
+          <br />
 
-            <OuPicker
-              ouSearchValue={this.state.ouSearchValue}
-              onOuSearchChange={this.onOuSearchChange}
-            />
+          <OuPicker
+            onOuSearchChange={this.onOuSearchChange}
+          />
 
-            <PeriodPicker
-              period={this.props.period}
-              onPeriodChange={this.onPeriodChange}
-              periodFormat={this.props.periodFormat}
-            />
-          </div>
-          <input type="submit" />
-        </form>
+          <PeriodPicker
+            period={this.props.period}
+            onPeriodChange={this.onPeriodChange}
+            periodFormat={this.props.periodFormat}
+          />
+          <br/>
+          {this.state.loading ?  <LinearProgress variant="query" /> : ""}
+        </div>
+
+
         <br />
 
         <br />

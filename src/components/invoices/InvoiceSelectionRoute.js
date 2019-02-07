@@ -14,7 +14,7 @@ const invoiceSelectionRoute = props => {
         );
         const period = params.get("period");
         const parent = params.get("parent");
-
+        const ouSearchValue = params.get("q");
         return (
           <InvoiceSelectionContainer
             key="InvoiceSelectionContainer"
@@ -28,6 +28,7 @@ const invoiceSelectionRoute = props => {
             dhis2={props.dhis2}
             topLevelsOrgUnits={props.topLevelsOrgUnits}
             parent={parent}
+            ouSearchValue={ouSearchValue}
           />
         );
       }}

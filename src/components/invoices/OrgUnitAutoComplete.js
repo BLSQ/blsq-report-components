@@ -24,7 +24,7 @@ const styles = theme => ({
   },
   input: {
     display: "flex",
-    width: "630px",
+    width: "560px",
     padding: 0
   },
   valueContainer: {
@@ -47,6 +47,7 @@ const styles = theme => ({
   },
   paper: {
     position: "absolute",
+    maxWidth: "630px",
     zIndex: 1,
     marginTop: theme.spacing.unit,
     left: 0,

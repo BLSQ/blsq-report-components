@@ -212,7 +212,7 @@ class IntegrationReactSelect extends React.Component {
           components={components}
           value={selected}
           onChange={this.handleChange("single")}
-          placeholder="Search a country (start with a)"
+          placeholder="Search or select parent organisation unit"
           isClearable
         />
       </div>

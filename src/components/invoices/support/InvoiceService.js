@@ -57,20 +57,14 @@ class InvoiceService {
     dataElementsFromGroups.dataElements.forEach(
       function(de) {
         names[de.id] = de.displayName;
-        var dataEltCatOptionComboNames = this.getCategoryOptionComboByDataElement(
-          de
-        );
-        names = { ...names, ...dataEltCatOptionComboNames };
+        names = { ...names, ...this.getCategoryOptionComboByDataElement(de) };
       }.bind(this)
     );
 
     dataElementsFromDataSet.dataElements.forEach(
       function(de) {
         names[de.id] = de.displayName;
-        var dataEltCatOptionComboNames = this.getCategoryOptionComboByDataElement(
-          de
-        );
-        names = { ...names, ...dataEltCatOptionComboNames };
+        names = { ...names, ...this.getCategoryOptionComboByDataElement(de) };
       }.bind(this)
     );
     return names;

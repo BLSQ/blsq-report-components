@@ -27,6 +27,7 @@ class OuPicker extends Component {
         label="Organisation Unit name"
         InputLabelProps={{ shrink: true }}
         onChange={this.handleChange}
+        value= {this.props.ouSearchValue}
         margin="normal"
         className={classes.formControl}
       />

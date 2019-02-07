@@ -36,6 +36,13 @@ const DrawerLinks = props => (
     >
       Auto generated invoice from orbf2 descriptor
     </ListItem>
+    <ListItem
+      button
+      component={Link}
+      to="/select?q=afro&period=2018Q2&parent=at6UHUQatSo"
+    >
+      Bookmarked search
+    </ListItem>
   </React.Fragment>
 );
 

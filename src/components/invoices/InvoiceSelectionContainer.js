@@ -42,7 +42,7 @@ class InvoiceSelectionContainer extends Component {
 
   constructor(props) {
     super(props);
-    this.searchOrgunit = debounce(this.searchOrgunit.bind(this), 1000);
+    this.searchOrgunit = debounce(this.searchOrgunit.bind(this), 1500);
     this.onOuSearchChange = this.onOuSearchChange.bind(this);
     this.onPeriodChange = this.onPeriodChange.bind(this);
     this.synchronizeUrl = debounce(this.synchronizeUrl.bind(this),200);
@@ -152,6 +152,7 @@ class InvoiceSelectionContainer extends Component {
 
           <OuPicker
             onOuSearchChange={this.onOuSearchChange}
+            ouSearchValue={this.props.ouSearchValue}
           />
 
           <PeriodPicker

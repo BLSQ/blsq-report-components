@@ -35,16 +35,8 @@ class InvoiceService {
 
     const rawValues = await dhis2.getInvoiceValues(request);
     const dataElementsNames = await this.getDataElementsNames(dhis2, request);
-    const dataElementsCategoryOptionComboNames = await this.getDataElementCategoryOptionComboNames(
-      dhis2,
-      request
-    );
 
-    const values = new Values(
-      rawValues,
-      dataElementsNames,
-      dataElementsCategoryOptionComboNames
-    );
+    const values = new Values(rawValues, dataElementsNames);
     const invoice = mapper.mapValues(request, values);
     const systemInfo = await dhis2.systemInfoRaw();
 
@@ -62,55 +54,39 @@ class InvoiceService {
       request.invoiceType.dataSets
     );
     var names = {};
-    dataElementsFromGroups.dataElements.forEach(function(de) {
-      names[de.id] = de.displayName;
-    });
+    dataElementsFromGroups.dataElements.forEach(
+      function(de) {
+        names[de.id] = de.displayName;
+        var dataEltCatOptionComboNames = this.getCategoryOptionComboByDataElement(
+          de
+        );
+        names = { ...names, ...dataEltCatOptionComboNames };
+      }.bind(this)
+    );
 
-    dataElementsFromDataSet.dataElements.forEach(function(de) {
-      names[de.id] = de.displayName;
-    });
+    dataElementsFromDataSet.dataElements.forEach(
+      function(de) {
+        names[de.id] = de.displayName;
+        var dataEltCatOptionComboNames = this.getCategoryOptionComboByDataElement(
+          de
+        );
+        names = { ...names, ...dataEltCatOptionComboNames };
+      }.bind(this)
+    );
     return names;
   }
 
-  async getDataElementCategoryOptionComboNames(dhis2, request) {
-    const dataElementsFromGroups = await dhis2.getDataElementNamesByGroups(
-      request.invoiceType.dataElementGroups
-    );
-    const dataElementsFromDataSet = await dhis2.getDataElementNamesByDataSets(
-      request.invoiceType.dataSets
-    );
+  getCategoryOptionComboByDataElement(de) {
     var names = {};
-
-    names = {
-      ...names,
-      ...this.getCategoryOptionComboByDataElement(
-        dataElementsFromGroups.dataElements
-      )
-    };
-
-    names = {
-      ...names,
-      ...this.getCategoryOptionComboByDataElement(
-        dataElementsFromDataSet.dataElements
-      )
-    };
-
-    return names;
-  }
-
-  getCategoryOptionComboByDataElement(dataElements) {
-    var names = {};
-    dataElements.forEach(function(de) {
-      const categoryOptionCombos = de.categoryCombo.categoryOptionCombos;
-      if (categoryOptionCombos.length > 1) {
-        categoryOptionCombos.forEach(function(catOptionCombo) {
-          names[de.id + "." + catOptionCombo.id] =
-            de.name + " - " + catOptionCombo.name;
-        });
-      } else if (categoryOptionCombos.length != 0) {
-        names[de.id + "." + categoryOptionCombos[0].name] = de.name;
-      }
-    });
+    const categoryOptionCombos = de.categoryCombo.categoryOptionCombos;
+    if (categoryOptionCombos.length > 1) {
+      categoryOptionCombos.forEach(function(catOptionCombo) {
+        names[de.id + "." + catOptionCombo.id] =
+          de.name + " - " + catOptionCombo.name;
+      });
+    } else if (categoryOptionCombos.length != 0) {
+      names[de.id + "." + categoryOptionCombos[0].name] = de.name;
+    }
     return names;
   }
 }

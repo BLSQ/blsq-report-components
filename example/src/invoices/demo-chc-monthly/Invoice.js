@@ -34,7 +34,6 @@ class Invoice extends Component {
           </thead>
           <tbody>
             {this.props.invoice.totals.map((de, index) => {
-              console.log(de);
               return (
                 <tr key={index}>
                   <Cell variant="order" value={index} field="self" />

@@ -73,6 +73,9 @@ class InvoiceSelectionContainer extends Component {
   }
 
   synchronizeHistory(parent, ouSearchValue, period) {
+    if (!ouSearchValue) {
+      ouSearchValue = ""
+    }
     const parentParam = parent ? "&parent=" + parent : "";
     this.props.history.replace({
       pathname: "/select",

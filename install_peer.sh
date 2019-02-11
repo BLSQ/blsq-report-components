@@ -7,4 +7,5 @@ npm install --no-save --no-package-lock \
    react-router-dom@4.3.1 \
    babel-polyfill \
    i18next@14.0.1 \
-   react-i18next@9.0.10
+   react-i18next@9.0.10 \
+   react-select@2.3.0

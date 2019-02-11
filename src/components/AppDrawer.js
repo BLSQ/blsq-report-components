@@ -120,12 +120,112 @@ const styles = theme => ({
   }
 });
 
+const RawAppDrawer = props => {
+  const DrawerLinks = props.drawerLinks || React.Fragment;
+  return (
+    <Drawer
+      variant="persistent"
+      anchor="left"
+      open={props.open}
+      className="no-print"
+      classes={{
+        paper: props.classes.drawerPaper
+      }}
+    >
+      <div className={props.classes.drawerHeader}>
+        <IconButton onClick={props.handleDrawerClose}>
+          <ChevronLeftIcon />
+        </IconButton>
+      </div>
+      <Divider />
+      <List onClick={props.handleDrawerClose}>
+        <ListItem button component="a" href="/">
+          <ListItemIcon>
+            <Dashboard />
+          </ListItemIcon>
+          <ListItemText primary="Dashboard" />
+        </ListItem>
+        <ListItem button component="a" href="./index.html#/select">
+          <ListItemIcon>
+            <FileIcon />
+          </ListItemIcon>
+          <ListItemText primary={props.t("report_and_invoices")} />
+        </ListItem>
+        <Divider />
+        <DrawerLinks period={props.period} />
+      </List>
+    </Drawer>
+  );
+};
+const AppDrawer = withNamespaces()(RawAppDrawer);
+
+class RawAppToolBar extends React.Component {
+  shouldComponentUpdate(nextProps) {
+    return this.props.currentUser !== nextProps.currentUser;
+  }
+
+  render() {
+    const { classes, open, currentUser, handleDrawerOpen, t } = this.props;
+    return (
+      <Toolbar disableGutters={!open}>
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          onClick={handleDrawerOpen}
+          className={classNames(classes.menuButton, open && classes.hide)}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Button aria-label="Menu" href="/">
+          <img
+            src="https://www.dhis2.org/sites/all/themes/dhis/logo.png"
+            className={classes.imageStyle}
+            alt="dhis2"
+          />
+        </Button>
+        <Typography variant="title" color="inherit" className={classes.flex}>
+          {t("app_name")}
+        </Typography>
+
+        <Typography
+          variant="title"
+          color="inherit"
+          title={
+            currentUser &&
+            "manage " +
+              currentUser.organisationUnits.map(ou => ou.name).join(", ") +
+              " and view " +
+              currentUser.dataViewOrganisationUnits
+                .map(ou => ou.name)
+                .join(", ")
+          }
+        >
+          {currentUser && currentUser.name}
+        </Typography>
+        <div>
+          <IconButton
+            aria-owns="menu-appbar"
+            aria-haspopup="true"
+            color="inherit"
+          >
+            <AccountCircle />
+          </IconButton>
+        </div>
+      </Toolbar>
+    );
+  }
+}
+
+const AppToolBar = withNamespaces()(RawAppToolBar);
+
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       period: DatePeriods.currentQuarter(),
+
       open: false,
+      orgUnits: [],
       currentUser: this.props.user
     };
     this.onPeriodChange = this.onPeriodChange.bind(this);
@@ -134,8 +234,10 @@ class App extends React.Component {
 
   async fetchCurrentUser() {
     const user = await this.props.dhis2.currentUserRaw();
+    const topLevelsOrgUnits = await this.props.dhis2.getTopLevels([2, 3]);
     this.setState({
-      currentUser: user
+      currentUser: user,
+      topLevelsOrgUnits: topLevelsOrgUnits
     });
   }
 
@@ -158,41 +260,6 @@ class App extends React.Component {
   render() {
     const { classes, t } = this.props;
     const { open } = this.state;
-    const DrawerLinks = this.props.drawerLinks || React.Fragment;
-    const drawer = (
-      <Drawer
-        variant="persistent"
-        anchor="left"
-        open={open}
-        className="no-print"
-        classes={{
-          paper: classes.drawerPaper
-        }}
-      >
-        <div className={classes.drawerHeader}>
-          <IconButton onClick={this.handleDrawerClose}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </div>
-        <Divider />
-        <List onClick={this.handleDrawerClose}>
-          <ListItem button component="a" href="/">
-            <ListItemIcon>
-              <Dashboard />
-            </ListItemIcon>
-            <ListItemText primary="Dashboard" />
-          </ListItem>
-          <ListItem button component="a" href="./index.html#/select">
-            <ListItemIcon>
-              <FileIcon />
-            </ListItemIcon>
-            <ListItemText primary={t("report_and_invoices")} />
-          </ListItem>
-          <Divider />
-          <DrawerLinks period={this.state.period} />
-        </List>
-      </Drawer>
-    );
 
     const frequency = this.state.period.includes("S")
       ? "sixMonthly"
@@ -205,58 +272,9 @@ class App extends React.Component {
       invoices: this.props.invoices,
       currentUser: this.state.currentUser,
       incentivesDescriptors: this.props.incentivesDescriptors,
-      dataElementGroups: this.props.dataElementGroups
+      dataElementGroups: this.props.dataElementGroups,
+      topLevelsOrgUnits: this.state.topLevelsOrgUnits
     };
-
-    const toolbar = (
-      <Toolbar disableGutters={!open}>
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          onClick={this.handleDrawerOpen}
-          className={classNames(classes.menuButton, open && classes.hide)}
-        >
-          <MenuIcon />
-        </IconButton>
-        <Button aria-label="Menu" href="/">
-          <img
-            src="https://www.dhis2.org/sites/all/themes/dhis/logo.png"
-            className={classes.imageStyle}
-            alt="dhis2"
-          />
-        </Button>
-        <Typography variant="title" color="inherit" className={classes.flex}>
-          {t("app_name")}
-        </Typography>
-
-        <Typography
-          variant="title"
-          color="inherit"
-          title={
-            this.state.currentUser &&
-            "manage " +
-              this.state.currentUser.organisationUnits
-                .map(ou => ou.name)
-                .join(", ") +
-              " and view " +
-              this.state.currentUser.dataViewOrganisationUnits
-                .map(ou => ou.name)
-                .join(", ")
-          }
-        >
-          {this.state.currentUser && this.state.currentUser.name}
-        </Typography>
-        <div>
-          <IconButton
-            aria-owns="menu-appbar"
-            aria-haspopup="true"
-            color="inherit"
-          >
-            <AccountCircle />
-          </IconButton>
-        </div>
-      </Toolbar>
-    );
 
     return (
       <Router>
@@ -270,9 +288,20 @@ class App extends React.Component {
                 }) + " no-print"
               }
             >
-              {toolbar}
+              <AppToolBar
+                classes={classes}
+                open={open}
+                currentUser={this.state.currentUser}
+                handleDrawerOpen={this.handleDrawerOpen}
+              />
             </AppBar>
-            {drawer}
+            <AppDrawer
+              classes={classes}
+              open={open}
+              handleDrawerClose={this.handleDrawerClose}
+              drawerLinks={this.props.drawerLinks}
+              period={this.state.period}
+            />
             <main
               className={classNames(classes.content, classes[`content-left`], {
                 [classes.contentShift]: open,

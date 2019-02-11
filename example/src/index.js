@@ -1,4 +1,4 @@
-import * as ds from "babel-polyfill";
+import "babel-polyfill";
 import "./index.css";
 import React from "react";
 import ReactDOM from "react-dom";

@@ -32,7 +32,7 @@ const DrawerLinks = props => (
     <ListItem
       button
       component={Link}
-      to="/invoices/2018Q3/DqfiI6NVnB1/rbf_payment_for"
+      to="/invoices/2018Q1/DqfiI6NVnB1/rbf_payment_for"
     >
       Auto generated invoice from orbf2 descriptor
     </ListItem>

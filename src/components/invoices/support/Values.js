@@ -92,6 +92,10 @@ class Values {
   }
 
   codeType(code, codeType) {
+    if (code == undefined) {
+      debugger;
+      return undefined
+    }
     switch (codeType) {
       case "de":
         return code.includes(".") ? code.split(".")[0] : code;

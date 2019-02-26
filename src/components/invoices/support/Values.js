@@ -93,7 +93,6 @@ class Values {
 
   codeType(code, codeType) {
     if (code == undefined) {
-      debugger;
       return undefined
     }
     switch (codeType) {

@@ -47,6 +47,24 @@ const noValueAmounts = new Values(
   }
 );
 
+it("allows null code", () => {
+  expect(values.amountByOrgUnit(undefined, "orgunit1", "2016Q1")).toEqual({
+    code: undefined,
+    name: "",
+    period: "2016Q1",
+    value: " "
+  });
+});
+
+it("allows null code", () => {
+  expect(values.amount(undefined, "2016Q1")).toEqual({
+    code: undefined,
+    name: "",
+    period: "2016Q1",
+    value: " "
+  });
+});
+
 it("handle data element (sum all coc)", () => {
   expect(values.amountByOrgUnit("de", "orgunit1", "2016Q1")).toEqual({
     code: "de",

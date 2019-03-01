@@ -115,7 +115,7 @@ class DatePeriods {
     return (
       currentDate.getFullYear() +
       "Q" +
-      this.quarterByMonth(currentDate.getMonth())
+      this.quarterByMonth(currentDate.getMonth() + 1)
     );
   }
 

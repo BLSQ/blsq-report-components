@@ -6,7 +6,7 @@ class Values {
 
   amount(code, selectedPeriod) {
     if (this.values.dataValues === undefined) {
-      return noValueAmount(code, selectedPeriod);
+      return this.noValueAmount(code, selectedPeriod);
     }
     const amounts = this.getFilteredValues(
       this.getFilterCriteria(code, selectedPeriod)
@@ -108,7 +108,7 @@ class Values {
 
   textByOrgUnit(code, orgUnit, selectedPeriod) {
     if (this.values.dataValues === undefined) {
-      return noValueAmount(code, selectedPeriod);
+      return this.noValueAmount(code, selectedPeriod);
     }
     const amounts = this.getFilteredValues(
       this.getFilterCriteria(code, selectedPeriod, orgUnit)

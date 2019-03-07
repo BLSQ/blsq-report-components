@@ -118,7 +118,7 @@ class Values {
       value = amounts[0].value;
     }
 
-    return asAmount(code, selectedPeriod, value);
+    return this.asAmount(code, selectedPeriod, value);
   }
 
   assignFormulaAmounts(total, descriptor, period, normalizeAttrib) {

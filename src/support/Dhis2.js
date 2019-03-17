@@ -372,6 +372,18 @@ class Dhis2 {
       });
   }
 
+  organisationUnits() {
+    const organisationUnitsUrl =
+      "/organisationUnits.json?fields=id,name,organisationUnitGroups[id,name],level,path,ancestors[id,name]&paging=false";
+    return getInstance().then(d2 => d2.Api.getApi().get(organisationUnitsUrl));
+  }
+
+  organisationUnitGroupSets() {
+    const organisationUnitsUrl =
+      "/organisationUnitGroupSets.json?fields=id,name,organisationUnitGroups[id,name]&paging=false";
+    return getInstance().then(d2 => d2.Api.getApi().get(organisationUnitsUrl));
+  }
+
   /**
    * Make sure the response status code is 2xx
    * @param response

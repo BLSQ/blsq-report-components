@@ -62,7 +62,11 @@ const OrganisationUnitList = props => {
               <TableCell>
                 {ou.ancestors && ou.ancestors[2] && ou.ancestors[2].name}
               </TableCell>
-              <TableCell>{ou.name}</TableCell>
+              <TableCell
+                title={ou.organisationUnitGroups.map(g => g.name).join(", ")}
+              >
+                {ou.name}
+              </TableCell>
               {organisationUnitGroupSets.map(groupset => (
                 <TableCell>
                   {groupsBelongingToGroupSet(ou, groupset)

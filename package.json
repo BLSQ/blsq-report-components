@@ -67,5 +67,9 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "formik": "^1.5.1",
+    "formik-material-ui": "0.0.16"
+  }
 }

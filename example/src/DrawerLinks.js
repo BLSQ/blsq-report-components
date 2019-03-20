@@ -43,6 +43,9 @@ const DrawerLinks = props => (
     >
       Bookmarked search
     </ListItem>
+    <ListItem button component={Link} to="/pyramid">
+      <ListItemText primary="Organisation Unit Groups Manager" />
+    </ListItem>
   </React.Fragment>
 );
 

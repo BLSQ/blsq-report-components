@@ -244,6 +244,12 @@ class Dhis2 {
     return getInstance().then(d2 => d2.Api.getApi().get(url));
   }
 
+  addToGroup(orgUnitId, groupId) {
+    const url =
+      "organisationUnitGroups/" + groupId + "/organisationUnits/" + orgUnitId;
+    return getInstance().then(d2 => d2.Api.getApi().post(url));
+  }
+
   searchOrgunits(name, orgunits, contractGroup, parentid) {
     var searchOuUrl =
       "organisationUnits?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]" +

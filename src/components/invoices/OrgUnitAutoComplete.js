@@ -195,8 +195,6 @@ class IntegrationReactSelect extends React.Component {
       ? options.find(ou => ou.value === this.props.selected)
       : undefined;
 
-
-
     return (
       <div className={classes.root}>
         <Select

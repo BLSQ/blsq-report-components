@@ -244,10 +244,31 @@ class Dhis2 {
     return getInstance().then(d2 => d2.Api.getApi().get(url));
   }
 
-  addToGroup(orgUnitId, groupId) {
-    const url =
-      "organisationUnitGroups/" + groupId + "/organisationUnits/" + orgUnitId;
-    return getInstance().then(d2 => d2.Api.getApi().post(url));
+  addToGroup(orgUnitId, targetGroup) {
+    // const url =
+    //   "organisationUnitGroups/" + groupId + "/organisationUnits/" + orgUnitId;
+    // return getInstance().then(d2 => d2.Api.getApi().delete(url));
+
+    // const url = "organisationUnits/OjidoDQhidx";
+    // return getInstance().then(d2 =>
+    //   d2.Api.getApi().update(url, {
+    //     name: "DHIS2 vUcl9aPaSNz",
+    //     shortName: "DHIS2 vUcl9aPaSNz",
+    //     openingDate: "2019-03-20",
+    //     organisationUnitGroups: [{ id: groupId }]
+    //   })
+    // );
+
+    const url = "organisationUnitGroups/" + targetGroup.id;
+
+    return getInstance().then(d2 =>
+      d2.Api.getApi().update(url, {
+        name: targetGroup.name,
+        organisationUnits: targetGroup.organisationUnits.concat({
+          id: orgUnitId
+        })
+      })
+    );
   }
 
   searchOrgunits(name, orgunits, contractGroup, parentid) {
@@ -385,9 +406,15 @@ class Dhis2 {
   }
 
   organisationUnitGroupSets() {
-    const organisationUnitsUrl =
+    const url =
       "/organisationUnitGroupSets.json?fields=id,name,organisationUnitGroups[id,name]&paging=false";
-    return getInstance().then(d2 => d2.Api.getApi().get(organisationUnitsUrl));
+    return getInstance().then(d2 => d2.Api.getApi().get(url));
+  }
+
+  organisationUnitGroups() {
+    const url =
+      "/organisationUnitGroups.json?fields=id,name,organisationUnits[id],groupSets[id,name]&paging=false";
+    return getInstance().then(d2 => d2.Api.getApi().get(url));
   }
 
   /**

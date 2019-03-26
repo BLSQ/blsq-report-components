@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { withNamespaces } from "react-i18next";
-import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import TableBody from "@material-ui/core/TableBody";
@@ -10,25 +9,13 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
-import Radio from "@material-ui/core/Radio";
 import Button from "@material-ui/core/Button";
+
 import OrgUnitAutoComplete from "../invoices/OrgUnitAutoComplete";
 import OuPicker from "../invoices/OuPicker";
-import OuFormLink from "./OuFormLink";
-
-import FormControl from "@material-ui/core/FormControl";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-
-import { Formik, Field, Form } from "formik";
-import { TextField, Checkbox, RadioGroup } from "formik-material-ui";
+import OrgUnitsGroupsForm from "./OrgUnitsGroupsForm";
 
 import debounce from "lodash/debounce";
-
-const styles = theme => ({
-  filters: {
-    marginLeft: "30px"
-  }
-});
 
 class OuSelectionContainer extends Component {
   constructor(props) {
@@ -37,7 +24,9 @@ class OuSelectionContainer extends Component {
     this.onOuSearchChange = this.onOuSearchChange.bind(this);
     this.synchronizeUrl = debounce(this.synchronizeUrl.bind(this), 200);
     this.onParentOrganisationUnit = this.onParentOrganisationUnit.bind(this);
-    this.state = {};
+    this.state = {
+      open: false
+    };
   }
 
   componentDidMount() {
@@ -81,7 +70,7 @@ class OuSelectionContainer extends Component {
     );
   }
 
-  async searchOrgunit() {
+  searchOrgunit = async () => {
     let searchvalue = this.props.ouSearchValue
       ? this.props.ouSearchValue.trim()
       : "";
@@ -105,7 +94,7 @@ class OuSelectionContainer extends Component {
         loading: false
       });
     }
-  }
+  };
 
   componentWillReceiveProps(nextProps) {
     const dirty =
@@ -119,25 +108,16 @@ class OuSelectionContainer extends Component {
     }
   }
 
-  setSelectedOrgUnitGroups(selectedOrgUnit) {
-    let orgUnitGroups = selectedOrgUnit.organisationUnitGroups.map(
-      group => group.id
-    );
+  handleDialogFormOpen = () => {
+    this.setState({ open: true });
+  };
 
-    if (orgUnitGroups.length > 0) {
-      this.props.organisationUnitGroupSets.forEach(groupset => {
-        let intersection = groupset.organisationUnitGroups
-          .filter(group => orgUnitGroups.includes(group.id))
-          .map(group => group.id);
-
-        this.props.setFieldValue("groupsets." + groupset.id, intersection);
-      });
-    }
-  }
+  handleDialogFormClose = () => {
+    this.setState({ open: false });
+  };
 
   render() {
-    const { classes, t, values, setFieldValue } = this.props;
-    const { activeStep } = this.state;
+    const { classes, t } = this.props;
 
     return (
       <React.Fragment>
@@ -162,22 +142,23 @@ class OuSelectionContainer extends Component {
         </div>
 
         <br />
-
-        <Field
-          id="orgUnitId"
-          type="hidden"
-          name="orgUnitId"
-          value={values.orgUnitId}
-          component={TextField}
+        <OrgUnitsGroupsForm
+          open={this.state.open}
+          handleDialogFormClose={this.handleDialogFormClose}
+          organisationUnitGroupSets={this.props.organisationUnitGroupSets}
+          organisationUnitGroups={this.props.organisationUnitGroups}
+          selectedOrgUnit={this.props.selectedOrgUnit}
+          groupsetInitVals={this.props.groupsetInitVals}
+          searchOrgunit={this.searchOrgunit}
+          {...this.props}
         />
-
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>{t("org_unit_name")}</TableCell>
-              <TableCell>{this.props.levels[1]}</TableCell>
-              <TableCell>{this.props.levels[2]}</TableCell>
-              <TableCell>{t("org_unit_operation")}</TableCell>
+              <TableCell>Levels</TableCell>
+              <TableCell>organisation unit groups</TableCell>
+              <TableCell align="right">{t("org_unit_operation")}</TableCell>
             </TableRow>
           </TableHead>
 
@@ -185,28 +166,25 @@ class OuSelectionContainer extends Component {
             {this.state.orgUnits &&
               this.state.orgUnits.map((orgUnit, index) => (
                 <TableRow key={orgUnit.id + index}>
-                  <TableCell
-                    component="th"
-                    scope="row"
-                    title={orgUnit.organisationUnitGroups
-                      .map(g => g.name)
-                      .join(", ")}
-                  >
+                  <TableCell component="th" scope="row">
                     {orgUnit.name}
                   </TableCell>
                   <TableCell>
+                    <b>{this.props.levels[1]}: </b>
                     {orgUnit.ancestors[1] && orgUnit.ancestors[1].name}
-                  </TableCell>
-                  <TableCell>
+                    <br />
+                    <b>{this.props.levels[2]}: </b>
                     {orgUnit.ancestors[2] && orgUnit.ancestors[2].name}
                   </TableCell>
                   <TableCell>
+                    {orgUnit.organisationUnitGroups.map(g => g.name).join(", ")}
+                  </TableCell>
+                  <TableCell align="right">
                     <Button
                       color="primary"
                       onClick={() => {
-                        setFieldValue("orgUnitId", orgUnit.id);
-                        this.setSelectedOrgUnitGroups(orgUnit);
-                        this.props.nextStepFn();
+                        this.props.setSelectedOrgUnitGroups(orgUnit);
+                        this.handleDialogFormOpen();
                       }}
                     >
                       {t("edit_org_unit_groups")}
@@ -225,4 +203,4 @@ OuSelectionContainer.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(withNamespaces()(OuSelectionContainer));
+export default withNamespaces()(OuSelectionContainer);

@@ -2,12 +2,10 @@ import React, { Component } from "react";
 
 import { withStyles } from "@material-ui/core/styles";
 
-import DatePeriods from "../../support/DatePeriods";
-import Dhis2 from "../../support/Dhis2";
+import BrowseDataToolBar from "./BrowseDataToolBar";
 import Cell from "../shared/Cell";
 
 import Loader from "../shared/Loader";
-import DegNavigationBar from "./DegNavigationBar";
 
 const styles = {
   table: {
@@ -130,11 +128,12 @@ class BrowseDataContainer extends Component {
   }
   render() {
     const navigation = this.props.dataElementGroups && (
-      <DegNavigationBar
+      <BrowseDataToolBar
         dataElementGroups={this.props.dataElementGroups}
         period={this.props.period}
         dataElementGroupId={this.props.dataElementGroupId}
         orgUnitId={this.props.orgUnitId}
+        periodFormat={this.props.periodFormat}
       />
     );
 
@@ -151,24 +150,11 @@ class BrowseDataContainer extends Component {
     }
 
     const classes = this.props.classes;
-    const {
-      dataElements,
-      orgUnits,
-      indexedValues,
-      dataElementGroup
-    } = this.state.data;
+    const { dataElements, orgUnits, indexedValues } = this.state.data;
 
     return (
       <div>
         {navigation}
-        <h1>
-          {dataElementGroup.name} ({orgUnits.length} org units, period &nbsp;
-          {DatePeriods.displayName(
-            this.props.period,
-            this.props.periodFormat[DatePeriods.detect(this.props.period)]
-          )}
-          )
-        </h1>
         <table className={classes.table}>
           <thead>
             <tr>
@@ -217,6 +203,7 @@ class BrowseDataContainer extends Component {
           <br />
           <br />
         </div>
+        <p>{orgUnits.length} org units</p>
       </div>
     );
   }

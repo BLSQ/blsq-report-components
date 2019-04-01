@@ -8,4 +8,5 @@ npm install --no-save --no-package-lock \
    babel-polyfill \
    i18next@14.0.1 \
    react-i18next@9.0.10 \
-   react-select@2.3.0
+   react-select@2.3.0 \
+   react-export-excel@0.5.3

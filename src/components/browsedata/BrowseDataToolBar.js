@@ -7,13 +7,15 @@ import ArrowBack from "@material-ui/icons/ArrowBack";
 import DatePeriods from "../../support/DatePeriods";
 
 import MenuItem from "@material-ui/core/MenuItem";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 
 const styles = {
   center: {
     textAlign: "center"
+  },
+  formControl: {
+    minWidth: "50%"
   }
 };
 
@@ -52,18 +54,20 @@ class InvoiceToolBar extends Component {
       dataElementGroups
     } = this.props;
 
+    const nextPeriod = DatePeriods.next(period);
     const next =
       "/data/" +
-      DatePeriods.next(period) +
+      nextPeriod +
       "/deg/" +
       dataElementGroupId +
       "/" +
       orgUnitId +
       "/children";
 
+    const previousPeriod = DatePeriods.previous(period);
     const previous =
       "/data/" +
-      DatePeriods.previous(period) +
+      previousPeriod +
       "/deg/" +
       dataElementGroupId +
       "/" +
@@ -72,27 +76,37 @@ class InvoiceToolBar extends Component {
 
     return (
       <div className={classes.center + " no-print"}>
-        <Select value={dataElementGroupId} onChange={this.handleChange}>
-          {dataElementGroups.map(group => (
-            <MenuItem
-              key={group.id}
-              component={Link}
-              value={group.id}
-              to={
-                "/data/" +
-                period +
-                "/deg/" +
-                group.id +
-                "/" +
-                orgUnitId +
-                "/children"
-              }
-            >
-              {group.name}
-            </MenuItem>
-          ))}
-        </Select>
-        <Button component={Link} to={previous}>
+        <FormControl className={classes.formControl}>
+          <Select
+            value={dataElementGroupId}
+            onChange={this.handleChange}
+            autoWidth={true}
+          >
+            {dataElementGroups.map(group => (
+              <MenuItem
+                key={group.id}
+                component={Link}
+                value={group.id}
+                to={
+                  "/data/" +
+                  period +
+                  "/deg/" +
+                  group.id +
+                  "/" +
+                  orgUnitId +
+                  "/children"
+                }
+              >
+                {group.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Button
+          component={Link}
+          to={previous}
+          title={"Previous period : " + previousPeriod}
+        >
           <ArrowBack />
         </Button>
         &nbsp;
@@ -103,7 +117,11 @@ class InvoiceToolBar extends Component {
           )}
         </span>
         &nbsp;
-        <Button component={Link} to={next}>
+        <Button
+          component={Link}
+          to={next}
+          title={"Next period : " + nextPeriod}
+        >
           <ArrowForward />
         </Button>
       </div>

@@ -66,6 +66,7 @@ class BrowseDataContainer extends Component {
     this.props = nextProps;
     this.setState({
       date: new Date(),
+      data: undefined,
       error: undefined
     });
     this.loadData();

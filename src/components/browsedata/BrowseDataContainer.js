@@ -115,13 +115,23 @@ class BrowseDataContainer extends Component {
         });
       }
 
-      const columns = [this.props.levels[1], this.props.levels[2], "Org Unit"];
+      const columns = [
+        "Org Unit id",
+        this.props.levels[1],
+        this.props.levels[2],
+        "Org Unit"
+      ];
 
       dataElements.forEach(de => {
         columns.push(de.name);
       });
       const xlsdata = orgUnits.map(ou => {
-        let row = [ou.ancestors[1].name, ou.ancestors[2].name, ou.name];
+        let row = [
+          ou.id,
+          ou.ancestors[1] ? ou.ancestors[1].name : "",
+          ou.ancestors[2] ? ou.ancestors[2].name : "",
+          ou.name
+        ];
         dataElements.forEach(de => {
           row.push(indexedValues[[de.id, this.props.period, ou.id]]);
         });
@@ -193,8 +203,8 @@ class BrowseDataContainer extends Component {
           <tbody>
             {orgUnits.map(ou => (
               <tr key={ou.id}>
-                <td>{ou.ancestors[1].name}</td>
-                <td>{ou.ancestors[2].name}</td>
+                <td>{ou.ancestors[1] && ou.ancestors[1].name}</td>
+                <td>{ou.ancestors[2] && ou.ancestors[2].name}</td>
                 <td>{ou.name}</td>
                 {dataElements.map(de => {
                   const rawValue =

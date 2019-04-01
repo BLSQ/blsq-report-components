@@ -17,7 +17,7 @@ const styles = {
     textAlign: "center"
   },
   formControl: {
-    minWidth: "50%"
+    minWidth: "30%"
   }
 };
 

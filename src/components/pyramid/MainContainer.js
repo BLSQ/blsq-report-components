@@ -5,7 +5,6 @@ import { withNamespaces } from "react-i18next";
 import Paper from "@material-ui/core/Paper";
 
 import OuSelectionContainer from "./OuSelectionContainer";
-import OrgUnitsGroupsForm from "./OrgUnitsGroupsForm";
 
 const styles = theme => ({
   paper: {
@@ -18,28 +17,44 @@ const styles = theme => ({
   },
   filters: {
     marginLeft: "30px"
+  },
+  error: {
+    color: "red"
   }
 });
 
 class MainContainer extends Component {
   constructor(props) {
     super(props);
-    this.state = { selectedOrgUnit: undefined, groupsetInitVals: undefined };
-    this.loadData = this.loadData.bind(this);
+    this._isMounted = false;
+    this.state = {
+      organisationUnitGroupSets: undefined,
+      organisationUnitGroups: undefined,
+      otherOrgUnitGroups: undefined,
+      selectedOrgUnit: undefined,
+      groupsetInitVals: undefined
+    };
   }
 
-  loadData = async () => {
+  async componentDidMount() {
+    this._isMounted = true;
+
     const rawGroupSets = await this.props.dhis2.organisationUnitGroupSets();
     const rawGroups = await this.props.dhis2.organisationUnitGroups();
+    const otherOrgUnitGroups = rawGroups.organisationUnitGroups.filter(
+      group => group.groupSets.length === 0
+    );
 
-    this.setState({
-      organisationUnitGroupSets: rawGroupSets.organisationUnitGroupSets,
-      organisationUnitGroups: rawGroups.organisationUnitGroups
-    });
-  };
+    this._isMounted &&
+      this.setState({
+        organisationUnitGroupSets: rawGroupSets.organisationUnitGroupSets,
+        organisationUnitGroups: rawGroups.organisationUnitGroups,
+        otherOrgUnitGroups: otherOrgUnitGroups
+      });
+  }
 
-  async componentDidMount() {
-    this.loadData();
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   setSelectedOrgUnitGroups = selectedOrgUnit => {
@@ -49,12 +64,16 @@ class MainContainer extends Component {
     );
 
     this.state.organisationUnitGroupSets.forEach(groupset => {
-      groupsetInitVals[
-        `${groupset.id}`
-      ] = groupset.organisationUnitGroups
-        .filter(group => orgUnitGroups.includes(group.id))
-        .map(group => group.id);
+      groupset.id !== this.props.contractSettings.primaryFlagGroupSet &&
+        (groupsetInitVals[
+          `${groupset.id}`
+        ] = groupset.organisationUnitGroups
+          .filter(group => orgUnitGroups.includes(group.id))
+          .map(group => group.id));
     });
+    groupsetInitVals["othergroups"] = this.state.otherOrgUnitGroups
+      .filter(group => orgUnitGroups.includes(group.id))
+      .map(group => group.id);
 
     this.setState({
       selectedOrgUnit: selectedOrgUnit,
@@ -68,6 +87,7 @@ class MainContainer extends Component {
     if (this.state.organisationUnitGroupSets === undefined) {
       return "Show loader";
     }
+
     return (
       <React.Fragment>
         <Paper key="main-paper" className={classes.paper}>
@@ -75,6 +95,7 @@ class MainContainer extends Component {
             <OuSelectionContainer
               organisationUnitGroupSets={this.state.organisationUnitGroupSets}
               organisationUnitGroups={this.state.organisationUnitGroups}
+              otherOrgUnitGroups={this.state.otherOrgUnitGroups}
               selectedOrgUnit={this.state.selectedOrgUnit}
               setSelectedOrgUnitGroups={this.setSelectedOrgUnitGroups}
               groupsetInitVals={this.state.groupsetInitVals}

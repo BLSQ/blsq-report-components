@@ -49,7 +49,13 @@ const App = t => (
             monthly: "monthYear",
             sixMonthly: "sixMonth"
           },
-          levels: ["Country", "Territory", "Land", "Facility"]
+          levels: ["Country", "Territory", "Land", "Facility"],
+          contractSettings: {
+            rbfContractedGroupSet: "J5jldMd8OHv",
+            primaryFlagGroupSet: "Cbuj0VCyDjL",
+            primaryFlagGroup: "GGghZsfu7qV",
+            contractSubContractGroupSet: "Bpx0589u8y0"
+          }
         }
       }}
       dhis2={new Dhis2()}

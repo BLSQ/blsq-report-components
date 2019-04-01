@@ -244,29 +244,45 @@ class Dhis2 {
     return getInstance().then(d2 => d2.Api.getApi().get(url));
   }
 
-  addToGroup(orgUnitId, targetGroup) {
-    // const url =
-    //   "organisationUnitGroups/" + groupId + "/organisationUnits/" + orgUnitId;
-    // return getInstance().then(d2 => d2.Api.getApi().delete(url));
+  removeFromGroup(orgUnitId, groups) {
+    let grps = Array.isArray(groups) ? groups : [groups];
+    grps.forEach(group => {
+      return getInstance().then(d2 =>
+        d2.Api.getApi().delete(
+          "organisationUnitGroups/" + group + "/organisationUnits/" + orgUnitId
+        )
+      );
+    });
+  }
 
-    // const url = "organisationUnits/OjidoDQhidx";
+  addToGroup(orgUnitId, targetGroup) {
+    return getInstance().then(d2 =>
+      d2.Api.getApi().post(
+        "organisationUnitGroups/" +
+          targetGroup.id +
+          "/organisationUnits/" +
+          orgUnitId
+      )
+    );
+    // const url = "organisationUnitGroups/" + targetGroup.id;
     // return getInstance().then(d2 =>
     //   d2.Api.getApi().update(url, {
-    //     name: "DHIS2 vUcl9aPaSNz",
-    //     shortName: "DHIS2 vUcl9aPaSNz",
-    //     openingDate: "2019-03-20",
-    //     organisationUnitGroups: [{ id: groupId }]
+    //     name: targetGroup.name,
+    //     organisationUnits: targetGroup.organisationUnits.concat({
+    //       id: orgUnitId
+    //     })
     //   })
     // );
+  }
 
+  renameGroup(targetGroup, newName) {
     const url = "organisationUnitGroups/" + targetGroup.id;
-
     return getInstance().then(d2 =>
-      d2.Api.getApi().update(url, {
-        name: targetGroup.name,
-        organisationUnits: targetGroup.organisationUnits.concat({
-          id: orgUnitId
-        })
+      d2.Api.getApi().patch(url, {
+        name: newName,
+        shortName: newName,
+        displayName: newName,
+        displayShortName: newName
       })
     );
   }
@@ -413,7 +429,7 @@ class Dhis2 {
 
   organisationUnitGroups() {
     const url =
-      "/organisationUnitGroups.json?fields=id,name,organisationUnits[id],groupSets[id,name]&paging=false";
+      "/organisationUnitGroups.json?fields=id,name,organisationUnits[id,name],groupSets[id,name]&paging=false";
     return getInstance().then(d2 => d2.Api.getApi().get(url));
   }
 

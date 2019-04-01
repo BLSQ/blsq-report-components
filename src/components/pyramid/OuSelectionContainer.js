@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
 import { withNamespaces } from "react-i18next";
 import Table from "@material-ui/core/Table";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -142,16 +141,19 @@ class OuSelectionContainer extends Component {
         </div>
 
         <br />
-        <OrgUnitsGroupsForm
-          open={this.state.open}
-          handleDialogFormClose={this.handleDialogFormClose}
-          organisationUnitGroupSets={this.props.organisationUnitGroupSets}
-          organisationUnitGroups={this.props.organisationUnitGroups}
-          selectedOrgUnit={this.props.selectedOrgUnit}
-          groupsetInitVals={this.props.groupsetInitVals}
-          searchOrgunit={this.searchOrgunit}
-          {...this.props}
-        />
+        {this.props.selectedOrgUnit !== undefined && (
+          <OrgUnitsGroupsForm
+            open={this.state.open}
+            handleDialogFormClose={this.handleDialogFormClose}
+            organisationUnitGroupSets={this.props.organisationUnitGroupSets}
+            organisationUnitGroups={this.props.organisationUnitGroups}
+            otherOrgUnitGroups={this.props.otherOrgUnitGroups}
+            selectedOrgUnit={this.props.selectedOrgUnit}
+            groupsetInitVals={this.props.groupsetInitVals}
+            searchOrgunit={this.searchOrgunit}
+            {...this.props}
+          />
+        )}
         <Table>
           <TableHead>
             <TableRow>

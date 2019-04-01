@@ -1,15 +1,17 @@
 import React, { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
+import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import ArrowForward from "@material-ui/icons/ArrowForward";
 import ArrowBack from "@material-ui/icons/ArrowBack";
+import SaveAlt from "@material-ui/icons/SaveAlt";
 import DatePeriods from "../../support/DatePeriods";
 
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-
+import Excel from "react-export-excel";
 const styles = {
   center: {
     textAlign: "center"
@@ -74,6 +76,30 @@ class InvoiceToolBar extends Component {
       orgUnitId +
       "/children";
 
+    const dataElementGroup = dataElementGroups.find(
+      deg => deg.id == dataElementGroupId
+    );
+    const dataExport = this.props.xlsdata && (
+      <Excel.ExcelFile
+        filename={
+          "data-" +
+          previousPeriod +
+          "-" +
+          (dataElementGroup ? dataElementGroup.name : dataElementGroupId)
+        }
+        element={
+          <IconButton aria-label="Download">
+            <SaveAlt />
+          </IconButton>
+        }
+      >
+        <Excel.ExcelFile.ExcelSheet
+          dataSet={[this.props.xlsdata]}
+          name="Data"
+        />
+      </Excel.ExcelFile>
+    );
+
     return (
       <div className={classes.center + " no-print"}>
         <FormControl className={classes.formControl}>
@@ -124,6 +150,7 @@ class InvoiceToolBar extends Component {
         >
           <ArrowForward />
         </Button>
+        {dataExport}
       </div>
     );
   }

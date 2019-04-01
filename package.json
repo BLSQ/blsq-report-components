@@ -31,7 +31,8 @@
     "react-router-dom": "^4.3.1",
     "i18next": "^14.0.1",
     "react-i18next": "^9.0.10",
-    "react-select": "^9.0.10"
+    "react-select": "^9.0.10",
+    "react-export-excel": "^0.5.3"
   },
   "devDependencies": {
     "@svgr/rollup": "^2.4.1",

@@ -115,8 +115,30 @@ class BrowseDataContainer extends Component {
         });
       }
 
+      const columns = [this.props.levels[1], this.props.levels[2], "Org Unit"];
+
+      dataElements.forEach(de => {
+        columns.push(de.name);
+      });
+      const xlsdata = orgUnits.map(ou => {
+        let row = [ou.ancestors[1].name, ou.ancestors[2].name, ou.name];
+        dataElements.forEach(de => {
+          row.push(indexedValues[[de.id, this.props.period, ou.id]]);
+        });
+        return row;
+      });
+
       this.setState({
-        data: { dataElementGroup, indexedValues, dataElements, orgUnits }
+        data: {
+          dataElementGroup,
+          indexedValues,
+          dataElements,
+          orgUnits,
+          xlsdata: {
+            columns: columns,
+            data: xlsdata
+          }
+        }
       });
     } catch (error) {
       this.setState({
@@ -130,11 +152,12 @@ class BrowseDataContainer extends Component {
   render() {
     const navigation = this.props.dataElementGroups && (
       <BrowseDataToolBar
-        dataElementGroups={this.props.dataElementGroups}
         period={this.props.period}
+        dataElementGroups={this.props.dataElementGroups}
         dataElementGroupId={this.props.dataElementGroupId}
         orgUnitId={this.props.orgUnitId}
         periodFormat={this.props.periodFormat}
+        xlsdata={this.state.data ? this.state.data.xlsdata : undefined}
       />
     );
 

@@ -29,11 +29,11 @@ const dataElementsComparator = (a, b) => {
 };
 
 const orgUnitComparator = (a, b) => {
-  var c1 = a.ancestors[1].name;
-  var c2 = b.ancestors[1].name;
+  var c1 = a.ancestors[1] ? a.ancestors[1].name : "";
+  var c2 = b.ancestors[1] ? b.ancestors[1].name : "";
 
-  var d1 = a.ancestors[2].name;
-  var d2 = b.ancestors[2].name;
+  var d1 = a.ancestors[2] ? a.ancestors[2].name : "";
+  var d2 = b.ancestors[2] ? b.ancestors[2].name : "";
 
   var n1 = a.name;
   var n2 = b.name;

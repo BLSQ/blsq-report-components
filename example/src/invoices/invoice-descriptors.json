@@ -5,6 +5,7 @@
     "facilityLabel": "demo-chcs",
     "orientation": "landscape",
     "frequency": "quarterly",
+    "periodFormat": "eduQuarter",
     "dataSets": [],
     "dataElementGroups": ["oDkJh5Ddh7d"]
   },

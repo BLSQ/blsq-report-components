@@ -66,7 +66,7 @@ it("split monthly in yearly periods", () => {
 });
 
 it("split year into in sixMonthly periods", () => {
-  expect(DatePeriods.split("2016", "sixMonthly")).toEqual(["2016S1","2016S2"]);
+  expect(DatePeriods.split("2016", "sixMonthly")).toEqual(["2016S1", "2016S2"]);
 });
 
 it("split quarter into in sixMonthly periods", () => {
@@ -77,8 +77,14 @@ it("split quarter into in sixMonthly periods", () => {
 });
 
 it("split sixMonthly into in quarter periods", () => {
-  expect(DatePeriods.split("2016S1", "quarterly")).toEqual(["2016Q1","2016Q2"]);
-  expect(DatePeriods.split("2016S2", "quarterly")).toEqual(["2016Q3","2016Q4"]);
+  expect(DatePeriods.split("2016S1", "quarterly")).toEqual([
+    "2016Q1",
+    "2016Q2"
+  ]);
+  expect(DatePeriods.split("2016S2", "quarterly")).toEqual([
+    "2016Q3",
+    "2016Q4"
+  ]);
 });
 
 it("split sixMonthly into in sixMonthly periods", () => {
@@ -86,8 +92,22 @@ it("split sixMonthly into in sixMonthly periods", () => {
 });
 
 it("split sixMonth period into in months", () => {
-  expect(DatePeriods.split("2016S1", "monthly")).toEqual(["201601", "201602", "201603", "201604", "201605", "201606"]);
-  expect(DatePeriods.split("2016S2", "monthly")).toEqual(["201607", "201608", "201609", "201610", "201611", "201612"]);
+  expect(DatePeriods.split("2016S1", "monthly")).toEqual([
+    "201601",
+    "201602",
+    "201603",
+    "201604",
+    "201605",
+    "201606"
+  ]);
+  expect(DatePeriods.split("2016S2", "monthly")).toEqual([
+    "201607",
+    "201608",
+    "201609",
+    "201610",
+    "201611",
+    "201612"
+  ]);
 });
 
 it("split monthly in sixMonthly period", () => {
@@ -238,8 +258,27 @@ it("monthName", () => {
   expect(DatePeriods.monthName("201611")).toEqual("November");
 });
 
-
 it("sixMonth", () => {
-  expect(DatePeriods.displayName("2016S1", "sixMonth")).toEqual("January - June 2016")
-  expect(DatePeriods.displayName("2016S2", "sixMonth")).toEqual("July - December 2016")
+  expect(DatePeriods.displayName("2016S1", "sixMonth")).toEqual(
+    "January - June 2016"
+  );
+  expect(DatePeriods.displayName("2016S2", "sixMonth")).toEqual(
+    "July - December 2016"
+  );
+});
+
+it("eduQuarter", () => {
+  expect(DatePeriods.displayName("2016Q4", "eduQuarter")).toEqual(
+    "2016-2017 T1 - Septembre - Décembre"
+  );
+  expect(DatePeriods.displayName("2017Q1", "eduQuarter")).toEqual(
+    "2016-2017 T2 - Janvier - Mars"
+  );
+  expect(DatePeriods.displayName("2017Q2", "eduQuarter")).toEqual(
+    "2016-2017 T3 - Avril - Juin"
+  );
+  expect(DatePeriods.displayName("2017Q3", "eduQuarter")).toEqual(
+    "2016-2017 XX - Juillet - Aout"
+  );
+
 });

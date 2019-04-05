@@ -23,13 +23,6 @@ const QUARTER_BY_SIX_MONTHLY = {
   2: [3, 4]
 };
 
-const MONTH_NAMES_BY_QUARTER = {
-  "1": ["January", "February", "March"],
-  "2": ["April", "May", "June"],
-  "3": ["July", "August", "September"],
-  "4": ["October", "November", "December"]
-};
-
 const MONTH_NAMES = [
   "January",
   "February",
@@ -45,11 +38,25 @@ const MONTH_NAMES = [
   "December"
 ];
 
+const MONTH_NAMES_BY_QUARTER = {
+  "1": [MONTH_NAMES[0], MONTH_NAMES[1], MONTH_NAMES[2]],
+  "2": [MONTH_NAMES[3], MONTH_NAMES[4], MONTH_NAMES[5]],
+  "3": [MONTH_NAMES[6], MONTH_NAMES[7], MONTH_NAMES[8]],
+  "4": [MONTH_NAMES[9], MONTH_NAMES[10], MONTH_NAMES[11]]
+};
+
 const MONTH_NUMBER_BY_QUARTER = {
   "1": ["1", "2", "3"],
   "2": ["4", "5", "6"],
   "3": ["7", "8", "9"],
   "4": ["10", "11", "12"]
+};
+
+const eduQuarterNames = {
+  4: "T1 - Septembre - Décembre",
+  1: "T2 - Janvier - Mars",
+  2: "T3 - Avril - Juin",
+  3: "XX - Juillet - Aout"
 };
 
 const YEARLY = "yearly";
@@ -62,13 +69,15 @@ const FORMAT_QUARTER = "quarter";
 const FORMAT_MONTH = "month";
 const FORMAT_MONTH_YEAR = "monthYear";
 const FORMAT_SIX_MONTH = "sixMonth";
+const FORMAT_EDU_QUARTER = "eduQuarter";
 
 const SUPPORTED_FORMATS = [
   FORMAT_FY_JULY_QUARTER,
   FORMAT_QUARTER,
   FORMAT_MONTH,
   FORMAT_MONTH_YEAR,
-  FORMAT_SIX_MONTH
+  FORMAT_SIX_MONTH,
+  FORMAT_EDU_QUARTER
 ];
 
 class DatePeriods {
@@ -163,11 +172,23 @@ class DatePeriods {
       return this.monthNameYear(dhis2period);
     } else if (format === FORMAT_SIX_MONTH) {
       return this.sixMonthlyName(dhis2period);
+    } else if (format === FORMAT_EDU_QUARTER) {
+      return this.eduQuarterName(dhis2period);
     }
 
     throw new Error(
       "unsupported format '" + format + "' see " + SUPPORTED_FORMATS.join(",")
     );
+  }
+
+  static eduQuarterName(period) {
+    let year = parseInt(period.slice(0, 4), 0);
+    let quarter = parseInt(period.slice(5, 6), 0);
+    if (quarter >= 1 && quarter < 4) {
+      year = year - 1;
+    }
+    const formatted = year + "-" + (year + 1) + " " + eduQuarterNames[quarter];
+    return formatted;
   }
 
   static period2QuarterName(dhis2period) {

@@ -287,6 +287,34 @@ class Dhis2 {
     );
   }
 
+  createContractGroup(orgUnit, contractSubContractGroupSet, prefix) {
+    const url = "organisationUnitGroups/";
+    return getInstance()
+      .then(d2 =>
+        d2.Api.getApi().post(url, {
+          name: prefix + orgUnit.name,
+          shortName: prefix + orgUnit.name,
+          displayName: prefix + orgUnit.name,
+          displayShortName: prefix + orgUnit.name,
+          organisationUnits: [
+            {
+              id: orgUnit.id
+            }
+          ]
+        })
+      )
+      .then(orgUnitGroupPromise => {
+        return getInstance().then(d2 =>
+          d2.Api.getApi().post(
+            "organisationUnitGroupSets/" +
+              contractSubContractGroupSet +
+              "/organisationUnitGroups/" +
+              orgUnitGroupPromise.response.uid
+          )
+        );
+      });
+  }
+
   searchOrgunits(name, orgunits, contractGroup, parentid) {
     var searchOuUrl =
       "organisationUnits?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]" +

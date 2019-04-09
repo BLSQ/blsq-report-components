@@ -26,6 +26,7 @@ class OrgUnitsGroupsForm extends Component {
 
   async setContractSettings(values) {
     // console.log(values);
+
     if (values.contractSettings.primaryOu !== "") {
       // 1. add primaryOu to this.props.contractSettings.primaryFlagGroup group
 
@@ -46,7 +47,13 @@ class OrgUnitsGroupsForm extends Component {
         ][0]
       );
 
-      if (targetGroup !== undefined > 0) {
+      if (targetGroup === undefined) {
+        await this.props.dhis2.createContractGroup(
+          this.props.selectedOrgUnit,
+          this.props.contractSettings.contractSubContractGroupSet,
+          "Contract - "
+        );
+      } else if (targetGroup !== undefined > 0) {
         let primaryOuInfo = targetGroup.organisationUnits.find(
           ou => ou.id === values.contractSettings.primaryOu
         );
@@ -109,11 +116,15 @@ class OrgUnitsGroupsForm extends Component {
       this.props.groupsetInitVals[
         this.props.contractSettings.contractSubContractGroupSet
       ][0]
-    ).organisationUnits.map(ou => ou.id);
-
-    return primaryGroupOus.find(primaryGroupOu =>
-      contractSubContractGroupOus.includes(primaryGroupOu)
     );
+
+    return contractSubContractGroupOus !== undefined
+      ? primaryGroupOus.find(primaryGroupOu =>
+          contractSubContractGroupOus.organisationUnits
+            .map(ou => ou.id)
+            .includes(primaryGroupOu)
+        )
+      : "";
   }
 
   render() {
@@ -160,9 +171,20 @@ class OrgUnitsGroupsForm extends Component {
               return errors;
             }}
             onSubmit={(values, { setSubmitting }) => {
+              let contractSubContractGroup = this.getTargetGroup(
+                values.groupsets[
+                  this.props.contractSettings.contractSubContractGroupSet
+                ][0]
+              );
+              values.contractSettings.primaryOu =
+                contractSubContractGroup === undefined
+                  ? this.props.selectedOrgUnit.id
+                  : values.contractSettings.primaryOu;
+
               this.setOrgUnitGroups(values);
               this.setContractSettings(values);
               this.props.searchOrgunit();
+              // ------------ REMEMBER TO REFLESH GROUPS --------------
               // setSubmitting(false);
               // this.props.handleDialogFormClose();
             }}
@@ -308,6 +330,7 @@ class OrgUnitsGroupsForm extends Component {
                               component={Select}
                               value={[values.groupsets[contractSubContract.id]]}
                               inputProps={{
+                                required: false,
                                 name:
                                   "groupsets." + contractSubContract.id + ".0",
                                 id: "groupsets." + contractSubContract.id
@@ -327,12 +350,17 @@ class OrgUnitsGroupsForm extends Component {
                                   </MenuItem>
                                 )
                               )}
-                              <MenuItem
-                                key={"group-" + contractSubContract.id + "0"}
-                                value={undefined}
-                              >
-                                {t("non_contract_sub_contract")}
-                              </MenuItem>
+                              {this.props.selectedOrgUnit.id !==
+                                values.contractSettings.primaryOu && (
+                                <MenuItem
+                                  key={"group-" + contractSubContract.id + "0"}
+                                  value={undefined}
+                                >
+                                  {t("create_new_from") +
+                                    " " +
+                                    this.props.selectedOrgUnit.name}
+                                </MenuItem>
+                              )}
                             </Field>
                           </FormControl>
                         </Grid>

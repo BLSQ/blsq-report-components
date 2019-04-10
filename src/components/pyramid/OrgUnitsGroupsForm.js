@@ -28,48 +28,55 @@ class OrgUnitsGroupsForm extends Component {
     // console.log(values);
 
     if (values.contractSettings.primaryOu !== "") {
-      // 1. add primaryOu to this.props.contractSettings.primaryFlagGroup group
+      // 1. remove the old primaryOu from this.props.contractSettings.primaryFlagGroup group
+      values.contractSettings.oldPrimaryOu !== undefined &&
+        (await this.props.dhis2.removeFromGroup(
+          values.contractSettings.oldPrimaryOu,
+          this.props.contractSettings.primaryFlagGroup
+        ));
 
-      let targetGroup = this.getTargetGroup(
+      // 2. add primaryOu to this.props.contractSettings.primaryFlagGroup group
+
+      let targetPrimaryFlagGroup = this.getTargetGroup(
         this.props.contractSettings.primaryFlagGroup
       );
 
-      targetGroup !== undefined > 0 &&
+      targetPrimaryFlagGroup !== undefined &&
         (await this.props.dhis2.addToGroup(
           values.contractSettings.primaryOu,
-          targetGroup
+          targetPrimaryFlagGroup
         ));
 
-      // 2. rename values.groupsets[this.props.contractSettings.contractSubContractGroupSet][0] group to primaryOu name
-      targetGroup = this.getTargetGroup(
+      // 3. rename values.groupsets[this.props.contractSettings.contractSubContractGroupSet][0] group to primaryOu name
+      let targetContractSubContractGroup = this.getTargetGroup(
         values.groupsets[
           this.props.contractSettings.contractSubContractGroupSet
         ][0]
       );
 
-      if (targetGroup === undefined) {
+      if (targetContractSubContractGroup === undefined) {
         await this.props.dhis2.createContractGroup(
           this.props.selectedOrgUnit,
           this.props.contractSettings.contractSubContractGroupSet,
           "Contract - "
         );
-      } else if (targetGroup !== undefined > 0) {
-        let primaryOuInfo = targetGroup.organisationUnits.find(
+
+        // add this.props.selectedOrgUnit to this.props.contractSettings.primaryFlagGroup (targetPrimaryFlagGroup)
+
+        targetPrimaryFlagGroup !== undefined &&
+          (await this.props.dhis2.addToGroup(
+            this.props.selectedOrgUnit.id,
+            targetPrimaryFlagGroup
+          ));
+      } else if (targetContractSubContractGroup !== undefined) {
+        let primaryOuInfo = targetContractSubContractGroup.organisationUnits.find(
           ou => ou.id === values.contractSettings.primaryOu
         );
         await this.props.dhis2.renameGroup(
-          targetGroup,
+          targetContractSubContractGroup,
           "Contract - " + primaryOuInfo.name
         );
       }
-
-      // 3. remove the old primaryOu from this.props.contractSettings.primaryFlagGroup group
-
-      values.contractSettings.oldPrimaryOu !== undefined > 0 &&
-        (await this.props.dhis2.removeFromGroup(
-          values.contractSettings.oldPrimaryOu,
-          this.props.contractSettings.primaryFlagGroup
-        ));
     }
   }
 
@@ -95,7 +102,7 @@ class OrgUnitsGroupsForm extends Component {
       groups.forEach(async group => {
         let targetGroup = this.getTargetGroup(group);
 
-        targetGroup !== undefined > 0 &&
+        targetGroup !== undefined &&
           (await this.props.dhis2.addToGroup(values.orgUnitId, targetGroup));
       });
     });
@@ -124,7 +131,12 @@ class OrgUnitsGroupsForm extends Component {
             .map(ou => ou.id)
             .includes(primaryGroupOu)
         )
-      : "";
+      : undefined;
+  }
+
+  refreshPyramid() {
+    this.props.reloadGroupsFn();
+    this.props.searchOrgunitFn();
   }
 
   render() {
@@ -183,8 +195,8 @@ class OrgUnitsGroupsForm extends Component {
 
               this.setOrgUnitGroups(values);
               this.setContractSettings(values);
-              this.props.searchOrgunit();
-              // ------------ REMEMBER TO REFLESH GROUPS --------------
+              // Should wait until promise(s) resolved before reloading Groups
+              setTimeout(this.refreshPyramid(), 2000);
               // setSubmitting(false);
               // this.props.handleDialogFormClose();
             }}
@@ -242,16 +254,20 @@ class OrgUnitsGroupsForm extends Component {
                                     id: "groupsets." + groupset.id
                                   }}
                                 >
-                                  {groupset.organisationUnitGroups.map(
-                                    group => (
+                                  {groupset.organisationUnitGroups
+                                    .sort((a, b) => {
+                                      if (a.name < b.name) return -1;
+                                      if (a.name > b.name) return 1;
+                                      return 0;
+                                    })
+                                    .map(group => (
                                       <MenuItem
                                         key={"group-" + groupset.id + group.id}
                                         value={group.id}
                                       >
                                         {group.name}
                                       </MenuItem>
-                                    )
-                                  )}
+                                    ))}
                                 </Field>
                               </FormControl>
                             </Grid>
@@ -293,14 +309,20 @@ class OrgUnitsGroupsForm extends Component {
                                 id: "groupsets.othergroups"
                               }}
                             >
-                              {this.props.otherOrgUnitGroups.map(group => (
-                                <MenuItem
-                                  key={"group-othergroups" + group.id}
-                                  value={group.id}
-                                >
-                                  {group.name}
-                                </MenuItem>
-                              ))}
+                              {this.props.otherOrgUnitGroups
+                                .sort((a, b) => {
+                                  if (a.name < b.name) return -1;
+                                  if (a.name > b.name) return 1;
+                                  return 0;
+                                })
+                                .map(group => (
+                                  <MenuItem
+                                    key={"group-othergroups" + group.id}
+                                    value={group.id}
+                                  >
+                                    {group.name}
+                                  </MenuItem>
+                                ))}
                             </Field>
                           </FormControl>
                         </Grid>
@@ -336,8 +358,13 @@ class OrgUnitsGroupsForm extends Component {
                                 id: "groupsets." + contractSubContract.id
                               }}
                             >
-                              {contractSubContract.organisationUnitGroups.map(
-                                group => (
+                              {contractSubContract.organisationUnitGroups
+                                .sort((a, b) => {
+                                  if (a.name < b.name) return -1;
+                                  if (a.name > b.name) return 1;
+                                  return 0;
+                                })
+                                .map(group => (
                                   <MenuItem
                                     key={
                                       "group-" +
@@ -348,8 +375,7 @@ class OrgUnitsGroupsForm extends Component {
                                   >
                                     {group.name}
                                   </MenuItem>
-                                )
-                              )}
+                                ))}
                               {this.props.selectedOrgUnit.id !==
                                 values.contractSettings.primaryOu && (
                                 <MenuItem

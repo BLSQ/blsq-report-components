@@ -34,6 +34,21 @@ class MainContainer extends Component {
       selectedOrgUnit: undefined,
       groupsetInitVals: undefined
     };
+    this.reloadGroups = this.reloadGroups.bind(this);
+  }
+
+  async reloadGroups() {
+    const rawGroupSets = await this.props.dhis2.organisationUnitGroupSets();
+    const rawGroups = await this.props.dhis2.organisationUnitGroups();
+    const otherOrgUnitGroups = rawGroups.organisationUnitGroups.filter(
+      group => group.groupSets.length === 0
+    );
+
+    this.setState({
+      organisationUnitGroupSets: rawGroupSets.organisationUnitGroupSets,
+      organisationUnitGroups: rawGroups.organisationUnitGroups,
+      otherOrgUnitGroups: otherOrgUnitGroups
+    });
   }
 
   async componentDidMount() {
@@ -99,6 +114,7 @@ class MainContainer extends Component {
               selectedOrgUnit={this.state.selectedOrgUnit}
               setSelectedOrgUnitGroups={this.setSelectedOrgUnitGroups}
               groupsetInitVals={this.state.groupsetInitVals}
+              reloadGroupsFn={this.reloadGroups}
               {...this.props}
             />
           </React.Fragment>

@@ -150,7 +150,8 @@ class OuSelectionContainer extends Component {
             otherOrgUnitGroups={this.props.otherOrgUnitGroups}
             selectedOrgUnit={this.props.selectedOrgUnit}
             groupsetInitVals={this.props.groupsetInitVals}
-            searchOrgunit={this.searchOrgunit}
+            searchOrgunitFn={this.searchOrgunit}
+            reloadGroupsFn={this.props.reloadGroupsFn}
             {...this.props}
           />
         )}

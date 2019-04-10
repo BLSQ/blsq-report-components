@@ -51,10 +51,10 @@ const App = t => (
           },
           levels: ["Country", "Territory", "Land", "Facility"],
           contractSettings: {
-            rbfContractedGroupSet: "J5jldMd8OHv",
-            primaryFlagGroupSet: "Cbuj0VCyDjL",
-            primaryFlagGroup: "GGghZsfu7qV",
-            contractSubContractGroupSet: "Bpx0589u8y0"
+            rbfContractedGroupSet: "tH77N6SG0kJ",
+            primaryFlagGroupSet: "nDSitaaiE53",
+            primaryFlagGroup: "QeBTuRlARqc",
+            contractSubContractGroupSet: "ewwso4rrli3"
           }
         }
       }}

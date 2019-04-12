@@ -51,7 +51,7 @@ class OrgUnitsGroupsForm extends Component {
       let targetContractSubContractGroup = this.getTargetGroup(
         values.groupsets[
           this.props.contractSettings.contractSubContractGroupSet
-        ][0]
+        ].filter(Boolean)[0]
       );
 
       if (targetContractSubContractGroup === undefined) {
@@ -85,6 +85,9 @@ class OrgUnitsGroupsForm extends Component {
       group => group.id
     );
     let newGroups = Object.values(values.groupsets).flat();
+    let fakeGroup = newGroups.indexOf("00000000000");
+    fakeGroup > -1 && newGroups.splice(fakeGroup, 1);
+
     let deletableDiffs = oldGroups
       .filter(oldGroup => !newGroups.includes(oldGroup))
       .filter(
@@ -134,11 +137,6 @@ class OrgUnitsGroupsForm extends Component {
       : undefined;
   }
 
-  refreshPyramid() {
-    this.props.reloadGroupsFn();
-    this.props.searchOrgunitFn();
-  }
-
   render() {
     const { classes, contractSettings, t } = this.props;
     const rbfGroupSets =
@@ -183,20 +181,29 @@ class OrgUnitsGroupsForm extends Component {
               return errors;
             }}
             onSubmit={(values, { setSubmitting }) => {
-              let contractSubContractGroup = this.getTargetGroup(
+              let contractSubContractGroupId =
                 values.groupsets[
                   this.props.contractSettings.contractSubContractGroupSet
-                ][0]
-              );
-              values.contractSettings.primaryOu =
-                contractSubContractGroup === undefined
-                  ? this.props.selectedOrgUnit.id
-                  : values.contractSettings.primaryOu;
+                ][0];
+
+              if (contractSubContractGroupId === undefined) {
+                values.contractSettings.primaryOu = "";
+              } else {
+                let contractSubContractGroup = this.getTargetGroup(
+                  contractSubContractGroupId
+                );
+
+                values.contractSettings.primaryOu =
+                  contractSubContractGroup === undefined
+                    ? this.props.selectedOrgUnit.id
+                    : values.contractSettings.primaryOu;
+              }
 
               this.setOrgUnitGroups(values);
-              this.setContractSettings(values);
-              // Should wait until promise(s) resolved before reloading Groups
-              setTimeout(this.refreshPyramid(), 2000);
+              //this.setContractSettings(values);
+              // // Should wait until promise(s) resolved before reloading Groups
+              //this.props.reloadGroupsFn();
+              //this.props.searchOrgunitFn();
               // setSubmitting(false);
               // this.props.handleDialogFormClose();
             }}
@@ -358,6 +365,14 @@ class OrgUnitsGroupsForm extends Component {
                                 id: "groupsets." + contractSubContract.id
                               }}
                             >
+                              <MenuItem
+                                key={
+                                  "group-" + contractSubContract.id + "-empty"
+                                }
+                                value={undefined}
+                              >
+                                {t("no_contract_sub_contract_group")}
+                              </MenuItem>
                               {contractSubContract.organisationUnitGroups
                                 .sort((a, b) => {
                                   if (a.name < b.name) return -1;
@@ -380,7 +395,7 @@ class OrgUnitsGroupsForm extends Component {
                                 values.contractSettings.primaryOu && (
                                 <MenuItem
                                   key={"group-" + contractSubContract.id + "0"}
-                                  value={undefined}
+                                  value="00000000000"
                                 >
                                   {t("create_new_from") +
                                     " " +
@@ -397,7 +412,9 @@ class OrgUnitsGroupsForm extends Component {
                           {values.groupsets[contractSubContract.id].length >
                             0 &&
                             values.groupsets[contractSubContract.id][0] !==
-                              undefined && (
+                              undefined &&
+                            values.groupsets[contractSubContract.id][0] !==
+                              "00000000000" && (
                               <Field
                                 name={"contractSettings.primaryOu"}
                                 component={RadioGroup}

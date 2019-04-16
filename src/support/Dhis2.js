@@ -2,7 +2,7 @@ import { init, getInstance, getManifest } from "d2/lib/d2";
 import DatePeriods from "./DatePeriods";
 
 const ORGUNIT_FIELDS =
-  "[id,name,ancestors[id,name],organisationUnitGroups[id,name,code]]";
+  "[id,name,ancestors[id,name,attributeValues[value]],organisationUnitGroups[id,name,code]]";
 
 class Dhis2 {
   /**

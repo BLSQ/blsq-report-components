@@ -190,7 +190,7 @@ class Dhis2 {
     var getOuUrl =
       "organisationUnits/" +
       orgunitid +
-      "?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]";
+      "?fields=[*],ancestors[id,name,attributeValues[value]],organisationUnitGroups[id,name,code]";
     return getInstance().then(d2 => d2.Api.getApi().get(getOuUrl));
   }
 

@@ -246,7 +246,7 @@ class Dhis2 {
 
   searchOrgunits(name, orgunits, contractGroup, parentid) {
     var searchOuUrl =
-      "organisationUnits?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]" +
+      "organisationUnits?fields=[*],ancestors[id,name,attributeValues[value]],organisationUnitGroups[id,name,code]" +
       "&pageSize=50";
 
     if (name && name != "") {

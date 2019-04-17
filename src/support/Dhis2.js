@@ -190,7 +190,7 @@ class Dhis2 {
     var getOuUrl =
       "organisationUnits/" +
       orgunitid +
-      "?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]";
+      "?fields=[*],ancestors[id,name,attributeValues[*]],organisationUnitGroups[id,name,code]";
     return getInstance().then(d2 => d2.Api.getApi().get(getOuUrl));
   }
 
@@ -246,7 +246,7 @@ class Dhis2 {
 
   searchOrgunits(name, orgunits, contractGroup, parentid) {
     var searchOuUrl =
-      "organisationUnits?fields=[*],ancestors[id,name,attributeValues[*]],organisationUnitGroups[id,name,code]" +
+      "organisationUnits?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]" +
       "&pageSize=50";
 
     if (name && name != "") {

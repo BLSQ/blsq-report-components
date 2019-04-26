@@ -92,6 +92,7 @@ const Cell = props => {
     decimals,
     href,
     unit,
+    renderer,
     ...other
   } = props;
   const amount = resolve(field, value);
@@ -150,9 +151,14 @@ const Cell = props => {
   const boldValue = bold === true;
   let renderedValue;
 
-  if (displayedValue && unit) {
-    displayedValue = displayedValue + unit;
+  if (renderer) {
+    displayedValue = renderer(displayedValue, value)
   }
+
+  if (displayedValue && unit) {
+    displayedValue = <React.Fragment>{displayedValue}{unit}</React.Fragment>;
+  }
+
   if (boldValue) {
     renderedValue = <b>{displayedValue}</b>;
   } else {

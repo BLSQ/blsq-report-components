@@ -152,11 +152,11 @@ const Cell = props => {
   let renderedValue;
 
   if (renderer) {
-    displayedValue = renderer(displayedValue, value)
+    displayedValue = renderer(displayedValue, amount);
   }
 
   if (displayedValue && unit) {
-    displayedValue = <React.Fragment>{displayedValue}{unit}</React.Fragment>;
+    displayedValue = displayedValue + unit;
   }
 
   if (boldValue) {

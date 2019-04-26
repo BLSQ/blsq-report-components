@@ -18,6 +18,24 @@ exports[`Cell renders amount with provided field and unit 1`] = `
 </td>
 `;
 
+exports[`Cell renders custom renderer for field 1`] = `
+<td
+  className="Cell-cellAmount-5"
+  title="super (demo code)  2016Q3 15564.524"
+>
+  demo renderer
+</td>
+`;
+
+exports[`Cell renders custom renderer for self 1`] = `
+<td
+  className="Cell-cellCenter-7"
+  title=""
+>
+  demo renderer
+</td>
+`;
+
 exports[`Cell renders empty percentage with provided field 1`] = `
 <td
   className="Cell-cellQuantity-4"

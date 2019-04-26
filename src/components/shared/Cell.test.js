@@ -28,7 +28,6 @@ describe("Cell", () => {
       name: "super",
       period: "2016Q3"
     }
-
   };
 
   it("is truthy", () => {
@@ -50,10 +49,9 @@ describe("Cell", () => {
     expect(tree.toJSON()).toMatchSnapshot();
   });
 
-
   it("renders amount with provided field and unit", () => {
     const tree = TestRenderer.create(
-      <Cell variant="money" field="demo" value={value} unit="$"/>
+      <Cell variant="money" field="demo" value={value} unit="$" />
     );
     expect(tree.toJSON()).toMatchSnapshot();
   });
@@ -74,14 +72,19 @@ describe("Cell", () => {
 
   it("renders percentage with provided field", () => {
     const tree = TestRenderer.create(
-      <Cell variant="percentage" field="score" value={value} unit="%"/>
+      <Cell variant="percentage" field="score" value={value} unit="%" />
     );
     expect(tree.toJSON()).toMatchSnapshot();
   });
 
   it("renders undefined percentage with provided field", () => {
     const tree = TestRenderer.create(
-      <Cell variant="percentage" field="undefinedScore" value={value} unit="%" />
+      <Cell
+        variant="percentage"
+        field="undefinedScore"
+        value={value}
+        unit="%"
+      />
     );
     expect(tree.toJSON()).toMatchSnapshot();
   });
@@ -110,6 +113,43 @@ describe("Cell", () => {
         bold
       />
     );
+    expect(tree.toJSON()).toMatchSnapshot();
+  });
+
+  it("renders custom renderer for self", () => {
+    let expect_value;
+    const tree = TestRenderer.create(
+      <Cell
+        variant="title"
+        field="self"
+        value="demo title"
+        renderer={(value, raw_value) => {
+          expect_value = raw_value;
+          return "demo renderer";
+        }}
+      />
+    );
+    expect(expect_value).toEqual("demo title");
+    expect(tree.toJSON()).toMatchSnapshot();
+  });
+
+  it("renders custom renderer for field", () => {
+    let expect_value;
+    let expect_raw_value;
+    const tree = TestRenderer.create(
+      <Cell
+        variant="money"
+        field="demo"
+        value={value}
+        renderer={(displayed_value, raw_value) => {
+          expect_value = displayed_value;
+          expect_raw_value = raw_value;
+          return "demo renderer";
+        }}
+      />
+    );
+    expect(expect_value).toEqual("15,564.52");
+    expect(expect_raw_value).toEqual(value.demo);
     expect(tree.toJSON()).toMatchSnapshot();
   });
 });

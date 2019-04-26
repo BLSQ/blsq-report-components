@@ -12,6 +12,7 @@ class IncentivePage extends Component {
     return (
       <IncentiveContainer
         period={this.props.match.params.period}
+        periodFormat ={this.props.periodFormat}
         incentiveCode={this.props.match.params.incentiveCode}
         incentivesDescriptors={this.props.incentivesDescriptors}
         currentUser={this.props.currentUser}

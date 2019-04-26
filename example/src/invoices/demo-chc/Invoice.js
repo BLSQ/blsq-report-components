@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { Cell } from "@blsq/blsq-report-components";
-
+import DoneIcon from "@material-ui/icons/Done";
+import CloseIcon from "@material-ui/icons/Close";
 const styles = {
   invoiceFrame: {
     backgroundColor: "#ffffff",
@@ -25,6 +26,13 @@ const activity = {
     name: "my super element",
     period: "2016Q4"
   }
+};
+
+const renderer = (value, raw_value) => {
+  if (raw_value == 1) {
+    return <DoneIcon style={{ color: "green" }} />;
+  }
+  return <CloseIcon style={{ color: "red" }} />;
 };
 
 class Invoice extends Component {
@@ -69,6 +77,7 @@ class Invoice extends Component {
                 value={activity}
                 field="total"
                 decimals={0}
+                unit=" $"
               />
             </tr>
             <tr>
@@ -103,6 +112,24 @@ class Invoice extends Component {
                 value={"link to to invoice"}
                 href="./index.html#/invoices/2017Q1/cDw53Ej8rju/demo-chc"
                 bold
+                colSpan={4}
+              />
+            </tr>
+            <tr>
+              <Cell
+                variant="quantity"
+                field="self"
+                value={1}
+                href="https://google.com"
+                renderer={renderer}
+                colSpan={4}
+              />
+              <Cell
+                variant="quantity"
+                field="self"
+                value={0}
+                href="https://google.com"
+                renderer={renderer}
                 colSpan={4}
               />
             </tr>

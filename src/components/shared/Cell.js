@@ -92,6 +92,7 @@ const Cell = props => {
     decimals,
     href,
     unit,
+    renderer,
     ...other
   } = props;
   const amount = resolve(field, value);
@@ -150,9 +151,14 @@ const Cell = props => {
   const boldValue = bold === true;
   let renderedValue;
 
+  if (renderer) {
+    displayedValue = renderer(displayedValue, amount);
+  }
+
   if (displayedValue && unit) {
     displayedValue = displayedValue + unit;
   }
+
   if (boldValue) {
     renderedValue = <b>{displayedValue}</b>;
   } else {

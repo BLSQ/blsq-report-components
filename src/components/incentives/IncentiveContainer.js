@@ -11,6 +11,7 @@ import IncentiveNavigationBar from "./IncentiveNavigationBar";
 import IncentiveSupport from "./IncentiveSupport";
 import Loader from "../shared/Loader";
 import Warning from "../shared/Warning";
+import DatePeriods from "../../support/DatePeriods";
 
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -24,7 +25,8 @@ const CustomTableCell = withStyles(theme => ({
     color: theme.palette.common.white,
     textAlign: "center",
     fontWeight: "bold",
-    fontSize: "18px"
+    padding: "5px",
+    fontSize: "14px",
   },
   root: {
     textAlign: "left",
@@ -336,7 +338,12 @@ class IncentiveContainer extends Component {
                 <CustomTableCell>OrgUnit</CustomTableCell>
                 <CustomTableCell>Data element</CustomTableCell>
                 {dsi.periods.map(p => (
-                  <CustomTableCell key={p}>{p}</CustomTableCell>
+                  <CustomTableCell key={p} title={p}>
+                    {DatePeriods.displayName(
+                      p,
+                      this.props.periodFormat[DatePeriods.detect(p)]
+                    )}
+                  </CustomTableCell>
                 ))}
               </TableRow>
             </TableHead>

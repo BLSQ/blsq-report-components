@@ -115,6 +115,12 @@ class InvoiceContainer extends Component {
       this.setState({
         invoice: invoice
       });
+      document.title =
+        invoiceTypeCode +
+        "-" +
+        period +
+        "-" +
+        (invoice.orgUnit ? invoice.orgUnit.name : "");
     } catch (error) {
       this.setState({
         error:

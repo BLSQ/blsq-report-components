@@ -312,8 +312,8 @@ class Dhis2 {
       orgUnits: orgUnits,
       period: period,
       quarterPeriod: period,
-      quarterPeriods: DatePeriods.split(period, "quarterly"),
-      monthlyPeriods: DatePeriods.split(period, "monthly"),
+      quarterPeriods: invoiceType.previousPeriods !== undefined ? DatePeriods.split(DatePeriods.previousQuarterByPeriodNumber(period, invoiceType.previousPeriods), "quarterly") : DatePeriods.split(period, "quarterly"),
+      monthlyPeriods: invoiceType.previousPeriods !== undefined ? DatePeriods.split(DatePeriods.previousQuarterByPeriodNumber(period, invoiceType.previousPeriods), "monthly") : DatePeriods.split(period, "monthly"),
       year: year,
       quarter: quarter,
       invoiceType: invoiceType

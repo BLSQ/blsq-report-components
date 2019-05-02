@@ -498,6 +498,20 @@ class DatePeriods {
       this.dhis2MonthPeriod(year, month)
     );
   }
+
+  static previousQuarterByPeriodNumber(period, previousPeriods){
+    var previousQuarter = "";
+    var arrayPreviousQuarter = [];
+    for(var i=0; i < previousPeriods; i++){
+      if(i === 0){
+        previousQuarter = this.previousQuarter(period);
+      }else{
+        previousQuarter = this.previousQuarter(arrayPreviousQuarter[i-1]);
+      }
+      arrayPreviousQuarter.push(prevQuarter);
+    }
+    return previousQuarter;
+  }
 }
 
 export default DatePeriods;

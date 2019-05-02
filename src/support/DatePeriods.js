@@ -508,7 +508,7 @@ class DatePeriods {
       }else{
         previousQuarter = this.previousQuarter(arrayPreviousQuarter[i-1]);
       }
-      arrayPreviousQuarter.push(prevQuarter);
+      arrayPreviousQuarter.push(previousQuarter);
     }
     return previousQuarter;
   }

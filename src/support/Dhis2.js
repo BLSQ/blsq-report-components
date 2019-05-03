@@ -313,7 +313,7 @@ class Dhis2 {
 
     if (invoiceType.previousPeriods) {
       quarterPeriods = quarterPeriods.concat(DatePeriods.previousPeriods(DatePeriods.split(period, "quarterly")[0], invoiceType.previousPeriods));
-      monthlyPeriods = monthlyPeriods.concat(DatePeriods.previousPeriods(DatePeriods.split(period, "monthly")[0], invoiceType.previousPeriods));
+      monthlyPeriods = monthlyPeriods.concat(DatePeriods.previousPeriods(DatePeriods.split(period, "monthly")[0], 3));
       yearlyPeriods = yearlyPeriods.concat(DatePeriods.previousPeriods(DatePeriods.split(period, "yearly")[0], invoiceType.previousPeriods));
     }
 

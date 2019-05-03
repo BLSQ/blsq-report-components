@@ -307,13 +307,24 @@ class Dhis2 {
     const year = period.slice(0, 4);
     const quarter = DatePeriods.split(period, "quarterly")[0].slice(5, 6);
 
+    let quarterPeriods = DatePeriods.split(period, "quarterly");
+    let monthlyPeriods = DatePeriods.split(period, "monthly");
+    let yearlyPeriods =  DatePeriods.split(period, "yearly");
+
+    if (invoiceType.previousPeriods) {
+      quarterPeriods = quarterPeriods.concat(DatePeriods.previousPeriods(DatePeriods.split(period, "quarterly")[0], invoiceType.previousPeriods));
+      monthlyPeriods = monthlyPeriods.concat(DatePeriods.previousPeriods(DatePeriods.split(period, "monthly")[0], invoiceType.previousPeriods));
+      yearlyPeriods = yearlyPeriods.concat(DatePeriods.previousPeriods(DatePeriods.split(period, "yearly")[0], invoiceType.previousPeriods));
+    }
+
     return {
       orgUnit: orgUnits.filter(orgUnit => orgUnit.id === orgUnitId)[0],
       orgUnits: orgUnits,
       period: period,
       quarterPeriod: period,
-      quarterPeriods: invoiceType.previousPeriods !== undefined ? DatePeriods.split(DatePeriods.previousQuarterByPeriodNumber(period, invoiceType.previousPeriods), "quarterly") : DatePeriods.split(period, "quarterly"),
-      monthlyPeriods: invoiceType.previousPeriods !== undefined ? DatePeriods.split(DatePeriods.previousQuarterByPeriodNumber(period, invoiceType.previousPeriods), "monthly") : DatePeriods.split(period, "monthly"),
+      quarterPeriods: quarterPeriods,
+      monthlyPeriods: monthlyPeriods,
+      yearlyPeriods: yearlyPeriods,
       year: year,
       quarter: quarter,
       invoiceType: invoiceType

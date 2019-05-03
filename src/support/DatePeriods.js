@@ -499,18 +499,32 @@ class DatePeriods {
     );
   }
 
-  static previousQuarterByPeriodNumber(period, previousPeriods){
-    var previousQuarter = "";
-    var arrayPreviousQuarter = [];
-    for(var i=0; i < previousPeriods; i++){
-      if(i === 0){
-        previousQuarter = this.previousQuarter(period);
-      }else{
-        previousQuarter = this.previousQuarter(arrayPreviousQuarter[i-1]);
+  static previousPeriods(period, numberOfPeriods){
+    var previous = "";
+    var previousPeriods = [];
+
+    for (var i = 0; i < numberOfPeriods; i++) {
+      if (i > 0) {
+        period = previousPeriods[i - 1];
       }
-      arrayPreviousQuarter.push(previousQuarter);
+      previous = this.previous(period);
+      previousPeriods.push(previous);
     }
-    return previousQuarter;
+    return previousPeriods;
+  }
+
+  static nextPeriods(period, numberOfPeriods){
+    var next = "";
+    var nextPeriods = [];
+
+    for (var i = 0; i < numberOfPeriods; i++) {
+      if (i > 0) {
+        period = nextPeriods[i - 1];
+      }
+      next = this.next(period);
+      nextPeriods.push(next);
+    }
+    return nextPeriods;
   }
 }
 

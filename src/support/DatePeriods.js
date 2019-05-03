@@ -510,7 +510,7 @@ class DatePeriods {
       previous = this.previous(period);
       previousPeriods.push(previous);
     }
-    return previousPeriods;
+    return previousPeriods.reverse();
   }
 
   static nextPeriods(period, numberOfPeriods){

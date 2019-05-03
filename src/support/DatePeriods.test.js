@@ -284,9 +284,9 @@ it("eduQuarter", () => {
 });
 
 it("calculates previous periods", () => {
-  expect(DatePeriods.previousPeriods("2018Q3", 3)).toEqual(["2018Q2", "2018Q1", "2017Q4"]);
-  expect(DatePeriods.previousPeriods("201802", 3)).toEqual(["201801", "201712", "201711"]);
-  expect(DatePeriods.previousPeriods("2018", 3)).toEqual(["2017", "2016", "2015"]);
+  expect(DatePeriods.previousPeriods("2018Q3", 3)).toEqual(["2017Q4", "2018Q1", "2018Q2"]);
+  expect(DatePeriods.previousPeriods("201802", 3)).toEqual(["201711", "201712", "201801"]);
+  expect(DatePeriods.previousPeriods("2018", 3)).toEqual(["2015", "2016", "2017"]);
 });
 
 it("calculates next periods", () => {

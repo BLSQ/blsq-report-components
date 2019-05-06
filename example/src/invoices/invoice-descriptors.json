@@ -15,6 +15,7 @@
     "facilityLabel": "demo-chcs",
     "orientation": "landscape",
     "frequency": "monthly",
+    "previousPeriod": 1,
     "dataSets": [],
     "dataElementGroups": ["oDkJh5Ddh7d"]
   },

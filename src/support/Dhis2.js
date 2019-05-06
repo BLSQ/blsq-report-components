@@ -22,6 +22,10 @@ class Dhis2 {
     this.ignoredStores = [""];
     this.version = "";
     this.forceHttps = options.forceHttps;
+    if (options.disableInitialize) {
+      return;
+    }
+
     this.initialize = this.initialize();
   }
 
@@ -309,12 +313,24 @@ class Dhis2 {
 
     let quarterPeriods = DatePeriods.split(period, "quarterly");
     let monthlyPeriods = DatePeriods.split(period, "monthly");
-    let yearlyPeriods =  DatePeriods.split(period, "yearly");
+    let yearlyPeriods = DatePeriods.split(period, "yearly");
 
     if (invoiceType.previousPeriods) {
-      quarterPeriods = quarterPeriods.concat(DatePeriods.previousPeriods(DatePeriods.split(period, "quarterly")[0], invoiceType.previousPeriods));
-      monthlyPeriods = monthlyPeriods.concat(DatePeriods.previousPeriods(DatePeriods.split(period, "monthly")[0], 3));
-      yearlyPeriods = yearlyPeriods.concat(DatePeriods.previousPeriods(DatePeriods.split(period, "yearly")[0], invoiceType.previousPeriods));
+      quarterPeriods = quarterPeriods.concat(
+        DatePeriods.previousPeriods(
+          DatePeriods.split(period, "quarterly")[0],
+          invoiceType.previousPeriods
+        )
+      );
+      monthlyPeriods = monthlyPeriods.concat(
+        DatePeriods.previousPeriods(DatePeriods.split(period, "monthly")[0], 3)
+      );
+      yearlyPeriods = yearlyPeriods.concat(
+        DatePeriods.previousPeriods(
+          DatePeriods.split(period, "yearly")[0],
+          invoiceType.previousPeriods
+        )
+      );
     }
 
     return {

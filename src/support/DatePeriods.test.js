@@ -212,6 +212,27 @@ it("split yearly in quarterly periods", () => {
   ]);
 });
 
+it("detect month", () => {
+  expect(DatePeriods.detect("201601")).toEqual("monthly");
+});
+
+it("detect quarterly", () => {
+  expect(DatePeriods.detect("2016Q")).toEqual("quarterly");
+});
+
+it("detect yearly", () => {
+  expect(DatePeriods.detect("2016")).toEqual("yearly");
+});
+
+it("detect yearly", () => {
+  expect(DatePeriods.detect("2016July")).toEqual("financialJuly");
+});
+
+it("detect sixMonthly", () => {
+  expect(DatePeriods.detect("2016S1")).toEqual("sixMonthly");
+  expect(DatePeriods.detect("2016S2")).toEqual("sixMonthly");
+});
+
 it("next month", () => {
   expect(DatePeriods.next("201601")).toEqual("201602");
   expect(DatePeriods.next("201612")).toEqual("201701");

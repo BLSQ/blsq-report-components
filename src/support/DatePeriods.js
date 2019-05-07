@@ -278,7 +278,10 @@ class DatePeriods {
     if (dhis2Period.length === 4) {
       return YEARLY;
     }
-    throw new Error("unsupported period format" + period);
+    if (dhis2Period.includes("July")) {
+      return FINANCIAL_JULY;
+    }
+    throw new Error("unsupported period format" + dhis2Period);
   }
 
   static nextYearMonth(period) {

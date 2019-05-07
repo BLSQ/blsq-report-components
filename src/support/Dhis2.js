@@ -314,6 +314,7 @@ class Dhis2 {
     let quarterPeriods = DatePeriods.split(period, "quarterly");
     let monthlyPeriods = DatePeriods.split(period, "monthly");
     let yearlyPeriods = DatePeriods.split(period, "yearly");
+    let yearlyJulyPeriods = DatePeriods.split(period, "financialJuly");
 
     if (invoiceType.previousPeriods) {
       quarterPeriods = quarterPeriods.concat(
@@ -341,6 +342,7 @@ class Dhis2 {
       quarterPeriods: quarterPeriods,
       monthlyPeriods: monthlyPeriods,
       yearlyPeriods: yearlyPeriods,
+      yearlyJulyPeriods: yearlyJulyPeriods,
       year: year,
       quarter: quarter,
       invoiceType: invoiceType
@@ -370,7 +372,9 @@ class Dhis2 {
       .join("&");
     const periods = [request.year]
       .concat(request.monthlyPeriods)
-      .concat(request.quarterPeriods);
+      .concat(request.quarterPeriods)
+      .concat(request.yearlyPeriods)
+      .concat(request.yearlyJulyPeriods);
     const periodsQuery = periods.map(p => "&period=" + p).join("");
 
     const dataValuesUrl =

@@ -37,6 +37,68 @@ it("split a quarter in monthly periods", () => {
   ]);
 });
 
+it("split financialJuly to month  ", () => {
+  expect(DatePeriods.split("2016July", "monthly")).toEqual([
+    "201607",
+    "201608",
+    "201609",
+    "201610",
+    "201611",
+    "201612",
+    "201701",
+    "201702",
+    "201703",
+    "201704",
+    "201705",
+    "201706"
+  ]);
+});
+
+it("split financialJuly to quarter  ", () => {
+  expect(DatePeriods.split("2016July", "quarterly")).toEqual([
+    "2016Q3",
+    "2016Q4",
+    "2017Q1",
+    "2017Q2"
+  ]);
+});
+
+it("split financialJuly to month  ", () => {
+  expect(DatePeriods.split("2016July", "yearly")).toEqual(["2016", "2017"]);
+});
+
+it("split financialJuly to month  ", () => {
+  expect(DatePeriods.split("2016July", "sixMonthly")).toEqual([
+    "2016S2",
+    "2017S1"
+  ]);
+});
+
+it("split month to financialJuly ", () => {
+  expect(DatePeriods.split("201606", "financialJuly")).toEqual(["2015July"]);
+
+  expect(DatePeriods.split("201607", "financialJuly")).toEqual(["2016July"]);
+});
+
+it("split sixmonthly to financialJuly ", () => {
+  expect(DatePeriods.split("2016S1", "financialJuly")).toEqual(["2015July"]);
+  expect(DatePeriods.split("2016S2", "financialJuly")).toEqual(["2016July"]);
+});
+
+it("split yearQuarter to financialJuly ", () => {
+  expect(DatePeriods.split("2016Q1", "financialJuly")).toEqual(["2015July"]);
+  expect(DatePeriods.split("2016Q2", "financialJuly")).toEqual(["2015July"]);
+  expect(DatePeriods.split("2016Q3", "financialJuly")).toEqual(["2016July"]);
+  expect(DatePeriods.split("2016Q4", "financialJuly")).toEqual(["2016July"]);
+});
+
+it("split yearQuarter to financialJuly ", () => {
+  expect(DatePeriods.split("2016", "financialJuly")).toEqual([
+    "2015July",
+    "2016July"
+  ]);
+});
+
 it("split yearQuarter in monthly periods", () => {
   expect(DatePeriods.split("2016Q4", "monthly")).toEqual([
     "201610",
@@ -150,6 +212,27 @@ it("split yearly in quarterly periods", () => {
   ]);
 });
 
+it("detect month", () => {
+  expect(DatePeriods.detect("201601")).toEqual("monthly");
+});
+
+it("detect quarterly", () => {
+  expect(DatePeriods.detect("2016Q")).toEqual("quarterly");
+});
+
+it("detect yearly", () => {
+  expect(DatePeriods.detect("2016")).toEqual("yearly");
+});
+
+it("detect yearly", () => {
+  expect(DatePeriods.detect("2016July")).toEqual("financialJuly");
+});
+
+it("detect sixMonthly", () => {
+  expect(DatePeriods.detect("2016S1")).toEqual("sixMonthly");
+  expect(DatePeriods.detect("2016S2")).toEqual("sixMonthly");
+});
+
 it("next month", () => {
   expect(DatePeriods.next("201601")).toEqual("201602");
   expect(DatePeriods.next("201612")).toEqual("201701");
@@ -162,6 +245,10 @@ it("next quarter", () => {
 
 it("next year", () => {
   expect(DatePeriods.next("2016")).toEqual("2017");
+});
+
+it("next financialJuly", () => {
+  expect(DatePeriods.next("2016July")).toEqual("2017July");
 });
 
 it("previous month", () => {
@@ -178,6 +265,9 @@ it("previous year", () => {
   expect(DatePeriods.previous("2016")).toEqual("2015");
 });
 
+it("previous financialJuly", () => {
+  expect(DatePeriods.previous("2016July")).toEqual("2015July");
+});
 it("monthsInQuarter", () => {
   expect(DatePeriods.monthsInQuarter(4)).toEqual(["10", "11", "12"]);
 });
@@ -280,17 +370,36 @@ it("eduQuarter", () => {
   expect(DatePeriods.displayName("2017Q3", "eduQuarter")).toEqual(
     "2016-2017 XX - Juillet - Aout"
   );
-
 });
 
 it("calculates previous periods", () => {
-  expect(DatePeriods.previousPeriods("2018Q3", 3)).toEqual(["2017Q4", "2018Q1", "2018Q2"]);
-  expect(DatePeriods.previousPeriods("201802", 3)).toEqual(["201711", "201712", "201801"]);
-  expect(DatePeriods.previousPeriods("2018", 3)).toEqual(["2015", "2016", "2017"]);
+  expect(DatePeriods.previousPeriods("2018Q3", 3)).toEqual([
+    "2017Q4",
+    "2018Q1",
+    "2018Q2"
+  ]);
+  expect(DatePeriods.previousPeriods("201802", 3)).toEqual([
+    "201711",
+    "201712",
+    "201801"
+  ]);
+  expect(DatePeriods.previousPeriods("2018", 3)).toEqual([
+    "2015",
+    "2016",
+    "2017"
+  ]);
 });
 
 it("calculates next periods", () => {
-  expect(DatePeriods.nextPeriods("2018Q3", 3)).toEqual(["2018Q4", "2019Q1", "2019Q2"]);
-  expect(DatePeriods.nextPeriods("201802", 3)).toEqual(["201803", "201804", "201805"]);
+  expect(DatePeriods.nextPeriods("2018Q3", 3)).toEqual([
+    "2018Q4",
+    "2019Q1",
+    "2019Q2"
+  ]);
+  expect(DatePeriods.nextPeriods("201802", 3)).toEqual([
+    "201803",
+    "201804",
+    "201805"
+  ]);
   expect(DatePeriods.nextPeriods("2018", 3)).toEqual(["2019", "2020", "2021"]);
 });

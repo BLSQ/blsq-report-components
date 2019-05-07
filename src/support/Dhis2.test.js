@@ -17,6 +17,7 @@ it("by default fetch current periods month, quarter and year", () => {
     quarterPeriods: ["2016Q1"],
     monthlyPeriods: ["201601", "201602", "201603"],
     yearlyPeriods: ["2016"],
+    yearlyJulyPeriods: ["2015July"],
     year: "2016",
     quarter: "1",
     invoiceType: {}
@@ -54,6 +55,7 @@ it("invoiceType can force lookup of previous periods", () => {
     quarterPeriod: "2016Q1",
     quarterPeriods: ["2016Q1", "2015Q4"],
     year: "2016",
-    yearlyPeriods: ["2016", "2015"]
+    yearlyPeriods: ["2016", "2015"],
+    yearlyJulyPeriods: ["2015July"]
   });
 });

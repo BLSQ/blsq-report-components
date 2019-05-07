@@ -246,6 +246,10 @@ class DatePeriods {
     if (period.length === 4) {
       return this.nextYear(period);
     }
+    if (period.includes("July")) {
+      return this.nextFinancialJuly(period);
+    }
+
     throw new Error("unsupported period format" + period);
   }
 
@@ -262,6 +266,10 @@ class DatePeriods {
     if (period.length === 4) {
       return this.previousYear(period);
     }
+    if (period.includes("July")) {
+      return this.previousFinancialJuly(period);
+    }
+
     throw new Error("unsupported period format" + period);
   }
 
@@ -316,6 +324,16 @@ class DatePeriods {
   static previousYear(period) {
     let year = parseInt(period.slice(0, 4), 0);
     return "" + (year - 1);
+  }
+
+  static nextFinancialJuly(period) {
+    let year = parseInt(period.slice(0, 4), 0);
+    return "" + (year + 1) + "July";
+  }
+
+  static previousFinancialJuly(period) {
+    let year = parseInt(period.slice(0, 4), 0);
+    return "" + (year - 1) + "July";
   }
 
   static nextQuarter(period) {

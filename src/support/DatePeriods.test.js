@@ -247,6 +247,10 @@ it("next year", () => {
   expect(DatePeriods.next("2016")).toEqual("2017");
 });
 
+it("next financialJuly", () => {
+  expect(DatePeriods.next("2016July")).toEqual("2017July");
+});
+
 it("previous month", () => {
   expect(DatePeriods.previous("201601")).toEqual("201512");
   expect(DatePeriods.previous("201612")).toEqual("201611");
@@ -261,6 +265,9 @@ it("previous year", () => {
   expect(DatePeriods.previous("2016")).toEqual("2015");
 });
 
+it("previous financialJuly", () => {
+  expect(DatePeriods.previous("2016July")).toEqual("2015July");
+});
 it("monthsInQuarter", () => {
   expect(DatePeriods.monthsInQuarter(4)).toEqual(["10", "11", "12"]);
 });

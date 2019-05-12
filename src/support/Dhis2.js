@@ -239,7 +239,7 @@ class Dhis2 {
 
   getOrgunitsForGroup(ancestorId, groupId) {
     const url =
-      "organisationUnits?fields=id,name,ancestors[id,name],organisationUnitGroups[id,name,code]" +
+      "organisationUnits?fields=id,name,code,ancestors[id,name],organisationUnitGroups[id,name,code]" +
       "&pageSize=1500" +
       "&filter=organisationUnitGroups.id:eq:" +
       groupId +

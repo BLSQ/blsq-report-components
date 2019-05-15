@@ -43,6 +43,14 @@ const DrawerLinks = props => (
     >
       Bookmarked search
     </ListItem>
+
+    <ListItem
+      button
+      component={Link}
+      to="/reports/2018Q3/ImspTQPwCqd/demo-chc-consolidated"
+    >
+      Consolidated invoice
+    </ListItem>
   </React.Fragment>
 );
 

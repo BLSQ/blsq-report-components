@@ -179,6 +179,11 @@ class Dhis2 {
     return getInstance().then(d2 => d2.Api.getApi().get(dataSetUrl));
   }
 
+  getFileDataValue(value){
+    var url = "/dataValues/files?de="+value.de+"&ou="+value.ou+"&pe="+value.de;
+    return getInstance().then(d2 => d2.Api.getApi().get(url));
+  }
+
   getDataElementGroupValues(orgUnitId, dataElementGroupId, periods) {
     var dataValueSetsUrl =
       "/dataValueSets?dataElementGroup=" +

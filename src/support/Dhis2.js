@@ -180,7 +180,7 @@ class Dhis2 {
   }
 
   getFileDataValue(value){
-    var fileUrl = "/dataValues/files?de="+value.de+"&ou="+value.ou+"&pe="+value.pe;
+    var fileUrl = this.baseUrl+"/api/dataValues/files?de="+value.de+"&ou="+value.ou+"&pe="+value.pe;
     return fileUrl;
   }
 

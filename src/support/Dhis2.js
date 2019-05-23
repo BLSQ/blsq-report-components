@@ -180,8 +180,8 @@ class Dhis2 {
   }
 
   getFileDataValue(value){
-    const fileUrl = "/dataValues/files?de="+value.de+"&ou="+value.ou+"&pe="+value.pe;
-    return getInstance().then(d2 => d2.Api.getApi().get(fileUrl));
+    var fileUrl = this.baseUrl+"/dataValues/files?de="+value.de+"&ou="+value.ou+"&pe="+value.pe;
+    return fileUrl;
   }
 
   getDataElementGroupValues(orgUnitId, dataElementGroupId, periods) {

@@ -179,9 +179,9 @@ class Dhis2 {
     return getInstance().then(d2 => d2.Api.getApi().get(dataSetUrl));
   }
 
-  getFileDataValue(value, fileUrl){
-    console.info("Current base URL ...:", fileUrl);
-    var fileUrl = fileUrl +"/api/dataValues/files?de="+value.de+"&ou="+value.ou+"&pe="+value.pe;
+  getFileDataValue(value, url){
+    console.info("Current base URL ...:", url);
+    var fileUrl = url +"/api/dataValues/files?de="+value.de+"&ou="+value.ou+"&pe="+value.pe;
     console.info("FILE URL :", fileUrl);
     return fileUrl;
   }

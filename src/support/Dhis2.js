@@ -180,7 +180,10 @@ class Dhis2 {
   }
 
   getFileDataValue(value){
-    console.info("Current object URL ...:", this.baseUrl);
+    console.info("Current base URL ...:", this.baseUrl);
+    console.info("ENV prod :", process.env.NODE_ENV);
+    console.info("Current base ...:", this);
+
     var fileUrl = (process.env.NODE_ENV === "production" ? this.baseUrl : this.url) +"/api/dataValues/files?de="+value.de+"&ou="+value.ou+"&pe="+value.pe;
     console.info("FILE URL :", fileUrl);
     return fileUrl;

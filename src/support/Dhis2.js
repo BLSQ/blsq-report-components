@@ -179,12 +179,9 @@ class Dhis2 {
     return getInstance().then(d2 => d2.Api.getApi().get(dataSetUrl));
   }
 
-  getFileDataValue(value){
-    console.info("Current base URL ...:", this.baseUrl);
-    console.info("ENV prod :", process.env.NODE_ENV);
-    console.info("Current base ...:", this);
-
-    var fileUrl = (process.env.NODE_ENV === "production" ? this.baseUrl : this.url) +"/api/dataValues/files?de="+value.de+"&ou="+value.ou+"&pe="+value.pe;
+  getFileDataValue(value, fileUrl){
+    console.info("Current base URL ...:", fileUrl);
+    var fileUrl = fileUrl +"/api/dataValues/files?de="+value.de+"&ou="+value.ou+"&pe="+value.pe;
     console.info("FILE URL :", fileUrl);
     return fileUrl;
   }

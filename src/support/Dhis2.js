@@ -188,7 +188,7 @@ class Dhis2 {
 
   getSystemSettingsByKey(key){
     const systemSettingsUrl = "systemSettings/"+key;
-    return getInstance().then(d2 => d2.Api.getApi().get(systemSettingsUrl));
+    return getInstance().then(d2 => Promise.all(d2.Api.getApi().get(systemSettingsUrl)));
   }
 
   getDataElementGroupValues(orgUnitId, dataElementGroupId, periods) {

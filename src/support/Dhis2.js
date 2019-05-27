@@ -186,11 +186,6 @@ class Dhis2 {
     return fileUrl;
   }
 
-  getSystemSettingsByKey(key){
-    var systemSettingsUrl = "systemSettings/"+key;
-    return getInstance().then(d2 => d2.Api.getApi().get(systemSettingsUrl)).then(response => {return response;});
-  }
-
   getDataElementGroupValues(orgUnitId, dataElementGroupId, periods) {
     var dataValueSetsUrl =
       "/dataValueSets?dataElementGroup=" +

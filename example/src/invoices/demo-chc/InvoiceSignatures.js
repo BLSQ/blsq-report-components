@@ -28,13 +28,9 @@ class InvoiceSignatures extends Component {
             <Grid
               container
               className={classes.demo}
-              justify="center"
+              justify="left"
               spacing={24}
             >
-              <Grid item>
-                <InvoiceSignature mainLabel="Checked by PRBFO" signature={this.props.invoice.signatures.sign1}/>
-              </Grid>
-
               <Grid item>
                 <InvoiceSignature mainLabel="Approved By Data Analyst" signature={this.props.invoice.signatures.sign2}/>
               </Grid>

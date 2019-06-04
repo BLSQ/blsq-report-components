@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { withNamespaces } from "react-i18next";
 import Paper from "@material-ui/core/Paper";
-
+import Loader from "../shared/Loader";
 import OuSelectionContainer from "./OuSelectionContainer";
 
 const styles = theme => ({
@@ -80,9 +80,7 @@ class MainContainer extends Component {
 
     this.state.organisationUnitGroupSets.forEach(groupset => {
       groupset.id !== this.props.contractSettings.primaryFlagGroupSet &&
-        (groupsetInitVals[
-          `${groupset.id}`
-        ] = groupset.organisationUnitGroups
+        (groupsetInitVals[groupset.id] = groupset.organisationUnitGroups
           .filter(group => orgUnitGroups.includes(group.id))
           .map(group => group.id));
     });
@@ -100,7 +98,7 @@ class MainContainer extends Component {
     const { classes } = this.props;
 
     if (this.state.organisationUnitGroupSets === undefined) {
-      return "Show loader";
+      return <Loader />;
     }
 
     return (

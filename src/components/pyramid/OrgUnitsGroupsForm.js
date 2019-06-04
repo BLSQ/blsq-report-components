@@ -118,9 +118,10 @@ class OrgUnitsGroupsForm extends Component {
   }
 
   getCurrentPrimaryOu() {
-    let primaryGroupOus = this.getTargetGroup(
+    let targetGroup = this.getTargetGroup(
       this.props.contractSettings.primaryFlagGroup
-    ).organisationUnits.map(ou => ou.id);
+    );
+    let primaryGroupOus = targetGroup.organisationUnits.map(ou => ou.id);
 
     let contractSubContractGroupOus = this.getTargetGroup(
       this.props.groupsetInitVals[

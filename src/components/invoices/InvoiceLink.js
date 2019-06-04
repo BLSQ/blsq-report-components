@@ -49,11 +49,12 @@ class InvoiceLink extends Component {
               >
                 {DatePeriods.displayName(
                   subPeriod,
-                  invoiceType.frequency == "quarterly"
-                    ? "quarter"
-                    : invoiceType.frequency == "sixMonthly"
-                    ? "sixMonth"
-                    : "monthYear"
+                  invoiceType.periodFormat ||
+                    (invoiceType.frequency == "quarterly"
+                      ? "quarter"
+                      : invoiceType.frequency == "sixMonthly"
+                      ? "sixMonth"
+                      : "monthYear")
                 )}
               </Button>
             )

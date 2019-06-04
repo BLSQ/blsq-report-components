@@ -11,7 +11,7 @@ import IncentiveNavigationBar from "./IncentiveNavigationBar";
 import IncentiveSupport from "./IncentiveSupport";
 import Loader from "../shared/Loader";
 import Warning from "../shared/Warning";
-import Dhis2 from "../../support/Dhis2";
+import DatePeriods from "../../support/DatePeriods";
 
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -25,7 +25,8 @@ const CustomTableCell = withStyles(theme => ({
     color: theme.palette.common.white,
     textAlign: "center",
     fontWeight: "bold",
-    fontSize: "18px"
+    padding: "5px",
+    fontSize: "14px",
   },
   root: {
     textAlign: "left",
@@ -60,7 +61,8 @@ const OrgUnitValues = props => {
     index,
     dataElementCommonPrefix,
     dsi,
-    classes
+    classes,
+    dhis2
   } = props;
 
   const strippedStyle = {
@@ -188,7 +190,7 @@ class IncentiveContainer extends Component {
 
   setDataValue = async (key, value) => {
     try {
-      await dhis2.setDataValue(value);
+      await this.props.dhis2.setDataValue(value);
       this.setState({ valids: { ...this.state.valids, [key]: true } });
       this.setState({ errors: { ...this.state.errors, [key]: undefined } });
     } catch (error) {
@@ -220,7 +222,9 @@ class IncentiveContainer extends Component {
     }
     //TODO display also last changes : http://liberia.dhis2.org/dhis/api/audits/dataValue?ds=Ouqnlj54RY4&period=2017July&period=2018July
     try {
-      const dataSet = await this.props.dhis2.getDataSet(this.props.incentiveCode);
+      const dataSet = await this.props.dhis2.getDataSet(
+        this.props.incentiveCode
+      );
       console.info("DATASET :", dataSet);
       const periods = IncentiveSupport.computePeriods(
         dataSet.periodType,
@@ -301,7 +305,7 @@ class IncentiveContainer extends Component {
       );
     }
     const dsi = this.state.dataSetInfos;
-    const { classes } = this.props;
+    const { classes, dhis2 } = this.props;
     const dataElementCommonPrefix = IncentiveSupport.commonPrefix(
       dsi.dataSet.dataSetElements.map(de => de.dataElement.name)
     );
@@ -310,10 +314,9 @@ class IncentiveContainer extends Component {
       indexedValues: this.state.indexedValues,
       valids: this.state.valids
     };
-    const allowedSeeOrgunitIds = this.props.dhis2.allowedSeeOrgunits(
-      this.props.currentUser,
-      dsi.dataSet
-    ).map(ou => ou.id);
+    const allowedSeeOrgunitIds = dhis2
+      .allowedSeeOrgunits(this.props.currentUser, dsi.dataSet)
+      .map(ou => ou.id);
 
     const nonAllowedSee = dsi.dataSet.organisationUnits.filter(
       ou => !allowedSeeOrgunitIds.includes(ou.id)
@@ -335,7 +338,12 @@ class IncentiveContainer extends Component {
                 <CustomTableCell>OrgUnit</CustomTableCell>
                 <CustomTableCell>Data element</CustomTableCell>
                 {dsi.periods.map(p => (
-                  <CustomTableCell key={p}>{p}</CustomTableCell>
+                  <CustomTableCell key={p} title={p}>
+                    {DatePeriods.displayName(
+                      p,
+                      this.props.periodFormat[DatePeriods.detect(p)]
+                    )}
+                  </CustomTableCell>
                 ))}
               </TableRow>
             </TableHead>
@@ -356,6 +364,7 @@ class IncentiveContainer extends Component {
                           classes={classes}
                           formInfos={formInfos}
                           handleChange={this.handleChange}
+                          dhis2={dhis2}
                         />
                       ))}
                     </React.Fragment>

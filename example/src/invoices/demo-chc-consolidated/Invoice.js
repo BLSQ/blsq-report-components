@@ -41,7 +41,7 @@ class Invoice extends Component {
             {totals.map((orgUnit, index) => {
               return (
                 <tr key={index}>
-                  <Cell variant="order" value={index} field="self" />
+                  <Cell variant="order" value={index + 1} field="self" />
                   <Cell
                     variant="text"
                     value={orgUnit.orgUnit.ancestors[0].name}

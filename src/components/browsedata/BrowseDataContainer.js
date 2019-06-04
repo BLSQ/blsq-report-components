@@ -2,12 +2,10 @@ import React, { Component } from "react";
 
 import { withStyles } from "@material-ui/core/styles";
 
-import DatePeriods from "../../support/DatePeriods";
-import Dhis2 from "../../support/Dhis2";
+import BrowseDataToolBar from "./BrowseDataToolBar";
 import Cell from "../shared/Cell";
 
 import Loader from "../shared/Loader";
-import DegNavigationBar from "./DegNavigationBar";
 
 const styles = {
   table: {
@@ -31,11 +29,11 @@ const dataElementsComparator = (a, b) => {
 };
 
 const orgUnitComparator = (a, b) => {
-  var c1 = a.ancestors[1].name;
-  var c2 = b.ancestors[1].name;
+  var c1 = a.ancestors[1] ? a.ancestors[1].name : "";
+  var c2 = b.ancestors[1] ? b.ancestors[1].name : "";
 
-  var d1 = a.ancestors[2].name;
-  var d2 = b.ancestors[2].name;
+  var d1 = a.ancestors[2] ? a.ancestors[2].name : "";
+  var d2 = b.ancestors[2] ? b.ancestors[2].name : "";
 
   var n1 = a.name;
   var n2 = b.name;
@@ -68,6 +66,7 @@ class BrowseDataContainer extends Component {
     this.props = nextProps;
     this.setState({
       date: new Date(),
+      data: undefined,
       error: undefined
     });
     this.loadData();
@@ -116,8 +115,40 @@ class BrowseDataContainer extends Component {
         });
       }
 
+      const columns = [
+        "Org Unit id",
+        this.props.levels[1],
+        this.props.levels[2],
+        "Org Unit"
+      ];
+
+      dataElements.forEach(de => {
+        columns.push(de.name);
+      });
+      const xlsdata = orgUnits.map(ou => {
+        let row = [
+          ou.id,
+          ou.ancestors[1] ? ou.ancestors[1].name : "",
+          ou.ancestors[2] ? ou.ancestors[2].name : "",
+          ou.name
+        ];
+        dataElements.forEach(de => {
+          row.push(indexedValues[[de.id, this.props.period, ou.id]]);
+        });
+        return row;
+      });
+
       this.setState({
-        data: { dataElementGroup, indexedValues, dataElements, orgUnits }
+        data: {
+          dataElementGroup,
+          indexedValues,
+          dataElements,
+          orgUnits,
+          xlsdata: {
+            columns: columns,
+            data: xlsdata
+          }
+        }
       });
     } catch (error) {
       this.setState({
@@ -130,11 +161,13 @@ class BrowseDataContainer extends Component {
   }
   render() {
     const navigation = this.props.dataElementGroups && (
-      <DegNavigationBar
-        dataElementGroups={this.props.dataElementGroups}
+      <BrowseDataToolBar
         period={this.props.period}
+        dataElementGroups={this.props.dataElementGroups}
         dataElementGroupId={this.props.dataElementGroupId}
         orgUnitId={this.props.orgUnitId}
+        periodFormat={this.props.periodFormat}
+        xlsdata={this.state.data ? this.state.data.xlsdata : undefined}
       />
     );
 
@@ -151,24 +184,11 @@ class BrowseDataContainer extends Component {
     }
 
     const classes = this.props.classes;
-    const {
-      dataElements,
-      orgUnits,
-      indexedValues,
-      dataElementGroup
-    } = this.state.data;
+    const { dataElements, orgUnits, indexedValues } = this.state.data;
 
     return (
       <div>
         {navigation}
-        <h1>
-          {dataElementGroup.name} ({orgUnits.length} org units, period &nbsp;
-          {DatePeriods.displayName(
-            this.props.period,
-            this.props.periodFormat[DatePeriods.detect(this.props.period)]
-          )}
-          )
-        </h1>
         <table className={classes.table}>
           <thead>
             <tr>
@@ -183,8 +203,8 @@ class BrowseDataContainer extends Component {
           <tbody>
             {orgUnits.map(ou => (
               <tr key={ou.id}>
-                <td>{ou.ancestors[1].name}</td>
-                <td>{ou.ancestors[2].name}</td>
+                <td>{ou.ancestors[1] && ou.ancestors[1].name}</td>
+                <td>{ou.ancestors[2] && ou.ancestors[2].name}</td>
                 <td>{ou.name}</td>
                 {dataElements.map(de => {
                   const rawValue =
@@ -217,6 +237,7 @@ class BrowseDataContainer extends Component {
           <br />
           <br />
         </div>
+        <p>{orgUnits.length} org units</p>
       </div>
     );
   }

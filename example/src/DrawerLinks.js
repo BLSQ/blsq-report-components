@@ -46,6 +46,13 @@ const DrawerLinks = props => (
     <ListItem button component={Link} to="/pyramid">
       <ListItemText primary="Organisation Unit Groups Manager" />
     </ListItem>
+    <ListItem
+      button
+      component={Link}
+      to="/reports/2018Q3/ImspTQPwCqd/demo-chc-consolidated"
+    >
+      Consolidated invoice
+    </ListItem>
   </React.Fragment>
 );
 

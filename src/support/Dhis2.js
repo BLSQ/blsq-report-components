@@ -22,6 +22,10 @@ class Dhis2 {
     this.ignoredStores = [""];
     this.version = "";
     this.forceHttps = options.forceHttps;
+    if (options.disableInitialize) {
+      return;
+    }
+
     this.initialize = this.initialize();
   }
 
@@ -175,6 +179,13 @@ class Dhis2 {
     return getInstance().then(d2 => d2.Api.getApi().get(dataSetUrl));
   }
 
+  getFileDataValue(value, fileUrl){
+    console.info("Current base URL ...:", fileUrl);
+    var fileUrl = fileUrl +"/api/dataValues/files?de="+value.de+"&ou="+value.ou+"&pe="+value.pe;
+    console.info("FILE URL :", fileUrl);
+    return fileUrl;
+  }
+
   getDataElementGroupValues(orgUnitId, dataElementGroupId, periods) {
     var dataValueSetsUrl =
       "/dataValueSets?dataElementGroup=" +
@@ -235,7 +246,7 @@ class Dhis2 {
 
   getOrgunitsForGroup(ancestorId, groupId) {
     const url =
-      "organisationUnits?fields=id,name,ancestors[id,name],organisationUnitGroups[id,name,code]" +
+      "organisationUnits?fields=id,name,code,ancestors[id,name],organisationUnitGroups[id,name,code]" +
       "&pageSize=1500" +
       "&filter=organisationUnitGroups.id:eq:" +
       groupId +
@@ -378,13 +389,38 @@ class Dhis2 {
     const year = period.slice(0, 4);
     const quarter = DatePeriods.split(period, "quarterly")[0].slice(5, 6);
 
+    let quarterPeriods = DatePeriods.split(period, "quarterly");
+    let monthlyPeriods = DatePeriods.split(period, "monthly");
+    let yearlyPeriods = DatePeriods.split(period, "yearly");
+    let yearlyJulyPeriods = DatePeriods.split(period, "financialJuly");
+
+    if (invoiceType.previousPeriods) {
+      quarterPeriods = quarterPeriods.concat(
+        DatePeriods.previousPeriods(
+          DatePeriods.split(period, "quarterly")[0],
+          invoiceType.previousPeriods
+        )
+      );
+      monthlyPeriods = monthlyPeriods.concat(
+        DatePeriods.previousPeriods(DatePeriods.split(period, "monthly")[0], 3)
+      );
+      yearlyPeriods = yearlyPeriods.concat(
+        DatePeriods.previousPeriods(
+          DatePeriods.split(period, "yearly")[0],
+          invoiceType.previousPeriods
+        )
+      );
+    }
+
     return {
       orgUnit: orgUnits.filter(orgUnit => orgUnit.id === orgUnitId)[0],
       orgUnits: orgUnits,
       period: period,
       quarterPeriod: period,
-      quarterPeriods: DatePeriods.split(period, "quarterly"),
-      monthlyPeriods: DatePeriods.split(period, "monthly"),
+      quarterPeriods: quarterPeriods,
+      monthlyPeriods: monthlyPeriods,
+      yearlyPeriods: yearlyPeriods,
+      yearlyJulyPeriods: yearlyJulyPeriods,
       year: year,
       quarter: quarter,
       invoiceType: invoiceType
@@ -414,7 +450,9 @@ class Dhis2 {
       .join("&");
     const periods = [request.year]
       .concat(request.monthlyPeriods)
-      .concat(request.quarterPeriods);
+      .concat(request.quarterPeriods)
+      .concat(request.yearlyPeriods)
+      .concat(request.yearlyJulyPeriods);
     const periodsQuery = periods.map(p => "&period=" + p).join("");
 
     const dataValuesUrl =

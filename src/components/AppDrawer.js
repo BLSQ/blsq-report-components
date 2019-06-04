@@ -105,6 +105,9 @@ const styles = theme => ({
   "@media print": {
     "content-left": {
       marginLeft: 0
+    },
+    "appFrame": {
+      display: "block"
     }
   },
   contentShift: {

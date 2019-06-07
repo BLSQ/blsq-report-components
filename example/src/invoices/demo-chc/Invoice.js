@@ -3,6 +3,8 @@ import { withStyles } from "@material-ui/core/styles";
 import { Cell } from "@blsq/blsq-report-components";
 import DoneIcon from "@material-ui/icons/Done";
 import CloseIcon from "@material-ui/icons/Close";
+import InvoiceSignatures from "./InvoiceSignatures";
+
 const styles = {
   invoiceFrame: {
     backgroundColor: "#ffffff",
@@ -135,6 +137,9 @@ class Invoice extends Component {
             </tr>
           </tbody>
         </table>
+
+        <br/>
+        <InvoiceSignatures invoice={this.props.invoice} />
       </div>
     );
   }

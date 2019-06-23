@@ -8,7 +8,15 @@ class OrganisationUnitsContainer extends Component {
     this.state = {};
     this.dhis2 = this.props.dhis2;
     this.loadData = this.loadData.bind(this);
+    this.openForEdition = this.openForEdition.bind(this);
   }
+
+  openForEdition(ou) {
+    this.props.history.replace({
+      pathname: "/pyramid/" + ou.id
+    });
+  }
+
   async loadData() {
     const organisationUnitsResponse = await this.dhis2.organisationUnits();
     let organisationUnits = organisationUnitsResponse.organisationUnits;
@@ -34,6 +42,7 @@ class OrganisationUnitsContainer extends Component {
           <OrganisationUnitList
             organisationUnits={organisationUnits}
             organisationUnitGroupSets={organisationUnitGroupSets}
+            openForEdition={this.openForEdition}
           />
         )}
       </React.Fragment>

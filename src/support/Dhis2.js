@@ -179,8 +179,15 @@ class Dhis2 {
     return getInstance().then(d2 => d2.Api.getApi().get(dataSetUrl));
   }
 
-  getFileDataValue(value, url){
-    var fileUrl = url +"/api/dataValues/files?de="+value.de+"&ou="+value.ou+"&pe="+value.pe;
+  getFileDataValue(value, url) {
+    var fileUrl =
+      url +
+      "/api/dataValues/files?de=" +
+      value.de +
+      "&ou=" +
+      value.ou +
+      "&pe=" +
+      value.pe;
     return fileUrl;
   }
 
@@ -408,9 +415,17 @@ class Dhis2 {
       });
   }
 
+  organisationUnit(id) {
+    const organisationUnitsUrl =
+      "/organisationUnits/" +
+      id +
+      ".json?fields=id,name,organisationUnitGroups[id,name],level,path,ancestors[id,name]";
+    return getInstance().then(d2 => d2.Api.getApi().get(organisationUnitsUrl));
+  }
+
   organisationUnits() {
     const organisationUnitsUrl =
-      "/organisationUnits.json?fields=id,name,organisationUnitGroups[id,name],level,path,ancestors[id,name]&paging=false";
+      "/organisationUnits.json?fields=id,name,organisationUnitGroups[id,name],level,path,ancestors[id,name]";
     return getInstance().then(d2 => d2.Api.getApi().get(organisationUnitsUrl));
   }
 

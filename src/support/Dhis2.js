@@ -435,6 +435,24 @@ class Dhis2 {
     return getInstance().then(d2 => d2.Api.getApi().get(organisationUnitsUrl));
   }
 
+  removeFromGroup(orgUnitId, group) {
+    return getInstance().then(d2 =>
+      d2.Api.getApi().delete(
+        "organisationUnitGroups/" + group + "/organisationUnits/" + orgUnitId
+      )
+    );
+  }
+
+  addToGroup(orgUnitId, targetGroup) {
+    return getInstance().then(d2 =>
+      d2.Api.getApi().post(
+        "organisationUnitGroups/" +
+          targetGroup +
+          "/organisationUnits/" +
+          orgUnitId
+      )
+    );
+  }
   /**
    * Make sure the response status code is 2xx
    * @param response

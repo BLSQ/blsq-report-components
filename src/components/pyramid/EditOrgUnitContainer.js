@@ -6,6 +6,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
+import Button from "@material-ui/core/Button";
 
 const styles = {
   root: {
@@ -13,8 +14,13 @@ const styles = {
     flex: 1
   },
   formControl: {
-    minWidth: 400,
-    maxWidth: 400
+    minWidth: 500,
+    maxWidth: 500,
+    margin: 10,
+    alignText: "right"
+  },
+  button: {
+    margin: 10
   }
 };
 
@@ -24,6 +30,7 @@ class OrganisationUnitsContainer extends React.Component {
     this.dhis2 = this.props.dhis2;
     this.loadData = this.loadData.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.applyChanges = this.applyChanges.bind(this);
   }
   async componentDidMount() {
     this.loadData();
@@ -52,9 +59,34 @@ class OrganisationUnitsContainer extends React.Component {
       });
     } else {
       this.setState({
-        currentGroupIds: [...this.state.currentGroupIds, ...valueBis]
+        currentGroupIds: [
+          ...new Set([...this.state.currentGroupIds, ...valueBis])
+        ]
       });
     }
+  }
+
+  async applyChanges() {
+    const ouGroupIds = this.state.orgUnit.organisationUnitGroups.map(
+      oug => oug.id
+    );
+    const toRemove = ouGroupIds.filter(
+      n => !this.state.currentGroupIds.includes(n)
+    );
+    const toAdd = this.state.currentGroupIds.filter(
+      n => !ouGroupIds.includes(n)
+    );
+    debugger;
+    let promises = toRemove.map(toBeRemoved =>
+      this.dhis2.removeFromGroup(this.state.orgUnit.id, toBeRemoved)
+    );
+    promises = promises.concat(
+      toAdd.map(toBeAdded =>
+        this.dhis2.addToGroup(this.state.orgUnit.id, toBeAdded)
+      )
+    );
+    await Promise.all(promises);
+    this.loadData();
   }
 
   render() {
@@ -67,7 +99,10 @@ class OrganisationUnitsContainer extends React.Component {
 
     return (
       <form autoComplete="off" className={classes.root}>
-        <h1>Editing : {orgUnit && orgUnit.name}</h1>
+        <h1>
+          {orgUnit.ancestors.map(ou => ou.name).join(" > ")} :{" "}
+          {orgUnit && orgUnit.name}
+        </h1>
         {organisationUnitGroupSets &&
           organisationUnitGroupSets.map(groupset => (
             <div>
@@ -76,6 +111,7 @@ class OrganisationUnitsContainer extends React.Component {
                   {groupset.name}
                 </InputLabel>
                 <Select
+                  displayEmpty={true}
                   value={currentGroupIds}
                   onChange={this.handleChange}
                   name={groupset.id}
@@ -93,6 +129,14 @@ class OrganisationUnitsContainer extends React.Component {
               </FormControl>
             </div>
           ))}
+        <Button
+          variant="contained"
+          color="primary"
+          className={classes.button}
+          onClick={this.applyChanges}
+        >
+          Apply changes
+        </Button>
       </form>
     );
   }

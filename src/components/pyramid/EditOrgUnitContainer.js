@@ -13,8 +13,8 @@ const styles = {
     flex: 1
   },
   formControl: {
-    minWidth: 300,
-    maxWidth: 300
+    minWidth: 400,
+    maxWidth: 400
   }
 };
 
@@ -36,10 +36,26 @@ class OrganisationUnitsContainer extends React.Component {
     const organisationUnitGroupSetsResponse = await this.dhis2.organisationUnitGroupSets();
     let organisationUnitGroupSets =
       organisationUnitGroupSetsResponse.organisationUnitGroupSets;
-    this.setState({ orgUnit, organisationUnitGroupSets });
+    const currentGroupIds = orgUnit.organisationUnitGroups.map(k => k.id);
+    this.setState({ orgUnit, organisationUnitGroupSets, currentGroupIds });
   }
 
-  handleChange(field) {}
+  handleChange(event, selectedValueItem) {
+    const valueBis = event.target.value;
+    const value = selectedValueItem.props.value;
+    const contains = this.state.currentGroupIds.includes(value);
+    if (contains) {
+      const newGroupIds = this.state.currentGroupIds.filter(v => v !== value);
+
+      this.setState({
+        currentGroupIds: newGroupIds
+      });
+    } else {
+      this.setState({
+        currentGroupIds: [...this.state.currentGroupIds, ...valueBis]
+      });
+    }
+  }
 
   render() {
     const { classes } = this.props;
@@ -47,8 +63,8 @@ class OrganisationUnitsContainer extends React.Component {
       return <div />;
     }
 
-    const { orgUnit, organisationUnitGroupSets } = this.state;
-    const currentGroupIds = orgUnit.organisationUnitGroups.map(k => k.id);
+    const { orgUnit, organisationUnitGroupSets, currentGroupIds } = this.state;
+
     return (
       <form autoComplete="off" className={classes.root}>
         <h1>Editing : {orgUnit && orgUnit.name}</h1>
@@ -62,13 +78,16 @@ class OrganisationUnitsContainer extends React.Component {
                 <Select
                   value={currentGroupIds}
                   onChange={this.handleChange}
+                  name={groupset.id}
                   multiple
                 >
-                  <MenuItem value="">
-                    <em>-</em>
-                  </MenuItem>
                   {groupset.organisationUnitGroups.map(oug => (
-                    <MenuItem value={oug.id}>{oug.name}</MenuItem>
+                    <MenuItem
+                      checked={currentGroupIds.indexOf(oug.id) >= 0}
+                      value={oug.id}
+                    >
+                      {oug.name}
+                    </MenuItem>
                   ))}
                 </Select>
               </FormControl>

@@ -25,7 +25,9 @@ class InvoiceService {
     }
 
     const request = dhis2.buildInvoiceRequest(
-      orgUnits,
+      invoiceType.includeMainOrgUnit
+        ? orgUnits.concat([mainOrgUnit])
+        : orgUnits,
       period,
       invoiceType,
       orgUnitId

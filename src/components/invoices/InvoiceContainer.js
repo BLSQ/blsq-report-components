@@ -185,6 +185,7 @@ class InvoiceContainer extends Component {
           calculateState={this.state.calculateState}
           warning={this.state.warning}
           periodFormat={this.props.periodFormat}
+          invoice={this.state.invoice}
         />
 
         <SelectedInvoice
@@ -202,6 +203,7 @@ class InvoiceContainer extends Component {
           calculateState={this.state.calculateState}
           warning={this.state.warning}
           periodFormat={this.props.periodFormat}
+          invoice={this.state.invoice}
         />
       </div>
     );

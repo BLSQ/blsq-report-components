@@ -1,5 +1,5 @@
 const plugins = {};
-const extensionCache = {};
+let extensionCache = {};
 
 class PluginRegistry {
   static register(plugin) {
@@ -26,10 +26,7 @@ class PluginRegistry {
   }
 
   static resetExtenstionCache() {
-    var pluginKeys = Object.keys(extensionCache);
-    for (var i = 0; i < pluginKeys.length; i++) {
-      delete extensionCache[pluginKeys[i]];
-    }
+    extensionCache = {};
   }
 }
 

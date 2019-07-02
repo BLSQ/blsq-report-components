@@ -13,10 +13,12 @@ import customRoute from "./custom/CustomRoute";
 
 import { I18nextProvider } from "react-i18next";
 
+import SimpleDialogDemo from "./SimpleDialogDemo";
+
 const Demo = props => {
-  return <span>complete {props.invoice.period} &nbsp;</span>;
+  return <SimpleDialogDemo />;
 };
-const Demo2 = props => <span>validate</span>;
+const Demo2 = props => <span>Read only</span>;
 
 const appPlugin = {
   key: "exampleApp",

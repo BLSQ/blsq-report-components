@@ -113,6 +113,12 @@ class Dhis2 {
     return getInstance().then(d2 => d2.Api.getApi().post(url));
   }
 
+  completeDataSet(dataValueSet){
+    const url = "/completeDataSetRegistrations";
+    var data = {completeDataSetRegistrations:[{dataSet: dataValueSet.dataSet, period: dataValueSet.period, organisationUnit: dataValueSet.orgUnit}]}
+    return getInstance().then(d2 => d2.Api.getApi().post(url, data));
+  }
+
   getDefaultCategoryCombo() {
     var categoryUrl =
       "categoryCombos?filter=name:eq:default&fields=id,name,categoryOptionCombos[id,name]";

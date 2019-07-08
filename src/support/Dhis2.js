@@ -114,9 +114,11 @@ class Dhis2 {
   }
 
   completeDataSet(dataValueSet){
-    const url = "completeDataSetRegistrations";
-    var data = {"dataSet": dataValueSet.dataSet, "period": dataValueSet.period, "organisationUnit": dataValueSet.orgUnit};
-    return getInstance().then(d2 => d2.Api.getApi().post(url, data));
+    //const url = "/completeDataSetRegistrations";
+    //var data = {"dataSet": dataValueSet.dataSet, "period": dataValueSet.period, "organisationUnit": dataValueSet.orgUnit};
+    //return getInstance().then(d2 => d2.Api.getApi().post(url, data));
+    const url = "/completeDataSetRegistrations?dataSet="+dataValueSet.dataSet+"&period="+dataValueSet.period+"&organisationUnit="+dataValueSet.orgUnit;
+    return getInstance().then(d2 => d2.Api.getApi().post(url));
   }
 
   getDefaultCategoryCombo() {

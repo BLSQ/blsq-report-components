@@ -45,6 +45,7 @@ class InvoiceService {
     invoice.invoiceType = invoiceType;
     invoice.period = period;
     invoice.generatedAt = new Date(systemInfo.serverDate);
+    invoice.validating = dhis2.completeDataSet({dataSet: "l0YmmflzpC0", period: "2019Q1", orgUnit: "cDw53Ej8rju"});
     return invoice;
   }
 

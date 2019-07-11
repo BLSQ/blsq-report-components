@@ -107,6 +107,8 @@ class InvoiceContainer extends Component {
         invoiceType,
         this.props.invoices.mapper(invoiceTypeCode)
       );
+      invoice.currentUser = this.props.currentUser;
+
       const calculations = this.props.invoices.getOrbfCalculations(
         invoice,
         this.props.currentUser

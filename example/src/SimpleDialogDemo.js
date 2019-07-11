@@ -70,9 +70,19 @@ SimpleDialog.propTypes = {
   selectedValue: PropTypes.string
 };
 
-export default function SimpleDialogDemo() {
+
+
+export default function SimpleDialogDemo(props) {
   const [open, setOpen] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState(emails[1]);
+
+  const validating =  (dataElementId, props) => {
+    var dhis2 = props.dhis2;
+    var dataElement = {de: dataElementId, pe: props.params.invoice.period, value: true, ou: props.params.invoice.orgUnit.id, co: "HllvX50cXC0", ds: props.data.dataSet};
+    var validate = dhis2.setDataValue(dataElement);
+    window.location.reload();
+    return validate;
+};
 
   function handleClickOpen() {
     setOpen(true);
@@ -85,9 +95,14 @@ export default function SimpleDialogDemo() {
 
   return (
     <span>
-      <Button color="primary" onClick={handleClickOpen} title={selectedValue}>
-        Validate
-      </Button>
+      {props.params.invoice.currentUser.userGroups.some(g => g.id === "wl5cDMuUhmF") && (<Button color="primary" onClick={() => {if (window.confirm('Are you sure to validate the invoice?')) validating(props.data.dataElement[1], props) }} >
+       First Validation
+      </Button>)}
+
+      {props.params.invoice.currentUser.userGroups.some(g => g.id === "wl5cDMuUhmF") && (<Button color="primary" onClick={handleClickOpen} title={selectedValue}>
+       Second Validation
+      </Button>)}
+
       <SimpleDialog
         selectedValue={selectedValue}
         open={open}

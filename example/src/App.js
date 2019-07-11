@@ -14,9 +14,10 @@ import customRoute from "./custom/CustomRoute";
 import { I18nextProvider } from "react-i18next";
 
 import SimpleDialogDemo from "./SimpleDialogDemo";
+import config from "./invoices/Config";
 
 const Demo = props => {
-  return <SimpleDialogDemo />;
+  return <SimpleDialogDemo params={props} dhis2={new Dhis2()} data={config.global.validation} />;
 };
 const Demo2 = props => <span>Read only</span>;
 

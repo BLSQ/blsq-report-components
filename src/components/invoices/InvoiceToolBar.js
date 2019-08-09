@@ -6,7 +6,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import ArrowForward from '@material-ui/icons/ArrowForward'
 import ArrowBack from '@material-ui/icons/ArrowBack'
 import DatePeriods from '../../support/DatePeriods'
-
+import { withNamespaces } from "react-i18next";
 import Typography from '@material-ui/core/Typography'
 
 import Dialog from '@material-ui/core/Dialog'
@@ -104,7 +104,7 @@ class InvoiceToolBar extends Component {
         <Button component={Link} to={next}>
           <ArrowForward />
         </Button>
-        <Button onClick={() => window.print()}>Print</Button>
+        <Button onClick={() => window.print()}>{this.props.t("print")}</Button>
         {recalculateButton}
         {this.props.warning && (
           <Typography color='error'>{this.props.warning}</Typography>
@@ -135,4 +135,4 @@ class InvoiceToolBar extends Component {
   }
 }
 
-export default withStyles(styles)(InvoiceToolBar)
+export default withStyles(styles)(withNamespaces()(InvoiceToolBar));

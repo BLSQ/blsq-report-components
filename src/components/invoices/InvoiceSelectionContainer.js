@@ -36,7 +36,7 @@ class InvoiceSelectionContainer extends Component {
   static defaultProps = {
     periodFormat: {
       quarterly: "quarter",
-      monthly: "monthYear"
+      monthly: "yearMonth"
     }
   };
 

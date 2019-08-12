@@ -104,7 +104,7 @@ class InvoiceToolBar extends Component {
         <Button component={Link} to={next}>
           <ArrowForward />
         </Button>
-        <Button onClick={() => window.print()}>{this.props.t("print")}</Button>
+        <Button onClick={() => window.print()}>{this.props.t('print')}</Button>
         {recalculateButton}
         {this.props.warning && (
           <Typography color='error'>{this.props.warning}</Typography>

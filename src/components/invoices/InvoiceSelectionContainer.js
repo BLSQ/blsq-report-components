@@ -175,10 +175,10 @@ class InvoiceSelectionContainer extends Component {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
+              <TableCell>{this.props.t("name")}</TableCell>
               <TableCell>{this.props.levels[1]}</TableCell>
               <TableCell>{this.props.levels[2]}</TableCell>
-              <TableCell>Invoice</TableCell>
+              <TableCell>{this.props.t("invoice")}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

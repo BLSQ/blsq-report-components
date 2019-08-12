@@ -28,7 +28,7 @@ const QUARTER_BY_SIX_MONTHLY = {
 const MONTH_NAMES = [
   t("month_0"),t("month_1"),t("month_2"),t("month_3"),
   t("month_4"),t("month_5"),t("month_6"),t("month_7"),
-  t("month_8"),t("month_9"),t("month_10"),t("month_11"),t("month_12")
+  t("month_8"),t("month_9"),t("month_10"),t("month_11")
 ];
 
 const MONTH_NAMES_BY_QUARTER = {

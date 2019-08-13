@@ -30,7 +30,6 @@ class InvoiceLink extends Component {
     const quarterPeriod = DatePeriods.split(this.props.period, "quarterly")[0];
     const periods = DatePeriods.split(quarterPeriod, invoiceType.frequency).map(
             subPeriod => (
-              return
                  <React.Fragment key={subPeriod}>
                 <Button
                 key={invoiceType.code + "-" + subPeriod + "-" + orgUnit.id}
@@ -51,8 +50,7 @@ class InvoiceLink extends Component {
                       : "monthYear")
                 )}
               </Button>
-               </React.Fragment>;
-            )
+               </React.Fragment>
           );
     return invoiceTypes.map(invoiceType => (
       <React.Fragment key={this.linkTo(invoiceType)}>

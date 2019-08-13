@@ -29,40 +29,41 @@ class InvoiceLink extends Component {
     const invoiceTypes = this.props.invoices.getInvoiceTypes(codes);
 
     const quarterPeriod = DatePeriods.split(this.props.period, "quarterly")[0];
-    const invoiceTypesData = invoiceTypes.map(invoiceType => (
-      <React.Fragment key={this.linkTo(invoiceType)}>
-        <React.Fragment>
-          <span className={this.props.classes.buttonLike}>
-            {invoiceType.name}
-          </span>
 
-          {DatePeriods.split(quarterPeriod, invoiceType.frequency).map(function
-            (subPeriod){
-              const period = DatePeriods.displayName(subPeriod, invoiceType.periodFormat || (invoiceType.frequency == "quarterly" ? "quarter" : invoiceType.frequency == "sixMonthly" ? "sixMonth" : "monthYear"));
-              const splittedPeriod = period.split(" ");
-              const linkPeriod = InvoiceLink.linkTo(invoiceType, subPeriod);
-              const translatedPeriod = InvoiceLink.translatePeriod(splittedPeriod[0]) + " " + splittedPeriod[1];
+    return (
+        invoiceTypes.map(invoiceType => (
+          <React.Fragment key={this.linkTo(invoiceType)}>
+            <React.Fragment>
+              <span className={this.props.classes.buttonLike}>
+                {invoiceType.name}
+              </span>
 
-              return (<Button
-                key={invoiceType.code + "-" + subPeriod + "-" + orgUnit.id}
-                variant="text"
-                color="primary"
-                size="small"
-                component={Link}
-                to={linkPeriod}
-                title={subPeriod}
-              >
-                {translatedPeriod}
-              </Button>);
-            })
-          }
-        </React.Fragment>
+              {DatePeriods.split(quarterPeriod, invoiceType.frequency).map(function
+                (subPeriod){
+                  const period = DatePeriods.displayName(subPeriod, invoiceType.periodFormat || (invoiceType.frequency == "quarterly" ? "quarter" : invoiceType.frequency == "sixMonthly" ? "sixMonth" : "monthYear"));
+                  const splittedPeriod = period.split(" ");
+                  const linkPeriod = this.linkTo(invoiceType, subPeriod);
+                  const translatedPeriod = this.translatePeriod(splittedPeriod[0]) + " " + splittedPeriod[1];
 
-        <br />
-      </React.Fragment>
-    ));
+                  return (<Button
+                    key={invoiceType.code + "-" + subPeriod + "-" + orgUnit.id}
+                    variant="text"
+                    color="primary"
+                    size="small"
+                    component={Link}
+                    to={linkPeriod}
+                    title={subPeriod}
+                  >
+                    {translatedPeriod}
+                  </Button>);
+                })
+              }
+            </React.Fragment>
 
-    return invoiceTypesData;
+            <br />
+          </React.Fragment>
+        ));
+    );
   }
 
   linkTo(invoiceType, period) {

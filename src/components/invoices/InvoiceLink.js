@@ -51,7 +51,7 @@ class InvoiceLink extends Component {
                 )}
               </Button>
                </React.Fragment>
-          );
+          ));
     return invoiceTypes.map(invoiceType => (
       <React.Fragment key={this.linkTo(invoiceType)}>
         <React.Fragment>

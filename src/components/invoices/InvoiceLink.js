@@ -28,7 +28,7 @@ class InvoiceLink extends Component {
     const invoiceTypes = this.props.invoices.getInvoiceTypes(codes);
 
     const quarterPeriod = DatePeriods.split(this.props.period, "quarterly")[0];
-    const invoiceTypes = invoiceTypes.map(invoiceType => (
+    const invoiceTypesData = invoiceTypes.map(invoiceType => (
       <React.Fragment key={this.linkTo(invoiceType)}>
         <React.Fragment>
           <span className={this.props.classes.buttonLike}>
@@ -64,7 +64,7 @@ class InvoiceLink extends Component {
       </React.Fragment>
     ));
 
-    return invoiceTypes;
+    return invoiceTypesData;
   }
 
   linkTo(invoiceType, period) {

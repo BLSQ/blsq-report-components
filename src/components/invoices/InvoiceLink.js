@@ -40,6 +40,8 @@ class InvoiceLink extends Component {
             (subPeriod){
               const period = DatePeriods.displayName(subPeriod, invoiceType.periodFormat || (invoiceType.frequency == "quarterly" ? "quarter" : invoiceType.frequency == "sixMonthly" ? "sixMonth" : "monthYear"));
               const splittedPeriod = period.split(" ");
+              const linkPeriod = this.linkTo(invoiceType, subPeriod);
+              const translatedPeriod = this.translatePeriod(splittedPeriod[0])+" "+splittedPeriod[1];
 
               return (<Button
                 key={invoiceType.code + "-" + subPeriod + "-" + orgUnit.id}
@@ -47,10 +49,10 @@ class InvoiceLink extends Component {
                 color="primary"
                 size="small"
                 component={Link}
-                to={this.linkTo(invoiceType, subPeriod)}
+                to={linkPeriod}
                 title={subPeriod}
               >
-                {this.translatePeriod(splittedPeriod[0])+" "+splittedPeriod[1]}
+                {translatedPeriod}
               </Button>);
             })
           }

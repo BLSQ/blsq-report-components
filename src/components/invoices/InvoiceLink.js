@@ -5,6 +5,7 @@ import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
 
 import DatePeriods from "../../support/DatePeriods";
+import { withNamespaces } from "react-i18next";
 
 const styles = theme => ({
   buttonLike: {
@@ -37,6 +38,12 @@ class InvoiceLink extends Component {
 
           {DatePeriods.split(quarterPeriod, invoiceType.frequency).map(
             subPeriod => (
+              var period = DatePeriods.displayName(subPeriod, invoiceType.periodFormat || (invoiceType.frequency == "quarterly" ? "quarter" : invoiceType.frequency == "sixMonthly" ? "sixMonth" : "monthYear"));
+              console.info("Splitted period:", period.split(" "));
+              var splittedPeriod = period.split(" ");
+              console.info("Splitted period:", splittedPeriod[0]);
+              console.info("This....:", this.props);
+
               <Button
                 key={invoiceType.code + "-" + subPeriod + "-" + orgUnit.id}
                 variant="text"
@@ -46,15 +53,7 @@ class InvoiceLink extends Component {
                 to={this.linkTo(invoiceType, subPeriod)}
                 title={subPeriod}
               >
-                {DatePeriods.displayName(
-                  subPeriod,
-                  invoiceType.periodFormat ||
-                    (invoiceType.frequency == "quarterly"
-                      ? "quarter"
-                      : invoiceType.frequency == "sixMonthly"
-                      ? "sixMonth"
-                      : "monthYear")
-                )}
+                {period}
               </Button>
             )
           )}
@@ -83,4 +82,4 @@ InvoiceLink.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(InvoiceLink);
+export default withStyles(styles)(withNamespaces()(InvoiceLink));

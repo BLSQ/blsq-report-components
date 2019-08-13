@@ -62,7 +62,7 @@ class InvoiceLink extends Component {
 
             <br />
           </React.Fragment>
-        ));
+        ))
     );
   }
 

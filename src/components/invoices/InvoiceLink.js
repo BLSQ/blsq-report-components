@@ -30,7 +30,7 @@ class InvoiceLink extends Component {
 
     const quarterPeriod = DatePeriods.split(this.props.period, "quarterly")[0];
     const invoiceTypesData = invoiceTypes.map(invoiceType => (
-      <React.Fragment key={this.linkTo(invoiceType)}>
+      <React.Fragment key={invoiceType.name}>
         <React.Fragment>
           <span className={this.props.classes.buttonLike}>
             {invoiceType.name}
@@ -44,7 +44,7 @@ class InvoiceLink extends Component {
               console.info("Splitted period:", splittedPeriod[0]);
               console.info("This....:", this.translatePeriod(splittedPeriod[0]));
 
-              <Button
+              return <Button
                 key={invoiceType.code + "-" + subPeriod + "-" + orgUnit.id}
                 variant="text"
                 color="primary"

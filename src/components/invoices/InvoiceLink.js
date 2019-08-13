@@ -42,7 +42,7 @@ class InvoiceLink extends Component {
               console.info("Splitted period:", period.split(" "));
               var splittedPeriod = period.split(" ");
               console.info("Splitted period:", splittedPeriod[0]);
-              console.info("This....:", this.props.i18n.t(splittedPeriod[0]));
+              console.info("This....:", this.translatePeriod(splittedPeriod[0]));
 
               <Button
                 key={invoiceType.code + "-" + subPeriod + "-" + orgUnit.id}
@@ -75,6 +75,10 @@ class InvoiceLink extends Component {
       "/" +
       invoiceType.code
     );
+  }
+
+  translatePeriod(period){
+    return (this.props.t(period));
   }
 }
 

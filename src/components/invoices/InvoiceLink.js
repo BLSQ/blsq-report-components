@@ -38,8 +38,7 @@ class InvoiceLink extends Component {
                 {invoiceType.name}
               </span>
 
-              {DatePeriods.split(quarterPeriod, invoiceType.frequency).map(function
-                (subPeriod){
+              {DatePeriods.split(quarterPeriod, invoiceType.frequency).map(subPeriod => (
                   const period = DatePeriods.displayName(subPeriod, invoiceType.periodFormat || (invoiceType.frequency == "quarterly" ? "quarter" : invoiceType.frequency == "sixMonthly" ? "sixMonth" : "monthYear"));
                   const splittedPeriod = period.split(" ");
                   const linkPeriod = this.linkTo(invoiceType, subPeriod);
@@ -56,7 +55,7 @@ class InvoiceLink extends Component {
                   >
                     {translatedPeriod}
                   </Button>);
-                })
+                ))
               }
             </React.Fragment>
 

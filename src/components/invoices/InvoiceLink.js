@@ -53,7 +53,7 @@ class InvoiceLink extends Component {
                 to={this.linkTo(invoiceType, subPeriod)}
                 title={subPeriod}
               >
-                {period}
+                {this.translatePeriod(splittedPeriod[0])+" "+splittedPeriod[1]}
               </Button>
             })
           }

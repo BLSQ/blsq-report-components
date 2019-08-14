@@ -1,12 +1,12 @@
-const keys = {
+{
   "report_and_invoices": "Report & Invoices",
   "app_name": "ORBF2 - Invoices & Reports",
   "print": "Print",
+  "generated_at": "Generated at",
   "orgUnit_name": "Organisation Unit name",
   "search_org_unit": "Search or select parent organisation unit",
-  "limit_org_unit_under": "Limiter à l'unité d'organisation enfant",
+  "limit_org_unit_under": "Limit to the child organisation unit",
   "period": "Period",
   "invoice": "Invoice",
   "name": "Name"
 }
-export default keys

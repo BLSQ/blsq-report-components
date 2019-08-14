@@ -4,6 +4,8 @@ import { Cell } from "@blsq/blsq-report-components";
 import DoneIcon from "@material-ui/icons/Done";
 import CloseIcon from "@material-ui/icons/Close";
 import InvoiceSignatures from "./InvoiceSignatures";
+import { withNamespaces } from "react-i18next";
+import { DatePeriods } from "@blsq/blsq-report-components";
 
 const styles = {
   invoiceFrame: {
@@ -44,7 +46,8 @@ class Invoice extends Component {
       <div className={classes.invoiceFrame} id="invoiceFrame">
         <h1>Demo</h1>
         <p>{this.props.invoice.orgUnit.name}</p>
-        <p>Generated at: {this.props.invoice.generatedAt.toLocaleString()}</p>
+        <p>{this.props.t("generated_at")}: {this.props.invoice.generatedAt.toLocaleString()}</p>
+         <p>{this.props.t("period")}: {DatePeriods.monthNameYear(this.props.period, "month")}</p>
 
         <h2>Cell show case</h2>
         <table
@@ -145,4 +148,4 @@ class Invoice extends Component {
   }
 }
 
-export default withStyles(styles)(Invoice);
+export default withStyles(styles)(withNamespaces()(Invoice));

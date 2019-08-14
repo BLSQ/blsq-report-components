@@ -1,13 +1,16 @@
 import React from "react";
 
 import DrawerLinks from "./DrawerLinks";
-import { AppDrawer, Dhis2, configureI18N } from "@blsq/blsq-report-components";
+import { AppDrawer, Dhis2, configureI18N, DatePeriods } from "@blsq/blsq-report-components";
 
 import Invoices from "./invoices/Invoices";
 
 import customRoute from "./custom/CustomRoute";
 
 import { I18nextProvider } from "react-i18next";
+import translations from "./locales/en/translations.json";
+
+DatePeriods.setLocale("en");
 
 const incentivesDescriptors = [
   {
@@ -30,10 +33,8 @@ const dataElementGroups = [
   },
   { name: "ANC", id: "qfxEYY9xAl6" }
 ];
-const i18n = configureI18N({
-  app_name: "Custom report App",
-  report_and_invoices: "Invoices & reports"
-});
+
+const i18n = configureI18N(translations);
 const App = t => (
   <I18nextProvider i18n={i18n}>
     <AppDrawer

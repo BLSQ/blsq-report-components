@@ -42,7 +42,7 @@ class InvoiceLink extends Component {
                   const splittedPeriod = period.split(" ");
                   const translatedPeriod = this.translatePeriod(splittedPeriod[0]) + " " + splittedPeriod[1];
 
-                  <Button
+                  return (<Button
                     key={invoiceType.code + "-" + subPeriod + "-" + orgUnit.id}
                     variant="text"
                     color="primary"
@@ -52,7 +52,7 @@ class InvoiceLink extends Component {
                     title={subPeriod}
                   >
                     {translatedPeriod}
-                  </Button>
+                  </Button>);
                 })
               }
             </React.Fragment>

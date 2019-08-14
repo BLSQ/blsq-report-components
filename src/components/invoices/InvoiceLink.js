@@ -41,7 +41,7 @@ class InvoiceLink extends Component {
                   const period = DatePeriods.displayName(subPeriod, invoiceType.periodFormat || (invoiceType.frequency == "quarterly" ? "quarter" : invoiceType.frequency == "sixMonthly" ? "sixMonth" : "monthYear"));
                   const splittedPeriod = period.split(" ");
                   const translatedPeriod = this.translatePeriod(splittedPeriod[0]) + " " + splittedPeriod[1];
-                <React.Fragment key={subPeriod}>
+
                   <Button
                     key={invoiceType.code + "-" + subPeriod + "-" + orgUnit.id}
                     variant="text"
@@ -53,7 +53,6 @@ class InvoiceLink extends Component {
                   >
                     {translatedPeriod}
                   </Button>
-                </React.Fragment>
                 })
               }
             </React.Fragment>

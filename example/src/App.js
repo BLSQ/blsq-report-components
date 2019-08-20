@@ -8,9 +8,14 @@ import Invoices from "./invoices/Invoices";
 import customRoute from "./custom/CustomRoute";
 
 import { I18nextProvider } from "react-i18next";
-import translations from "./locales/en/translations.json";
+import translationsEn from "./locales/en/translations.json";
+import translationsFr from "./locales/fr/translations.json";
 
-DatePeriods.setLocale("en");
+
+const defaultLang = "en";
+DatePeriods.setLocale(defaultLang);
+const i18n = configureI18N(defaultLang === "en" ? translationsEn : translationsFr);
+
 
 const incentivesDescriptors = [
   {
@@ -34,7 +39,6 @@ const dataElementGroups = [
   { name: "ANC", id: "qfxEYY9xAl6" }
 ];
 
-const i18n = configureI18N(translations);
 const App = t => (
   <I18nextProvider i18n={i18n}>
     <AppDrawer

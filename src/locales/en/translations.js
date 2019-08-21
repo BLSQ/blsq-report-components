@@ -5,7 +5,7 @@ const keys = {
   "print": "Print",
   "orgUnit_name": "Organisation Unit name",
   "search_org_unit": "Search or select parent organisation unit",
-  "limit_org_unit_under": "Limiter à l'unité d'organisation enfant",
+  "limit_org_unit_under": "Limit to the child organisation unit",
   "period": "Period",
   "invoice": "Invoice",
   "name": "Name"

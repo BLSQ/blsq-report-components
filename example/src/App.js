@@ -4,13 +4,12 @@ import { AppDrawer, Dhis2, configureI18N, DatePeriods, PluginRegistry } from "@b
 import Invoices from "./invoices/Invoices";
 import customRoute from "./custom/CustomRoute";
 import { I18nextProvider } from "react-i18next";
+import SimpleDialogDemo from "./SimpleDialogDemo";
+import config from "./invoices/Config";
 
 const defaultLang = "fr";
 DatePeriods.setLocale(defaultLang);
 const i18n = configureI18N(defaultLang);
-
-import SimpleDialogDemo from "./SimpleDialogDemo";
-import config from "./invoices/Config";
 
 const Demo = props => {
   return <SimpleDialogDemo params={props} dhis2={new Dhis2()} data={config.global.validation} />;

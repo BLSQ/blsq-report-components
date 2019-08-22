@@ -22,6 +22,8 @@ import * as NumberFormatter from "./support/NumberFormatter";
 import Cell from "./components/shared/Cell";
 import Warning from "./components/shared/Warning";
 import AppDrawer from "./components/AppDrawer";
+import PluginRegistry from "./components/core/PluginRegistry";
+import ExtensionsComponent from "./components/core/ExtensionsComponent";
 
 import { indexBy } from "./support/Arrays";
 import configureI18N from "./support/configureI18N";
@@ -46,5 +48,7 @@ export {
   Warning,
   GenericInvoices,
   CompositeInvoices,
-  configureI18N
+  configureI18N,
+  PluginRegistry,
+  ExtensionsComponent
 };

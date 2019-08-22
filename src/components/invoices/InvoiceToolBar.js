@@ -1,65 +1,67 @@
-import React, { Component } from 'react'
-import { withStyles } from '@material-ui/core/styles'
-import { Link } from 'react-router-dom'
-import Button from '@material-ui/core/Button'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import ArrowForward from '@material-ui/icons/ArrowForward'
-import ArrowBack from '@material-ui/icons/ArrowBack'
-import DatePeriods from '../../support/DatePeriods'
+import React, { Component } from "react";
+import { withStyles } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
+import Button from "@material-ui/core/Button";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import ArrowForward from "@material-ui/icons/ArrowForward";
+import ArrowBack from "@material-ui/icons/ArrowBack";
+import DatePeriods from "../../support/DatePeriods";
 
-import Typography from '@material-ui/core/Typography'
+import Typography from "@material-ui/core/Typography";
 
-import Dialog from '@material-ui/core/Dialog'
-import DialogActions from '@material-ui/core/DialogActions'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogContentText from '@material-ui/core/DialogContentText'
-import DialogTitle from '@material-ui/core/DialogTitle'
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+
+import ExtensionsComponent from "../core/ExtensionsComponent";
 
 const styles = {
   center: {
-    textAlign: 'center'
+    textAlign: "center"
   }
-}
+};
 
 class InvoiceToolBar extends Component {
   constructor(props) {
-    super(props)
-    this.recalculateInvoice = this.recalculateInvoice.bind(this)
+    super(props);
+    this.recalculateInvoice = this.recalculateInvoice.bind(this);
     this.state = {
       open: false
-    }
+    };
   }
 
   handleClickOpen = () => {
-    this.setState({ open: true })
-  }
+    this.setState({ open: true });
+  };
 
   handleClose = () => {
-    this.setState({ open: false })
-  }
+    this.setState({ open: false });
+  };
 
   handleConfirm = () => {
-    this.setState({ open: false })
-    this.recalculateInvoice()
-  }
+    this.setState({ open: false });
+    this.recalculateInvoice();
+  };
 
   async recalculateInvoice() {
-    this.props.onRecalculate()
+    this.props.onRecalculate();
   }
 
   render() {
-    const classes = this.props.classes
-    const period = this.props.period
-    const orgUnitId = this.props.orgUnitId
-    const invoiceCode = this.props.invoiceCode
-    const linkPrefix = this.props.linkPrefix
+    const classes = this.props.classes;
+    const period = this.props.period;
+    const orgUnitId = this.props.orgUnitId;
+    const invoiceCode = this.props.invoiceCode;
+    const linkPrefix = this.props.linkPrefix;
     const running =
-      this.props.calculateState && this.props.calculateState.running > 0
+      this.props.calculateState && this.props.calculateState.running > 0;
     const message = running
       ? this.props.calculateState.running +
-        ' / ' +
+        " / " +
         this.props.calculateState.total
-      : 'Calculate'
+      : "Calculate";
     const recalculateButton = this.props.onRecalculate && (
       <Button
         onClick={this.handleClickOpen}
@@ -68,28 +70,28 @@ class InvoiceToolBar extends Component {
         {message}
         {running && <CircularProgress size={15} />}
       </Button>
-    )
+    );
     const next =
-      '/' +
+      "/" +
       linkPrefix +
-      '/' +
+      "/" +
       DatePeriods.next(period) +
-      '/' +
+      "/" +
       orgUnitId +
-      '/' +
-      invoiceCode
+      "/" +
+      invoiceCode;
     const previous =
-      '/' +
+      "/" +
       linkPrefix +
-      '/' +
+      "/" +
       DatePeriods.previous(period) +
-      '/' +
+      "/" +
       orgUnitId +
-      '/' +
-      invoiceCode
+      "/" +
+      invoiceCode;
 
     return (
-      <div className={classes.center + ' no-print'}>
+      <div className={classes.center + " no-print"}>
         <Button component={Link} to={previous}>
           <ArrowBack />
         </Button>
@@ -107,32 +109,36 @@ class InvoiceToolBar extends Component {
         <Button onClick={() => window.print()}>Print</Button>
         {recalculateButton}
         {this.props.warning && (
-          <Typography color='error'>{this.props.warning}</Typography>
+          <Typography color="error">{this.props.warning}</Typography>
         )}
+        <ExtensionsComponent
+          extensionKey="invoices.actions"
+          invoice={this.props.invoice}
+        />
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}
-          aria-labelledby='alert-dialog-title'
-          aria-describedby='alert-dialog-description'
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id='alert-dialog-title'>{'Calculate'}</DialogTitle>
+          <DialogTitle id="alert-dialog-title">{"Calculate"}</DialogTitle>
           <DialogContent>
-            <DialogContentText id='alert-dialog-description'>
+            <DialogContentText id="alert-dialog-description">
               this might override already generated data do you confirm ?
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.handleClose} color='primary'>
+            <Button onClick={this.handleClose} color="primary">
               Cancel
             </Button>
-            <Button onClick={this.handleConfirm} color='primary' autoFocus>
+            <Button onClick={this.handleConfirm} color="primary" autoFocus>
               Confirm
             </Button>
           </DialogActions>
         </Dialog>
       </div>
-    )
+    );
   }
 }
 
-export default withStyles(styles)(InvoiceToolBar)
+export default withStyles(styles)(InvoiceToolBar);

@@ -21,7 +21,7 @@ const styles = theme => ({
   paper: theme.mixins.gutters({
     paddingTop: 16,
     paddingBottom: 16,
-    marginTop: theme.spacing.unit * 3,
+    marginTop: theme.spacing(3),
     minHeight: "600px"
   }),
   table: {
@@ -142,7 +142,7 @@ class InvoiceSelectionContainer extends Component {
     const { classes, t } = this.props;
     return (
       <Paper className={classes.paper} square>
-        <Typography variant="title" component="h5" gutterBottom>
+        <Typography variant="h5" component="h5" gutterBottom>
           {t("report_and_invoices")}
         </Typography>
         <div className={classes.filters}>

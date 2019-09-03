@@ -110,7 +110,7 @@ class InvoiceToolBar extends Component {
           >
             {dataElementGroups.map(group => (
               <MenuItem
-                key={group.id}
+                key={"group-id-"+group.id}
                 component={Link}
                 value={group.id}
                 to={

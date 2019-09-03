@@ -90,7 +90,7 @@ const styles = theme => ({
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 3,
+    padding: theme.spacing(3),
     transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
@@ -126,6 +126,7 @@ const styles = theme => ({
 
 const RawAppDrawer = props => {
   const DrawerLinks = props.drawerLinks || React.Fragment;
+
   return (
     <Drawer
       variant="persistent"
@@ -187,12 +188,12 @@ class RawAppToolBar extends React.Component {
             alt="dhis2"
           />
         </Button>
-        <Typography variant="title" color="inherit" className={classes.flex}>
+        <Typography variant="h6" color="inherit" className={classes.flex}>
           {t("app_name")}
         </Typography>
 
         <Typography
-          variant="title"
+          variant="inherit"
           color="inherit"
           title={
             currentUser &&

@@ -10,7 +10,7 @@ const styles = theme => ({
   buttonLike: {
     ...theme.typography.button,
     backgroundColor: theme.palette.common.white,
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
     fontSize: "0.8125rem"
   }
 });

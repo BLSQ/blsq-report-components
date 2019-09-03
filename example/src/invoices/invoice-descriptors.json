@@ -4,8 +4,20 @@
     "name": "demo-chc",
     "facilityLabel": "demo-chcs",
     "orientation": "landscape",
-    "frequency": "quarterly",
-    "periodFormat": "eduQuarter",
+    "frequency": "quarterlyFirstMonths",
+    "periodFormat": "firstMonths",
+    "periodStep": "3",
+    "dataSets": [],
+    "dataElementGroups": ["oDkJh5Ddh7d"]
+  },
+  {
+    "code": "demo-chc-2-last_Month",
+    "name": "demo-chc 2 last months",
+    "facilityLabel": "demo-chcs",
+    "orientation": "landscape",
+    "frequency": "quarterlyTwoLastMonths",
+    "periodFormat": "twoLastMonths",
+    "periodStep": "1",
     "dataSets": [],
     "dataElementGroups": ["oDkJh5Ddh7d"]
   },

@@ -54,6 +54,15 @@ class InvoiceToolBar extends Component {
     const orgUnitId = this.props.orgUnitId;
     const invoiceCode = this.props.invoiceCode;
     const linkPrefix = this.props.linkPrefix;
+
+    const monthlyPeriods = this.props.invoice.quarter ? DatePeriods.monthlyPeriods(this.props.invoice.year, this.props.invoice.quarter) : [];
+    const periodStepNumber = (this.props.period === monthlyPeriods[monthlyPeriods.length - 1] ? "2" : (this.props.invoice.invoiceType.periodStep ? this.props.invoice.invoiceType.periodStep : 0));
+    const nextPeriod = DatePeriods.next(period);
+    const previousPeriod = DatePeriods.previous(period);
+
+    const nextStep =  DatePeriods.nextPeriods(period, periodStepNumber);
+    const previousStep = DatePeriods.previousPeriods(period, periodStepNumber);
+
     const running =
       this.props.calculateState && this.props.calculateState.running > 0;
     const message = running
@@ -74,7 +83,7 @@ class InvoiceToolBar extends Component {
       "/" +
       linkPrefix +
       "/" +
-      DatePeriods.next(period) +
+      (this.props.invoice.invoiceType.periodStep ? nextStep[nextStep.length - 1] : nextPeriod) +
       "/" +
       orgUnitId +
       "/" +
@@ -83,7 +92,7 @@ class InvoiceToolBar extends Component {
       "/" +
       linkPrefix +
       "/" +
-      DatePeriods.previous(period) +
+      (this.props.invoice.invoiceType.periodStep ? previousStep[0] : previousPeriod) +
       "/" +
       orgUnitId +
       "/" +

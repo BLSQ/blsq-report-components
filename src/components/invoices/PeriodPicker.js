@@ -10,7 +10,7 @@ import { withNamespaces } from "react-i18next";
 
 const styles = theme => ({
   formControl: {
-    margin: theme.spacing(1),
+    margin: theme.spacing.unit,
     minWidth: 120,
     verticalAlign: "bottom"
   }

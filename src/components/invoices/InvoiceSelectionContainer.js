@@ -32,7 +32,7 @@ const styles = theme => ({
   paper: theme.mixins.gutters({
     paddingTop: 16,
     paddingBottom: 16,
-    marginTop: theme.spacing(3),
+    marginTop: theme.spacing.unit * 3,
     minHeight: "600px"
   }),
   table: {
@@ -62,12 +62,10 @@ class InvoiceSelectionContainer extends Component {
   }
 
    handleInvoiceDialogOpen = (links) => {
-    console.info("LINKS :", links);
     this.setState({ invoiceLinks: links });
     if(this.state.invoiceLinks !== undefined){
       this.setState({ invoiceDialogOpen: true });
     }
-    console.info("State ...:", this.state);
   };
 
   handleInvoiceDialogClose = () => {

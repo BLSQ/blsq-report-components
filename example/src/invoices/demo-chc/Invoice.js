@@ -33,7 +33,7 @@ const activity = {
 };
 
 const renderer = (value, raw_value) => {
-  if (raw_value == 1) {
+  if (raw_value === 1) {
     return <DoneIcon style={{ color: "green" }} />;
   }
   return <CloseIcon style={{ color: "red" }} />;

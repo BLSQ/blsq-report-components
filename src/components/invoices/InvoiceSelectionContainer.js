@@ -14,7 +14,9 @@ import Dialog from "@material-ui/core/Dialog";
 import Button from '@material-ui/core/Button';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import List from '@material-ui/core/List';
+import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItem';
 import { Link } from "react-router-dom";
@@ -56,7 +58,7 @@ class InvoiceSelectionContainer extends Component {
     this.onPeriodChange = this.onPeriodChange.bind(this);
     this.synchronizeUrl = debounce(this.synchronizeUrl.bind(this),200);
     this.onParentOrganisationUnit = this.onParentOrganisationUnit.bind(this);
-    this.state = {invoiceDialogOpen: false, invoiceLinks: undefined};
+    this.state = {invoiceDialogOpen: false, invoiceLinks: undefined, invoiceOrgUnitName: undefined};
   }
 
    handleInvoiceDialogOpen = (links) => {
@@ -160,10 +162,10 @@ class InvoiceSelectionContainer extends Component {
     const invoiceTypes = invoices.getInvoiceTypes(codes);
 
     const quarterPeriod = DatePeriods.split(period, "quarterly")[0];
-
+    this.setState({invoiceOrgUnitName:orgUnit.name})
     return invoiceTypes.map(invoiceType => 
       ({invoiceName: invoiceType.name, 
-       invoiceLinks: DatePeriods.split(quarterPeriod, invoiceType.frequency).map(
+       links: DatePeriods.split(quarterPeriod, invoiceType.frequency).map(
             subPeriod => (
 
                 {
@@ -267,7 +269,7 @@ class InvoiceSelectionContainer extends Component {
                       this.props.period,
                       this.props.invoices))
                     }>
-                      Open alert dialog
+                      {this.props.t('show_avalaible_invoices')}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -281,18 +283,23 @@ class InvoiceSelectionContainer extends Component {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
           >
-          <DialogContent>
+         <DialogTitle id="simple-dialog-title">{this.state.invoiceOrgUnitName}</DialogTitle>
+         <DialogContent>
             <DialogContentText id="alert-dialog-description">
-
-
+            <List>
                 {
-                  this.state.invoiceLinks.map(link => (
-                    <span>{link.invoiceName +" "+link.invoiceLinks.map(l => <Button key={l.key}  variant="text"  color="primary" size="small" component={Link} to={l.to} title = {l.title}>{l.label}</Button>).slice(0, link.invoiceLinks.length)}</span> 
+                  this.state.invoiceLinks.map((link,linkIndex) => (
+                    <li key={link.invoiceName+"-"+linkIndex}>
+<Typography variant="overline" gutterBottom>{link.invoiceName} </Typography>
+{
+  link.links.map(l => <Button key={l.key}  variant="text"  color="primary" size="small" component={Link} to={l.to} title = {l.title}>{l.label}</Button>)
+}
+<Divider />
+                   </li> 
                   ))
                 }
-
-
-            </DialogContentText>
+                </List>
+                </DialogContentText>
           </DialogContent>
         </Dialog>
         }

@@ -8,6 +8,7 @@ const keys = {
   "limit_org_unit_under": "Limiter à l'unité d'organisation enfant",
   "period": "Période",
   "invoice": "Facture",
-  "name": "Nom"
+  "name": "Nom",
+  "show_avalaible_invoices": "Choisir factures"
 }
 export default keys

@@ -8,6 +8,7 @@ const keys = {
   "limit_org_unit_under": "Limit to the child organisation unit",
   "period": "Period",
   "invoice": "Invoice",
-  "name": "Name"
+  "name": "Name",
+  "show_avalaible_invoices": "Choose invoices"
 }
 export default keys

@@ -10,10 +10,19 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
+import Dialog from "@material-ui/core/Dialog";
+import Button from '@material-ui/core/Button';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItem';
+import { Link } from "react-router-dom";
 import OrgUnitAutoComplete from "./OrgUnitAutoComplete";
 import PeriodPicker from "./PeriodPicker";
 import OuPicker from "./OuPicker";
-import InvoiceLink from "./InvoiceLink";
+// import InvoiceLink from "./InvoiceLink";
+import DatePeriods from "../../support/DatePeriods";
 
 import debounce from "lodash/debounce";
 
@@ -47,8 +56,22 @@ class InvoiceSelectionContainer extends Component {
     this.onPeriodChange = this.onPeriodChange.bind(this);
     this.synchronizeUrl = debounce(this.synchronizeUrl.bind(this),200);
     this.onParentOrganisationUnit = this.onParentOrganisationUnit.bind(this);
-    this.state = {};
+    this.state = {invoiceDialogOpen: false, invoiceLinks: undefined};
   }
+
+   handleInvoiceDialogOpen = (links) => {
+    console.info("LINKS :", links);
+    this.setState({ invoiceLinks: links });
+    if(this.state.invoiceLinks !== undefined){
+      this.setState({ invoiceDialogOpen: true });
+    }
+    console.info("State ...:", this.state);
+  };
+
+  handleInvoiceDialogClose = () => {
+    this.setState({ invoiceDialogOpen: false, invoiceLinks: undefined });
+  };
+
 
   componentDidMount() {
     this.searchOrgunit();
@@ -126,6 +149,43 @@ class InvoiceSelectionContainer extends Component {
     }
   }
 
+   InvoiceLink (orgUnit,  period, invoices) {
+    //debugger;
+    const codes = invoices.getInvoiceTypeCodes(orgUnit);
+
+    if (codes === undefined || codes.length === 0) {
+      return null;
+    }
+
+    const invoiceTypes = invoices.getInvoiceTypes(codes);
+
+    const quarterPeriod = DatePeriods.split(period, "quarterly")[0];
+
+    return invoiceTypes.map(invoiceType => 
+      ({invoiceName: invoiceType.name, 
+       invoiceLinks: DatePeriods.split(quarterPeriod, invoiceType.frequency).map(
+            subPeriod => (
+
+                {
+                  key:invoiceType.code + "-" + subPeriod + "-" + orgUnit.id,
+                  to : "/invoices/" +subPeriod +"/" +orgUnit.id +"/" +invoiceType.code,
+                title: subPeriod,
+                label:  DatePeriods.displayName(
+                  subPeriod,
+                  invoiceType.periodFormat ||
+                    (invoiceType.frequency == "quarterly"
+                      ? "quarter"
+                      : invoiceType.frequency == "sixMonthly"
+                      ? "sixMonth"
+                      : "monthYear")
+                )
+                }
+            )
+          ) 
+      })
+      );
+}
+
   componentWillReceiveProps(nextProps) {
     const dirty =
       nextProps.ouSearchValue !== this.props.ouSearchValue ||
@@ -201,16 +261,42 @@ class InvoiceSelectionContainer extends Component {
                     {orgUnit.ancestors[2] && orgUnit.ancestors[2].name}
                   </TableCell>
                   <TableCell>
-                    <InvoiceLink
-                      orgUnit={orgUnit}
-                      period={this.props.period}
-                      invoices={this.props.invoices}
-                    />
+                    
+                    <Button variant="outlined" color="primary" onClick={()=>this.handleInvoiceDialogOpen(this.InvoiceLink(
+                      orgUnit,
+                      this.props.period,
+                      this.props.invoices))
+                    }>
+                      Open alert dialog
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
           </TableBody>
         </Table>
+        {
+          this.state.invoiceLinks && <Dialog 
+          open={this.state.invoiceDialogOpen}
+          onClose={this.handleInvoiceDialogClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          >
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+
+
+                {
+                  this.state.invoiceLinks.map(link => (
+                    <span>{link.invoiceName +" "+link.invoiceLinks.map(l => <Button key={l.key}  variant="text"  color="primary" size="small" component={Link} to={l.to} title = {l.title}>{l.label}</Button>).slice(0, link.invoiceLinks.length)}</span> 
+                  ))
+                }
+
+
+            </DialogContentText>
+          </DialogContent>
+        </Dialog>
+        }
+        
       </Paper>
     );
   }

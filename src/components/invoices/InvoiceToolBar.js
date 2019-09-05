@@ -55,13 +55,15 @@ class InvoiceToolBar extends Component {
     const invoiceCode = this.props.invoiceCode;
     const linkPrefix = this.props.linkPrefix;
 
-    const monthlyPeriods = this.props.invoice.quarter ? DatePeriods.monthlyPeriods(this.props.invoice.year, this.props.invoice.quarter) : [];
-    const periodStepNumber = (this.props.period === monthlyPeriods[monthlyPeriods.length - 1] ? "2" : (this.props.invoice.invoiceType.periodStep ? this.props.invoice.invoiceType.periodStep : 0));
     const nextPeriod = DatePeriods.next(period);
     const previousPeriod = DatePeriods.previous(period);
 
+    const monthlyPeriods = this.props.invoice.quarter ? DatePeriods.monthlyPeriods(this.props.invoice.year, this.props.invoice.quarter) : [];
+    const periodPreviousNumber = this.props.invoice.invoiceType.periodStep ? ((this.props.period === monthlyPeriods[monthlyPeriods.length - 1]) ? "1" : ((this.props.period === monthlyPeriods[0]) ? this.props.invoice.invoiceType.periodStep :"2") ) : 0;
+    const periodStepNumber = (this.props.period === monthlyPeriods[monthlyPeriods.length - 1] ? "2" : (this.props.invoice.invoiceType.periodStep ? this.props.invoice.invoiceType.periodStep : 0));
     const nextStep =  DatePeriods.nextPeriods(period, periodStepNumber);
-    const previousStep = DatePeriods.previousPeriods(period, periodStepNumber);
+    const previousStep = DatePeriods.previousPeriods(period, periodPreviousNumber);
+
 
     const running =
       this.props.calculateState && this.props.calculateState.running > 0;

@@ -4,26 +4,25 @@ import { withStyles } from "@material-ui/core/styles";
 import { withNamespaces } from "react-i18next";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
-import LinearProgress from '@material-ui/core/LinearProgress';
+import LinearProgress from "@material-ui/core/LinearProgress";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
 import Dialog from "@material-ui/core/Dialog";
-import Button from '@material-ui/core/Button';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItem';
+import Button from "@material-ui/core/Button";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import List from "@material-ui/core/List";
+import Divider from "@material-ui/core/Divider";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItem";
 import { Link } from "react-router-dom";
 import OrgUnitAutoComplete from "./OrgUnitAutoComplete";
 import PeriodPicker from "./PeriodPicker";
 import OuPicker from "./OuPicker";
-// import InvoiceLink from "./InvoiceLink";
 import DatePeriods from "../../support/DatePeriods";
 
 import debounce from "lodash/debounce";
@@ -56,22 +55,18 @@ class InvoiceSelectionContainer extends Component {
     this.searchOrgunit = debounce(this.searchOrgunit.bind(this), 1500);
     this.onOuSearchChange = this.onOuSearchChange.bind(this);
     this.onPeriodChange = this.onPeriodChange.bind(this);
-    this.synchronizeUrl = debounce(this.synchronizeUrl.bind(this),200);
+    this.synchronizeUrl = debounce(this.synchronizeUrl.bind(this), 200);
     this.onParentOrganisationUnit = this.onParentOrganisationUnit.bind(this);
-    this.state = {invoiceDialogOpen: false, invoiceLinks: undefined, invoiceOrgUnitName: undefined};
+    this.state = {
+      invoiceDialogOpen: false,
+      invoiceLinks: undefined,
+      invoiceOrgUnitName: undefined
+    };
   }
-
-   handleInvoiceDialogOpen = (links) => {
-    this.setState({ invoiceLinks: links });
-    if(this.state.invoiceLinks !== undefined){
-      this.setState({ invoiceDialogOpen: true });
-    }
-  };
 
   handleInvoiceDialogClose = () => {
     this.setState({ invoiceDialogOpen: false, invoiceLinks: undefined });
   };
-
 
   componentDidMount() {
     this.searchOrgunit();
@@ -87,7 +82,7 @@ class InvoiceSelectionContainer extends Component {
   }
 
   synchronizeUrl() {
-    this.setState({loading: true})
+    this.setState({ loading: true });
     synchronizeHistory(
       this.props.parent,
       this.props.ouSearchValue,
@@ -97,7 +92,7 @@ class InvoiceSelectionContainer extends Component {
 
   synchronizeHistory(parent, ouSearchValue, period) {
     if (!ouSearchValue) {
-      ouSearchValue = ""
+      ouSearchValue = "";
     }
     const parentParam = parent ? "&parent=" + parent : "";
     this.props.history.replace({
@@ -127,64 +122,122 @@ class InvoiceSelectionContainer extends Component {
       ? this.props.ouSearchValue.trim()
       : "";
     if (this.props.currentUser) {
-      this.setState({loading: true})
-        const user = this.props.currentUser;
-        const orgUnitsResp = await this.props.dhis2.searchOrgunits(
-          searchvalue,
-          user.dataViewOrganisationUnits,
-          this.props.contractedOrgUnitGroupId,
-          this.props.parent
-        );
-        console.log(
-          "Searching for " +
-            this.props.period +
-            searchvalue +
-            " => " +
-            orgUnitsResp.organisationUnits.length
-        );
-        this.setState({
-          orgUnits: orgUnitsResp.organisationUnits,
-          loading: false
-        });
+      this.setState({ loading: true });
+      const user = this.props.currentUser;
+      const orgUnitsResp = await this.props.dhis2.searchOrgunits(
+        searchvalue,
+        user.dataViewOrganisationUnits,
+        this.props.contractedOrgUnitGroupId,
+        this.props.parent
+      );
+
+      this.setState({
+        orgUnits: orgUnitsResp.organisationUnits,
+        loading: false
+      });
     }
   }
 
-   InvoiceLink (orgUnit,  period, invoices) {
-    //debugger;
+  buildInvoiceLink = (orgUnit, quarterPeriod, invoiceType) => {
+    return {
+      invoiceName: invoiceType.name,
+      links: DatePeriods.split(quarterPeriod, invoiceType.frequency).map(
+        subPeriod => ({
+          key: invoiceType.code + "-" + subPeriod + "-" + orgUnit.id,
+          to:
+            "/invoices/" +
+            subPeriod +
+            "/" +
+            orgUnit.id +
+            "/" +
+            invoiceType.code,
+          title: subPeriod,
+          label: DatePeriods.displayName(
+            subPeriod,
+            invoiceType.periodFormat ||
+              (invoiceType.frequency == "quarterly"
+                ? "quarter"
+                : invoiceType.frequency == "sixMonthly"
+                ? "sixMonth"
+                : "monthYear")
+          )
+        })
+      )
+    };
+  };
+
+  buildInvoiceAnchors = linkObj => {
+    return (
+      <React.Fragment>
+        <Typography variant="overline" gutterBottom>
+          {linkObj.invoiceName}{" "}
+        </Typography>
+        {linkObj.links.map(link => (
+          <Button
+            key={link.key}
+            variant="text"
+            color="primary"
+            size="small"
+            component={Link}
+            to={link.to}
+            title={link.title}
+          >
+            {link.label}
+          </Button>
+        ))}
+      </React.Fragment>
+    );
+  };
+
+  buildInvoiceTypes = (invoices, orgUnit) => {
     const codes = invoices.getInvoiceTypeCodes(orgUnit);
 
     if (codes === undefined || codes.length === 0) {
       return null;
     }
 
-    const invoiceTypes = invoices.getInvoiceTypes(codes);
+    return invoices.getInvoiceTypes(codes);
+  };
 
+  buildInvoiceLinks(orgUnit, period, invoices) {
+    const invoiceTypes = this.buildInvoiceTypes(invoices, orgUnit);
     const quarterPeriod = DatePeriods.split(period, "quarterly")[0];
-    this.setState({invoiceOrgUnitName:orgUnit.name})
-    return invoiceTypes.map(invoiceType => 
-      ({invoiceName: invoiceType.name, 
-       links: DatePeriods.split(quarterPeriod, invoiceType.frequency).map(
-            subPeriod => (
 
-                {
-                  key:invoiceType.code + "-" + subPeriod + "-" + orgUnit.id,
-                  to : "/invoices/" +subPeriod +"/" +orgUnit.id +"/" +invoiceType.code,
-                title: subPeriod,
-                label:  DatePeriods.displayName(
-                  subPeriod,
-                  invoiceType.periodFormat ||
-                    (invoiceType.frequency == "quarterly"
-                      ? "quarter"
-                      : invoiceType.frequency == "sixMonthly"
-                      ? "sixMonth"
-                      : "monthYear")
-                )
-                }
-            )
-          ) 
-      })
-      );
-}
+    var invoiceLinks = invoiceTypes.map(invoiceType =>
+      this.buildInvoiceLink(orgUnit, quarterPeriod, invoiceType)
+    );
+
+    this.setState({
+      invoiceOrgUnitName: orgUnit.name,
+      invoiceLinks: invoiceLinks,
+      invoiceDialogOpen: true
+    });
+  }
+
+  evalInvoice = (orgUnit, period, invoices) => {
+    const invoiceTypes = this.buildInvoiceTypes(invoices, orgUnit);
+    const quarterPeriod = DatePeriods.split(period, "quarterly")[0];
+    return invoiceTypes.length > 1 ? (
+      <Button
+        variant="outlined"
+        color="primary"
+        size="small"
+        onClick={() =>
+          this.buildInvoiceLinks(
+            orgUnit,
+            this.props.period,
+            this.props.invoices
+          )
+        }
+      >
+        {this.props.t("show_avalaible_invoices")}
+      </Button>
+    ) : (
+      this.buildInvoiceAnchors(
+        this.buildInvoiceLink(orgUnit, quarterPeriod, invoiceTypes[0])
+      )
+    );
+  };
 
   componentWillReceiveProps(nextProps) {
     const dirty =
@@ -223,10 +276,9 @@ class InvoiceSelectionContainer extends Component {
             onPeriodChange={this.onPeriodChange}
             periodFormat={this.props.periodFormat}
           />
-          <br/>
-          {this.state.loading ?  <LinearProgress variant="query" /> : ""}
+          <br />
+          {this.state.loading ? <LinearProgress variant="query" /> : ""}
         </div>
-
 
         <br />
 
@@ -261,47 +313,42 @@ class InvoiceSelectionContainer extends Component {
                     {orgUnit.ancestors[2] && orgUnit.ancestors[2].name}
                   </TableCell>
                   <TableCell>
-                    
-                    <Button variant="outlined" color="primary" onClick={()=>this.handleInvoiceDialogOpen(this.InvoiceLink(
+                    {this.evalInvoice(
                       orgUnit,
                       this.props.period,
-                      this.props.invoices))
-                    }>
-                      {this.props.t('show_avalaible_invoices')}
-                    </Button>
+                      this.props.invoices
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
           </TableBody>
         </Table>
-        {
-          this.state.invoiceLinks && <Dialog 
-          open={this.state.invoiceDialogOpen}
-          onClose={this.handleInvoiceDialogClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
+        {this.state.invoiceLinks && (
+          <Dialog
+            fullWidth={true}
+            maxWidth="md"
+            open={this.state.invoiceDialogOpen}
+            onClose={this.handleInvoiceDialogClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
           >
-         <DialogTitle id="simple-dialog-title">{this.state.invoiceOrgUnitName}</DialogTitle>
-         <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-            <List>
-                {
-                  this.state.invoiceLinks.map((link,linkIndex) => (
-                    <li key={link.invoiceName+"-"+linkIndex}>
-<Typography variant="overline" gutterBottom>{link.invoiceName} </Typography>
-{
-  link.links.map(l => <Button key={l.key}  variant="text"  color="primary" size="small" component={Link} to={l.to} title = {l.title}>{l.label}</Button>)
-}
-<Divider />
-                   </li> 
-                  ))
-                }
+            <DialogTitle id="simple-dialog-title">
+              {this.state.invoiceOrgUnitName}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                <List>
+                  {this.state.invoiceLinks.map((link, linkIndex) => (
+                    <li key={link.invoiceName + "-" + linkIndex}>
+                      {this.buildInvoiceAnchors(link)}
+                      <Divider />
+                    </li>
+                  ))}
                 </List>
-                </DialogContentText>
-          </DialogContent>
-        </Dialog>
-        }
-        
+              </DialogContentText>
+            </DialogContent>
+          </Dialog>
+        )}
       </Paper>
     );
   }

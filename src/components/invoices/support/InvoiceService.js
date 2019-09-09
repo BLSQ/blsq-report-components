@@ -5,6 +5,7 @@ class InvoiceService {
   async fetchInvoiceData(dhis2, orgUnitId, period, invoiceType, mapper) {
     let mainOrgUnit;
     let orgUnits = [];
+    let categoryCombos = [];
 
     if (invoiceType.contractGroupSet) {
       orgUnits = await dhis2.getOrgunitsForContract(
@@ -45,6 +46,7 @@ class InvoiceService {
     invoice.invoiceType = invoiceType;
     invoice.period = period;
     invoice.generatedAt = new Date(systemInfo.serverDate);
+    invoice.categoryCombos = await dhis2.getCategoryComboById();
     return invoice;
   }
 

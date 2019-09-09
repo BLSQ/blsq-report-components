@@ -35,7 +35,7 @@ class InvoiceService {
     );
 
     request.mainOrgUnit = mainOrgUnit;
-
+    request.categoryCombos = await dhis2.getCategoryComboById();
     const rawValues = await dhis2.getInvoiceValues(request);
     const dataElementsNames = await this.getDataElementsNames(dhis2, request);
 
@@ -46,7 +46,7 @@ class InvoiceService {
     invoice.invoiceType = invoiceType;
     invoice.period = period;
     invoice.generatedAt = new Date(systemInfo.serverDate);
-    invoice.categoryCombos = await dhis2.getCategoryComboById();
+
     return invoice;
   }
 

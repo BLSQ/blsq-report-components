@@ -1,6 +1,12 @@
 import React from "react";
 import DrawerLinks from "./DrawerLinks";
-import { AppDrawer, Dhis2, configureI18N, DatePeriods, PluginRegistry } from "@blsq/blsq-report-components";
+import {
+  AppDrawer,
+  Dhis2,
+  configureI18N,
+  DatePeriods,
+  PluginRegistry
+} from "@blsq/blsq-report-components";
 import Invoices from "./invoices/Invoices";
 import customRoute from "./custom/CustomRoute";
 import { I18nextProvider } from "react-i18next";
@@ -12,7 +18,13 @@ DatePeriods.setLocale(defaultLang);
 const i18n = configureI18N(defaultLang);
 
 const Demo = props => {
-  return <SimpleDialogDemo params={props} dhis2={new Dhis2()} data={config.global.validation} />;
+  return (
+    <SimpleDialogDemo
+      params={props}
+      dhis2={new Dhis2()}
+      data={config.global.validation}
+    />
+  );
 };
 const Demo2 = props => <span>Read only</span>;
 
@@ -65,7 +77,7 @@ const App = t => (
           levels: ["Country", "Territory", "Land", "Facility"]
         }
       }}
-      dhis2={new Dhis2()}
+      dhis2={new Dhis2({ categoryComboId: "wrESd0U5q5K" })}
     />
   </I18nextProvider>
 );

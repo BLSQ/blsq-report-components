@@ -49,5 +49,14 @@
     "dataSets": [],
     "dataElementGroups": ["oDkJh5Ddh7d"],
     "organisationUnitGroup": "oRVt7g429ZO"
+  },
+  {
+    "code": "demo-invoice-category-combo",
+    "name": "demo-invoice-category-combo",
+    "facilityLabel": "demo-invoice-category-combo",
+    "orientation": "landscape",
+    "frequency": "quarterly",
+    "dataSets": [],
+    "dataElementGroups": ["oDkJh5Ddh7d"]
   }
 ]

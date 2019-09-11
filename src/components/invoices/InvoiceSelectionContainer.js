@@ -130,12 +130,44 @@ class InvoiceSelectionContainer extends Component {
         this.props.contractedOrgUnitGroupId,
         this.props.parent
       );
-
+      let categoryList = [];
+      if (this.props.dhis2.categoryComboId) {
+        categoryList = await this.searchCategoryCombo(searchvalue);
+        categoryList.forEach(cl =>
+          orgUnitsResp.organisationUnits.push({
+            id: cl.id,
+            shortName: cl.shortName,
+            name: cl.name,
+            ancestors: [],
+            level: cl.level,
+            organisationUnitGroups: cl.organisationUnitGroups
+          })
+        );
+      }
       this.setState({
         orgUnits: orgUnitsResp.organisationUnits,
         loading: false
       });
     }
+  }
+
+  async searchCategoryCombo(searchvalue) {
+    const categoryCombos = await this.props.dhis2.getCategoryComboById();
+    let optionsCombos = categoryCombos.categoryOptionCombos.filter(cc =>
+      cc.name.includes(searchvalue)
+    );
+    return optionsCombos.map(option => {
+      return {
+        id: option.id,
+        shortName: option.shortName,
+        name: option.name,
+        ancestors: [],
+        level: 0,
+        organisationUnitGroups: [
+          { name: "", id: this.props.contractedOrgUnitGroupId }
+        ]
+      };
+    });
   }
 
   buildInvoiceLink = (orgUnit, quarterPeriod, invoiceType) => {

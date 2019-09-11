@@ -6,6 +6,13 @@ class InvoiceService {
     let mainOrgUnit;
     let orgUnits = [];
     let categoryCombos = [];
+    let categoryCombo = "";
+
+    if (invoiceType.isPartner) {
+      categoryCombo = orgUnitId;
+      const country = await dhis2.getTopLevels([1]);
+      orgUnitId = country.organisationUnits[0].id;
+    }
 
     if (invoiceType.contractGroupSet) {
       orgUnits = await dhis2.getOrgunitsForContract(

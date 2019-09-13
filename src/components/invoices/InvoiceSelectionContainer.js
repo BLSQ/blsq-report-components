@@ -153,8 +153,8 @@ class InvoiceSelectionContainer extends Component {
 
   async searchCategoryCombo(searchvalue) {
     const categoryCombos = await this.props.dhis2.getCategoryComboById();
-    let optionsCombos = categoryCombos.categoryOptionCombos.filter(cc =>
-      cc.name.includes(searchvalue)
+    let optionsCombos = categoryCombos.categoryOptionCombos.filter(
+      cc => cc.name.toLowerCase().indexOf(searchvalue.toLowerCase()) > -1
     );
     return optionsCombos.map(option => {
       return {

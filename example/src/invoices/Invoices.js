@@ -22,6 +22,7 @@ const INVOICE_DEMO_CHT_SEMIANNUALLY = "demo-chc-sixMonthly";
 const INVOICE_DEMO_CHT_CONSOLIDATED = "demo-chc-consolidated";
 const INVOICE_DEMO_CHT_TWO_LAST_MONTH = "demo-chc-2-last_Month";
 const INVOICE_EMPTY = "demo-invoice-category-combo";
+const INVOICE_DEMO_QUARTERLY_FIRST_MONTH = "demo-quarter-first-months";
 
 const INVOICES = {
   [INVOICE_DEMO_CHT]: {
@@ -44,7 +45,14 @@ const INVOICES = {
     component: DemoConsolidatedInvoice,
     mapper: DemoConsolidatedMapper
   },
-  [INVOICE_EMPTY]: {}
+  [INVOICE_EMPTY]: {
+    component: DemoConsolidatedInvoice,
+    mapper: DemoConsolidatedMapper
+  },
+  [INVOICE_DEMO_QUARTERLY_FIRST_MONTH]: {
+    component: DemoInvoice,
+    mapper: DemoMapper
+  }
 };
 
 const DESCRIPTOR_BY_CODE = indexBy(invoiceDescriptors, e => e.code);
@@ -55,7 +63,8 @@ class Invoices {
       INVOICE_DEMO_CHT,
       INVOICE_DEMO_CHT_MONTHLY,
       INVOICE_DEMO_CHT_SEMIANNUALLY,
-      INVOICE_DEMO_CHT_TWO_LAST_MONTH
+      INVOICE_DEMO_CHT_TWO_LAST_MONTH,
+      INVOICE_DEMO_QUARTERLY_FIRST_MONTH
     ];
     if (orgUnit.level === 1) {
       invoiceCodes.push(INVOICE_DEMO_CHT_CONSOLIDATED);

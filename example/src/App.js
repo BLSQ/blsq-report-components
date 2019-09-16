@@ -77,7 +77,7 @@ const App = t => (
           levels: ["Country", "Territory", "Land", "Facility"]
         }
       }}
-      dhis2={new Dhis2({ categoryComboId: "wrESd0U5q5K" })}
+      dhis2={new Dhis2({ categoryComboId: "t3aNCvHsoSn" })}
     />
   </I18nextProvider>
 );

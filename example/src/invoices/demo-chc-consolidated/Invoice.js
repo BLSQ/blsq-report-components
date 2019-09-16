@@ -42,21 +42,27 @@ class Invoice extends Component {
               return (
                 <tr key={index}>
                   <Cell variant="order" value={index + 1} field="self" />
-                  <Cell
-                    variant="text"
-                    value={orgUnit.orgUnit.ancestors[0].name}
-                    field="self"
-                  />
-                  <Cell
-                    variant="text"
-                    value={orgUnit.orgUnit.ancestors[1].name}
-                    field="self"
-                  />
-                  <Cell
-                    variant="text"
-                    value={orgUnit.orgUnit.ancestors[2].name}
-                    field="self"
-                  />
+                  {orgUnit.orgUnit.ancestors[0] && (
+                    <Cell
+                      variant="text"
+                      value={orgUnit.orgUnit.ancestors[0].name}
+                      field="self"
+                    />
+                  )}
+                  {orgUnit.orgUnit.ancestors[1] && (
+                    <Cell
+                      variant="text"
+                      value={orgUnit.orgUnit.ancestors[1].name}
+                      field="self"
+                    />
+                  )}
+                  {orgUnit.orgUnit.ancestors[2] && (
+                    <Cell
+                      variant="text"
+                      value={orgUnit.orgUnit.ancestors[2].name}
+                      field="self"
+                    />
+                  )}
                   <Cell
                     variant="text"
                     value={orgUnit.orgUnit.name}

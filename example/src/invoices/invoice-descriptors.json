@@ -4,20 +4,8 @@
     "name": "demo-chc",
     "facilityLabel": "demo-chcs",
     "orientation": "landscape",
-    "frequency": "quarterlyFirstMonths",
-    "periodFormat": "firstMonths",
-    "periodStep": "3",
-    "dataSets": [],
-    "dataElementGroups": ["oDkJh5Ddh7d"]
-  },
-  {
-    "code": "demo-chc-2-last_Month",
-    "name": "demo-chc 2 last months",
-    "facilityLabel": "demo-chcs",
-    "orientation": "landscape",
-    "frequency": "quarterlyTwoLastMonths",
-    "periodFormat": "twoLastMonths",
-    "periodStep": "1",
+    "frequency": "quarterly",
+    "periodFormat": "eduQuarter",
     "dataSets": [],
     "dataElementGroups": ["oDkJh5Ddh7d"]
   },
@@ -28,7 +16,7 @@
     "orientation": "landscape",
     "frequency": "monthly",
     "previousPeriod": 1,
-    "dataSets": [],
+    "dataSets": ["eZDhcZi6FLP"],
     "dataElementGroups": ["oDkJh5Ddh7d"]
   },
   {
@@ -56,6 +44,31 @@
     "facilityLabel": "demo-invoice-category-combo",
     "orientation": "landscape",
     "frequency": "quarterly",
+    "dataSets": ["DLUSCOr5l3K", "RkmXd0PYlUg", "eZDhcZi6FLP"],
+    "dataElementGroups": ["TzwKbcw1nUK", "oDkJh5Ddh7d"],
+    "isPartner": true,
+    "dataElementIds": ["yq3jkilkX24", "kDQqtyTpRXY"],
+    "organisationUnitGroup": "f25dqv3Y7Z0"
+  },
+  {
+    "code": "demo-quarter-first-months",
+    "name": "demo-quarter-first-months",
+    "facilityLabel": "demo-quarter-first-months",
+    "orientation": "landscape",
+    "frequency": "quarterlyFirstMonths",
+    "periodFormat": "firstMonths",
+    "periodStep": "3",
+    "dataSets": ["eZDhcZi6FLP"],
+    "dataElementGroups": ["TzwKbcw1nUK"]
+  },
+  {
+    "code": "demo-chc-2-last_Month",
+    "name": "demo-chc 2 last months",
+    "facilityLabel": "demo-chcs",
+    "orientation": "landscape",
+    "frequency": "quarterlyTwoLastMonths",
+    "periodFormat": "twoLastMonths",
+    "periodStep": "1",
     "dataSets": [],
     "dataElementGroups": ["oDkJh5Ddh7d"]
   }

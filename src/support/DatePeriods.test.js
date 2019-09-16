@@ -404,3 +404,25 @@ it("calculates next periods", () => {
   ]);
   expect(DatePeriods.nextPeriods("2018", 3)).toEqual(["2019", "2020", "2021"]);
 });
+
+it("split quarter in months by split type", () => {
+  expect(DatePeriods.split("2018Q4", "monthly")).toEqual([
+    "201810",
+    "201811",
+    "201812"
+  ]);
+  expect(DatePeriods.split("2018Q4", "quarterlyFirstMonths")).toEqual([
+    "201810"
+  ]);
+  expect(DatePeriods.split("2019Q1", "quarterlyFirstMonths")).toEqual([
+    "201901"
+  ]);
+  expect(DatePeriods.split("2018Q4", "quarterlyTwoLastMonths")).toEqual([
+    "201811",
+    "201812"
+  ]);
+  expect(DatePeriods.split("2019Q1", "quarterlyTwoLastMonths")).toEqual([
+    "201902",
+    "201903"
+  ]);
+});

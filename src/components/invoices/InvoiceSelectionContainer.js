@@ -249,25 +249,29 @@ class InvoiceSelectionContainer extends Component {
   evalInvoice = (orgUnit, period, invoices) => {
     const invoiceTypes = this.buildInvoiceTypes(invoices, orgUnit);
     const quarterPeriod = DatePeriods.split(period, "quarterly")[0];
-    return invoiceTypes.length > 1 ? (
-      <Button
-        variant="outlined"
-        color="primary"
-        size="small"
-        onClick={() =>
-          this.buildInvoiceLinks(
-            orgUnit,
-            this.props.period,
-            this.props.invoices
-          )
-        }
-      >
-        {this.props.t("show_avalaible_invoices")}
-      </Button>
-    ) : (
-      this.buildInvoiceAnchors(
-        this.buildInvoiceLink(orgUnit, quarterPeriod, invoiceTypes[0])
+    return invoiceTypes !== undefined ? (
+      invoiceTypes.length > 1 ? (
+        <Button
+          variant="outlined"
+          color="primary"
+          size="small"
+          onClick={() =>
+            this.buildInvoiceLinks(
+              orgUnit,
+              this.props.period,
+              this.props.invoices
+            )
+          }
+        >
+          {this.props.t("show_avalaible_invoices")}
+        </Button>
+      ) : (
+        this.buildInvoiceAnchors(
+          this.buildInvoiceLink(orgUnit, quarterPeriod, invoiceTypes[0])
+        )
       )
+    ) : (
+      "Missing invoice types..."
     );
   };
 

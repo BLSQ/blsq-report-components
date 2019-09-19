@@ -378,7 +378,9 @@ class InvoiceSelectionContainer extends Component {
                   {this.state.invoiceLinks.map((link, linkIndex) => (
                     <li key={link.invoiceName + "-" + linkIndex}>
                       {this.buildInvoiceAnchors(link)}
-                      <Divider />
+                      {this.state.invoiceLinks.length - 1 !== linkIndex && (
+                        <Divider />
+                      )}
                     </li>
                   ))}
                 </List>

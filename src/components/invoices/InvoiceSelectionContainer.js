@@ -250,7 +250,7 @@ class InvoiceSelectionContainer extends Component {
     const invoiceTypes = this.buildInvoiceTypes(invoices, orgUnit);
     const quarterPeriod = DatePeriods.split(period, "quarterly")[0];
     debugger;
-    return invoiceTypes !== undefined ? (
+    return invoiceTypes !== null ? (
       invoiceTypes.length > 1 ? (
         <Button
           variant="outlined"

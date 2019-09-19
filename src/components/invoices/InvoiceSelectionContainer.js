@@ -249,7 +249,7 @@ class InvoiceSelectionContainer extends Component {
   evalInvoice = (orgUnit, period, invoices) => {
     const invoiceTypes = this.buildInvoiceTypes(invoices, orgUnit);
     const quarterPeriod = DatePeriods.split(period, "quarterly")[0];
-    debugger;
+
     return invoiceTypes !== null ? (
       invoiceTypes.length > 1 ? (
         <Button
@@ -272,7 +272,7 @@ class InvoiceSelectionContainer extends Component {
         )
       )
     ) : (
-      "Missing invoice types..."
+      this.props.t("missing_invoice_types")
     );
   };
 

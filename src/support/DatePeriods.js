@@ -25,7 +25,20 @@ const QUARTER_BY_SIX_MONTHLY = {
   2: [3, 4]
 };
 
-const MONTH_NAMES_FR = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+const MONTH_NAMES_FR = [
+  "Janvier",
+  "Février",
+  "Mars",
+  "Avril",
+  "Mai",
+  "Juin",
+  "Juillet",
+  "Août",
+  "Septembre",
+  "Octobre",
+  "Novembre",
+  "Décembre"
+];
 
 const MONTH_NAMES_EN = [
   "January",
@@ -80,7 +93,6 @@ const FORMAT_EDU_QUARTER = "eduQuarter";
 const FORMAT_QUARTER_FIRST_MONTHS = "firstMonths";
 const FORMAT_QUARTER_TWO_LAST_MONTHS = "twoLastMonths";
 
-
 const SUPPORTED_FORMATS = [
   FORMAT_FY_JULY_QUARTER,
   FORMAT_QUARTER,
@@ -93,7 +105,7 @@ const SUPPORTED_FORMATS = [
 ];
 
 class DatePeriods {
-  static setLocale(local){
+  static setLocale(local) {
     const translations = local === "fr" ? MONTH_NAMES_FR : MONTH_NAMES_EN;
     MONTH_NAMES = translations;
     MONTH_NAMES_BY_QUARTER = {
@@ -103,10 +115,10 @@ class DatePeriods {
       "4": [MONTH_NAMES[9], MONTH_NAMES[10], MONTH_NAMES[11]]
     };
     eduQuarterNames = {
-      4: "T1 - "+MONTH_NAMES[8]+" - "+MONTH_NAMES[11],
-      1: "T2 - "+MONTH_NAMES[0]+" - "+MONTH_NAMES[2],
-      2: "T3 - "+MONTH_NAMES[3]+" - "+MONTH_NAMES[5],
-      3: "XX - "+MONTH_NAMES[6]+" - "+MONTH_NAMES[7]
+      4: "T1 - " + MONTH_NAMES[8] + " - " + MONTH_NAMES[11],
+      1: "T2 - " + MONTH_NAMES[0] + " - " + MONTH_NAMES[2],
+      2: "T3 - " + MONTH_NAMES[3] + " - " + MONTH_NAMES[5],
+      3: "XX - " + MONTH_NAMES[6] + " - " + MONTH_NAMES[7]
     };
   }
 
@@ -197,18 +209,17 @@ class DatePeriods {
       return this.period2QuarterName(dhis2period);
     } else if (format === FORMAT_MONTH) {
       return this.monthName(dhis2period);
-    } else if (format === FORMAT_MONTH_YEAR) {
+    } else if (
+      format === FORMAT_MONTH_YEAR ||
+      format === FORMAT_QUARTER_FIRST_MONTHS ||
+      format === FORMAT_QUARTER_TWO_LAST_MONTHS
+    ) {
       return this.monthNameYear(dhis2period);
     } else if (format === FORMAT_SIX_MONTH) {
       return this.sixMonthlyName(dhis2period);
     } else if (format === FORMAT_EDU_QUARTER) {
       return this.eduQuarterName(dhis2period);
-    } else if (format === FORMAT_QUARTER_FIRST_MONTHS) {
-      return this.monthNameYear(dhis2period);
-    } else if (format === FORMAT_QUARTER_TWO_LAST_MONTHS) {
-      return this.monthNameYear(dhis2period);
     }
-
     throw new Error(
       "unsupported format '" + format + "' see " + SUPPORTED_FORMATS.join(",")
     );
@@ -427,14 +438,14 @@ class DatePeriods {
 
   static split(period, splitType) {
     if (period.includes("Q")) {
-      if(splitType === "quarterlyFirstMonths") {
+      if (splitType === "quarterlyFirstMonths") {
         return this.splitQuarterFirstMonths(period, splitType);
       } else {
-          if(splitType === "quarterlyTwoLastMonths") {
-            return this.splitQuarterlyTwoLastMonths(period, splitType);
-          }else {
-            return this.splitYearQuarter(period, splitType);
-          }
+        if (splitType === "quarterlyTwoLastMonths") {
+          return this.splitQuarterlyTwoLastMonths(period, splitType);
+        } else {
+          return this.splitYearQuarter(period, splitType);
+        }
       }
     }
     if (period.includes("S")) {
@@ -542,7 +553,10 @@ class DatePeriods {
     let year = parseInt(period.slice(0, 4), 0);
     let quarter = parseInt(period.slice(5, 6), 0);
     let months = this.monthsInQuarter(quarter);
-    return [this.dhis2MonthPeriod(year, months[1]), this.dhis2MonthPeriod(year, months[2])];
+    return [
+      this.dhis2MonthPeriod(year, months[1]),
+      this.dhis2MonthPeriod(year, months[2])
+    ];
   }
 
   static splitYearQuarter(period, splitType) {

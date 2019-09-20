@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
+import { withNamespaces } from "react-i18next";
 
 const styles = theme => ({
   formControl: {
@@ -24,7 +25,7 @@ class OuPicker extends Component {
     return (
       <TextField
         autoFocus
-        label="Organisation Unit name"
+        label={this.props.t("orgUnit_name")}
         InputLabelProps={{ shrink: true }}
         onChange={this.handleChange}
         value= {this.props.ouSearchValue}
@@ -39,4 +40,4 @@ OuPicker.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(OuPicker);
+export default withStyles(styles)(withNamespaces()(OuPicker));

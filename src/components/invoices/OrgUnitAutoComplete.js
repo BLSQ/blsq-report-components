@@ -8,6 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
+import { withNamespaces } from "react-i18next";
 
 const full_name = suggestion => {
   const ancestorsWithoutCountry = suggestion.ancestors
@@ -203,7 +204,7 @@ class IntegrationReactSelect extends React.Component {
           classes={classes}
           styles={selectStyles}
           textFieldProps={{
-            label: "Limit to organisation unit under",
+            label: this.props.t("limit_org_unit_under"),
             InputLabelProps: {
               shrink: true
             }
@@ -212,7 +213,7 @@ class IntegrationReactSelect extends React.Component {
           components={components}
           value={selected}
           onChange={this.handleChange("single")}
-          placeholder="Search or select parent organisation unit"
+          placeholder={this.props.t("search_org_unit")}
           isClearable
         />
       </div>
@@ -225,4 +226,4 @@ IntegrationReactSelect.propTypes = {
   theme: PropTypes.object.isRequired
 };
 
-export default withStyles(styles, { withTheme: true })(IntegrationReactSelect);
+export default withStyles(styles, { withTheme: true })(withNamespaces()(IntegrationReactSelect));

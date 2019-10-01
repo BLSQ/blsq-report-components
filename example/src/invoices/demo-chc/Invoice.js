@@ -29,6 +29,24 @@ const activity = {
     value: 94.45698921323,
     name: "my super element",
     period: "2016Q4"
+  },
+  amount: {
+    code: "code",
+    value: 4565.45698921323,
+    name: "Total amount to pay",
+    period: "2019Q4"
+  },
+  advance: {
+    code: "code",
+    value: 0,
+    name: "Avance à payer",
+    period: "2019Q4"
+  },
+  reliquat: {
+    code: "code",
+    value: -2795.806989213,
+    name: "Reliquat à payer",
+    period: "2019Q4"
   }
 };
 
@@ -46,8 +64,14 @@ class Invoice extends Component {
       <div className={classes.invoiceFrame} id="invoiceFrame">
         <h1>Demo</h1>
         <p>{this.props.invoice.orgUnit.name}</p>
-        <p>{this.props.t("generated_at")}: {this.props.invoice.generatedAt.toLocaleString()}</p>
-         <p>{this.props.t("period")}: {DatePeriods.monthNameYear(this.props.period, "month")}</p>
+        <p>
+          {this.props.t("generated_at")}:{" "}
+          {this.props.invoice.generatedAt.toLocaleString()}
+        </p>
+        <p>
+          {this.props.t("period")}:{" "}
+          {DatePeriods.monthNameYear(this.props.period, "month")}
+        </p>
 
         <h2>Cell show case</h2>
         <table
@@ -86,7 +110,7 @@ class Invoice extends Component {
               />
             </tr>
             <tr>
-              <Cell variant="order" value="1" field="self" />
+              <Cell variant="order" value="2" field="self" />
               <Cell variant="text" value="percentage" field="self" bold />
               <Cell variant="percentage" value={activity} field="score" />
               <Cell
@@ -99,6 +123,57 @@ class Invoice extends Component {
                 variant="percentage"
                 value={activity}
                 field="score"
+                decimals={0}
+              />
+            </tr>
+            <tr>
+              <Cell variant="order" value="3" field="self" />
+              <Cell variant="text" value="AmountToPay" field="self" bold />
+              <Cell variant="AmountToPay" value={activity} field="amount" />
+              <Cell
+                variant="AmountToPay"
+                value={activity}
+                field="amount"
+                decimals={4}
+              />
+              <Cell
+                variant="AmountToPay"
+                value={activity}
+                field="amount"
+                decimals={0}
+              />
+            </tr>
+            <tr>
+              <Cell variant="order" value="4" field="self" />
+              <Cell variant="text" value="AmountToPay" field="self" bold />
+              <Cell variant="AmountToPay" value={activity} field="advance" />
+              <Cell
+                variant="AmountToPay"
+                value={activity}
+                field="advance"
+                decimals={4}
+              />
+              <Cell
+                variant="AmountToPay"
+                value={activity}
+                field="advance"
+                decimals={0}
+              />
+            </tr>
+            <tr>
+              <Cell variant="order" value="5" field="self" />
+              <Cell variant="text" value="AmountToPay" field="self" bold />
+              <Cell variant="AmountToPay" value={activity} field="reliquat" />
+              <Cell
+                variant="AmountToPay"
+                value={activity}
+                field="reliquat"
+                decimals={4}
+              />
+              <Cell
+                variant="AmountToPay"
+                value={activity}
+                field="reliquat"
                 decimals={0}
               />
             </tr>
@@ -141,7 +216,7 @@ class Invoice extends Component {
           </tbody>
         </table>
 
-        <br/>
+        <br />
         <InvoiceSignatures invoice={this.props.invoice} />
       </div>
     );

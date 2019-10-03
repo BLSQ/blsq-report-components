@@ -107,6 +107,8 @@ class InvoiceContainer extends Component {
         invoiceType,
         this.props.invoices.mapper(invoiceTypeCode)
       );
+      invoice.currentUser = this.props.currentUser;
+
       const calculations = this.props.invoices.getOrbfCalculations(
         invoice,
         this.props.currentUser
@@ -185,6 +187,7 @@ class InvoiceContainer extends Component {
           calculateState={this.state.calculateState}
           warning={this.state.warning}
           periodFormat={this.props.periodFormat}
+          invoice={this.state.invoice}
         />
 
         <SelectedInvoice
@@ -202,6 +205,7 @@ class InvoiceContainer extends Component {
           calculateState={this.state.calculateState}
           warning={this.state.warning}
           periodFormat={this.props.periodFormat}
+          invoice={this.state.invoice}
         />
       </div>
     );

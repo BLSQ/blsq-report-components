@@ -1,4 +1,5 @@
 import DatePeriods from "./DatePeriods";
+DatePeriods.setLocale("en");
 
 it("calculates next quarter", () => {
   expect(DatePeriods.next("2016Q1")).toEqual("2016Q2");
@@ -359,16 +360,16 @@ it("sixMonth", () => {
 
 it("eduQuarter", () => {
   expect(DatePeriods.displayName("2016Q4", "eduQuarter")).toEqual(
-    "2016-2017 T1 - Septembre - Décembre"
+    "2016-2017 T1 - September - December"
   );
   expect(DatePeriods.displayName("2017Q1", "eduQuarter")).toEqual(
-    "2016-2017 T2 - Janvier - Mars"
+    "2016-2017 T2 - January - March"
   );
   expect(DatePeriods.displayName("2017Q2", "eduQuarter")).toEqual(
-    "2016-2017 T3 - Avril - Juin"
+    "2016-2017 T3 - April - June"
   );
   expect(DatePeriods.displayName("2017Q3", "eduQuarter")).toEqual(
-    "2016-2017 XX - Juillet - Aout"
+    "2016-2017 XX - July - August"
   );
 });
 

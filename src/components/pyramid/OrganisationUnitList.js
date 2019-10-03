@@ -43,6 +43,7 @@ const OrganisationUnitList = props => {
               fields
                 .split(",")
                 .map(f => <TableCell rowSpan="2">{f}</TableCell>)}
+
             <TableCell rowSpan="2">Org Unit Name</TableCell>
             {organisationUnitGroupSets.map(groupset => (
               <TableCell>{groupset.name}</TableCell>
@@ -74,6 +75,7 @@ const OrganisationUnitList = props => {
               fields
                 .split(",")
                 .map(f => <TableCell >{resolve(f,ou)}</TableCell>)}
+
               <TableCell
                 title={ou.organisationUnitGroups.map(g => g.name).join(", ")}
               >

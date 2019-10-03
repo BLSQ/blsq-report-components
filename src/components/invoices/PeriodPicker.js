@@ -6,6 +6,7 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import DatePeriods from "../../support/DatePeriods";
+import { withNamespaces } from "react-i18next";
 
 const styles = theme => ({
   formControl: {
@@ -31,7 +32,7 @@ class PeriodPicker extends Component {
     const periods = this.buildPeriods(period);
     return (
       <FormControl className={classes.formControl}>
-        <InputLabel>Period</InputLabel>
+        <InputLabel>{this.props.t("period")}</InputLabel>
         <Select
           value={this.props.period}
           onChange={this.handleChange}
@@ -75,4 +76,4 @@ PeriodPicker.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(PeriodPicker);
+export default withStyles(styles)(withNamespaces()(PeriodPicker));

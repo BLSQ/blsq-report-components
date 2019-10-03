@@ -76,7 +76,7 @@ class OrganisationUnitsContainer extends React.Component {
     const toAdd = this.state.currentGroupIds.filter(
       n => !ouGroupIds.includes(n)
     );
-    debugger;
+
     let promises = toRemove.map(toBeRemoved =>
       this.dhis2.removeFromGroup(this.state.orgUnit.id, toBeRemoved)
     );

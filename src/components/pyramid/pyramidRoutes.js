@@ -10,7 +10,20 @@ const pyramidRoute = props => {
       path="/pyramid"
       exact
       component={routerProps => {
-        return <OrganisationUnitsContainer {...routerProps} {...props} />;
+        const params = new URLSearchParams(
+          routerProps.location.search.substring(1)
+        );
+        const filter = params.get("filter");
+        const fields = params.get("fields");
+
+        return (
+          <OrganisationUnitsContainer
+            filter={filter}
+            fields={fields}
+            {...routerProps}
+            {...props}
+          />
+        );
       }}
     />,
     <Route

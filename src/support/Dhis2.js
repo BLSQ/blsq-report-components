@@ -423,10 +423,17 @@ class Dhis2 {
     return getInstance().then(d2 => d2.Api.getApi().get(organisationUnitsUrl));
   }
 
-  organisationUnits() {
-    const organisationUnitsUrl =
-      "/organisationUnits.json?fields=id,name,organisationUnitGroups[id,name],level,path,ancestors[id,name]";
-    return getInstance().then(d2 => d2.Api.getApi().get(organisationUnitsUrl));
+  organisationUnits(extraFields, extra) {
+    const defaultFields =
+      "fields=id,name,organisationUnitGroups[id,name],level,path,ancestors[id,name]";
+    let fields = defaultFields;
+    if (extraFields) {
+      fields = defaultFields + "," + extraFields;
+    }
+    const organisationUnitsUrl = "/organisationUnits.json?" + fields + extra;
+    return getInstance().then(d2 =>
+      d2.Api.getApi().get(organisationUnitsUrl + extra+"&paging=false")
+    );
   }
 
   organisationUnitGroupSets() {

@@ -22,14 +22,27 @@ const groupsBelongingToGroupSet = (ou, groupset) => {
   return groupset.organisationUnitGroups.filter(g => groupIds.includes(g.id));
 };
 
+function resolve(path, obj, separator = ".") {
+  if (path === "self") {
+    return obj;
+  }
+  var properties = Array.isArray(path) ? path : path.split(separator);
+
+  return properties.reduce((prev, curr) => prev && prev[curr], obj);
+}
+
 const OrganisationUnitList = props => {
-  const { organisationUnits, organisationUnitGroupSets } = props;
+  const { organisationUnits, organisationUnitGroupSets,fields } = props;
   return (
     <Paper>
       <Table style={{}}>
         <TableHead>
           <TableRow>
             <TableCell rowSpan="2">Levels</TableCell>
+            {fields &&
+              fields
+                .split(",")
+                .map(f => <TableCell rowSpan="2">{f}</TableCell>)}
             <TableCell rowSpan="2">Org Unit Name</TableCell>
             {organisationUnitGroupSets.map(groupset => (
               <TableCell>{groupset.name}</TableCell>
@@ -57,6 +70,10 @@ const OrganisationUnitList = props => {
                 <br />
                 {ou.ancestors && ou.ancestors[2] && ou.ancestors[2].name}
               </TableCell>
+              {fields &&
+              fields
+                .split(",")
+                .map(f => <TableCell >{resolve(f,ou)}</TableCell>)}
               <TableCell
                 title={ou.organisationUnitGroups.map(g => g.name).join(", ")}
               >

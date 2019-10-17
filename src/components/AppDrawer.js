@@ -106,7 +106,7 @@ const styles = theme => ({
     "content-left": {
       marginLeft: 0
     },
-    "appFrame": {
+    appFrame: {
       display: "block"
     }
   },
@@ -150,7 +150,7 @@ const RawAppDrawer = props => {
           </ListItemIcon>
           <ListItemText primary="Dashboard" />
         </ListItem>
-        <ListItem button component="a" href="./index.html#/select">
+        <ListItem button component="a" href={"./#" + props.defaultPathName}>
           <ListItemIcon>
             <FileIcon />
           </ListItemIcon>
@@ -272,6 +272,7 @@ class App extends React.Component {
     const params = {
       config: this.props.config,
       dhis2: this.props.dhis2,
+      defaultPathName: this.props.defaultPathName,
       period: DatePeriods.split(this.state.period, frequency)[0],
       onPeriodChange: this.onPeriodChange,
       invoices: this.props.invoices,
@@ -306,6 +307,7 @@ class App extends React.Component {
               handleDrawerClose={this.handleDrawerClose}
               drawerLinks={this.props.drawerLinks}
               period={this.state.period}
+              defaultPathName={this.props.defaultPathName || "/select"}
             />
             <main
               className={classNames(classes.content, classes[`content-left`], {

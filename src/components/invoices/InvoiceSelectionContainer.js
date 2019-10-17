@@ -73,7 +73,7 @@ class InvoiceSelectionContainer extends Component {
     }
     const parentParam = parent ? "&parent=" + parent : "";
     this.props.history.replace({
-      pathname: "/select",
+      pathname: this.props.defaultPathName,
       search: "?q=" + ouSearchValue + "&period=" + period + parentParam
     });
   }

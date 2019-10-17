@@ -71,7 +71,7 @@ const App = t => (
       invoices={Invoices}
       routes={customRoutes}
       dataElementGroups={dataElementGroups}
-      defaultPathName={"/selection"}
+      defaultPathName={"/select"}
       config={{
         global: {
           periodFormat: {

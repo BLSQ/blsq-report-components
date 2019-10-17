@@ -228,7 +228,6 @@ class App extends React.Component {
     super(props);
     this.state = {
       period: DatePeriods.currentQuarter(),
-
       open: false,
       orgUnits: [],
       currentUser: this.props.user
@@ -272,7 +271,6 @@ class App extends React.Component {
     const params = {
       config: this.props.config,
       dhis2: this.props.dhis2,
-      defaultPathName: this.props.defaultPathName,
       period: DatePeriods.split(this.state.period, frequency)[0],
       onPeriodChange: this.onPeriodChange,
       invoices: this.props.invoices,
@@ -307,7 +305,7 @@ class App extends React.Component {
               handleDrawerClose={this.handleDrawerClose}
               drawerLinks={this.props.drawerLinks}
               period={this.state.period}
-              defaultPathName={params.defaultPathName || "/select"}
+              defaultPathName={this.props.defaultPathName || "/select"}
             />
             <main
               className={classNames(classes.content, classes[`content-left`], {

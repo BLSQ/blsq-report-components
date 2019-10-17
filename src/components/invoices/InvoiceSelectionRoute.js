@@ -6,7 +6,7 @@ const invoiceSelectionRoute = props => {
   return (
     <Route
       key="invoiceSelectionRoute"
-      path={props.defaultPathName}
+      path="/select"
       exact
       component={routerProps => {
         const params = new URLSearchParams(

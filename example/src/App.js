@@ -5,9 +5,11 @@ import {
   Dhis2,
   configureI18N,
   DatePeriods,
-  PluginRegistry
+  PluginRegistry,
+  InvoiceSelectionContainer
 } from "@blsq/blsq-report-components";
 import Invoices from "./invoices/Invoices";
+import { Route, Redirect } from "react-router-dom";
 import customRoute from "./custom/CustomRoute";
 import { I18nextProvider } from "react-i18next";
 import SimpleDialogDemo from "./SimpleDialogDemo";
@@ -47,8 +49,58 @@ const incentivesDescriptors = [
     dataSet: "vc6nF5yZsPR"
   }
 ];
+const customDefaultRoute = (
+  <Route
+    exact
+    path="/"
+    render={() => {
+      return <Redirect key="defaultSelect" from="/" to="/selectiond" />;
+    }}
+  />
+);
+
+const routeToCustomSelector = props => (
+  <Route
+    key="OuSelectionRoute"
+    path="/selectiond"
+    component={routerProps => {
+      const params = new URLSearchParams(
+        routerProps.location.search.substring(1)
+      );
+      const period = params.get("period");
+      const parent = params.get("parent");
+      let ouSearchValue = params.get("q");
+      if (!ouSearchValue) {
+        ouSearchValue = "";
+      }
+
+      return (
+        <InvoiceSelectionContainer
+          key="InvoiceSelectionContainer"
+          {...routerProps}
+          invoices={props.invoices}
+          currentUser={props.currentUser}
+          onPeriodChange={props.onPeriodChange}
+          orgUnits={props.orgUnits}
+          period={period || props.period}
+          {...props.config.global}
+          dhis2={props.dhis2}
+          topLevelsOrgUnits={props.topLevelsOrgUnits}
+          parent={parent}
+          ouSearchValue={ouSearchValue}
+          resultsElements={DrawerLinks}
+        />
+      );
+    }}
+  />
+);
+
 const customRoutes = params => {
-  return [customRoute(params)];
+  return [
+    customDefaultRoute,
+    customRoute(params),
+    routeToCustomSelector(params)
+  ];
 };
 
 const dataElementGroups = [
@@ -71,7 +123,7 @@ const App = t => (
       invoices={Invoices}
       routes={customRoutes}
       dataElementGroups={dataElementGroups}
-      defaultPathName={"/select"}
+      defaultPathName={"/selectiond"}
       config={{
         global: {
           periodFormat: {

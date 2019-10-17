@@ -54,7 +54,7 @@ const customDefaultRoute = (
     exact
     path="/"
     render={() => {
-      return <Redirect key="defaultSelect" from="/" to="/selectiond" />;
+      return <Redirect key="defaultSelect" from="/" to="/selection" />;
     }}
   />
 );
@@ -62,7 +62,7 @@ const customDefaultRoute = (
 const routeToCustomSelector = props => (
   <Route
     key="OuSelectionRoute"
-    path="/selectiond"
+    path="/selection"
     component={routerProps => {
       const params = new URLSearchParams(
         routerProps.location.search.substring(1)
@@ -123,7 +123,6 @@ const App = t => (
       invoices={Invoices}
       routes={customRoutes}
       dataElementGroups={dataElementGroups}
-      defaultPathName={"/selectiond"}
       config={{
         global: {
           periodFormat: {

@@ -307,7 +307,7 @@ class App extends React.Component {
               handleDrawerClose={this.handleDrawerClose}
               drawerLinks={this.props.drawerLinks}
               period={this.state.period}
-              defaultPathName={this.props.defaultPathName || "/select"}
+              defaultPathName={params.defaultPathName || "/select"}
             />
             <main
               className={classNames(classes.content, classes[`content-left`], {

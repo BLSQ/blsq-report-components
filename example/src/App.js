@@ -17,6 +17,10 @@ const defaultLang = "fr";
 DatePeriods.setLocale(defaultLang);
 const i18n = configureI18N(defaultLang);
 
+i18n.addResourceBundle("fr", "translation", {
+  report_and_invoices: "Custom caption"
+});
+
 const Demo = props => {
   return (
     <SimpleDialogDemo

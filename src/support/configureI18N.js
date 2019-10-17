@@ -6,7 +6,10 @@ import translationFR from "../locales/fr/translations.js";
 
 const configureI18N = lang => {
   const translation = lang === "fr" ? translationFR : translationEN;
-  const resources = { en: { translation: { ...translation, ...translationEN } }, fr: { translation: { ...translation, ...translationFR } }};
+  const resources = {
+    en: { translation: { ...translation, ...translationEN } },
+    fr: { translation: { ...translation, ...translationFR } }
+  };
   i18n.use(reactI18nextModule).init({
     resources: resources,
     lng: lang,

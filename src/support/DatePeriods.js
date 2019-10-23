@@ -257,10 +257,11 @@ class DatePeriods {
   }
 
   static formatValues(dhis2period) {
-    const monthDhis2Periods = this.split(dhis2period, MONTHLY);
-    const monthPeriod = monthDhis2Periods[0];
-    const yearPeriod = this.split(dhis2period, YEARLY)[0];
     const quarterPeriod = this.split(dhis2period, QUARTERLY)[0];
+    const monthDhis2Periods = this.split(quarterPeriod, MONTHLY);
+    const monthPeriod =
+      this.detect(dhis2period) == MONTHLY ? dhis2period : monthDhis2Periods[0];
+    const yearPeriod = this.split(dhis2period, YEARLY)[0];
 
     let year = parseInt(yearPeriod, 0);
     let quarterNumber = parseInt(quarterPeriod.slice(5), 0);
@@ -274,9 +275,7 @@ class DatePeriods {
       financialQuarterNumber = quarterNumber - 2;
     }
     const financialJulyYearPlus1 = financialJulyYear + 1;
-    console.log("before the crash")
-    console.log(monthPeriod)
-    console.log(monthDhis2Periods)
+
     const subs = {
       dhis2period: dhis2period,
       financialJulyYear: financialJulyYear,
@@ -286,8 +285,12 @@ class DatePeriods {
       financialQuarterNumber: financialQuarterNumber,
       monthNumber: monthNumber,
       monthName: this.monthName(monthPeriod),
-      monthQuarterStart: this.monthName(monthDhis2Periods[0]),
-      monthQuarterEnd: this.monthName(monthDhis2Periods[2])
+      monthQuarterStart: monthDhis2Periods[0]
+        ? this.monthName(monthDhis2Periods[0])
+        : "",
+      monthQuarterEnd: monthDhis2Periods[2]
+        ? this.monthName(monthDhis2Periods[2])
+        : ""
     };
 
     return subs;
@@ -298,14 +301,17 @@ class DatePeriods {
   }
 
   static substituteStr(str, data) {
-    console.log("data", data);
     var output = str.replace(/(\${([^}]+)})/g, function(match) {
       let key = match.replace(/\${/, "").replace(/}/, "");
-      console.log("matching", key, data[key]);
       if (data[key] !== undefined) {
         return data[key];
       } else {
-        throw new Error("unknown placeholder :'" + key + "' only knows "+JSON.stringify(data));
+        throw new Error(
+          "unknown placeholder :'" +
+            key +
+            "' only knows " +
+            JSON.stringify(data)
+        );
       }
     });
     return output;
@@ -480,6 +486,9 @@ class DatePeriods {
   }
 
   static split(period, splitType) {
+    if (period === undefined) {
+      throw new Error("Can't split undefined period into " + splitType);
+    }
     if (period.includes("Q")) {
       return this.splitYearQuarter(period, splitType);
     }

@@ -307,6 +307,23 @@ it("period2FinancialYearJulyQuarterName", () => {
   ]);
 });
 
+it("formats", () => {
+  console.log("formats test !!!")
+  expect(
+    DatePeriods.format(
+      "2019Q3",
+      "Financial year ${financialJulyYear}/${financialJulyYearPlus1} - Quarter ${financialQuarterNumber} ${monthQuarterStart}-${monthQuarterEnd}"
+    )
+  ).toEqual("Financial year 2019/2020 - Quarter 1 July-September");
+
+  expect(
+    DatePeriods.format(
+      "201903",
+      "Financial year ${financialJulyYear}/${financialJulyYearPlus1} - Quarter ${financialQuarterNumber} ${monthQuarterStart}-${monthQuarterEnd}"
+    )
+  ).toEqual("");
+});
+
 it("monthYear", () => {
   expect(
     DatePeriods.split("2014", "monthly").map(q =>

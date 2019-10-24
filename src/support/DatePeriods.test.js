@@ -307,6 +307,56 @@ it("period2FinancialYearJulyQuarterName", () => {
   ]);
 });
 
+it("formats quarterly", () => {
+  expect(
+    DatePeriods.format(
+      "2019Q3",
+      "Financial year ${financialJulyYear}/${financialJulyYearPlus1} - Quarter ${financialQuarterNumber} ${monthQuarterStart}-${monthQuarterEnd}"
+    )
+  ).toEqual("Financial year 2019/2020 - Quarter 1 July-September");
+  expect(
+    DatePeriods.format(
+      "2019Q2",
+      "Financial year ${financialJulyYear}/${financialJulyYearPlus1} - Quarter ${financialQuarterNumber} ${monthQuarterStart}-${monthQuarterEnd}"
+    )
+  ).toEqual("Financial year 2018/2019 - Quarter 4 April-June");
+});
+it("formats monthly periods", () => {
+  expect(
+    DatePeriods.format(
+      "201903",
+      " dhis2period: ${dhis2period} " +
+        "financialJulyYear: ${financialJulyYear} " +
+        "financialJulyYearPlus1: ${financialJulyYearPlus1} " +
+        "year: ${year} " +
+        "quarterNumber: ${quarterNumber} " +
+        "financialQuarterNumber: ${financialQuarterNumber} " +
+        "monthNumber: ${monthNumber} " +
+        "monthName: ${monthName} " +
+        "monthQuarterStart: ${monthQuarterStart} " +
+        "monthQuarterEnd: ${monthQuarterEnd} "
+    )
+  ).toEqual(
+    " dhis2period: 201903 " +
+      "financialJulyYear: 2018 " +
+      "financialJulyYearPlus1: 2019 " +
+      "year: 2019 quarterNumber: 1 " +
+      "financialQuarterNumber: 3 " +
+      "monthNumber: 3 monthName: March " +
+      "monthQuarterStart: January " +
+      "monthQuarterEnd: March "
+  );
+});
+it("formats detects unknown token", () => {
+  expect(() => {
+    DatePeriods.format(
+      "201903",
+      " dhis2period: ${dhis2period} ${unknown token}"
+    );
+  }).toThrowError(
+    'unknown placeholder :\'unknown token\' only knows {"dhis2period":"201903","financialJulyYear":2018,"financialJulyYearPlus1":2019,"year":2019,"quarterNumber":1,"financialQuarterNumber":3,"monthNumber":3,"monthName":"March","monthQuarterStart":"January","monthQuarterEnd":"March"}'
+  );
+});
 it("monthYear", () => {
   expect(
     DatePeriods.split("2014", "monthly").map(q =>

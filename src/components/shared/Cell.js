@@ -93,9 +93,13 @@ const Cell = props => {
     href,
     unit,
     renderer,
+    separator,
+    decimalSeparator,
     ...other
   } = props;
   const amount = resolve(field, value);
+  let separatorFinal = separator || ",";
+  let decimalSeparatorFinal = decimalSeparator || ".";
   let className = null;
   let label = labelize(amount);
   let displayedValue = amount;
@@ -110,7 +114,9 @@ const Cell = props => {
     className = classes.cellQuantity;
   } else if (variant === VARIANT_MONEY) {
     displayedValue = numberWithCommas(
-      roundedAmount(amount.value, displayedDecimals)
+      roundedAmount(amount.value, displayedDecimals),
+      separatorFinal,
+      decimalSeparatorFinal
     );
     className = classes.cellAmount;
   } else if (variant === VARIANT_ROUNDED) {
@@ -173,10 +179,12 @@ const Cell = props => {
     );
   }
 
+  const Element = props.element || "td";
+
   return (
-    <td className={className} title={label} {...other}>
+    <Element className={className} title={label} {...other}>
       {renderedValue}
-    </td>
+    </Element>
   );
 };
 

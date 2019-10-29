@@ -20,7 +20,7 @@ const styles = {
 const activity = {
   total: {
     code: "code",
-    value: 4565.45698921323,
+    value: 1234565.45698921323,
     name: "my super element",
     period: "2016Q4"
   },
@@ -46,8 +46,28 @@ class Invoice extends Component {
       <div className={classes.invoiceFrame} id="invoiceFrame">
         <h1>Demo</h1>
         <p>{this.props.invoice.orgUnit.name}</p>
-        <p>{this.props.t("generated_at")}: {this.props.invoice.generatedAt.toLocaleString()}</p>
-         <p>{this.props.t("period")}: {DatePeriods.monthNameYear(this.props.period, "month")}</p>
+        <p>
+          {this.props.t("generated_at")}:{" "}
+          {this.props.invoice.generatedAt.toLocaleString()}
+        </p>
+        <p>
+          {this.props.t("period")}:{" "}
+          {DatePeriods.monthNameYear(this.props.period, "month")}
+        </p>
+
+        <p>
+          you can also use the cell as a span in the middle
+          <Cell
+            variant="money"
+            value={activity}
+            field="total"
+            decimals={0}
+            separator=" "
+            unit=" $"
+            element="span"
+            style={{border: "0pt"}}
+          /> of a text
+        </p>
 
         <h2>Cell show case</h2>
         <table
@@ -64,6 +84,7 @@ class Invoice extends Component {
               <Cell variant="text" value="default decimals" field="self" />
               <Cell variant="text" value="4 decimals" field="self" />
               <Cell variant="text" value="0 decimals" field="self" />
+              <Cell variant="text" value="blank as separator" field="self" />
             </tr>
           </thead>
           <tbody>
@@ -82,6 +103,14 @@ class Invoice extends Component {
                 value={activity}
                 field="total"
                 decimals={0}
+                unit=" $"
+              />
+              <Cell
+                variant="money"
+                value={activity}
+                field="total"
+                decimals={0}
+                separator=" "
                 unit=" $"
               />
             </tr>
@@ -141,7 +170,7 @@ class Invoice extends Component {
           </tbody>
         </table>
 
-        <br/>
+        <br />
         <InvoiceSignatures invoice={this.props.invoice} />
       </div>
     );

@@ -34,13 +34,13 @@ export function roundedAmountOrInteger(number, decimals = 2) {
   return "";
 }
 
-export function numberWithCommas(x) {
+export function numberWithCommas(x, separator = ",", decimalSeparator = ".") {
   if (x === undefined) {
     return "";
   }
   var parts = x.toString().split(".");
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  return parts.join(".");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, separator);
+  return parts.join(decimalSeparator);
 }
 
 export function labelize(descriptor) {

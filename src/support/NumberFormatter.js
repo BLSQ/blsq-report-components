@@ -59,7 +59,7 @@ export function labelize(field, descriptor) {
   }
 
   return (
-    field +
+    (field === undefined ? "" : field) +
     " " +
     (descriptor.expression ? " := " + descriptor.expression : "") +
     "\n" +

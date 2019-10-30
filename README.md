@@ -46,6 +46,11 @@ cd example
 npm start
 ```
 
+you might need to upgrade jest snapshots
+
+```
+npm test -- --updateSnapshot
+```
 
 ## License
 

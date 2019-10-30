@@ -101,7 +101,7 @@ const Cell = props => {
   let separatorFinal = separator || ",";
   let decimalSeparatorFinal = decimalSeparator || ".";
   let className = null;
-  let label = labelize(amount);
+  let label = labelize(field, amount);
   let displayedValue = amount;
   let displayedDecimals = decimals !== undefined ? decimals : 2;
 
@@ -113,11 +113,15 @@ const Cell = props => {
     }
     className = classes.cellQuantity;
   } else if (variant === VARIANT_MONEY) {
-    displayedValue = numberWithCommas(
-      roundedAmount(amount.value, displayedDecimals),
-      separatorFinal,
-      decimalSeparatorFinal
-    );
+    if (amount === undefined) {
+      displayedValue = "";
+    } else {
+      displayedValue = numberWithCommas(
+        roundedAmount(amount.value, displayedDecimals),
+        separatorFinal,
+        decimalSeparatorFinal
+      );
+    }
     className = classes.cellAmount;
   } else if (variant === VARIANT_ROUNDED) {
     displayedValue = roundedAmount(amount.value, displayedDecimals);

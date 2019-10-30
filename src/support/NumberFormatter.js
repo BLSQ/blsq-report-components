@@ -43,7 +43,7 @@ export function numberWithCommas(x, separator = ",", decimalSeparator = ".") {
   return parts.join(decimalSeparator);
 }
 
-export function labelize(descriptor) {
+export function labelize(field, descriptor) {
   if (descriptor === undefined) {
     return "";
   }
@@ -57,13 +57,18 @@ export function labelize(descriptor) {
   ) {
     return "";
   }
+
   return (
-    descriptor.name +
-    " (" +
-    descriptor.code +
-    ")  " +
-    descriptor.period +
+    (field === undefined ? "" : field) +
     " " +
-    (descriptor.value !== undefined ? descriptor.value : "")
+    (descriptor.expression ? " := " + descriptor.expression : "") +
+    "\n" +
+    descriptor.value +
+    "\n" +
+    descriptor.name +
+    "\n" +
+    descriptor.code +
+    " " +
+    descriptor.period
   );
 }

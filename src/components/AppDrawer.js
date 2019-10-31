@@ -150,7 +150,11 @@ const RawAppDrawer = props => {
           </ListItemIcon>
           <ListItemText primary="Dashboard" />
         </ListItem>
-        <ListItem button component="a" href={"./#" + props.defaultPathName}>
+        <ListItem
+          button
+          component="a"
+          href={"./index.html#" + props.defaultPathName}
+        >
           <ListItemIcon>
             <FileIcon />
           </ListItemIcon>

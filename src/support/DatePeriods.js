@@ -85,6 +85,7 @@ const SUPPORTED_PERIOD_TYPES = [
 ];
 
 const FORMAT_FY_JULY_QUARTER = "fyJulyQuarter";
+const FORMAT_YEAR = "year";
 const FORMAT_QUARTER = "quarter";
 const FORMAT_MONTH = "month";
 const FORMAT_MONTH_YEAR = "monthYear";
@@ -95,6 +96,7 @@ const FORMAT_QUARTER_TWO_LAST_MONTHS = "twoLastMonths";
 
 const SUPPORTED_FORMATS = [
   FORMAT_FY_JULY_QUARTER,
+  FORMAT_YEAR,
   FORMAT_QUARTER,
   FORMAT_MONTH,
   FORMAT_MONTH_YEAR,
@@ -205,6 +207,8 @@ class DatePeriods {
   static displayName(dhis2period, format) {
     if (format === FORMAT_FY_JULY_QUARTER) {
       return this.period2FinancialYearJulyQuarterName(dhis2period);
+    } else if (format === FORMAT_YEAR) {
+      return this.split(dhis2period, YEARLY)[0];
     } else if (format === FORMAT_QUARTER) {
       return this.period2QuarterName(dhis2period);
     } else if (format === FORMAT_MONTH) {

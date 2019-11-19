@@ -13,6 +13,7 @@ import { Route, Redirect } from "react-router-dom";
 import customRoute from "./custom/CustomRoute";
 import { I18nextProvider } from "react-i18next";
 import SimpleDialogDemo from "./SimpleDialogDemo";
+import BackButtonDemo from "./BackButtonDemo";
 import config from "./invoices/Config";
 
 const defaultLang = "fr";
@@ -20,7 +21,8 @@ DatePeriods.setLocale(defaultLang);
 const i18n = configureI18N(defaultLang);
 
 i18n.addResourceBundle("fr", "translation", {
-  report_and_invoices: "Custom caption"
+  report_and_invoices: "Custom caption",
+  back_buttom_caption: "Back to previous page"
 });
 
 const Demo = props => {
@@ -34,10 +36,14 @@ const Demo = props => {
 };
 const Demo2 = props => <span>Read only</span>;
 
+const DemoBackButton = props => {
+  return <BackButtonDemo />;
+};
+
 const appPlugin = {
   key: "exampleApp",
   extensions: {
-    "invoices.actions": [Demo, Demo2]
+    "invoices.actions": [Demo, Demo2, DemoBackButton]
   }
 };
 

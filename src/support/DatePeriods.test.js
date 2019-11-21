@@ -378,6 +378,45 @@ it("monthYear", () => {
   ]);
 });
 
+it("monthYear", () => {
+  try {
+    DatePeriods.setMonthTranslations([
+      "Tir",
+      "Yekatit",
+      "Megabit",
+      "Miyazia",
+      "Ginbot",
+      "Sene",
+      "Hamle",
+      "Nehase",
+      "Meskerem",
+      "Tikimt",
+      "Hidar",
+      "Tahisas"
+    ]);
+    expect(
+      DatePeriods.split("2014", "monthly").map(q =>
+        DatePeriods.displayName(q, "monthYear")
+      )
+    ).toEqual([
+      "Tir 2014",
+      "Yekatit 2014",
+      "Megabit 2014",
+      "Miyazia 2014",
+      "Ginbot 2014",
+      "Sene 2014",
+      "Hamle 2014",
+      "Nehase 2014",
+      "Meskerem 2014",
+      "Tikimt 2014",
+      "Hidar 2014",
+      "Tahisas 2014"
+    ]);
+  } finally {
+    DatePeriods.setLocale("en");
+  }
+});
+
 it("monthYear 2 ", () => {
   expect(
     DatePeriods.split("2014", "quarterly").map(q =>

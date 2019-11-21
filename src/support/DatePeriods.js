@@ -99,6 +99,10 @@ const SUPPORTED_FORMATS = [
 class DatePeriods {
   static setLocale(local) {
     const translations = local === "fr" ? MONTH_NAMES_FR : MONTH_NAMES_EN;
+    this.setMonthTranslations(translations)
+  }
+
+  static setMonthTranslations(translations) {
     MONTH_NAMES = translations;
     MONTH_NAMES_BY_QUARTER = {
       "1": [MONTH_NAMES[0], MONTH_NAMES[1], MONTH_NAMES[2]],

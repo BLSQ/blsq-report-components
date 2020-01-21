@@ -123,24 +123,28 @@ class InvoiceLinks extends Component {
   evalInvoice = () => {
     const invoiceTypes = this.buildInvoiceTypes(this.props.invoices);
     const quarterPeriod = DatePeriods.split(this.props.period, "quarterly")[0];
-
-    return invoiceTypes !== null ? (
-      invoiceTypes.length > 1 ? (
-        <Button
-          color="primary"
-          size="small"
-          onClick={() => this.buildInvoiceLinks()}
-        >
-          {this.props.t("show_avalaible_invoices")}
-        </Button>
-      ) : (
-        this.buildInvoiceAnchors(
-          this.buildInvoiceLink(quarterPeriod, invoiceTypes[0])
-        )
-      )
-    ) : (
-      this.props.t("missing_invoice_types")
+    const promptBtn = (
+      <Button
+        color="primary"
+        size="small"
+        onClick={() => this.buildInvoiceLinks()}
+      >
+        {this.props.t("show_avalaible_invoices")}
+      </Button>
     );
+    let invoicePrompt = this.props.t("missing_invoice_types");
+
+    if (invoiceTypes !== null) {
+      invoicePrompt =
+        this.props.hideCurrentInvoice === true
+          ? promptBtn
+          : invoiceTypes.length > 1
+          ? promptBtn
+          : this.buildInvoiceAnchors(
+              this.buildInvoiceLink(quarterPeriod, invoiceTypes[0])
+            );
+    }
+    return invoicePrompt;
   };
 
   render() {

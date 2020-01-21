@@ -187,6 +187,7 @@ class InvoiceContainer extends Component {
           calculateState={this.state.calculateState}
           warning={this.state.warning}
           periodFormat={this.props.periodFormat}
+          invoices={this.props.invoices}
           invoice={this.state.invoice}
         />
 
@@ -205,6 +206,7 @@ class InvoiceContainer extends Component {
           calculateState={this.state.calculateState}
           warning={this.state.warning}
           periodFormat={this.props.periodFormat}
+          invoices={this.props.invoices}
           invoice={this.state.invoice}
         />
       </div>

@@ -50,11 +50,7 @@ class InvoiceToolBar extends Component {
   }
 
   render() {
-    const classes = this.props.classes;
-    const period = this.props.period;
-    const orgUnitId = this.props.orgUnitId;
-    const invoiceCode = this.props.invoiceCode;
-    const linkPrefix = this.props.linkPrefix;
+    const { classes, period, orgUnitId, invoiceCode, linkPrefix } = this.props;
 
     const nextPeriod = DatePeriods.next(period);
     const previousPeriod = DatePeriods.previous(period);

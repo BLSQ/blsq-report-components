@@ -3,10 +3,10 @@ import Values from "./Values";
 
 class InvoiceService {
   async fetchInvoiceData(dhis2, orgUnitId, period, invoiceType, mapper) {
-    let mainOrgUnit;
-    let orgUnits = [];
-    let categoryCombos = [];
-    let categoryCombo = "";
+    let mainOrgUnit,
+      orgUnits = [],
+      categoryCombos = [],
+      categoryCombo = "";
 
     if (invoiceType.isPartner) {
       categoryCombo = orgUnitId;

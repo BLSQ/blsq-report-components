@@ -9,7 +9,7 @@ const keys = {
   period: "Période",
   invoice: "Facture",
   name: "Nom",
-  show_avalaible_invoices: "Choisir facture",
+  show_avalaible_invoices: "Choisir une facture",
   missing_invoice_types: "Facture introuvable..."
 };
 export default keys;

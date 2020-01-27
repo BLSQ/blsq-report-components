@@ -93,6 +93,35 @@ class InvoiceLinks extends Component {
     );
   };
 
+  invoiceListDialog = () => {
+    return (
+      <Dialog
+        fullWidth={true}
+        maxWidth="md"
+        open={this.state.invoiceDialogOpen}
+        onClose={this.handleInvoiceDialogClose}
+      >
+        <DialogTitle id="simple-dialog-title">
+          {this.state.invoiceOrgUnitName}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            <List>
+              {this.state.invoiceLinks.map((link, linkIndex) => (
+                <li key={link.invoiceName + "-" + linkIndex}>
+                  {this.buildInvoiceAnchors(link)}
+                  {this.state.invoiceLinks.length - 1 !== linkIndex && (
+                    <Divider />
+                  )}
+                </li>
+              ))}
+            </List>
+          </DialogContentText>
+        </DialogContent>
+      </Dialog>
+    );
+  };
+
   buildInvoiceTypes = invoices => {
     let codes = invoices.getInvoiceTypeCodes(this.props.orgUnit);
     if (this.props.hideCurrentInvoice === true) {
@@ -151,34 +180,7 @@ class InvoiceLinks extends Component {
     return (
       <React.Fragment>
         {this.evalInvoice()}
-        {this.state.invoiceLinks && (
-          <Dialog
-            fullWidth={true}
-            maxWidth="md"
-            open={this.state.invoiceDialogOpen}
-            onClose={this.handleInvoiceDialogClose}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-            <DialogTitle id="simple-dialog-title">
-              {this.state.invoiceOrgUnitName}
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                <List>
-                  {this.state.invoiceLinks.map((link, linkIndex) => (
-                    <li key={link.invoiceName + "-" + linkIndex}>
-                      {this.buildInvoiceAnchors(link)}
-                      {this.state.invoiceLinks.length - 1 !== linkIndex && (
-                        <Divider />
-                      )}
-                    </li>
-                  ))}
-                </List>
-              </DialogContentText>
-            </DialogContent>
-          </Dialog>
-        )}
+        {this.state.invoiceLinks && this.invoiceListDialog()}
       </React.Fragment>
     );
   }

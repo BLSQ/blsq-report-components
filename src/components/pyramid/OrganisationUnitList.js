@@ -35,6 +35,7 @@ const OrganisationUnitList = props => {
           <TableRow>
             <TableCell rowSpan="2">Level 2</TableCell>
             <TableCell rowSpan="2">Level 3</TableCell>
+            <TableCell rowSpan="2">Level 4</TableCell>
             <TableCell rowSpan="2">Org Unit Name</TableCell>
             {organisationUnitGroupSets.map(groupset => (
               <TableCell>{groupset.name}</TableCell>
@@ -61,6 +62,9 @@ const OrganisationUnitList = props => {
               </TableCell>
               <TableCell>
                 {ou.ancestors && ou.ancestors[2] && ou.ancestors[2].name}
+              </TableCell>
+              <TableCell>
+                {ou.ancestors && ou.ancestors[3] && ou.ancestors[3].name}
               </TableCell>
               <TableCell
                 title={ou.organisationUnitGroups.map(g => g.name).join(", ")}

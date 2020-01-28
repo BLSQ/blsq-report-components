@@ -1,25 +1,49 @@
 import React from "react";
 import DrawerLinks from "./DrawerLinks";
-import { AppDrawer, Dhis2, configureI18N, DatePeriods, PluginRegistry } from "@blsq/blsq-report-components";
+import {
+  AppDrawer,
+  Dhis2,
+  configureI18N,
+  DatePeriods,
+  PluginRegistry,
+  InvoiceSelectionContainer
+} from "@blsq/blsq-report-components";
 import Invoices from "./invoices/Invoices";
+import { Route, Redirect } from "react-router-dom";
 import customRoute from "./custom/CustomRoute";
 import { I18nextProvider } from "react-i18next";
 import SimpleDialogDemo from "./SimpleDialogDemo";
+import BackButtonDemo from "./BackButtonDemo";
 import config from "./invoices/Config";
 
 const defaultLang = "fr";
 DatePeriods.setLocale(defaultLang);
 const i18n = configureI18N(defaultLang);
 
+i18n.addResourceBundle("fr", "translation", {
+  report_and_invoices: "Custom caption",
+  back_buttom_caption: "Back to previous page"
+});
+
 const Demo = props => {
-  return <SimpleDialogDemo params={props} dhis2={new Dhis2()} data={config.global.validation} />;
+  return (
+    <SimpleDialogDemo
+      params={props}
+      dhis2={new Dhis2()}
+      data={config.global.validation}
+    />
+  );
 };
 const Demo2 = props => <span>Read only</span>;
+
+const DemoBackButton = props => {
+  return <BackButtonDemo />;
+};
 
 const appPlugin = {
   key: "exampleApp",
   extensions: {
-    "invoices.actions": [Demo, Demo2]
+    "invoices.actions": [Demo, Demo2, DemoBackButton]
   }
 };
 
@@ -31,8 +55,58 @@ const incentivesDescriptors = [
     dataSet: "vc6nF5yZsPR"
   }
 ];
+const customDefaultRoute = (
+  <Route
+    exact
+    path="/"
+    render={() => {
+      return <Redirect key="defaultSelect" from="/" to="/selection" />;
+    }}
+  />
+);
+
+const routeToCustomSelector = props => (
+  <Route
+    key="OuSelectionRoute"
+    path="/selection"
+    component={routerProps => {
+      const params = new URLSearchParams(
+        routerProps.location.search.substring(1)
+      );
+      const period = params.get("period");
+      const parent = params.get("parent");
+      let ouSearchValue = params.get("q");
+      if (!ouSearchValue) {
+        ouSearchValue = "";
+      }
+
+      return (
+        <InvoiceSelectionContainer
+          key="InvoiceSelectionContainer"
+          {...routerProps}
+          invoices={props.invoices}
+          currentUser={props.currentUser}
+          onPeriodChange={props.onPeriodChange}
+          orgUnits={props.orgUnits}
+          period={period || props.period}
+          {...props.config.global}
+          dhis2={props.dhis2}
+          topLevelsOrgUnits={props.topLevelsOrgUnits}
+          parent={parent}
+          ouSearchValue={ouSearchValue}
+          resultsElements={DrawerLinks}
+        />
+      );
+    }}
+  />
+);
+
 const customRoutes = params => {
-  return [customRoute(params)];
+  return [
+    customDefaultRoute,
+    customRoute(params),
+    routeToCustomSelector(params)
+  ];
 };
 
 const dataElementGroups = [
@@ -65,7 +139,7 @@ const App = t => (
           levels: ["Country", "Territory", "Land", "Facility"]
         }
       }}
-      dhis2={new Dhis2()}
+      dhis2={new Dhis2({ categoryComboId: "t3aNCvHsoSn" })}
     />
   </I18nextProvider>
 );

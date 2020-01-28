@@ -3,8 +3,16 @@ import Values from "./Values";
 
 class InvoiceService {
   async fetchInvoiceData(dhis2, orgUnitId, period, invoiceType, mapper) {
-    let mainOrgUnit;
-    let orgUnits = [];
+    let mainOrgUnit,
+      orgUnits = [],
+      categoryCombos = [],
+      categoryCombo = "";
+
+    if (invoiceType.isPartner) {
+      categoryCombo = orgUnitId;
+      const country = await dhis2.getTopLevels([1]);
+      orgUnitId = country.organisationUnits[0].id;
+    }
 
     if (invoiceType.contractGroupSet) {
       orgUnits = await dhis2.getOrgunitsForContract(
@@ -34,7 +42,10 @@ class InvoiceService {
     );
 
     request.mainOrgUnit = mainOrgUnit;
-
+    if (dhis2.categoryComboId) {
+      request.categoryCombos = await dhis2.getCategoryComboById();
+    }
+    request.categoryComboId = categoryCombo;
     const rawValues = await dhis2.getInvoiceValues(request);
     const dataElementsNames = await this.getDataElementsNames(dhis2, request);
 
@@ -45,6 +56,7 @@ class InvoiceService {
     invoice.invoiceType = invoiceType;
     invoice.period = period;
     invoice.generatedAt = new Date(systemInfo.serverDate);
+
     return invoice;
   }
 

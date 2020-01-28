@@ -16,7 +16,7 @@ const invoiceSelectionRoute = props => {
         const parent = params.get("parent");
         let ouSearchValue = params.get("q");
         if (!ouSearchValue) {
-          ouSearchValue=""
+          ouSearchValue = "";
         }
         return (
           <InvoiceSelectionContainer

@@ -1,42 +1,24 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
-import { withStyles } from "@material-ui/core/styles";
-
 import DatePeriods from "../../support/DatePeriods";
 
-const styles = theme => ({
-  buttonLike: {
-    ...theme.typography.button,
-    backgroundColor: theme.palette.common.white,
-    padding: theme.spacing.unit,
-    fontSize: "0.8125rem"
-  }
-});
 
-class InvoiceLink extends Component {
-  render() {
-    const orgUnit = this.props.orgUnit;
 
-    const codes = this.props.invoices.getInvoiceTypeCodes(orgUnit);
+function InvoiceLink (orgUnit, invoices, period) {
+
+    const codes = invoices.getInvoiceTypeCodes(orgUnit);
 
     if (codes === undefined || codes.length === 0) {
       return null;
     }
 
-    const invoiceTypes = this.props.invoices.getInvoiceTypes(codes);
+    const invoiceTypes = invoices.getInvoiceTypes(codes);
 
-    const quarterPeriod = DatePeriods.split(this.props.period, "quarterly")[0];
+    const quarterPeriod = DatePeriods.split(period, "quarterly")[0];
 
-    return invoiceTypes.map(invoiceType => (
-      <React.Fragment key={this.linkTo(invoiceType)}>
-        <React.Fragment>
-          <span className={this.props.classes.buttonLike}>
-            {invoiceType.name}
-          </span>
-
-          {DatePeriods.split(quarterPeriod, invoiceType.frequency).map(
+    return invoiceTypes.map(invoiceType =>
+      {invoiceName:  invoiceType.name,
+       invoiceLinks:  DatePeriods.split(quarterPeriod, invoiceType.frequency).map(
             subPeriod => (
               <Button
                 key={invoiceType.code + "-" + subPeriod + "-" + orgUnit.id}
@@ -44,7 +26,7 @@ class InvoiceLink extends Component {
                 color="primary"
                 size="small"
                 component={Link}
-                to={this.linkTo(invoiceType, subPeriod)}
+                to = {"/invoices/" +subPeriod +"/" +orgUnit.id +"/" +invoiceType.code}
                 title={subPeriod}
               >
                 {DatePeriods.displayName(
@@ -58,28 +40,9 @@ class InvoiceLink extends Component {
                 )}
               </Button>
             )
-          )}
-        </React.Fragment>
-
-        <br />
-      </React.Fragment>
-    ));
-  }
-
-  linkTo(invoiceType, period) {
-    return (
-      "/invoices/" +
-      period +
-      "/" +
-      this.props.orgUnit.id +
-      "/" +
-      invoiceType.code
-    );
-  }
+          );
+      }
+      );
 }
 
-InvoiceLink.propTypes = {
-  classes: PropTypes.object.isRequired
-};
-
-export default withStyles(styles)(InvoiceLink);
+export default InvoiceLink;

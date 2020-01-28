@@ -150,6 +150,27 @@ class InvoiceContainer extends Component {
     }
   }
 
+  boolBarButtons = () => {
+    const calculable = this.props.invoices.isCalculable(
+      this.state.invoice,
+      this.props.currentUser
+    );
+    return (
+      <InvoiceToolBar
+        linkPrefix={"invoices"}
+        period={this.props.period}
+        orgUnitId={this.props.orgUnitId}
+        invoiceCode={this.props.invoiceCode}
+        onRecalculate={calculable && this.recalculate}
+        calculateState={this.state.calculateState}
+        warning={this.state.warning}
+        periodFormat={this.props.periodFormat}
+        invoices={this.props.invoices}
+        invoice={this.state.invoice}
+      />
+    );
+  };
+
   render() {
     if (this.state.error !== undefined) {
       return <Warning message={this.state.error} />;
@@ -168,45 +189,18 @@ class InvoiceContainer extends Component {
       this.state.invoice.invoiceType.code
     );
 
-    const calculable = this.props.invoices.isCalculable(
-      this.state.invoice,
-      this.props.currentUser
-    );
-
     return (
       <div className="invoicePage">
         <PageOrientation
           orientation={this.state.invoice.invoiceType.orientation}
         />
-        <InvoiceToolBar
-          linkPrefix={"invoices"}
-          period={this.props.period}
-          orgUnitId={this.props.orgUnitId}
-          invoiceCode={this.props.invoiceCode}
-          onRecalculate={calculable && this.recalculate}
-          calculateState={this.state.calculateState}
-          warning={this.state.warning}
-          periodFormat={this.props.periodFormat}
-          invoice={this.state.invoice}
-        />
-
+        {this.boolBarButtons()}
         <SelectedInvoice
           invoice={this.state.invoice}
           orgUnitId={this.props.orgUnitId}
           period={this.props.period}
         />
-
-        <InvoiceToolBar
-          linkPrefix={"invoices"}
-          period={this.props.period}
-          orgUnitId={this.props.orgUnitId}
-          invoiceCode={this.props.invoiceCode}
-          onRecalculate={calculable && this.recalculate}
-          calculateState={this.state.calculateState}
-          warning={this.state.warning}
-          periodFormat={this.props.periodFormat}
-          invoice={this.state.invoice}
-        />
+        {this.boolBarButtons()}
       </div>
     );
   }

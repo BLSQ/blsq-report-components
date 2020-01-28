@@ -347,7 +347,7 @@ class IncentiveContainer extends Component {
                 ))}
               </TableRow>
             </TableHead>
-            <TableBody>
+            <TableBody key={dsi.dataSet.name}>
               {dsi.dataSet.organisationUnits
                 .filter(ou => allowedSeeOrgunitIds.includes(ou.id))
                 .map(ou => {

@@ -106,7 +106,7 @@ const styles = theme => ({
     "content-left": {
       marginLeft: 0
     },
-    "appFrame": {
+    appFrame: {
       display: "block"
     }
   },
@@ -126,6 +126,7 @@ const styles = theme => ({
 
 const RawAppDrawer = props => {
   const DrawerLinks = props.drawerLinks || React.Fragment;
+
   return (
     <Drawer
       variant="persistent"
@@ -149,7 +150,11 @@ const RawAppDrawer = props => {
           </ListItemIcon>
           <ListItemText primary="Dashboard" />
         </ListItem>
-        <ListItem button component="a" href="./index.html#/select">
+        <ListItem
+          button
+          component="a"
+          href={"./index.html#" + props.defaultPathName}
+        >
           <ListItemIcon>
             <FileIcon />
           </ListItemIcon>
@@ -187,12 +192,12 @@ class RawAppToolBar extends React.Component {
             alt="dhis2"
           />
         </Button>
-        <Typography variant="title" color="inherit" className={classes.flex}>
+        <Typography variant="h6" color="inherit" className={classes.flex}>
           {t("app_name")}
         </Typography>
 
         <Typography
-          variant="title"
+          variant="inherit"
           color="inherit"
           title={
             currentUser &&
@@ -227,7 +232,6 @@ class App extends React.Component {
     super(props);
     this.state = {
       period: DatePeriods.currentQuarter(),
-
       open: false,
       orgUnits: [],
       currentUser: this.props.user
@@ -305,6 +309,7 @@ class App extends React.Component {
               handleDrawerClose={this.handleDrawerClose}
               drawerLinks={this.props.drawerLinks}
               period={this.state.period}
+              defaultPathName={this.props.defaultPathName || "/select"}
             />
             <main
               className={classNames(classes.content, classes[`content-left`], {

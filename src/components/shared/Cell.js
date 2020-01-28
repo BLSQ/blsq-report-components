@@ -59,6 +59,7 @@ const VARIANT_TEXTDE = "textde";
 const VARIANT_ORDER = "order";
 const VARIANT_PERCENTAGE = "percentage";
 const VARIANT_ROUNDED_AMOUNT_OR_INTEGER = "roundedAmountOrInteger";
+const VARIANT_AMOUNT_TO_PAY = "AmountToPay";
 const VARIANT_TITLE = "title";
 
 const VARIANTS = [
@@ -71,6 +72,7 @@ const VARIANTS = [
   VARIANT_ORDER,
   VARIANT_PERCENTAGE,
   VARIANT_ROUNDED_AMOUNT_OR_INTEGER,
+  VARIANT_AMOUNT_TO_PAY,
   VARIANT_TITLE
 ];
 
@@ -111,6 +113,11 @@ const Cell = props => {
   } else if (variant === VARIANT_MONEY) {
     displayedValue = numberWithCommas(
       roundedAmount(amount.value, displayedDecimals)
+    );
+    className = classes.cellAmount;
+  } else if (variant === VARIANT_AMOUNT_TO_PAY) {
+    displayedValue = numberWithCommas(
+      roundedAmount(amount.value < 0 ? "0*" : amount.value, displayedDecimals)
     );
     className = classes.cellAmount;
   } else if (variant === VARIANT_ROUNDED) {

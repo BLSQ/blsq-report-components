@@ -22,6 +22,7 @@ class Dhis2 {
     this.ignoredStores = [""];
     this.version = "";
     this.forceHttps = options.forceHttps;
+    this.categoryComboId = options.categoryComboId;
     if (options.disableInitialize) {
       return;
     }
@@ -118,7 +119,13 @@ class Dhis2 {
       "categoryCombos?filter=name:eq:default&fields=id,name,categoryOptionCombos[id,name]";
     return getInstance().then(d2 => d2.Api.getApi().get(categoryUrl));
   }
-
+  getCategoryComboById() {
+    var categoryUrl =
+      "categoryCombos/" +
+      this.categoryComboId +
+      ".json?fields=id,name,categoryOptionCombos[id,name,*]";
+    return getInstance().then(d2 => d2.Api.getApi().get(categoryUrl));
+  }
   getDataSet(dataSetId) {
     var dataSetUrl =
       "/dataSets/" +
@@ -179,8 +186,15 @@ class Dhis2 {
     return getInstance().then(d2 => d2.Api.getApi().get(dataSetUrl));
   }
 
-  getFileDataValue(value, url){
-    var fileUrl = url +"/api/dataValues/files?de="+value.de+"&ou="+value.ou+"&pe="+value.pe;
+  getFileDataValue(value, url) {
+    var fileUrl =
+      url +
+      "/api/dataValues/files?de=" +
+      value.de +
+      "&ou=" +
+      value.ou +
+      "&pe=" +
+      value.pe;
     return fileUrl;
   }
 

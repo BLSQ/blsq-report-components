@@ -3,17 +3,12 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { withNamespaces } from "react-i18next";
 import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import LinearProgress from '@material-ui/core/LinearProgress';
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
+import LinearProgress from "@material-ui/core/LinearProgress";
 import Typography from "@material-ui/core/Typography";
 import OrgUnitAutoComplete from "./OrgUnitAutoComplete";
 import PeriodPicker from "./PeriodPicker";
 import OuPicker from "./OuPicker";
-import InvoiceLink from "./InvoiceLink";
+import SelectionResultsContainer from "./SelectionResultsContainer";
 
 import debounce from "lodash/debounce";
 
@@ -45,9 +40,9 @@ class InvoiceSelectionContainer extends Component {
     this.searchOrgunit = debounce(this.searchOrgunit.bind(this), 1500);
     this.onOuSearchChange = this.onOuSearchChange.bind(this);
     this.onPeriodChange = this.onPeriodChange.bind(this);
-    this.synchronizeUrl = debounce(this.synchronizeUrl.bind(this),200);
+    this.synchronizeUrl = debounce(this.synchronizeUrl.bind(this), 200);
     this.onParentOrganisationUnit = this.onParentOrganisationUnit.bind(this);
-    this.state = {};
+    this.state = { loading: false };
   }
 
   componentDidMount() {
@@ -64,7 +59,7 @@ class InvoiceSelectionContainer extends Component {
   }
 
   synchronizeUrl() {
-    this.setState({loading: true})
+    this.setState({ loading: true });
     synchronizeHistory(
       this.props.parent,
       this.props.ouSearchValue,
@@ -74,11 +69,11 @@ class InvoiceSelectionContainer extends Component {
 
   synchronizeHistory(parent, ouSearchValue, period) {
     if (!ouSearchValue) {
-      ouSearchValue = ""
+      ouSearchValue = "";
     }
     const parentParam = parent ? "&parent=" + parent : "";
     this.props.history.replace({
-      pathname: "/select",
+      pathname: this.props.defaultPathName,
       search: "?q=" + ouSearchValue + "&period=" + period + parentParam
     });
   }
@@ -104,26 +99,52 @@ class InvoiceSelectionContainer extends Component {
       ? this.props.ouSearchValue.trim()
       : "";
     if (this.props.currentUser) {
-      this.setState({loading: true})
-        const user = this.props.currentUser;
-        const orgUnitsResp = await this.props.dhis2.searchOrgunits(
-          searchvalue,
-          user.dataViewOrganisationUnits,
-          this.props.contractedOrgUnitGroupId,
-          this.props.parent
+      this.setState({ loading: true });
+      const user = this.props.currentUser;
+      const orgUnitsResp = await this.props.dhis2.searchOrgunits(
+        searchvalue,
+        user.dataViewOrganisationUnits,
+        this.props.contractedOrgUnitGroupId,
+        this.props.parent
+      );
+      let categoryList = [];
+      if (this.props.dhis2.categoryComboId) {
+        categoryList = await this.searchCategoryCombo(searchvalue);
+        categoryList.forEach(cl =>
+          orgUnitsResp.organisationUnits.push({
+            id: cl.id,
+            shortName: cl.shortName,
+            name: cl.name,
+            ancestors: [],
+            level: cl.level,
+            organisationUnitGroups: cl.organisationUnitGroups
+          })
         );
-        console.log(
-          "Searching for " +
-            this.props.period +
-            searchvalue +
-            " => " +
-            orgUnitsResp.organisationUnits.length
-        );
-        this.setState({
-          orgUnits: orgUnitsResp.organisationUnits,
-          loading: false
-        });
+      }
+      this.setState({
+        orgUnits: orgUnitsResp.organisationUnits,
+        loading: false
+      });
     }
+  }
+
+  async searchCategoryCombo(searchvalue) {
+    const categoryCombos = await this.props.dhis2.getCategoryComboById();
+    let optionsCombos = categoryCombos.categoryOptionCombos.filter(
+      cc => cc.name.toLowerCase().indexOf(searchvalue.toLowerCase()) > -1
+    );
+    return optionsCombos.map(option => {
+      return {
+        id: option.id,
+        shortName: option.shortName,
+        name: option.name,
+        ancestors: [],
+        level: 0,
+        organisationUnitGroups: [
+          { name: "", id: this.props.contractedOrgUnitGroupId }
+        ]
+      };
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -140,9 +161,11 @@ class InvoiceSelectionContainer extends Component {
 
   render() {
     const { classes, t } = this.props;
+    const SelectionResults =
+      this.props.resultsElements || SelectionResultsContainer;
     return (
       <Paper className={classes.paper} square>
-        <Typography variant="title" component="h5" gutterBottom>
+        <Typography variant="h5" component="h5" gutterBottom>
           {t("report_and_invoices")}
         </Typography>
         <div className={classes.filters}>
@@ -163,54 +186,13 @@ class InvoiceSelectionContainer extends Component {
             onPeriodChange={this.onPeriodChange}
             periodFormat={this.props.periodFormat}
           />
-          <br/>
-          {this.state.loading ?  <LinearProgress variant="query" /> : ""}
+          <br />
+          {this.state.loading ? <LinearProgress variant="query" /> : ""}
         </div>
-
-
-        <br />
-
         <br />
         <br />
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>{this.props.t("name")}</TableCell>
-              <TableCell>{this.props.levels[1]}</TableCell>
-              <TableCell>{this.props.levels[2]}</TableCell>
-              <TableCell>{this.props.t("invoice")}</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {this.state.orgUnits &&
-              this.state.orgUnits.map((orgUnit, index) => (
-                <TableRow key={orgUnit.id + index}>
-                  <TableCell
-                    component="th"
-                    scope="row"
-                    title={orgUnit.organisationUnitGroups
-                      .map(g => g.name)
-                      .join(", ")}
-                  >
-                    {orgUnit.name}
-                  </TableCell>
-                  <TableCell>
-                    {orgUnit.ancestors[1] && orgUnit.ancestors[1].name}
-                  </TableCell>
-                  <TableCell>
-                    {orgUnit.ancestors[2] && orgUnit.ancestors[2].name}
-                  </TableCell>
-                  <TableCell>
-                    <InvoiceLink
-                      orgUnit={orgUnit}
-                      period={this.props.period}
-                      invoices={this.props.invoices}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
+        <br />
+        <SelectionResults {...this.props} orgUnits={this.state.orgUnits} />
       </Paper>
     );
   }

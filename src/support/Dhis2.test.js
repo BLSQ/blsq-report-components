@@ -2,10 +2,11 @@ import Dhis2 from "./Dhis2";
 
 it("by default fetch current periods month, quarter and year", () => {
   const dhis2 = new Dhis2({
-    url: "https://play.dhis2.org/2.28",
+    url: "https://play.dhis2.org/2.29",
     user: "admin",
     password: "district",
-    disableInitialize: true
+    disableInitialize: true,
+    categoryComboId: "t3aNCvHsoSn"
   });
 
   const request = dhis2.buildInvoiceRequest([], "2016Q1", {}, "azeazeaze");
@@ -26,10 +27,11 @@ it("by default fetch current periods month, quarter and year", () => {
 
 it("invoiceType can force lookup of previous periods", () => {
   const dhis2 = new Dhis2({
-    url: "https://play.dhis2.org/2.28",
+    url: "https://play.dhis2.org/2.29",
     user: "admin",
     password: "district",
-    disableInitialize: true
+    disableInitialize: true,
+    categoryComboId: "t3aNCvHsoSn"
   });
 
   const request = dhis2.buildInvoiceRequest(

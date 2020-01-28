@@ -9,6 +9,8 @@ import incentiveRoute from "./components/incentives/IncentiveRoute";
 import InvoicePage from "./components/invoices/InvoicePage";
 import invoiceRoute from "./components/invoices/InvoiceRoute";
 import invoiceSelectionRoute from "./components/invoices/InvoiceSelectionRoute";
+import InvoiceSelectionContainer from "./components/invoices/InvoiceSelectionContainer";
+import PeriodPicker from "./components/invoices/PeriodPicker";
 import Values from "./components/invoices/support/Values";
 
 import GenericInvoices from "./components/generic_invoice/GenericInvoices";
@@ -37,11 +39,13 @@ export {
   IncentiveContainer,
   InvoicePage,
   invoiceSelectionRoute,
+  InvoiceSelectionContainer,
   invoiceRoute,
   Dhis2,
   Orbf2,
   Values,
   DatePeriods,
+  PeriodPicker,
   indexBy,
   NumberFormatter,
   Cell,

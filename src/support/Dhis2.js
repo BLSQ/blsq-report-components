@@ -439,7 +439,7 @@ class Dhis2 {
     }
     const organisationUnitsUrl = "/organisationUnits.json?" + fields + extra;
     return getInstance().then(d2 =>
-      d2.Api.getApi().get(organisationUnitsUrl + extra+"&paging=false")
+      d2.Api.getApi().get(organisationUnitsUrl + extra + "&paging=false")
     );
   }
 

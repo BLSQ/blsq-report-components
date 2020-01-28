@@ -68,5 +68,9 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "@material-ui/core": "3.6.0",
+    "d2": "30.0.2"
+  }
 }

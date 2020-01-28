@@ -284,6 +284,13 @@ class App extends React.Component {
       topLevelsOrgUnits: this.state.topLevelsOrgUnits
     };
 
+    const routes = [
+      browseDataRoute(params),
+      incentiveRoute(params),
+      pyramidRoutes(params),
+      invoiceRoutes(params)
+    ].flat();
+
     return (
       <Router>
         <div className={classes.root}>
@@ -319,12 +326,7 @@ class App extends React.Component {
             >
               <div className={classes.drawerHeader + " no-print"} />
               <Switch>
-                {[
-                  browseDataRoute(params),
-                  incentiveRoute(params),
-                  pyramidRoutes(params)
-                ]}
-                {invoiceRoutes(params)}
+                {routes}
                 {this.props.routes && this.props.routes(params)}
               </Switch>
             </main>

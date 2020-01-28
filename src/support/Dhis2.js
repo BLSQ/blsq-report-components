@@ -422,10 +422,25 @@ class Dhis2 {
       });
   }
 
-  organisationUnits() {
+  organisationUnit(id) {
     const organisationUnitsUrl =
-      "/organisationUnits.json?fields=id,name,organisationUnitGroups[id,name],level,path,ancestors[id,name]&paging=false";
+      "/organisationUnits/" +
+      id +
+      ".json?fields=id,name,organisationUnitGroups[id,name],level,path,ancestors[id,name]";
     return getInstance().then(d2 => d2.Api.getApi().get(organisationUnitsUrl));
+  }
+
+  organisationUnits(extraFields, extra) {
+    const defaultFields =
+      "fields=id,name,organisationUnitGroups[id,name],level,path,ancestors[id,name]";
+    let fields = defaultFields;
+    if (extraFields) {
+      fields = defaultFields + "," + extraFields;
+    }
+    const organisationUnitsUrl = "/organisationUnits.json?" + fields + extra;
+    return getInstance().then(d2 =>
+      d2.Api.getApi().get(organisationUnitsUrl + extra+"&paging=false")
+    );
   }
 
   organisationUnitGroupSets() {
@@ -434,6 +449,24 @@ class Dhis2 {
     return getInstance().then(d2 => d2.Api.getApi().get(organisationUnitsUrl));
   }
 
+  removeFromGroup(orgUnitId, group) {
+    return getInstance().then(d2 =>
+      d2.Api.getApi().delete(
+        "organisationUnitGroups/" + group + "/organisationUnits/" + orgUnitId
+      )
+    );
+  }
+
+  addToGroup(orgUnitId, targetGroup) {
+    return getInstance().then(d2 =>
+      d2.Api.getApi().post(
+        "organisationUnitGroups/" +
+          targetGroup +
+          "/organisationUnits/" +
+          orgUnitId
+      )
+    );
+  }
   /**
    * Make sure the response status code is 2xx
    * @param response

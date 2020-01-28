@@ -8,13 +8,25 @@ class OrganisationUnitsContainer extends Component {
     this.state = {};
     this.dhis2 = this.props.dhis2;
     this.loadData = this.loadData.bind(this);
+    this.openForEdition = this.openForEdition.bind(this);
   }
+
+  openForEdition(ou) {
+    this.props.history.replace({
+      pathname: "/pyramid/" + ou.id
+    });
+  }
+
   async loadData() {
-    const organisationUnitsResponse = await this.dhis2.organisationUnits();
+    const filter = this.props.filter;
+
+    const organisationUnitsResponse = await this.dhis2.organisationUnits(
+      this.props.fields,
+      filter ? "&filter="+filter : undefined
+    );
+
     let organisationUnits = organisationUnitsResponse.organisationUnits;
-    /*organisationUnits = organisationUnits.filter(ou =>
-      this.props.levels.includes(ou.level)
-    );*/
+
     const organisationUnitGroupSetsResponse = await this.dhis2.organisationUnitGroupSets();
     let organisationUnitGroupSets =
       organisationUnitGroupSetsResponse.organisationUnitGroupSets;
@@ -34,6 +46,8 @@ class OrganisationUnitsContainer extends Component {
           <OrganisationUnitList
             organisationUnits={organisationUnits}
             organisationUnitGroupSets={organisationUnitGroupSets}
+            openForEdition={this.openForEdition}
+            fields={this.props.fields}
           />
         )}
       </React.Fragment>

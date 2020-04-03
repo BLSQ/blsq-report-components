@@ -3,6 +3,7 @@ const keys = {
   report_and_invoices: "Rapports",
   generated_at: "Généré le",
   print: "Imprimer",
+  re_calculate: "Recalculer",
   orgUnit_name: "Nom d'unité d'organisation",
   search_org_unit: "Rechercher ou sélectionner l'unité d'organisation parente",
   limit_org_unit_under: "Limiter à l'unité d'organisation enfant",

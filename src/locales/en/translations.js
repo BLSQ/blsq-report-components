@@ -3,6 +3,7 @@ const keys = {
   app_name: "ORBF2 - Invoices & Reports",
   generated_at: "Generated on",
   print: "Print",
+  re_calculate: "Calculate",
   orgUnit_name: "Organisation Unit name",
   search_org_unit: "Search or select parent organisation unit",
   limit_org_unit_under: "Limit to the child organisation unit",

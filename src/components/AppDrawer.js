@@ -29,6 +29,9 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Dashboard from "@material-ui/icons/Dashboard";
 import FileIcon from "@material-ui/icons/InsertDriveFile";
 import { withNamespaces } from "react-i18next";
+import PluginRegistry from "./core/PluginRegistry";
+import ExtensionsComponent from "./core/ExtensionsComponent";
+
 const drawerWidth = 240;
 
 const styles = theme => ({
@@ -247,6 +250,12 @@ class App extends React.Component {
       currentUser: user,
       topLevelsOrgUnits: topLevelsOrgUnits
     });
+    const api = await this.props.dhis2.api();
+    for (const plugin of PluginRegistry.allPlugins()) {
+      if (plugin.initializer) {
+        await plugin.initializer({ api, user });
+      }
+    }
   }
 
   onPeriodChange(period) {
@@ -328,6 +337,7 @@ class App extends React.Component {
               <Switch>
                 {routes}
                 {this.props.routes && this.props.routes(params)}
+                <ExtensionsComponent extensionKey="core.routes" {...params} />
               </Switch>
             </main>
           </div>

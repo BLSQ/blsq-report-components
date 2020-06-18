@@ -58,7 +58,7 @@ const INVOICES = {
 const DESCRIPTOR_BY_CODE = indexBy(invoiceDescriptors, e => e.code);
 
 class Invoices {
-  getInvoiceTypeCodes(orgUnit) {
+  getInvoiceTypeCodes(orgUnit, period) {
     let invoiceCodes = [
       INVOICE_DEMO_CHT,
       INVOICE_DEMO_CHT_MONTHLY,

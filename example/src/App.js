@@ -6,7 +6,8 @@ import {
   configureI18N,
   DatePeriods,
   PluginRegistry,
-  InvoiceSelectionContainer
+  InvoiceSelectionContainer,
+  ContractPlugin
 } from "@blsq/blsq-report-components";
 import Invoices from "./invoices/Invoices";
 import { Route, Redirect } from "react-router-dom";
@@ -46,8 +47,13 @@ const appPlugin = {
     "invoices.actions": [Demo, Demo2, DemoBackButton]
   }
 };
+const contractConfig = {
+  programId: "TwcqxaLn11C",
+  allEventsSqlViewId: "QNKOsX4EGEk"
+};
 
 PluginRegistry.register(appPlugin);
+PluginRegistry.register(new ContractPlugin(contractConfig));
 
 const incentivesDescriptors = [
   {
@@ -121,6 +127,8 @@ const dataElementGroups = [
   { name: "ANC", id: "qfxEYY9xAl6" }
 ];
 
+const dhis2 = new Dhis2({ categoryComboId: "t3aNCvHsoSn" })
+
 const App = t => (
   <I18nextProvider i18n={i18n}>
     <AppDrawer
@@ -139,7 +147,7 @@ const App = t => (
           levels: ["Country", "Territory", "Land", "Facility"]
         }
       }}
-      dhis2={new Dhis2({ categoryComboId: "t3aNCvHsoSn" })}
+      dhis2={dhis2 }
     />
   </I18nextProvider>
 );

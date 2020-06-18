@@ -26,7 +26,8 @@ import Warning from "./components/shared/Warning";
 import AppDrawer from "./components/AppDrawer";
 import PluginRegistry from "./components/core/PluginRegistry";
 import ExtensionsComponent from "./components/core/ExtensionsComponent";
-
+import ContractService from "./components/contracts/ContractService";
+import ContractPlugin from "./components/contracts/ContractPlugin"
 import { indexBy } from "./support/Arrays";
 import configureI18N from "./support/configureI18N";
 export {
@@ -54,5 +55,7 @@ export {
   CompositeInvoices,
   configureI18N,
   PluginRegistry,
-  ExtensionsComponent
+  ExtensionsComponent,
+  ContractService,
+  ContractPlugin
 };

@@ -60,8 +60,9 @@ class ContractPage extends Component {
                     color="textPrimary"
                     style={{ fontWeight: "bold" }}
                   >
-                    {contract.orgUnit.name}
+                    {contract.orgUnit.name} <code>{contract.orgUnit.id}</code>
                   </Typography>
+
                   <Typography
                     style={{
                       display: "flex",
@@ -75,7 +76,7 @@ class ContractPage extends Component {
                     ))}
                   </Typography>
 
-                  <Typography color="textSecondary">
+                  <Typography color="textSecondary" title={contract.orgUnit.path}>
                     {contract.orgUnit.ancestors
                       .slice(1, -1)
                       .map(a => a.name)

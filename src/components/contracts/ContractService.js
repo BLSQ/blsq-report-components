@@ -1,5 +1,4 @@
 import Contract from "./Contract";
-
 class ContractService {
   constructor(api, program, allEventsSqlViewId) {
     this.api = api;
@@ -22,7 +21,12 @@ class ContractService {
       const de = this.mappings[dv.dataElement];
       contract[de.code] = dv.value;
     });
-    contract.orgUnit = { id: event.orgUnit, name: event.orgUnitName, path: event.orgUnitPath, ancestors: event.ancestors };
+    contract.orgUnit = {
+      id: event.orgUnit,
+      name: event.orgUnitName,
+      path: event.orgUnitPath,
+      ancestors: event.ancestors || []
+    };
 
     return new Contract(contract);
   }
@@ -58,15 +62,15 @@ class ContractService {
           ...dataVals[k]
         };
       });
-      const ancestors = []
-      const level = row[indexes.level]
-      for (var i = 1; i <= level ; i +=1) {
-        const idIndex = indexes["uidlevel"+i]
-        const nameIndex =indexes["namelevel"+i]
+      const ancestors = [];
+      const level = row[indexes.level];
+      for (var i = 1; i <= level; i += 1) {
+        const idIndex = indexes["uidlevel" + i];
+        const nameIndex = indexes["namelevel" + i];
         ancestors.push({
           id: row[idIndex],
           name: row[nameIndex]
-        })
+        });
       }
 
       return {
@@ -95,10 +99,21 @@ class ContractService {
       const dataValues = [];
 
       Object.keys(contractInfo).forEach(field => {
+        const dataElement = Object.values(this.mappings).find(
+          mapping => mapping.code == field
+        );
+        if (dataElement == undefined) {
+          throw new Error(
+            "no mapping for field " +
+              field +
+              " vs " +
+              Object.values(this.mappings)
+                .map(m => m.code)
+                .join(",")
+          );
+        }
         dataValues.push({
-          dataElement: Object.values(this.mappings).find(
-            mapping => mapping.code == field
-          ).id,
+          dataElement: dataElement.id,
           value: contractInfo[field]
         });
       });
@@ -106,7 +121,7 @@ class ContractService {
       const event = {
         orgUnit: orgUnitId,
         program: this.program.id,
-        eventDate: contractInfo.startContract,
+        eventDate: contractInfo.contract_start_date,
         programStage: this.program.programStages[0].id,
         dataValues: dataValues
       };

@@ -41,10 +41,67 @@ const DemoBackButton = props => {
   return <BackButtonDemo />;
 };
 
+
+/**
+I'm thinking of leaving this ContractBasedResolver in the invoice app and let them "handle" specifics
+we have some "general" mechanism, but was always tricky to make right
+often ending requesting "more" orgunits and filtering in the mapper
+
+use cases
+ - individual
+      orgUnit Id
+      get the contract and knows if it's a pca or pma
+
+ - aggregated invoice/report
+      the region/province/district/aire orgUnit Id
+      and "get what's under" and belongs to set of groups (pma, pca)
+      hard to be sure if "it's all codes or at least one code" or something more "fun"
+
+ - contract based
+     the primary orgUnit Id
+     find all contracts that reference it as "contract_main_orgunit"
+
+ - contract based
+     a secondary orgUnit Id
+     find all contracts that reference the same "contract_main_orgunit"
+
+other kinds ?
+
+
+http://localhost:3000/#/reports/2019Q4/pL5A7C1at1M/demo-contracts
+http://localhost:3000/#/contracts
+
+ */
+
+class ContractBasedResolver {
+  async resolveOrgunits(dhis2, orgUnitId, period, invoiceType, mapper) {
+    let mainOrgUnit,
+      orgUnits = [],
+      categoryCombo = "";
+    const contractService = PluginRegistry.extensions("contracts.service")[0];
+    const contracts = await contractService.findAll();
+
+    orgUnits = contracts
+      .filter(
+        contract =>
+          contract.matchPeriod(period) && contract.orgUnit.path.includes(orgUnitId)
+      )
+      .map(contract => contract.orgUnit);
+    mainOrgUnit = orgUnits[0]
+
+    return {
+      mainOrgUnit,
+      orgUnits,
+      categoryCombo
+    };
+  }
+}
+
 const appPlugin = {
   key: "exampleApp",
   extensions: {
-    "invoices.actions": [Demo, Demo2, DemoBackButton]
+    "invoices.actions": [Demo, Demo2, DemoBackButton],
+    "invoices.orgUnitsResolver": [new ContractBasedResolver()]
   }
 };
 const contractConfig = {
@@ -126,8 +183,9 @@ const dataElementGroups = [
   },
   { name: "ANC", id: "qfxEYY9xAl6" }
 ];
+const options = { categoryComboId: "t3aNCvHsoSn" }
 
-const dhis2 = new Dhis2({ categoryComboId: "t3aNCvHsoSn" })
+const dhis2 = new Dhis2();
 
 const App = t => (
   <I18nextProvider i18n={i18n}>
@@ -147,7 +205,7 @@ const App = t => (
           levels: ["Country", "Territory", "Land", "Facility"]
         }
       }}
-      dhis2={dhis2 }
+      dhis2={dhis2}
     />
   </I18nextProvider>
 );

@@ -1,5 +1,6 @@
 import { init, getInstance, getManifest } from "d2/lib/d2";
 import DatePeriods from "./DatePeriods";
+import PeriodsResolver from "../components/invoices/support/PeriodsResolver"
 
 const ORGUNIT_FIELDS =
   "[id,name,ancestors[id,name],organisationUnitGroups[id,name,code]]";
@@ -28,6 +29,7 @@ class Dhis2 {
     }
 
     this.initialize = this.initialize();
+    this.periodResolver = options.periodResolver || new PeriodsResolver()
   }
 
   /**
@@ -329,44 +331,14 @@ class Dhis2 {
   }
 
   buildInvoiceRequest(orgUnits, period, invoiceType, orgUnitId) {
-    const year = period.slice(0, 4);
-    const quarter = DatePeriods.split(period, "quarterly")[0].slice(5, 6);
 
-    let quarterPeriods = DatePeriods.split(period, "quarterly");
-    let monthlyPeriods = DatePeriods.split(period, "monthly");
-    let yearlyPeriods = DatePeriods.split(period, "yearly");
-    let yearlyJulyPeriods = DatePeriods.split(period, "financialJuly");
-
-    if (invoiceType.previousPeriods) {
-      quarterPeriods = quarterPeriods.concat(
-        DatePeriods.previousPeriods(
-          DatePeriods.split(period, "quarterly")[0],
-          invoiceType.previousPeriods
-        )
-      );
-      monthlyPeriods = monthlyPeriods.concat(
-        DatePeriods.previousPeriods(DatePeriods.split(period, "monthly")[0], 3)
-      );
-      yearlyPeriods = yearlyPeriods.concat(
-        DatePeriods.previousPeriods(
-          DatePeriods.split(period, "yearly")[0],
-          invoiceType.previousPeriods
-        )
-      );
-    }
+    const resolvedPeriods = this.periodResolver.resolvePeriods(orgUnits, period, invoiceType, orgUnitId)
 
     return {
       orgUnit: orgUnits.filter(orgUnit => orgUnit.id === orgUnitId)[0],
       orgUnits: orgUnits,
-      period: period,
-      quarterPeriod: period,
-      quarterPeriods: quarterPeriods,
-      monthlyPeriods: monthlyPeriods,
-      yearlyPeriods: yearlyPeriods,
-      yearlyJulyPeriods: yearlyJulyPeriods,
-      year: year,
-      quarter: quarter,
-      invoiceType: invoiceType
+      invoiceType: invoiceType,
+      ...resolvedPeriods
     };
   }
 

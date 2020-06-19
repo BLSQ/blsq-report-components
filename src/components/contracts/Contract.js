@@ -1,4 +1,6 @@
 
+import DatePeriods from "../../support/DatePeriods"
+
 const KNOWN_FIELDS = ["contract_start_date","contract_end_date","id","orgUnit"]
 
 class Contract {
@@ -19,7 +21,7 @@ class Contract {
         this.codes.push(fieldValues[k])
       }
     })
-
+    this.orgUnit.codes = this.codes
 
   }
 

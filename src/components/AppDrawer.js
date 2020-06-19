@@ -246,16 +246,18 @@ class App extends React.Component {
   async fetchCurrentUser() {
     const user = await this.props.dhis2.currentUserRaw();
     const topLevelsOrgUnits = await this.props.dhis2.getTopLevels([2, 3]);
-    this.setState({
-      currentUser: user,
-      topLevelsOrgUnits: topLevelsOrgUnits
-    });
+
     const api = await this.props.dhis2.api();
     for (const plugin of PluginRegistry.allPlugins()) {
       if (plugin.initializer) {
         await plugin.initializer({ api, user });
       }
     }
+    PluginRegistry.resetExtenstionCache();
+    this.setState({
+      currentUser: user,
+      topLevelsOrgUnits: topLevelsOrgUnits
+    });
   }
 
   onPeriodChange(period) {
@@ -334,11 +336,13 @@ class App extends React.Component {
               })}
             >
               <div className={classes.drawerHeader + " no-print"} />
-              <Switch>
-                {routes}
-                {this.props.routes && this.props.routes(params)}
-                <ExtensionsComponent extensionKey="core.routes" {...params} />
-              </Switch>
+              {this.state.currentUser && (
+                <Switch>
+                  {routes}
+                  {this.props.routes && this.props.routes(params)}
+                  <ExtensionsComponent extensionKey="core.routes" {...params} />
+                </Switch>
+              )}
             </main>
           </div>
         </div>

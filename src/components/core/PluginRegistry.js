@@ -11,6 +11,7 @@ class PluginRegistry {
     if (extensionCache[extensionKey] == undefined) {
       const extensions = [];
       this.allPlugins().forEach(plugin => {
+
         const currentExtensions = plugin.extensions[extensionKey] || [];
         if (currentExtensions) {
           extensions.push(...currentExtensions);

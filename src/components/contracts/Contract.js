@@ -1,12 +1,26 @@
+
+const KNOWN_FIELDS = ["contract_start_date","contract_end_date","id","orgUnit"]
+
 class Contract {
   constructor(fieldValues) {
     this.fieldValues = fieldValues;
     this.id = this.fieldValues.id;
-    this.orgUnit = fieldValues.orgUnit;
-    this.startPeriod = fieldValues.start_contract
+    this.orgUnit =  fieldValues.orgUnit
+
+    this.startPeriod = fieldValues.contract_start_date
       .replace("-", "")
       .substring(0, 6);
-    this.endPeriod = fieldValues.end_contract.replace("-", "").substring(0, 6);
+    this.endPeriod = fieldValues.contract_end_date.replace("-", "").substring(0, 6);
+
+    this.codes = []
+
+    Object.keys(fieldValues).forEach(k => {
+      if (!KNOWN_FIELDS.includes(k)) {
+        this.codes.push(fieldValues[k])
+      }
+    })
+
+
   }
 
   matchPeriod(period) {

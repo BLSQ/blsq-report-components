@@ -28,8 +28,8 @@ class ContractPlugin {
         program,
         config.allEventsSqlViewId
       );
-      this.extensions["contracts.service"] = contractService
-      this.extensions["contracts.program"] = program
+      this.extensions["contracts.service"] = [contractService]
+      this.extensions["contracts.program"] = [program]
     }
   };
 }

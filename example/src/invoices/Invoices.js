@@ -81,6 +81,11 @@ class Invoices {
       invoiceCodes = [];
       invoiceCodes.push(INVOICE_EMPTY);
     }
+    if (orgUnit.activeContracts && orgUnit.activeContracts.length > 0) {
+      if (orgUnit.activeContracts[0].codes.includes("province")) {
+        invoiceCodes.push(INVOICE_DEMO_CONTRACTS)
+      }
+    }
     return invoiceCodes;
   }
 

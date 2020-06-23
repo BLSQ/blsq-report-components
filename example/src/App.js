@@ -69,6 +69,8 @@ other kinds ?
 
 
 http://localhost:3000/#/reports/2019Q4/pL5A7C1at1M/demo-contracts
+http://localhost:3000/#/reports/2019Q4/BmKjwqc6BEw/demo-contracts
+
 http://localhost:3000/#/contracts
 
  */

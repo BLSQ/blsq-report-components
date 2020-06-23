@@ -9,7 +9,7 @@ import OrgUnitAutoComplete from "./OrgUnitAutoComplete";
 import PeriodPicker from "./PeriodPicker";
 import OuPicker from "./OuPicker";
 import SelectionResultsContainer from "./SelectionResultsContainer";
-
+import PluginRegistry from "../core/PluginRegistry";
 import debounce from "lodash/debounce";
 
 const styles = theme => ({
@@ -120,6 +120,23 @@ class InvoiceSelectionContainer extends Component {
             organisationUnitGroups: cl.organisationUnitGroups
           })
         );
+      }
+      const contractService = PluginRegistry.extensions("contracts.service")[0];
+      if (contractService) {
+        const contracts = await contractService.findAll();
+        const contractByOrgUnitId = {};
+        contracts.forEach(contract => {
+          if (contractByOrgUnitId[contract.orgUnit.id] == undefined) {
+            contractByOrgUnitId[contract.orgUnit.id] = [];
+          }
+          contractByOrgUnitId[contract.orgUnit.id].push(contract);
+        });
+        orgUnitsResp.organisationUnits.forEach(orgUnit => {
+          orgUnit.contracts = contractByOrgUnitId[orgUnit.id] || [];
+          orgUnit.activeContracts = orgUnit.contracts.filter(c =>
+            c.matchPeriod(this.props.period)
+          );
+        });
       }
       this.setState({
         orgUnits: orgUnitsResp.organisationUnits,

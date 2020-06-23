@@ -79,6 +79,8 @@
     "orientation": "landscape",
     "dataSets": ["rzXJB6e2AXP"],
     "dataElementGroups": [],
-    "organisationUnitGroups": []
+    "organisationUnitGroups": [],
+    "frequency": "quarterly",
+    "periodFormat": "quarter"
   }
 ]

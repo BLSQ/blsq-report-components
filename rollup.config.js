@@ -1,39 +1,41 @@
-import babel from "rollup-plugin-babel";
-import commonjs from "rollup-plugin-commonjs";
-import external from "rollup-plugin-peer-deps-external";
-import postcss from "rollup-plugin-postcss";
-import resolve from "rollup-plugin-node-resolve";
-import url from "rollup-plugin-url";
-import svgr from "@svgr/rollup";
 
-import pkg from "./package.json";
+import babel from '@rollup/plugin-babel'
+import json from '@rollup/plugin-json'
+import pkg from './package.json'
 
 export default {
-  input: "src/index.js",
+  input: 'src/index.js',
   output: [
     {
-      file: pkg.main,
-      format: "cjs",
+      file: pkg.module,
+      format: 'es',
       sourcemap: true
     },
     {
-      file: pkg.module,
-      format: "es",
+      file: 'dist/index.js',
+      format: 'cjs',
       sourcemap: true
     }
   ],
+  external: [
+    /^@babel.*/,
+    /^@date-io\/.*/,
+    /^@material-ui\/.*/,
+    /^@openimis.*/,
+    "classnames",
+    "clsx",
+    "history",
+    /^lodash.*/,
+    "moment",
+    "prop-types",
+    /^react.*/,
+    /^redux.*/
+  ],
   plugins: [
-    external(),
-    postcss({
-      modules: true
-    }),
-    url(),
-    svgr(),
+    json(),
     babel({
-      exclude: "node_modules/**",
-      plugins: ["external-helpers"]
+      exclude: 'node_modules/**',
+      babelHelpers: 'runtime'
     }),
-    resolve(),
-    commonjs()
   ]
-};
+}

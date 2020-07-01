@@ -1,9 +1,10 @@
 {
   "parser": "babel-eslint",
   "extends": [
-    "prettier",
     "standard",
-    "standard-react"
+    "standard-react",
+    "plugin:react-hooks/recommended",
+    "prettier"
   ],
   "env": {
     "es6": true

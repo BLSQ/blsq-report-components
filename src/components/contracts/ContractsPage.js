@@ -1,113 +1,103 @@
-import React, { Component, useState, useEffect } from "react";
-import PluginRegistry from "../core/PluginRegistry";
-import ArrowIcon from "@material-ui/icons/ArrowRightAlt";
+import FormControl from "@material-ui/core/FormControl";
+import Input from "@material-ui/core/Input";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import InputLabel from "@material-ui/core/InputLabel";
 import Typography from "@material-ui/core/Typography";
-import Card from "@material-ui/core/Card";
-import Chip from "@material-ui/core/Chip";
-import CardContent from "@material-ui/core/CardContent";
+import SearchIcon from "@material-ui/icons/Search";
+import React, { useEffect, useState } from "react";
+import PluginRegistry from "../core/PluginRegistry";
+import ContractCard from "./ContractCard";
+import { toContractsById, toOverlappings } from "./utils";
+import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import { Link } from "react-router-dom";
 
-function Example() {
-  // Declare a new state variable, which we'll call "count"
-  const [count, setCount] = useState(0);
+function ContractsPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [contracts, setContracts] = useState(null);
+  const [contractsById, setContractsById] = useState(null);
+  const [contractsOverlaps, setContractsOverlaps] = useState({});
+  const [filter, setFilter] = useState(undefined);
+  const contractService = PluginRegistry.extensions("contracts.service")[0];
+  useEffect(() => {
+    const fetchData = async () => {
+      if (contractService) {
+        setIsLoading(true);
+        const contracts = await contractService.findAll();
+        setContractsOverlaps(toOverlappings(contracts));
+        setContractsById(toContractsById(contracts));
+        setContracts(contracts);
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [setIsLoading, setContracts]);
+
+  const filteredContracts = filter
+    ? contracts.filter(
+        (c) =>
+          (filter == "overlaps" &&
+            contractsOverlaps[c.id] &&
+            contractsOverlaps[c.id].size > 0) ||
+          c.codes.includes(filter) ||
+          c.orgUnit.name.toLowerCase().includes(filter.toLowerCase()) ||
+          c.startPeriod.includes(filter) ||
+          c.endPeriod.includes(filter)
+      )
+    : contracts;
+
   return (
     <div>
-      <p>You clicked {count} times</p>
-      <button onClick={() => setCount(count + 1)}>
-        Click me
-      </button>
+      <Breadcrumbs aria-label="breadcrumb">
+        <Typography color="textPrimary">Contracts</Typography>
+      </Breadcrumbs>
+      <br></br>
+      {isLoading ? <div>Loading ...</div> : <div />}
+      <FormControl>
+        <Input
+          id="input-with-icon-adornment"
+          fullWidth={true}
+          startAdornment={
+            <InputAdornment position="start">
+              <SearchIcon />
+            </InputAdornment>
+          }
+          value={filter}
+          onChange={(event) => setFilter(event.target.value)}
+        />
+      </FormControl>
+      <Typography fontWeight="fontWeightLight">
+        Filter on name, contract codes, periods or type "overlaps"
+      </Typography>
+      {contracts && (
+        <Typography>
+          {filteredContracts.length} matching filter out of {contracts.length}{" "}
+          contracts, {Object.keys(contractsOverlaps).length} overlapping
+          globaly.
+        </Typography>
+      )}
+      {contracts && (
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            justifyContent: "flex-start",
+            flexWrap: "wrap",
+            alignItems: "flex-start",
+            alignContent: "space-around",
+          }}
+        >
+          {filteredContracts.slice(0, 4 * 3).map((contract) => (
+            <ContractCard
+              key={contract.id}
+              contract={contract}
+              contractsById={contractsById}
+              contractsOverlaps={contractsOverlaps}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-
-class ContractPage extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-    this.fetchData = this.fetchData.bind(this);
-  }
-
-  async componentDidMount() {
-    this.fetchData();
-  }
-
-  async fetchData() {
-    const contractService = PluginRegistry.extensions("contracts.service")[0];
-    if (contractService) {
-      this.setState({ isLoading: true });
-      const contracts = await contractService.findAll();
-      this.setState({ contracts: contracts, isLoading: false });
-    }
-  }
-
-  render() {
-    const { isLoading, contracts } = this.state;
-    return (
-      <div>
-        <Example></Example>
-        <h1>Contracts</h1>
-        {isLoading ? <div>Loading ...</div> : <div></div>}
-        {contracts && <Typography>{contracts.length} contracts</Typography>}
-        {contracts && (
-          <div
-            style={{
-              display: "flex",
-              width: "100%",
-              justifyContent: "flex-start",
-              flexWrap: "wrap",
-              alignItems: "flex-start",
-              alignContent: "space-around"
-            }}
-          >
-            {contracts.map(contract => (
-              <Card
-                key={contract.id}
-                style={{
-                  minWidth: "500px",
-                  margin: "20px",
-                  flex: "10 10 20%",
-                  alignSelf: "stretch",
-                  alignContent: "stretch"
-                }}
-              >
-                <CardContent>
-                  <Typography
-                    color="textPrimary"
-                    style={{ fontWeight: "bold" }}
-                  >
-                    {contract.orgUnit.name} <code>{contract.orgUnit.id}</code>
-                  </Typography>
-
-                  <Typography
-                    style={{
-                      display: "flex",
-                      alignItems: "center"
-                    }}
-                  >
-                    {contract.startPeriod} <ArrowIcon /> {contract.endPeriod}{" "}
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    {contract.codes.map(code => (
-                      <Chip label={code}></Chip>
-                    ))}
-                  </Typography>
-
-                  <Typography
-                    color="textSecondary"
-                    title={contract.orgUnit.path}
-                  >
-                    {contract.orgUnit.ancestors
-                      .slice(1, -1)
-                      .map(a => a.name)
-                      .join(" > ")}
-                  </Typography>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  }
-}
-
-export default ContractPage;
+export default ContractsPage;

@@ -74,7 +74,10 @@ const styles = theme => ({
   },
   menuButton: {
     marginLeft: 12,
-    marginRight: 20
+    marginRight: theme.spacing(5),
+  },
+  appBarItem: {
+    paddingLeft: "30px",
   },
   hide: {
     display: "none"
@@ -87,13 +90,13 @@ const styles = theme => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "flex-end",
-    padding: "0 8px",
+    padding: "8px 8px",
     ...theme.mixins.toolbar
   },
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 3,
+    padding: theme.spacing(3),
     transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
@@ -179,23 +182,23 @@ class RawAppToolBar extends React.Component {
   render() {
     const { classes, open, currentUser, handleDrawerOpen, t } = this.props;
     return (
-      <Toolbar disableGutters={!open}>
+      <Toolbar disableGutters={!open} className={classes.drawerHeader}>
         <IconButton
           color="inherit"
           aria-label="open drawer"
           onClick={handleDrawerOpen}
-          className={classNames(classes.menuButton, open && classes.hide)}
+          className={classNames(classes.menuButton, open && classes.hide)+ " "+classes.appBarItem}
         >
           <MenuIcon />
         </IconButton>
-        <Button aria-label="Menu" href="/">
+        <Button aria-label="Menu" href="/" className={classes.appBarItem}>
           <img
             src="https://www.dhis2.org/sites/all/themes/dhis/logo.png"
-            className={classes.imageStyle}
+            className={classes.imageStyle+" "+classes.appBarItem}
             alt="dhis2"
           />
         </Button>
-        <Typography variant="h6" color="inherit" className={classes.flex}>
+        <Typography variant="h6" color="inherit" className={classes.flex+ " "+classes.appBarItem}>
           {t("app_name")}
         </Typography>
 

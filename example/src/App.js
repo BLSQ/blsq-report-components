@@ -108,7 +108,7 @@ class ContractBasedResolver {
     };
   }
 }
-const withContracts = false;
+const withContracts = true;
 const appPlugin = {
   key: "exampleApp",
   extensions: {

@@ -24,12 +24,12 @@ class Dhis2 {
     this.version = "";
     this.forceHttps = options.forceHttps;
     this.categoryComboId = options.categoryComboId;
+    this.periodResolver = options.periodResolver ? options.periodResolver : new PeriodsResolver()
     if (options.disableInitialize) {
       return;
     }
 
     this.initialize = this.initialize();
-    this.periodResolver = options.periodResolver || new PeriodsResolver()
   }
 
   /**

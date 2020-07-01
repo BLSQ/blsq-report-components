@@ -1,5 +1,7 @@
 import React from "react";
 import DrawerLinks from "./DrawerLinks";
+import { createMuiTheme, responsiveFontSizes, ThemeProvider } from '@material-ui/core/styles';
+
 import {
   AppDrawer,
   Dhis2,
@@ -25,6 +27,11 @@ i18n.addResourceBundle("fr", "translation", {
   report_and_invoices: "Custom caption",
   back_buttom_caption: "Back to previous page"
 });
+
+
+let theme = createMuiTheme();
+theme = responsiveFontSizes(theme);
+
 
 const Demo = props => {
   return (
@@ -190,6 +197,7 @@ const options = { categoryComboId: "t3aNCvHsoSn" }
 const dhis2 = new Dhis2();
 
 const App = t => (
+  <ThemeProvider theme={theme}>
   <I18nextProvider i18n={i18n}>
     <AppDrawer
       incentivesDescriptors={incentivesDescriptors}
@@ -210,6 +218,7 @@ const App = t => (
       dhis2={dhis2}
     />
   </I18nextProvider>
+  </ThemeProvider>
 );
 
 export default App;

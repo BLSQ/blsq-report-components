@@ -5,4 +5,3 @@ script: npm test -- --coverage
 install:
   - npm install -g npm@latest
   - npm ci
-  - ./install_peer.sh

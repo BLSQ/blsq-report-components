@@ -21,7 +21,7 @@ export default {
     /^@babel.*/,
     /^@date-io\/.*/,
     /^@material-ui\/.*/,
-    /^@openimis.*/,
+    /^@blsq.*/,
     "classnames",
     "clsx",
     "history",

@@ -1,6 +1,6 @@
 {
   "name": "@blsq/blsq-report-components",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "blsq-report-components",
   "author": "BLSQ",
   "license": "MIT",
@@ -9,8 +9,8 @@
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
   "engines": {
-    "node": ">=8",
-    "npm": ">=5"
+    "node": ">=12",
+    "npm": ">=6"
   },
   "scripts": {
     "test": "cross-env CI=1 react-scripts test --env=jsdom",
@@ -21,56 +21,49 @@
     "predeploy": "cd example && npm install && npm run build",
     "deploy": "gh-pages -d example/build"
   },
-  "peerDependencies": {
-    "@material-ui/core": "3.6.0",
-    "@material-ui/icons": "3.0.1",
-    "d2": "30.0.2",
-    "prop-types": "^15.5.4",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-router-dom": "^4.3.1",
-    "i18next": "^14.0.1",
-    "react-i18next": "^9.0.10",
-    "react-select": "^9.0.10",
-    "react-export-excel": "^0.5.3"
-  },
   "devDependencies": {
-    "@svgr/rollup": "^2.4.1",
-    "babel-core": "^6.26.3",
-    "babel-eslint": "^8.2.5",
-    "babel-plugin-external-helpers": "^6.22.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.6",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "@babel/preset-react": "^7.9.4",
+    "@babel/runtime": "^7.9.6",
+    "@material-ui/core": "4.10.2",
+    "@material-ui/icons": "4.9.1",
+    "@rollup/plugin-babel": "^5.0.0",
+    "@rollup/plugin-commonjs": "^11.1.0",
+    "@rollup/plugin-json": "^4.0.3",
+    "@rollup/plugin-node-resolve": "^7.1.3",
+    "@rollup/plugin-url": "^5.0.0",
+    "babel-eslint": "10.1.0",
     "classnames": "^2.2.6",
     "cross-env": "^5.1.4",
-    "eslint": "^5.0.1",
+    "d2": "30.0.2",
+    "eslint": "^6.6.0",
     "eslint-config-standard": "^11.0.0",
     "eslint-config-standard-react": "^6.0.0",
     "eslint-plugin-import": "^2.13.0",
     "eslint-plugin-node": "^7.0.1",
     "eslint-plugin-promise": "^4.0.0",
-    "eslint-plugin-react": "^7.10.0",
+    "eslint-plugin-react": "^7.20.2",
     "eslint-plugin-standard": "^3.1.0",
     "gh-pages": "^1.2.0",
-    "jest": "^23.6.0",
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1",
-    "react-scripts": "^1.1.4",
+    "i18next": "^14.0.1",
+    "jest": "^24.9.0",
+    "prop-types": "^15.5.4",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-export-excel": "^0.5.3",
+    "react-i18next": "^9.0.10",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "3.4.1",
+    "react-select": "^3.1.0",
     "react-test-renderer": "^16.6.3",
-    "rollup": "^0.64.1",
-    "rollup-plugin-babel": "^3.0.7",
-    "rollup-plugin-commonjs": "^9.1.3",
-    "rollup-plugin-node-resolve": "^3.3.0",
-    "rollup-plugin-peer-deps-external": "^2.2.0",
-    "rollup-plugin-postcss": "^1.6.2",
-    "rollup-plugin-url": "^1.4.0"
+    "rollup": "^2.10.0"
   },
   "files": [
     "dist"
   ],
-  "dependencies": {
-    "@material-ui/core": "3.6.0",
-    "d2": "30.0.2"
-  }
+  "dependencies": {}
 }

@@ -1,7 +1,6 @@
 import FormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import InputLabel from "@material-ui/core/InputLabel";
 import Typography from "@material-ui/core/Typography";
 import SearchIcon from "@material-ui/icons/Search";
 import React, { useEffect, useState } from "react";
@@ -9,7 +8,6 @@ import PluginRegistry from "../core/PluginRegistry";
 import ContractCard from "./ContractCard";
 import { toContractsById, toOverlappings } from "./utils";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
-import { Link } from "react-router-dom";
 
 function ContractsPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -17,7 +15,7 @@ function ContractsPage() {
   const [contractsById, setContractsById] = useState(null);
   const [contractsOverlaps, setContractsOverlaps] = useState({});
   const [filter, setFilter] = useState(undefined);
-  const contractService = PluginRegistry.extensions("contracts.service")[0];
+  const contractService = PluginRegistry.extension("contracts.service");
   useEffect(() => {
     const fetchData = async () => {
       if (contractService) {

@@ -41,7 +41,7 @@ class InvoiceLinks extends Component {
         subPeriod => ({
           key: invoiceType.code + '-' + subPeriod + '-' + this.props.orgUnit.id,
           to:
-            '/invoices/' +
+            '/reports/' +
             subPeriod +
             '/' +
             this.props.orgUnit.id +

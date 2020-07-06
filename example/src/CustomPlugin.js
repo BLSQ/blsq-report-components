@@ -3,11 +3,10 @@ import DrawerLinks from "./DrawerLinks";
 import {
   createMuiTheme,
   responsiveFontSizes,
-  ThemeProvider,
 } from "@material-ui/core/styles";
 
 import {
-  AppDrawer,
+
   Dhis2,
   configureI18N,
   DatePeriods,
@@ -22,6 +21,7 @@ import { I18nextProvider } from "react-i18next";
 import SimpleDialogDemo from "./SimpleDialogDemo";
 import BackButtonDemo from "./BackButtonDemo";
 import config from "./invoices/Config";
+
 
 const defaultLang = "fr";
 DatePeriods.setLocale(defaultLang);
@@ -88,7 +88,7 @@ class ContractBasedResolver {
     let mainOrgUnit;
     let orgUnits = [];
     let categoryCombo = "";
-    const contractService = PluginRegistry.extensions("contracts.service")[0];
+    const contractService = PluginRegistry.extension("contracts.service");
 
     const contracts = await contractService.findAll();
 
@@ -136,7 +136,7 @@ const incentivesDescriptors = [
   },
 ];
 const customDefaultRoute = (
-  <Route key="defaultRoute"
+  <Route
     exact
     path="/"
     render={() => {
@@ -215,20 +215,4 @@ const appConfig = {
 
 const dhis2 = new Dhis2();
 
-const App = (t) => (
-  <ThemeProvider theme={theme}>
-    <I18nextProvider i18n={i18n}>
-      <AppDrawer
-        incentivesDescriptors={incentivesDescriptors}
-        drawerLinks={DrawerLinks}
-        invoices={Invoices}
-        routes={customRoutes}
-        dataElementGroups={dataElementGroups}
-        config={appConfig}
-        dhis2={dhis2}
-      />
-    </I18nextProvider>
-  </ThemeProvider>
-);
 
-export default App;

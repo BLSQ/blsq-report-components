@@ -2,6 +2,7 @@ import React from "react";
 import InvoiceSelectionContainer from "./InvoiceSelectionContainer";
 import InvoicePage from "./InvoicePage"
 import { Route, Redirect } from "react-router-dom";
+import PluginRegistry from "../core/PluginRegistry";
 
 const invoiceRoutes = (props) => {
   return [
@@ -9,10 +10,11 @@ const invoiceRoutes = (props) => {
       key="reportRoute"
       path="/reports/:period/:orgUnitId/:invoiceCode"
       component={(routerProps) => {
+        const invoices = PluginRegistry.extension("invoices.invoices");
         return (
           <InvoicePage
             {...routerProps}
-            invoices={props.invoices}
+            invoices={invoices}
             currentUser={props.currentUser}
             onPeriodChange={props.onPeriodChange}
             {...props.config.global}
@@ -35,11 +37,13 @@ const invoiceRoutes = (props) => {
         if (!ouSearchValue) {
           ouSearchValue = "";
         }
+        const invoices = PluginRegistry.extension("invoices.invoices");
+        debugger;
         return (
           <InvoiceSelectionContainer
             key="InvoiceSelectionContainer"
             {...routerProps}
-            invoices={props.invoices}
+            invoices={invoices}
             currentUser={props.currentUser}
             onPeriodChange={props.onPeriodChange}
             orgUnits={props.orgUnits}

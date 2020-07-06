@@ -126,9 +126,12 @@ const styles = (theme) => ({
     marginRight: 0,
   },
 });
+const DefaultDrawerLinks = (props) => {
+  return <span></span>
+}
 
 const RawAppDrawer = (props) => {
-  const DrawerLinks = props.drawerLinks || React.Fragment;
+  const DrawerLinks = props.drawerLinks || DefaultDrawerLinks;
 
   return (
     <Drawer

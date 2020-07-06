@@ -6,9 +6,11 @@ class ExtensionsComponent extends Component {
   render() {
     return PluginRegistry.extensions(this.props.extensionKey).map(
       (Extension, index) => {
+        const key = `${this.props.extensionKey}-${index}`
+        console.log(key, Extension)
         return (
           <Extension
-            key={`${this.props.extensionKey}-${index}`}
+            key={key}
             {...this.props}
           />
         );

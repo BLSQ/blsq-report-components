@@ -1,6 +1,7 @@
 import IncentiveRoute from "./IncentiveRoute";
 
 const IncentivePlugin = {
+  key: "incentives",
   extensions: {
     "core.routes": [IncentiveRoute],
 

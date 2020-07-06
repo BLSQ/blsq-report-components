@@ -196,7 +196,7 @@ class BrowseDataContainer extends Component {
               <th>{this.props.levels[2]}</th>
               <th>Org Unit</th>
               {dataElements.map(de => (
-                <th>{de.name}</th>
+                <th key={de.name}>{de.name}</th>
               ))}
             </tr>
           </thead>

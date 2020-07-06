@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import IncentiveContainer from "./IncentiveContainer";
+import PluginRegistry from "../core/PluginRegistry"
 
 class IncentivePage extends Component {
   componentWillReceiveProps(props) {
@@ -14,7 +15,7 @@ class IncentivePage extends Component {
         period={this.props.match.params.period}
         periodFormat ={this.props.periodFormat}
         incentiveCode={this.props.match.params.incentiveCode}
-        incentivesDescriptors={this.props.incentivesDescriptors}
+        incentivesDescriptors={PluginRegistry.extension("incentives.incentivesDescriptors") || []}
         currentUser={this.props.currentUser}
         groups={this.props.groups}
         dhis2={this.props.dhis2}

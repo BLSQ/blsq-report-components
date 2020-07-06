@@ -7,8 +7,6 @@ import IncentiveContainer from "./components/incentives/IncentiveContainer";
 import incentiveRoute from "./components/incentives/IncentiveRoute";
 
 import InvoicePage from "./components/invoices/InvoicePage";
-import invoiceRoute from "./components/invoices/InvoiceRoute";
-import invoiceSelectionRoute from "./components/invoices/InvoiceSelectionRoute";
 import InvoiceSelectionContainer from "./components/invoices/InvoiceSelectionContainer";
 import PeriodPicker from "./components/invoices/PeriodPicker";
 import Values from "./components/invoices/support/Values";
@@ -28,6 +26,9 @@ import PluginRegistry from "./components/core/PluginRegistry";
 import ExtensionsComponent from "./components/core/ExtensionsComponent";
 import ContractService from "./components/contracts/ContractService";
 import ContractPlugin from "./components/contracts/ContractPlugin"
+import InvoicePlugin from "./components/invoices/InvoicePlugin"
+import IncentivePlugin from "./components/incentives/IncentivePlugin"
+
 import { indexBy } from "./support/Arrays";
 import configureI18N from "./support/configureI18N";
 export {
@@ -36,12 +37,10 @@ export {
   BrowseDataPage,
   browseDataRoute,
   IncentivePage,
-  incentiveRoute,
+  IncentivePlugin,
   IncentiveContainer,
   InvoicePage,
-  invoiceSelectionRoute,
   InvoiceSelectionContainer,
-  invoiceRoute,
   Dhis2,
   Orbf2,
   Values,
@@ -57,5 +56,6 @@ export {
   PluginRegistry,
   ExtensionsComponent,
   ContractService,
-  ContractPlugin
+  ContractPlugin,
+  InvoicePlugin
 };

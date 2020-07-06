@@ -25,7 +25,7 @@ function InvoiceLink(orgUnit, invoices, period) {
             size="small"
             component={Link}
             to={
-              "/invoices/" +
+              "/reports/" +
               subPeriod +
               "/" +
               orgUnit.id +

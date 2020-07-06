@@ -121,7 +121,7 @@ class InvoiceSelectionContainer extends Component {
           })
         );
       }
-      const contractService = PluginRegistry.extensions("contracts.service")[0];
+      const contractService = PluginRegistry.extension("contracts.service");
       if (contractService) {
         const contracts = await contractService.findAll();
         const contractByOrgUnitId = {};

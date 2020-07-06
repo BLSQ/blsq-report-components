@@ -12,7 +12,7 @@ function ContractPage({ match }) {
   const [contractsById, setContractsById] = useState(null);
   const [contractsOverlaps, setContractsOverlaps] = useState({});
 
-  const contractService = PluginRegistry.extensions("contracts.service")[0];
+  const contractService = PluginRegistry.extension("contracts.service");
   useEffect(() => {
     const fetchData = async () => {
       if (contractService) {

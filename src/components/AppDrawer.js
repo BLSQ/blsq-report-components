@@ -15,8 +15,6 @@ import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 
 import browseDataRoute from "./browsedata/BrowseDataRoute";
-import incentiveRoute from "./incentives/IncentiveRoute";
-import invoiceRoutes from "./invoices/invoiceRoutes";
 import pyramidRoutes from "./pyramid/pyramidRoutes";
 
 import DatePeriods from "../support/DatePeriods";
@@ -27,22 +25,21 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Dashboard from "@material-ui/icons/Dashboard";
-import FileIcon from "@material-ui/icons/InsertDriveFile";
 import { withNamespaces } from "react-i18next";
 import PluginRegistry from "./core/PluginRegistry";
 import ExtensionsComponent from "./core/ExtensionsComponent";
 
 const drawerWidth = 240;
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   flex: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   imageStyle: {
-    height: "20px"
+    height: "20px",
   },
   appFrame: {
     height: "100%",
@@ -50,27 +47,27 @@ const styles = theme => ({
     overflow: "auto",
     position: "relative",
     display: "flex",
-    width: "100%"
+    width: "100%",
   },
   appBar: {
     position: "absolute",
     transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    })
+      duration: theme.transitions.duration.leavingScreen,
+    }),
   },
   appBarShift: {
     width: `calc(100% - ${drawerWidth}px)`,
     transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen
-    })
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
   "appBarShift-left": {
-    marginLeft: drawerWidth
+    marginLeft: drawerWidth,
   },
   "appBarShift-right": {
-    marginRight: drawerWidth
+    marginRight: drawerWidth,
   },
   menuButton: {
     marginLeft: 12,
@@ -80,18 +77,18 @@ const styles = theme => ({
     paddingLeft: "30px",
   },
   hide: {
-    display: "none"
+    display: "none",
   },
   drawerPaper: {
     position: "relative",
-    width: drawerWidth
+    width: drawerWidth,
   },
   drawerHeader: {
     display: "flex",
     alignItems: "center",
     justifyContent: "flex-end",
     padding: "8px 8px",
-    ...theme.mixins.toolbar
+    ...theme.mixins.toolbar,
   },
   content: {
     flexGrow: 1,
@@ -99,39 +96,42 @@ const styles = theme => ({
     padding: theme.spacing(3),
     transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    })
+      duration: theme.transitions.duration.leavingScreen,
+    }),
   },
   "content-left": {
-    marginLeft: -drawerWidth
+    marginLeft: -drawerWidth,
   },
   "content-right": {
-    marginRight: -drawerWidth
+    marginRight: -drawerWidth,
   },
   "@media print": {
     "content-left": {
-      marginLeft: 0
+      marginLeft: 0,
     },
     appFrame: {
-      display: "block"
-    }
+      display: "block",
+    },
   },
   contentShift: {
     transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen
-    })
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
   "contentShift-left": {
-    marginLeft: 0
+    marginLeft: 0,
   },
   "contentShift-right": {
-    marginRight: 0
-  }
+    marginRight: 0,
+  },
 });
+const DefaultDrawerLinks = (props) => {
+  return <span></span>
+}
 
-const RawAppDrawer = props => {
-  const DrawerLinks = props.drawerLinks || React.Fragment;
+const RawAppDrawer = (props) => {
+  const DrawerLinks = props.drawerLinks || DefaultDrawerLinks;
 
   return (
     <Drawer
@@ -140,7 +140,7 @@ const RawAppDrawer = props => {
       open={props.open}
       className="no-print"
       classes={{
-        paper: props.classes.drawerPaper
+        paper: props.classes.drawerPaper,
       }}
     >
       <div className={props.classes.drawerHeader}>
@@ -156,18 +156,10 @@ const RawAppDrawer = props => {
           </ListItemIcon>
           <ListItemText primary="Dashboard" />
         </ListItem>
-        <ListItem
-          button
-          component="a"
-          href={"./index.html#" + props.defaultPathName}
-        >
-          <ListItemIcon>
-            <FileIcon />
-          </ListItemIcon>
-          <ListItemText primary={props.t("report_and_invoices")} />
-        </ListItem>
+
         <Divider />
         <DrawerLinks period={props.period} />
+        <ExtensionsComponent extensionKey="core.drawerLinks" {...props} />
       </List>
     </Drawer>
   );
@@ -187,18 +179,26 @@ class RawAppToolBar extends React.Component {
           color="inherit"
           aria-label="open drawer"
           onClick={handleDrawerOpen}
-          className={classNames(classes.menuButton, open && classes.hide)+ " "+classes.appBarItem}
+          className={
+            classNames(classes.menuButton, open && classes.hide) +
+            " " +
+            classes.appBarItem
+          }
         >
           <MenuIcon />
         </IconButton>
         <Button aria-label="Menu" href="/" className={classes.appBarItem}>
           <img
             src="https://www.dhis2.org/sites/all/themes/dhis/logo.png"
-            className={classes.imageStyle+" "+classes.appBarItem}
+            className={classes.imageStyle + " " + classes.appBarItem}
             alt="dhis2"
           />
         </Button>
-        <Typography variant="h6" color="inherit" className={classes.flex+ " "+classes.appBarItem}>
+        <Typography
+          variant="h6"
+          color="inherit"
+          className={classes.flex + " " + classes.appBarItem}
+        >
           {t("app_name")}
         </Typography>
 
@@ -208,10 +208,10 @@ class RawAppToolBar extends React.Component {
           title={
             currentUser &&
             "manage " +
-              currentUser.organisationUnits.map(ou => ou.name).join(", ") +
+              currentUser.organisationUnits.map((ou) => ou.name).join(", ") +
               " and view " +
               currentUser.dataViewOrganisationUnits
-                .map(ou => ou.name)
+                .map((ou) => ou.name)
                 .join(", ")
           }
         >
@@ -240,7 +240,7 @@ class App extends React.Component {
       period: DatePeriods.currentQuarter(),
       open: false,
       orgUnits: [],
-      currentUser: this.props.user
+      currentUser: this.props.user,
     };
     this.onPeriodChange = this.onPeriodChange.bind(this);
     this.fetchCurrentUser();
@@ -259,7 +259,7 @@ class App extends React.Component {
     PluginRegistry.resetExtenstionCache();
     this.setState({
       currentUser: user,
-      topLevelsOrgUnits: topLevelsOrgUnits
+      topLevelsOrgUnits: topLevelsOrgUnits,
     });
   }
 
@@ -295,14 +295,12 @@ class App extends React.Component {
       currentUser: this.state.currentUser,
       incentivesDescriptors: this.props.incentivesDescriptors,
       dataElementGroups: this.props.dataElementGroups,
-      topLevelsOrgUnits: this.state.topLevelsOrgUnits
+      topLevelsOrgUnits: this.state.topLevelsOrgUnits,
     };
 
     const routes = [
       browseDataRoute(params),
-      incentiveRoute(params),
       pyramidRoutes(params),
-      invoiceRoutes(params)
     ].flat();
 
     return (
@@ -313,7 +311,7 @@ class App extends React.Component {
               className={
                 classNames(classes.appBar, {
                   [classes.appBarShift]: open,
-                  [classes[`appBarShift-left`]]: open
+                  [classes[`appBarShift-left`]]: open,
                 }) + " no-print"
               }
             >
@@ -335,7 +333,7 @@ class App extends React.Component {
             <main
               className={classNames(classes.content, classes[`content-left`], {
                 [classes.contentShift]: open,
-                [classes[`contentShift-left`]]: open
+                [classes[`contentShift-left`]]: open,
               })}
             >
               <div className={classes.drawerHeader + " no-print"} />
@@ -356,7 +354,7 @@ class App extends React.Component {
 
 App.propTypes = {
   classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired
+  theme: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(withNamespaces()(App));

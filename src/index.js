@@ -1,12 +1,3 @@
-import BrowseDataContainer from "./components/browsedata/BrowseDataContainer";
-import BrowseDataPage from "./components/browsedata/BrowseDataPage";
-import browseDataRoute from "./components/browsedata/BrowseDataRoute";
-
-import IncentivePage from "./components/incentives/IncentivePage";
-import IncentiveContainer from "./components/incentives/IncentiveContainer";
-import incentiveRoute from "./components/incentives/IncentiveRoute";
-
-import InvoicePage from "./components/invoices/InvoicePage";
 import InvoiceSelectionContainer from "./components/invoices/InvoiceSelectionContainer";
 import PeriodPicker from "./components/invoices/PeriodPicker";
 import Values from "./components/invoices/support/Values";
@@ -25,21 +16,17 @@ import AppDrawer from "./components/AppDrawer";
 import PluginRegistry from "./components/core/PluginRegistry";
 import ExtensionsComponent from "./components/core/ExtensionsComponent";
 import ContractService from "./components/contracts/ContractService";
-import ContractPlugin from "./components/contracts/ContractPlugin"
-import InvoicePlugin from "./components/invoices/InvoicePlugin"
-import IncentivePlugin from "./components/incentives/IncentivePlugin"
+
+import ContractPlugin from "./components/contracts/ContractPlugin";
+import InvoicePlugin from "./components/invoices/InvoicePlugin";
+import IncentivePlugin from "./components/incentives/IncentivePlugin";
+import BrowseDataPlugin from "./components/browsedata/BrowseDataPlugin";
+import PyramidPlugin from "./components/pyramid/PyramidPlugin"
 
 import { indexBy } from "./support/Arrays";
 import configureI18N from "./support/configureI18N";
 export {
   AppDrawer,
-  BrowseDataContainer,
-  BrowseDataPage,
-  browseDataRoute,
-  IncentivePage,
-  IncentivePlugin,
-  IncentiveContainer,
-  InvoicePage,
   InvoiceSelectionContainer,
   Dhis2,
   Orbf2,
@@ -56,6 +43,10 @@ export {
   PluginRegistry,
   ExtensionsComponent,
   ContractService,
+  // plugins
   ContractPlugin,
-  InvoicePlugin
+  InvoicePlugin,
+  IncentivePlugin,
+  BrowseDataPlugin,
+  PyramidPlugin
 };

@@ -1,7 +1,7 @@
 import IncentiveRoute from "./IncentiveRoute";
 
 const IncentivePlugin = {
-  key: "incentives",
+  key: "@blsq/blsq-report-components#incentives",
   extensions: {
     "core.routes": [IncentiveRoute],
 

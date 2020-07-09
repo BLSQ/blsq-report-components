@@ -13,12 +13,7 @@ import IconButton from "@material-ui/core/IconButton";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-
-import browseDataRoute from "./browsedata/BrowseDataRoute";
-import pyramidRoutes from "./pyramid/pyramidRoutes";
-
 import DatePeriods from "../support/DatePeriods";
-
 import { Typography } from "@material-ui/core";
 
 import ListItem from "@material-ui/core/ListItem";
@@ -127,8 +122,8 @@ const styles = (theme) => ({
   },
 });
 const DefaultDrawerLinks = (props) => {
-  return <span></span>
-}
+  return <span></span>;
+};
 
 const RawAppDrawer = (props) => {
   const DrawerLinks = props.drawerLinks || DefaultDrawerLinks;
@@ -201,6 +196,13 @@ class RawAppToolBar extends React.Component {
         >
           {t("app_name")}
         </Typography>
+
+        <Switch>
+          <ExtensionsComponent
+            extensionKey="core.headerRoutes"
+            {...this.props}
+          />
+        </Switch>
 
         <Typography
           variant="inherit"
@@ -298,11 +300,6 @@ class App extends React.Component {
       topLevelsOrgUnits: this.state.topLevelsOrgUnits,
     };
 
-    const routes = [
-      browseDataRoute(params),
-      pyramidRoutes(params),
-    ].flat();
-
     return (
       <Router>
         <div className={classes.root}>
@@ -339,8 +336,6 @@ class App extends React.Component {
               <div className={classes.drawerHeader + " no-print"} />
               {this.state.currentUser && (
                 <Switch>
-                  {routes}
-                  {this.props.routes && this.props.routes(params)}
                   <ExtensionsComponent extensionKey="core.routes" {...params} />
                 </Switch>
               )}

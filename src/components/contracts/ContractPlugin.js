@@ -7,7 +7,7 @@ const PROGRAM_FIELDS =
 
 class ContractPlugin {
   constructor() {
-    this.key = "contracts";
+    this.key = "@blsq/blsq-report-components#contracts";
     this.extensions = {
       "core.routes": [ContractRoutes],
     };

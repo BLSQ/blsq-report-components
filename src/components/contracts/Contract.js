@@ -35,7 +35,7 @@ class Contract {
     );
   }
   overlaps(contract) {
-    if (contract.id == this.id) {
+    if (contract.id === this.id) {
       return false;
     }
     return (

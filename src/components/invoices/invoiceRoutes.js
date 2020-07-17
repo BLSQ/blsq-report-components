@@ -38,7 +38,6 @@ const invoiceRoutes = (props) => {
           ouSearchValue = "";
         }
         const invoices = PluginRegistry.extension("invoices.invoices");
-        debugger;
         return (
           <InvoiceSelectionContainer
             key="InvoiceSelectionContainer"

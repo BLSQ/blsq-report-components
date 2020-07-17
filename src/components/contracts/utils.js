@@ -15,7 +15,7 @@ export const toOverlappings = (contracts) => {
     });
 
     const contractsOverlaps = {};
-    for (const [orgUnitId, contractsForOrgUnit] of Object.entries(
+    for (const [, contractsForOrgUnit] of Object.entries(
       contractsByOrgUnits
     )) {
       contractsForOrgUnit.forEach((contract1) => {
@@ -35,3 +35,19 @@ export const toOverlappings = (contracts) => {
     }
     return contractsOverlaps;
   };
+
+export const getFilteredContracts = (filter, contracts, contractsOverlaps) => {
+  const filteredContracts = filter
+  ? contracts.filter(
+      (c) =>
+        (filter === "overlaps" &&
+          contractsOverlaps[c.id] &&
+          contractsOverlaps[c.id].size > 0) ||
+        c.codes.includes(filter) ||
+        c.orgUnit.name.toLowerCase().includes(filter.toLowerCase()) ||
+        c.startPeriod.includes(filter) ||
+        c.endPeriod.includes(filter)
+    )
+  : contracts;
+  return filteredContracts;
+}

@@ -100,9 +100,9 @@ class ContractService {
 
       Object.keys(contractInfo).forEach(field => {
         const dataElement = Object.values(this.mappings).find(
-          mapping => mapping.code == field
+          mapping => mapping.code === field
         );
-        if (dataElement == undefined) {
+        if (dataElement === undefined) {
           throw new Error(
             "no mapping for field " +
               field +
@@ -128,7 +128,7 @@ class ContractService {
       return event;
     });
 
-    const createResp = await api.post("events", { events });
+    const createResp = await this.api.post("events", { events });
     return createResp;
   }
 }

@@ -1,71 +1,75 @@
-import FormControl from "@material-ui/core/FormControl";
-import Input from "@material-ui/core/Input";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import React, { Component } from "react";
 import Typography from "@material-ui/core/Typography";
-import SearchIcon from "@material-ui/icons/Search";
-import React, { useEffect, useState } from "react";
-import PluginRegistry from "../core/PluginRegistry";
-import ContractCard from "./ContractCard";
-import { toContractsById, toOverlappings } from "./utils";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 
-function ContractsPage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [contracts, setContracts] = useState(null);
-  const [contractsById, setContractsById] = useState(null);
-  const [contractsOverlaps, setContractsOverlaps] = useState({});
-  const [filter, setFilter] = useState(undefined);
-  const contractService = PluginRegistry.extension("contracts.service");
-  useEffect(() => {
-    const fetchData = async () => {
-      if (contractService) {
-        setIsLoading(true);
-        const contracts = await contractService.findAll();
-        setContractsOverlaps(toOverlappings(contracts));
-        setContractsById(toContractsById(contracts));
-        setContracts(contracts);
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, [setIsLoading, setContracts]);
+import PluginRegistry from "../core/PluginRegistry";
+import ContractCard from "./ContractCard";
+import ContractFilters from "./ContractFilters";
+import LoadingSpinner from "../shared/LoadingSpinner";
+import { toContractsById, toOverlappings, getFilteredContracts } from "./utils";
 
-  const filteredContracts = filter
-    ? contracts.filter(
-        (c) =>
-          (filter == "overlaps" &&
-            contractsOverlaps[c.id] &&
-            contractsOverlaps[c.id].size > 0) ||
-          c.codes.includes(filter) ||
-          c.orgUnit.name.toLowerCase().includes(filter.toLowerCase()) ||
-          c.startPeriod.includes(filter) ||
-          c.endPeriod.includes(filter)
-      )
-    : contracts;
+class ContractsPage extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: false,
+      contracts: null,
+      contractsById: null,
+      contractsOverlaps: {},
+      filter: undefined,
+      contractService: PluginRegistry.extension("contracts.service"),
+    };
+  }
+
+  setIsLoading(isLoading) {
+    this.setState({
+      isLoading,
+    })
+  }
+
+  setContracts(data) {
+    this.setState({
+      ...data,
+    })
+  }
+
+  async fetchData() {
+    const { contractService } = this.state;
+    if (contractService) {
+      this.setIsLoading(true);
+      const contracts = await contractService.findAll();
+      console.log('fetchData', contracts);
+      this.setContracts({
+        contracts,
+        contractsById: toContractsById(contracts),
+        contractsOverlaps: toOverlappings(contracts),
+      })
+      this.setIsLoading(false);
+    }
+  }
+
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  render() {
+    const { contracts, filter, contractsOverlaps, isLoading, contractsById } = this.state;
+    const filteredContracts = getFilteredContracts(filter, contracts, contractsOverlaps);
 
   return (
     <div>
       <Breadcrumbs aria-label="breadcrumb">
         <Typography color="textPrimary">Contracts</Typography>
       </Breadcrumbs>
-      <br></br>
-      {isLoading ? <div>Loading ...</div> : <div />}
-      <FormControl>
-        <Input
-          id="input-with-icon-adornment"
-          fullWidth={true}
-          startAdornment={
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          }
-          value={filter}
-          onChange={(event) => setFilter(event.target.value)}
-        />
-      </FormControl>
-      <Typography fontWeight="fontWeightLight">
-        Filter on name, contract codes, periods or type "overlaps"
-      </Typography>
+      <br />
+      {
+        isLoading
+        && <LoadingSpinner />
+      }
+      <ContractFilters
+        filter={filter}
+        setFilter={(filter) => this.setState({filter})}
+      />
       {contracts && (
         <Typography>
           {filteredContracts.length} matching filter out of {contracts.length}{" "}
@@ -96,6 +100,7 @@ function ContractsPage() {
       )}
     </div>
   );
-}
+  };
+};
 
 export default ContractsPage;

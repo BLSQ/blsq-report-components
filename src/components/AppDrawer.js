@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import { HashRouter as Router, Route, Switch } from "react-router-dom";
+import { HashRouter as Router, Switch } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
@@ -66,7 +66,6 @@ const styles = (theme) => ({
   },
   menuButton: {
     marginLeft: 12,
-    marginRight: theme.spacing(5),
   },
   appBarItem: {
     paddingLeft: "30px",
@@ -121,8 +120,9 @@ const styles = (theme) => ({
     marginRight: 0,
   },
 });
+
 const DefaultDrawerLinks = (props) => {
-  return <span></span>;
+  return <span />;
 };
 
 const RawAppDrawer = (props) => {
@@ -161,38 +161,54 @@ const RawAppDrawer = (props) => {
 };
 const AppDrawer = withNamespaces()(RawAppDrawer);
 
+RawAppDrawer.defaultProps = {
+  drawerLinks: null,
+}
+
+RawAppDrawer.propTypes = {
+  classes: PropTypes.object.isRequired,
+  open: PropTypes.bool.isRequired,
+  handleDrawerClose: PropTypes.func.isRequired,
+  drawerLinks: PropTypes.any,
+  period: PropTypes.string.isRequired,
+};
+
 class RawAppToolBar extends React.Component {
   shouldComponentUpdate(nextProps) {
-    return this.props.currentUser !== nextProps.currentUser;
+    return (
+      this.props.currentUser !== nextProps.currentUser
+      || this.props.open !== nextProps.open
+    );
   }
 
   render() {
-    const { classes, open, currentUser, handleDrawerOpen, t } = this.props;
+    const { classes, open, currentUser, handleDrawerOpen, t, handleDrawerClose } = this.props;
     return (
       <Toolbar disableGutters={!open} className={classes.drawerHeader}>
         <IconButton
           color="inherit"
           aria-label="open drawer"
-          onClick={handleDrawerOpen}
-          className={
-            classNames(classes.menuButton, open && classes.hide) +
-            " " +
-            classes.appBarItem
-          }
+          onClick={open ? handleDrawerClose : handleDrawerOpen}
+          className={classes.menuButton}
         >
           <MenuIcon />
         </IconButton>
         <Button aria-label="Menu" href="/" className={classes.appBarItem}>
           <img
             src="https://www.dhis2.org/sites/all/themes/dhis/logo.png"
-            className={classes.imageStyle + " " + classes.appBarItem}
+            className={classes.imageStyle}
             alt="dhis2"
           />
         </Button>
         <Typography
           variant="h6"
           color="inherit"
-          className={classes.flex + " " + classes.appBarItem}
+          className={
+            classNames(
+              classes.flex,
+              classes.appBarItem,
+            )
+          }
         >
           {t("app_name")}
         </Typography>
@@ -232,6 +248,21 @@ class RawAppToolBar extends React.Component {
     );
   }
 }
+
+RawAppToolBar.defaultProps = {
+  currentUser: undefined,
+};
+
+RawAppToolBar.propTypes = {
+  classes: PropTypes.object.isRequired,
+  currentUser: PropTypes.object,
+  open: PropTypes.bool.isRequired,
+  handleDrawerOpen: PropTypes.func.isRequired,
+  handleDrawerClose: PropTypes.func.isRequired,
+  t: PropTypes.func.isRequired,
+};
+
+
 
 const AppToolBar = withNamespaces()(RawAppToolBar);
 
@@ -317,6 +348,7 @@ class App extends React.Component {
                 open={open}
                 currentUser={this.state.currentUser}
                 handleDrawerOpen={this.handleDrawerOpen}
+                handleDrawerClose={this.handleDrawerClose}
               />
             </AppBar>
             <AppDrawer

@@ -51,3 +51,11 @@ export const getFilteredContracts = (filter, contracts, contractsOverlaps) => {
   : contracts;
   return filteredContracts;
 }
+
+export const getOverlaps = (contractId, contractsOverlaps, contractsById) => {
+  if (!contractsOverlaps[contractId]) {
+    return [];
+  }
+  return Array.from(contractsOverlaps[contractId])
+            .map((contractId) => contractsById[contractId]);
+};

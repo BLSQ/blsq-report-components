@@ -1,0 +1,64 @@
+{
+    "app_name": "ORBF2 - Invoices & Reports",
+    "codes": "Codes",
+    "contracts": {
+        "overlaps": ", {{overlap}} overlapping globaly",
+        "results": "{{total}} contracts",
+        "resultsFiltered": "{{filtered}} results filtered out {{total}} contracts",
+        "title": "Contracts",
+        "searchInfos": "Filter on name or contract codes"
+    },
+    "end_period": "End period",
+    "filter": "Filter",
+    "generated_at": "Generated on",
+    "invoice": "Invoice",
+    "limit_org_unit_under": "Limit to the child organisation unit",
+    "missing_invoice_types": "Missing invoice...",
+    "name": "Name",
+    "orgUnit_name": "Organisation Unit name",
+    "period": "Period",
+    "print": "Print",
+    "report_and_invoices": "Report & Invoices",
+    "search_org_unit": "Search or select parent organisation unit",
+    "show_avalaible_invoices": "Select invoice",
+    "start_period": "Start period",
+    "table": {
+        "actions": {
+            "edit": "Edit",
+            "see": "See",
+            "title": "Action(s)"
+        },
+        "body": {
+            "columnHeaderTooltip": "Sort for {{label}}",
+            "noMatch": "Sorry, no matching records found",
+            "toolTip": "Sort"
+        },
+        "filter": {
+            "all": "All",
+            "reset": "RESET",
+            "title": "FILTERS"
+        },
+        "pagination": {
+            "displayRows": "of",
+            "next": "Next Page",
+            "previous": "Previous Page",
+            "rowsPerPage": "Rows per page:"
+        },
+        "selectedRows": {
+            "delete": "Delete",
+            "deleteAria": "Delete Selected Rows",
+            "text": "row(s) selected"
+        },
+        "toolbar": {
+            "downloadCsv": "Download CSV",
+            "filterTable": "Filter Table",
+            "print": "Print",
+            "search": "Search",
+            "viewColumns": "View Columns"
+        },
+        "viewColumns": {
+            "title": "Show Columns",
+            "titleAria": "Show/Hide Table Columns"
+        }
+    }
+}

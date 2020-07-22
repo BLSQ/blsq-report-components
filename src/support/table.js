@@ -1,36 +1,37 @@
 
 export const textLabels = (t) => ({
     body: {
-      noMatch: "Sorry, no matching records found",
-      toolTip: "Sort",
-      columnHeaderTooltip: column => `Sort for ${column.label}`
+      noMatch: t("table.body.noMatch"),
+      toolTip: t("table.body.toolTip"),
+      columnHeaderTooltip: column =>
+        t("table.body.columnHeaderTooltip", { label: column.label.toLowerCase() })
     },
     pagination: {
-      next: "Next Page",
-      previous: "Previous Page",
-      rowsPerPage: "Rows per page:",
-      displayRows: "of",
+      next: t("table.pagination.next"),
+      previous: t("table.pagination.previous"),
+      rowsPerPage: t("table.pagination.rowsPerPage"),
+      displayRows: t("table.pagination.displayRows"),
     },
     toolbar: {
-      search: "Search",
-      downloadCsv: "Download CSV",
-      print: "Print",
-      viewColumns: "View Columns",
-      filterTable: "Filter Table",
+      search: t("table.toolbar.search"),
+      downloadCsv: t("table.toolbar.downloadCsv"),
+      print: t("table.toolbar.print"),
+      viewColumns: t("table.toolbar.viewColumns"),
+      filterTable: t("table.toolbar.filterTable"),
     },
     filter: {
-      all: "All",
-      title: "FILTERS",
-      reset: "RESET",
+      all: t("table.filter.all"),
+      title: t("table.filter.title"),
+      reset: t("table.filter.reset"),
     },
     viewColumns: {
-      title: "Show Columns",
-      titleAria: "Show/Hide Table Columns",
+      title: t("table.viewColumns.title"),
+      titleAria: t("table.viewColumns.titleAria"),
     },
     selectedRows: {
-      text: "row(s) selected",
-      delete: "Delete",
-      deleteAria: "Delete Selected Rows",
+      text: t("table.selectedRows.text"),
+      delete: t("table.selectedRows.delete"),
+      deleteAria: t("table.selectedRows.deleteAria"),
     },
 })
 

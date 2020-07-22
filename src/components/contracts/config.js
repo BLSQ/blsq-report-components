@@ -5,13 +5,13 @@ import {
     IconButton,
     Tooltip,
 } from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
+import Visibility from '@material-ui/icons/Visibility';
 
 import { Link } from "react-router-dom";
 import { defaultOptions } from '../../support/table';
 import { getOverlaps } from "./utils";
 
-export const contractsColumns = (t) => [
+export const contractsColumns = (t, classes) => [
     {
      name: "id",
      label: "ID",
@@ -38,7 +38,7 @@ export const contractsColumns = (t) => [
       filter: true,
       sort: true,
       customBodyRender: (codes, tableMeta, updateValue) => (codes.map((code) => (
-        <Chip key={code} label={code} />
+        <Chip key={code} label={code}  className={classes.chip} />
        )))
      },
     },
@@ -60,20 +60,20 @@ export const contractsColumns = (t) => [
     },
     {
      name: "orgUnit.id",
-     label: t('actions'),
+     label: t('table.actions.title'),
      options: {
       filter: false,
       sort: false,
       customBodyRender: (orgUnitId, tableMeta, updateValue) => (
         <Tooltip
           placement="bottom"
-          title={t('edit')}
+          title={t('table.actions.see')}
           arrow
          >
           <span>
             <IconButton>
-              <Link to={`/contracts/${orgUnitId}`}>
-                <EditIcon color="primary" />
+              <Link to={`/contracts/${orgUnitId}`} className={classes.iconLink}>
+                <Visibility />
               </Link>
             </IconButton>
           </span>
@@ -85,6 +85,8 @@ export const contractsColumns = (t) => [
 
 export const contractsOptions = (t, contracts, contractsById, contractsOverlaps, classes) => ({
     ...defaultOptions(t),
+    search: false,
+    filter: false,
     setRowProps: (row, dataIndex, rowIndex) => {
         const contract = contracts[dataIndex]
         const isOverlaping = getOverlaps(contract.id, contractsOverlaps, contractsById).length > 0

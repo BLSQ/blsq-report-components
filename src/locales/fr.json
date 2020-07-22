@@ -1,0 +1,64 @@
+{
+    "app_name": "Factures & Rapports",
+    "codes": "Codes",
+    "contracts": {
+        "overlaps": ", dont {{overlap}} se chevauchant",
+        "results": "{{total}} contrats",
+        "resultsFiltered": "{{filtered}} contrats filtrés sur {{total}}",
+        "title": "Contrats",
+        "searchInfos": "Chercher sur le nom ou le code du contrat"
+    },
+    "end_period": "Fin de période",
+    "filter": "Filtrer",
+    "generated_at": "Généré le",
+    "invoice": "Facture",
+    "limit_org_unit_under": "Limiter à l'unité d'organisation enfant",
+    "missing_invoice_types": "Facture introuvable...",
+    "name": "Nom",
+    "orgUnit_name": "Nom d'unité d'organisation",
+    "period": "Période",
+    "print": "Imprimer",
+    "report_and_invoices": "Rapports",
+    "search_org_unit": "Rechercher ou sélectionner l'unité d'organisation parente",
+    "show_avalaible_invoices": "Choisir une facture",
+    "start_period": "Début de période",
+    "table": {
+        "actions": {
+            "edit": "Editer",
+            "see": "Voir",
+            "title": "Action(s)"
+        },
+        "body": {
+            "columnHeaderTooltip": "Trier sur {{label}}",
+            "noMatch": "Aucun résultat trouvé",
+            "toolTip": "Trier"
+        },
+        "filter": {
+            "all": "Tous",
+            "reset": "ANNULER",
+            "title": "FILTRES"
+        },
+        "pagination": {
+            "displayRows": "de",
+            "next": "Page suivant",
+            "previous": "Page précédente",
+            "rowsPerPage": "Lignes par page :"
+        },
+        "selectedRows": {
+            "delete": "Effacer",
+            "deleteAria": "Effacer les lignes sélectionnées",
+            "text": "ligne(s) séléctionnée(s)"
+        },
+        "toolbar": {
+            "downloadCsv": "Télécharger le CSV",
+            "filterTable": "Filtrer la table",
+            "print": "Imprimer",
+            "search": "Rechercher",
+            "viewColumns": "Colonnes visibles"
+        },
+        "viewColumns": {
+            "title": "Colonnes visibles",
+            "titleAria": "Montrer/cacher des colonnes"
+        }
+    }
+}

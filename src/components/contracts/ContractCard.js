@@ -8,8 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import CardActions from "@material-ui/core/CardActions";
 import Button from "@material-ui/core/Button";
 import { Link } from "react-router-dom";
-import { getOverlaps } from "./utils";
-
+import { getOverlaps, getOrgUnitAncestors } from "./utils";
 const ContractCard = ({ contract, contractsOverlaps, contractsById }) => (
   <Card
     key={contract.id}
@@ -52,10 +51,7 @@ const ContractCard = ({ contract, contractsOverlaps, contractsById }) => (
         </span>
       )}
       <Typography color="textSecondary" title={contract.orgUnit.path}>
-        {contract.orgUnit.ancestors
-          .slice(1, -1)
-          .map((a) => a.name)
-          .join(" > ")}
+        {getOrgUnitAncestors(contract.orgUnit)}
       </Typography>
     </CardContent>
     <CardActions>

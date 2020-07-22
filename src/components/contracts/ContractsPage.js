@@ -119,7 +119,7 @@ class ContractsPage extends Component {
                   }}
                   title={contracts.length > 0 ? tableTitle : ''}
                   data={filteredContracts}
-                  columns={contractsColumns(t, classes)}
+                  columns={contractsColumns(t, classes, contracts)}
                   options={contractsOptions(t, contracts, contractsById, contractsOverlaps, classes)}
                   />
               )

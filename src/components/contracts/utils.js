@@ -59,3 +59,13 @@ export const getOverlaps = (contractId, contractsOverlaps, contractsById) => {
   return Array.from(contractsOverlaps[contractId])
             .map((contractId) => contractsById[contractId]);
 };
+
+export const getOrgUnitAncestors = orgUnit => {
+  if (orgUnit && orgUnit.ancestors) {
+    return orgUnit.ancestors
+    .slice(1, -1)
+    .map((a) => a.name)
+    .join(" > ");
+  }
+  return ""
+}

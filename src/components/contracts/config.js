@@ -9,9 +9,11 @@ import Visibility from '@material-ui/icons/Visibility';
 
 import { Link } from "react-router-dom";
 import { defaultOptions } from '../../support/table';
-import { getOverlaps } from "./utils";
+import { getOverlaps, getOrgUnitAncestors } from "./utils";
+import DatePeriods  from "../../support/DatePeriods";
 
-export const contractsColumns = (t, classes) => [
+
+export const contractsColumns = (t, classes, contracts) => [
     {
      name: "id",
      label: "ID",
@@ -29,11 +31,21 @@ export const contractsColumns = (t, classes) => [
      options: {
       filter: false,
       sort: true,
+      customBodyRender: (orgUnitName, tableMeta, updateValue) => {
+        return (<Tooltip
+          arrow
+          title={getOrgUnitAncestors(contracts[tableMeta.rowIndex].orgUnit)}
+        >
+          <span>
+            {orgUnitName}
+          </span>
+        </Tooltip>)
+      }
      }
     },
     {
      name: "codes",
-     label: t('codes'),
+     label: t('groups'),
      options: {
       filter: true,
       sort: true,
@@ -48,6 +60,7 @@ export const contractsColumns = (t, classes) => [
      options: {
       filter: true,
       sort: true,
+      customBodyRender: (startPeriod, tableMeta, updateValue) => (DatePeriods.displayName(startPeriod, "monthYear"))
      }
     },
     {
@@ -56,6 +69,7 @@ export const contractsColumns = (t, classes) => [
      options: {
       filter: true,
       sort: true,
+      customBodyRender: (endPeriod, tableMeta, updateValue) => (DatePeriods.displayName(endPeriod, "monthYear"))
      }
     },
     {

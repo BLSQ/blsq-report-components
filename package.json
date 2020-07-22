@@ -67,5 +67,9 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "@material-ui/pickers": "^3.2.10",
+    "moment": "^2.27.0"
+  }
 }

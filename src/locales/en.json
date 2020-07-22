@@ -5,12 +5,13 @@
         "overlaps": ", {{overlap}} overlapping globaly",
         "results": "{{total}} contracts",
         "resultsFiltered": "{{filtered}} results filtered out {{total}} contracts",
-        "title": "Contracts",
-        "searchInfos": "Filter on name or contract codes"
+        "searchInfos": "Filter on name or contract codes",
+        "title": "Contracts"
     },
     "end_period": "End period",
     "filter": "Filter",
     "generated_at": "Generated on",
+    "group": "Group",
     "invoice": "Invoice",
     "limit_org_unit_under": "Limit to the child organisation unit",
     "missing_invoice_types": "Missing invoice...",

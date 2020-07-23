@@ -2,13 +2,14 @@
     "app_name": "Factures & Rapports",
     "codes": "Codes",
     "contracts": {
+        "activeAt": "Actif le",
         "overlaps": ", dont {{overlap}} se chevauchant",
         "results": "{{total}} contrats",
         "resultsFiltered": "{{filtered}} contrats filtrés sur {{total}}",
         "searchInfos": "Chercher sur le nom ou le code du contrat",
         "title": "Contrats"
     },
-    "end_period": "Fin de période",
+    "end_period": "Fin",
     "filter": "Filtrer",
     "generated_at": "Généré le",
     "group": "Groupe",
@@ -20,9 +21,10 @@
     "period": "Période",
     "print": "Imprimer",
     "report_and_invoices": "Rapports",
+    "search": "Recherche",
     "search_org_unit": "Rechercher ou sélectionner l'unité d'organisation parente",
     "show_avalaible_invoices": "Choisir une facture",
-    "start_period": "Début de période",
+    "start_period": "Début",
     "table": {
         "actions": {
             "edit": "Editer",

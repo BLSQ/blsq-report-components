@@ -2,13 +2,14 @@
     "app_name": "ORBF2 - Invoices & Reports",
     "codes": "Codes",
     "contracts": {
+        "activeAt": "Active at",
         "overlaps": ", {{overlap}} overlapping globaly",
         "results": "{{total}} contracts",
         "resultsFiltered": "{{filtered}} results filtered out {{total}} contracts",
         "searchInfos": "Filter on name or contract codes",
         "title": "Contracts"
     },
-    "end_period": "End period",
+    "end_period": "End",
     "filter": "Filter",
     "generated_at": "Generated on",
     "group": "Group",
@@ -20,9 +21,10 @@
     "period": "Period",
     "print": "Print",
     "report_and_invoices": "Report & Invoices",
+    "search": "Search",
     "search_org_unit": "Search or select parent organisation unit",
     "show_avalaible_invoices": "Select invoice",
-    "start_period": "Start period",
+    "start_period": "Start",
     "table": {
         "actions": {
             "edit": "Edit",

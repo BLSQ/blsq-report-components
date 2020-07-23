@@ -1,3 +1,5 @@
+import moment from 'moment'
+import DatePeriods  from "../../support/DatePeriods"
 
 export const toContractsById = (contracts) => {
     const contractsById = {};
@@ -36,19 +38,22 @@ export const toOverlappings = (contracts) => {
     return contractsOverlaps;
   };
 
-export const getFilteredContracts = (filter, contracts, contractsOverlaps) => {
-  const filteredContracts = filter
-  ? contracts.filter(
-      (c) =>
-        (filter === "overlaps" &&
+export const getFilteredContracts = (filters, contracts, contractsOverlaps) => {
+  let filteredContracts  = contracts;
+  Object.keys(filters).forEach(filterKey =>{
+    const filter = filters[filterKey]
+    filteredContracts = filteredContracts.filter(
+      (c) => {
+        return (filter === "overlaps" &&
           contractsOverlaps[c.id] &&
           contractsOverlaps[c.id].size > 0) ||
         c.codes.includes(filter) ||
         c.orgUnit.name.toLowerCase().includes(filter.toLowerCase()) ||
         c.startPeriod.includes(filter) ||
         c.endPeriod.includes(filter)
+      }
     )
-  : contracts;
+  })
   return filteredContracts;
 }
 
@@ -69,3 +74,25 @@ export const getOrgUnitAncestors = orgUnit => {
   }
   return ""
 }
+
+export const filterItems = (filters, items) => {
+    let filteredItems = [...items]
+    filters.forEach(filter => {
+        filteredItems = filter.onFilter(filter.value, filteredItems)
+    })
+    return filteredItems
+}
+
+export const getStartDateFromPeriod = (startPeriod) => {
+  const startPeriodMonths = DatePeriods.split(startPeriod, "monthly")
+  return moment(startPeriodMonths[0], 'YYYYMM')
+}
+export const getEndDateFromPeriod = (endPeriod) => {
+  const endPeriodMonths = DatePeriods.split(endPeriod, "monthly")
+  return moment(endPeriodMonths[endPeriodMonths.length - 1], 'YYYYMM').endOf('month')
+}
+
+export const getContractDates = (contract) => ({
+  startDate: getStartDateFromPeriod(contract.startPeriod),
+  endDate: getEndDateFromPeriod(contract.endPeriod)
+})

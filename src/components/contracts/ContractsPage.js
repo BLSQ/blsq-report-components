@@ -9,6 +9,7 @@ import {
 import { withStyles } from "@material-ui/core/styles";
 import MUIDataTable from "mui-datatables";
 import { withNamespaces } from 'react-i18next';
+import isEqual from "lodash/isEqual";
 
 import PluginRegistry from "../core/PluginRegistry";
 import ContractFilters from "./ContractFilters";
@@ -16,7 +17,7 @@ import { contractsColumns, contractsOptions } from "./config";
 import tablesStyles from "../styles/tables";
 import containersStyles from "../styles/containers";
 import LoadingSpinner from "../shared/LoadingSpinner";
-import { toContractsById, toOverlappings, getFilteredContracts } from "./utils";
+import { toContractsById, toOverlappings } from "./utils";
 
 const styles = theme => ({
     ...tablesStyles(theme),
@@ -29,11 +30,16 @@ class ContractsPage extends Component {
     this.state = {
       isLoading: false,
       contracts: [],
+      filteredContracts: [],
       contractsById: null,
       contractsOverlaps: {},
-      filter: undefined,
       contractService: PluginRegistry.extension("contracts.service"),
     };
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !isEqual(nextState.filteredContracts, this.state.filteredContracts)
+      || (nextState.isLoading !== this.state.isLoading)
   }
 
   setIsLoading(isLoading) {
@@ -55,6 +61,7 @@ class ContractsPage extends Component {
       const contracts = await contractService.findAll();
       this.setContracts({
         contracts,
+        filteredContracts: contracts,
         contractsById: toContractsById(contracts),
         contractsOverlaps: toOverlappings(contracts),
       })
@@ -68,8 +75,7 @@ class ContractsPage extends Component {
 
   render() {
     const { t, classes } = this.props;
-    const { contracts, filter, contractsOverlaps, isLoading, contractsById } = this.state;
-    const filteredContracts = getFilteredContracts(filter, contracts, contractsOverlaps);
+    const { contracts, contractsOverlaps, isLoading, contractsById, filteredContracts } = this.state;
     const overlapsTotal = Object.keys(contractsOverlaps).length;
     const tableTitle = (
       <span className={classes.tableTitle}>
@@ -106,8 +112,8 @@ class ContractsPage extends Component {
             </Typography>
           </Breadcrumbs>
           <ContractFilters
-            filter={filter}
-            setFilter={(filter) => this.setState({filter})}
+            contracts={contracts}
+            setFilteredContracts={newFilteredContracts => this.setState({filteredContracts: newFilteredContracts})}
             />
           <Divider />
           {

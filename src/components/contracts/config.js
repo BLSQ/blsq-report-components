@@ -9,8 +9,7 @@ import Visibility from '@material-ui/icons/Visibility';
 
 import { Link } from "react-router-dom";
 import { defaultOptions } from '../../support/table';
-import { getOverlaps, getOrgUnitAncestors } from "./utils";
-import DatePeriods  from "../../support/DatePeriods";
+import { getOverlaps, getOrgUnitAncestors, getStartDateFromPeriod, getEndDateFromPeriod } from "./utils";
 
 
 export const contractsColumns = (t, classes, contracts) => [
@@ -45,7 +44,7 @@ export const contractsColumns = (t, classes, contracts) => [
     },
     {
      name: "codes",
-     label: t('groups'),
+     label: t('group'),
      options: {
       filter: true,
       sort: true,
@@ -60,7 +59,7 @@ export const contractsColumns = (t, classes, contracts) => [
      options: {
       filter: true,
       sort: true,
-      customBodyRender: (startPeriod, tableMeta, updateValue) => (DatePeriods.displayName(startPeriod, "monthYear"))
+      customBodyRender: (startPeriod, tableMeta, updateValue) => getStartDateFromPeriod(startPeriod).format('DD/MM/YYYY')
      }
     },
     {
@@ -69,7 +68,7 @@ export const contractsColumns = (t, classes, contracts) => [
      options: {
       filter: true,
       sort: true,
-      customBodyRender: (endPeriod, tableMeta, updateValue) => (DatePeriods.displayName(endPeriod, "monthYear"))
+      customBodyRender: (endPeriod, tableMeta, updateValue) => getEndDateFromPeriod(endPeriod).format('DD/MM/YYYY')
      }
     },
     {
@@ -101,6 +100,7 @@ export const contractsOptions = (t, contracts, contractsById, contractsOverlaps,
     ...defaultOptions(t),
     search: false,
     filter: false,
+    print: false,
     setRowProps: (row, dataIndex, rowIndex) => {
         const contract = contracts[dataIndex]
         const isOverlaping = getOverlaps(contract.id, contractsOverlaps, contractsById).length > 0
@@ -109,3 +109,4 @@ export const contractsOptions = (t, contracts, contractsById, contractsOverlaps,
       };
     },
 })
+

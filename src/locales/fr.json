@@ -1,5 +1,6 @@
 {
     "app_name": "Factures & Rapports",
+    "clear": "Supprimer",
     "codes": "Codes",
     "contracts": {
         "activeAt": "Actif le",
@@ -13,6 +14,7 @@
     "filter": "Filtrer",
     "generated_at": "Généré le",
     "group": "Groupe",
+    "groups": "Groupes",
     "invoice": "Facture",
     "limit_org_unit_under": "Limiter à l'unité d'organisation enfant",
     "missing_invoice_types": "Facture introuvable...",

@@ -5,6 +5,7 @@ import {
   Breadcrumbs,
   Paper,
   Divider,
+  Box,
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import MUIDataTable from "mui-datatables";
@@ -107,9 +108,11 @@ class ContractsPage extends Component {
         }
         <Paper square className={classes.rootContainer}>
           <Breadcrumbs aria-label="breadcrumb">
-            <Typography variant="h5" component="h5" gutterBottom  color="textPrimary">
-              {t("contracts.title")}
-            </Typography>
+            <Box mb={2}>
+              <Typography variant="h5" component="h5" gutterBottom  color="textPrimary">
+                {t("contracts.title")}
+              </Typography>
+            </Box>
           </Breadcrumbs>
           <ContractFilters
             contracts={contracts}

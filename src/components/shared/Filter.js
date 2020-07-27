@@ -7,23 +7,30 @@ import {
     Input,
     InputAdornment,
     Tooltip,
+    IconButton,
     InputLabel,
 } from "@material-ui/core";
-import moment from 'moment';
 import { makeStyles } from '@material-ui/core/styles';
 import SearchIcon from "@material-ui/icons/Search";
 import InfoIcon from '@material-ui/icons/Info';
-import EventIcon from '@material-ui/icons/Event';
-import { DatePicker } from '@material-ui/pickers';
+import Clear from '@material-ui/icons/Clear';
+import { KeyboardDatePicker } from '@material-ui/pickers';
 
 
 const styles = theme => ({
   formControl: {
     width: "100%"
   },
-  label: {
-      color: 'black',
+  searchLabel: {
+      paddingLeft: theme.spacing(4)
   },
+  clearDateButton: {
+      marginRight: theme.spacing(2),
+      padding: 0,
+      position: 'absolute',
+      right: theme.spacing(5),
+      top: 20
+  }
 });
 
 const useStyles = makeStyles((theme) => styles(theme));
@@ -41,16 +48,17 @@ const Filter = ({filter, setFilterValue, onSearch, t}) => {
     case "search": {
         return (
           <FormControl className={classes.formControl}>
-            <InputLabel className={classes.label}>
+            <InputLabel shrink={filter.value !== ""} className={classes.searchLabel}>
               {t(filter.key)}
             </InputLabel>
             <Input
+              id={filter.id}
               fullWidth={true}
               value={filter.value}
               onKeyPress={(e) => handleKeyPressed(e)}
               startAdornment={
                 <InputAdornment position="start">
-                  <SearchIcon />
+                  <SearchIcon color="action" />
                 </InputAdornment>
             }
               endAdornment={
@@ -60,7 +68,7 @@ const Filter = ({filter, setFilterValue, onSearch, t}) => {
                       arrow
                       title={t(filter.keyInfo)}
                   >
-                      <InfoIcon color="primary" />
+                      <InfoIcon color="action" />
                     </Tooltip>
                   </InputAdornment>
                 : null
@@ -73,29 +81,43 @@ const Filter = ({filter, setFilterValue, onSearch, t}) => {
     case "date": {
         return (
           <FormControl className={classes.formControl}>
-            <DatePicker
+            <KeyboardDatePicker
+              id={filter.id}
               autoOk
               disableToolbar
-              InputLabelProps={{
-                        className: classes.label,
-                        shrink: filter.value !== '',
-                    }}
-              InputProps={{
-              endAdornment:(
-                <InputAdornment position="end">
-                  <EventIcon color="primary" />
-                </InputAdornment>)
-            }}
               variant="inline"
+              InputLabelProps={{
+                        shrink: Boolean(filter.value),
+                    }}
               format="DD/MM/yyyy"
               label={t(filter.key)}
-              value={filter.value}
+              helperText=""
+              value={filter.value === '' ? null : filter.value}
               onChange={(newValue) =>
-                        setFilterValue(
-                            1, moment(newValue).format('yyyy/MM/DD'),
-                        )
-                    }
-                />
+                    setFilterValue(
+                        1, newValue,
+                    )
+                }
+            />
+
+            {
+                    filter.value
+                    && (
+                    <Tooltip
+                      arrow
+                      title={t("clear")}
+                                >
+                      <IconButton
+                        color="inherit"
+                        onClick={() => setFilterValue(
+                                  1, null,
+                              )}
+                        className={classes.clearDateButton}
+                                >
+                        <Clear color="primary" />
+                      </IconButton>
+                    </Tooltip>)
+            }
           </FormControl>
         );
     }

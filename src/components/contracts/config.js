@@ -14,17 +14,6 @@ import { getOverlaps, getOrgUnitAncestors, getStartDateFromPeriod, getEndDateFro
 
 export const contractsColumns = (t, classes, contracts) => [
     {
-     name: "id",
-     label: "ID",
-     options: {
-      filter: false,
-      sort: false,
-      style: {
-          color: 'red',
-      }
-     }
-    },
-    {
      name: "orgUnit.name",
      label: t('orgUnit_name'),
      options: {

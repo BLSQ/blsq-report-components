@@ -1,5 +1,6 @@
 {
     "app_name": "ORBF2 - Invoices & Reports",
+    "clear": "Clear",
     "codes": "Codes",
     "contracts": {
         "activeAt": "Active at",
@@ -13,6 +14,7 @@
     "filter": "Filter",
     "generated_at": "Generated on",
     "group": "Group",
+    "groups": "Groups",
     "invoice": "Invoice",
     "limit_org_unit_under": "Limit to the child organisation unit",
     "missing_invoice_types": "Missing invoice...",

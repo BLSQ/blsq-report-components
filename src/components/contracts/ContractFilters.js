@@ -29,38 +29,28 @@ const ContractFilters = ({setFilteredContracts, t, contracts}) => {
     setIsTouched(false)
     setFilteredContracts(filterItems(filters, contracts))
   }
-
+  console.log('new Array(4)', new Array(4))
   return (
     <Box mb={3}>
       <Grid container item xs={12} spacing={4}>
-        <Grid item xs={12} md={3}>
-          {
-            filters.filter(f => f.column === 1).map(filter => (
-              <Filter
-                key={filter.key}
-                filter={filter}
-                onSearch={handleSearch}
-                setFilterValue={setFilterValue}
-              />
-            ))
-          }
-        </Grid>
-
-        <Grid item xs={12} md={3} >
-
-          {
-            filters.filter(f => f.column === 2).map(filter => (
-              <Filter
-                key={filter.key}
-                filter={filter}
-                onSearch={handleSearch}
-                setFilterValue={setFilterValue}
-              />
-            ))
-          }
-        </Grid>
-        <Grid item xs={12} md={3} />
-        <Grid container item xs={12} md={3} justify="flex-end">
+        {
+          [1, 2, 3, 4].map((column) => (
+            <Grid item xs={12} md={3} key={`column-${column}`}>
+              {
+                filters.filter(f => f.column === column).map(filter => (
+                  <Filter
+                    key={filter.key}
+                    filter={filter}
+                    onSearch={handleSearch}
+                    setFilterValue={setFilterValue}
+                  />
+                ))
+              }
+            </Grid>
+          ))}
+      </Grid>
+      <Grid container item xs={12} spacing={4}>
+        <Grid container item xs={12} justify="flex-end">
           <Button
             onClick={handleSearch}
             color="primary"

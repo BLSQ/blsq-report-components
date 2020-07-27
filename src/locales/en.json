@@ -4,6 +4,7 @@
     "codes": "Codes",
     "contracts": {
         "activeAt": "Active at",
+        "onlyOverlaps": "Only with overlaps",
         "overlaps": ", {{overlap}} overlapping globaly",
         "results": "{{total}} contracts",
         "resultsFiltered": "{{filtered}} results filtered out {{total}} contracts",

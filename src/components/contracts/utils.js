@@ -75,10 +75,10 @@ export const getOrgUnitAncestors = orgUnit => {
   return ""
 }
 
-export const filterItems = (filters, items) => {
+export const filterItems = (filters, items, extra) => {
     let filteredItems = [...items]
     filters.forEach(filter => {
-        filteredItems = filter.onFilter(filter.value, filteredItems)
+        filteredItems = filter.onFilter(filter.value, filteredItems, extra)
     })
     return filteredItems
 }

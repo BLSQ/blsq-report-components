@@ -73,7 +73,7 @@ export const contractsColumns = (t, classes, contracts) => [
           arrow
          >
           <span>
-            <IconButton>
+            <IconButton size="small" >
               <Link to={`/contracts/${orgUnitId}`} className={classes.iconLink}>
                 <Visibility />
               </Link>

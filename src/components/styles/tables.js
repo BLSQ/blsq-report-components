@@ -11,6 +11,9 @@ const tables = (theme) => ({
     },
     iconLink: {
         color: 'inherit',
+        height: 24,
+        display: 'flex',
+        alignItems: 'baseline',
     },
     chip: {
         marginRight: theme.spacing(2),

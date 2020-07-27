@@ -13,6 +13,9 @@ import { getContractDates }  from "./utils"
         * @property {number} column - column where to display the filter (1, 2 ,3, 4)
         * @property {any} value - default value
         * @property {function} onFilter - function used to filter the items
+        * @property {array} options - Optionnal - array of options for the select type
+            * @property {string} label - label of the option
+            * @property {any} value - value of the option
  */
 
 const filters = [
@@ -32,7 +35,7 @@ const filters = [
           )
     },
     {
-        id: "activeAt",
+        id: "active_at",
         key: "contracts.activeAt",
         type: "date",
         column: 2,
@@ -48,6 +51,80 @@ const filters = [
                 })
         }
     },
+    {
+        id: "groups",
+        key: "groups",
+        type: "select",
+        multi: true,
+        column: 3,
+        value: [],
+        options: [
+            {
+                label: "PMA",
+                value: "PMA",
+            },
+            {
+                label: "PCA",
+                value: "PCA",
+            },
+            {
+                label: "Province",
+                value: "province",
+            }
+        ],
+        onFilter: (groups, contracts) => {
+            if (groups.length === 0) {
+                return contracts
+            }
+
+            return contracts.filter(
+                (c) => c.codes.some(c=> groups.findIndex(g => g.value === c) >= 0))
+        }
+    },
+    {
+        id: "only_overlaps",
+        key: "contracts.onlyOverlaps",
+        type: "checkbox",
+        column: 4,
+        value: false,
+        onFilter: (onlyOverlaps, contracts, contractsOverlaps) => {
+            if (!onlyOverlaps) {
+                return contracts
+            }
+            return contracts.filter(
+                (c) => contractsOverlaps[c.id] &&
+                contractsOverlaps[c.id].size > 0)
+        }
+    },
+    // {
+    //     id: "groupsBis",
+    //     key: "groups",
+    //     type: "select",
+    //     column: 4,
+    //     value: "",
+    //     options: [
+    //         {
+    //             label: "PMA",
+    //             value: "PMA",
+    //         },
+    //         {
+    //             label: "PCA",
+    //             value: "PCA",
+    //         },
+    //         {
+    //             label: "Province",
+    //             value: "province",
+    //         }
+    //     ],
+    //     onFilter: (group, contracts) => {
+    //         if (!group || (group && group.value === "")) {
+    //             return contracts
+    //         }
+
+    //         return contracts.filter(
+    //             (c) => c.codes.includes(group.value))
+    //     }
+    // }
 ]
 
 export default filters;

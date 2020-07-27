@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withNamespaces } from "react-i18next";
+import moment from 'moment'
 
 import {
     Box,
@@ -13,29 +14,43 @@ import filtersConfig from "./filters";
 import { filterItems } from "./utils";
 
 
-const ContractFilters = ({setFilteredContracts, t, contracts}) => {
+const ContractFilters = ({setFilteredContracts, t, contracts, contractsOverlaps}) => {
   const [filters, setFilters] = React.useState(filtersConfig);
   const [isTouched, setIsTouched] = React.useState(false);
-  const setFilterValue = (index, value) => {
+  const [hasError, setHasError] = React.useState(false);
+
+
+  const checkErrors = () => {
+    setHasError(false)
+    filters.forEach(f => {
+      if (f.type === "date" && f.value && !moment(f.value).isValid() && !hasError) {
+        setHasError(true)
+      }
+    })
+  }
+  const setFilterValue = (filterId, value) => {
     const newFilters = [...filters]
-    if (newFilters[index].value !== value) {
-      newFilters[index].value = value
+    const filterIndex = newFilters.findIndex(f => f.id === filterId)
+    const filter = newFilters[filterIndex]
+    if (filterIndex !== -1 && filter && filter.value !== value) {
+      filter.value = value
       setFilters(newFilters)
       setIsTouched(true)
+      checkErrors()
     }
   }
 
   const handleSearch = () => {
     setIsTouched(false)
-    setFilteredContracts(filterItems(filters, contracts))
+    setFilteredContracts(filterItems(filters, contracts, contractsOverlaps))
   }
-  console.log('new Array(4)', new Array(4))
   return (
     <Box mb={3}>
       <Grid container item xs={12} spacing={4}>
         {
           [1, 2, 3, 4].map((column) => (
-            <Grid item xs={12} md={3} key={`column-${column}`}>
+            <Grid container item xs={12} md={3} key={`column-${column}`}
+              alignItems="center">
               {
                 filters.filter(f => f.column === column).map(filter => (
                   <Filter
@@ -55,7 +70,7 @@ const ContractFilters = ({setFilteredContracts, t, contracts}) => {
             onClick={handleSearch}
             color="primary"
             variant="contained"
-            disabled={!isTouched}
+            disabled={!isTouched || hasError}
         >
             {t('filter')}
           </Button>
@@ -67,6 +82,7 @@ const ContractFilters = ({setFilteredContracts, t, contracts}) => {
 
 ContractFilters.propTypes = {
   contracts: PropTypes.array.isRequired,
+  contractsOverlaps: PropTypes.object.isRequired,
   setFilteredContracts: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired,
 };

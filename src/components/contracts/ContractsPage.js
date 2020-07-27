@@ -100,6 +100,7 @@ class ContractsPage extends Component {
       }.
       </span>
     )
+    console.log('filteredContracts', filteredContracts)
     return (
       <>
         {
@@ -116,6 +117,7 @@ class ContractsPage extends Component {
           </Breadcrumbs>
           <ContractFilters
             contracts={contracts}
+            contractsOverlaps={contractsOverlaps}
             setFilteredContracts={newFilteredContracts => this.setState({filteredContracts: newFilteredContracts})}
             />
           <Divider />
@@ -123,6 +125,8 @@ class ContractsPage extends Component {
               !isLoading
               && (
                 <MUIDataTable
+                  selectableRows="none"
+                  selectableRowsHideCheckboxes={true}
                   classes={{
                       paper: classes.tableContainer,
                   }}

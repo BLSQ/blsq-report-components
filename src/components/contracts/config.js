@@ -37,6 +37,7 @@ export const contractsColumns = (t, classes, contracts) => [
      options: {
       filter: true,
       sort: true,
+      sortCompare: (order) => (a, b) => (a.data < b.data ? -1 : 1) * (order === "desc" ? 1 : -1),
       customBodyRender: (codes, tableMeta, updateValue) => (codes.map((code) => (
         <Chip key={code} label={code}  className={classes.chip} />
        )))

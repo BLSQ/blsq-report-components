@@ -16,8 +16,8 @@ import { getContractDates }  from "./utils"
         * @property {array} options - Optionnal - array of options for the select type
             * @property {string} label - label of the option
             * @property {any} value - value of the option
-        * @property {function} urlEncode - function used encode filter into url
-        * @property {function} urlDecode - function used decode filter into url
+        * @property {function} urlEncode - Optionnal - function used encode filter into url
+        * @property {function} urlDecode - Optionnal - function used decode filter from url
  */
 
 const filters = [

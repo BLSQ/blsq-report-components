@@ -38,6 +38,7 @@ const styles = (theme) => ({
   },
   appFrame: {
     height: "100%",
+    minHeight: "100vh",
     zIndex: 1,
     overflow: "auto",
     position: "relative",

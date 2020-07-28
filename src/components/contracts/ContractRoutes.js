@@ -8,8 +8,7 @@ const contractsRoute = (props) => {
     <Route
       key="contractsRoute"
       path="/contracts/"
-      exact={true}
-      component={(routerProps) => (
+      render={(routerProps) => (
         <ContractsPage
           {...routerProps}
           periodFormat={props.periodFormat}
@@ -21,7 +20,8 @@ const contractsRoute = (props) => {
     <Route
       key="contractRoute"
       path="/contracts/:orgUnitId"
-      component={(routerProps) => (
+      exact={true}
+      render={(routerProps) => (
         <ContractPage
           {...routerProps}
           periodFormat={props.periodFormat}

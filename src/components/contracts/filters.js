@@ -16,6 +16,8 @@ import { getContractDates }  from "./utils"
         * @property {array} options - Optionnal - array of options for the select type
             * @property {string} label - label of the option
             * @property {any} value - value of the option
+        * @property {function} urlEncode - function used encode filter into url
+        * @property {function} urlDecode - function used decode filter into url
  */
 
 const filters = [
@@ -32,7 +34,7 @@ const filters = [
             c.orgUnit.name.toLowerCase().includes(value.toLowerCase()) ||
             c.startPeriod.includes(value) ||
             c.endPeriod.includes(value)
-          )
+          ),
     },
     {
         id: "active_at",
@@ -49,7 +51,8 @@ const filters = [
                     const contractDates = getContractDates(c)
                     return moment(value).isBetween(contractDates.startDate, contractDates.endDate)
                 })
-        }
+        },
+        urlDecode: (value) => !value || value === "" ? null : value
     },
     {
         id: "groups",
@@ -79,7 +82,9 @@ const filters = [
 
             return contracts.filter(
                 (c) => c.codes.some(c=> groups.findIndex(g => g.value === c) >= 0))
-        }
+        },
+        urlEncode: (value) => !value || value.length === 0 ? "" : JSON.stringify(value),
+        urlDecode: (value) => !value || value === "" ? [] : JSON.parse(value)
     },
     {
         id: "only_overlaps",
@@ -94,7 +99,9 @@ const filters = [
             return contracts.filter(
                 (c) => contractsOverlaps[c.id] &&
                 contractsOverlaps[c.id].size > 0)
-        }
+        },
+        urlEncode: (value) => value ? 'true' : 'false',
+        urlDecode: (value) => value === 'true'
     },
     // {
     //     id: "groupsBis",
@@ -123,7 +130,9 @@ const filters = [
 
     //         return contracts.filter(
     //             (c) => c.codes.includes(group.value))
-    //     }
+    //     },
+        // urlEncode: (value) => !value || value.length === 0 ? "" : JSON.stringify(value),
+        // urlDecode: (value) => !value || value === "" ? [] : JSON.parse(value)
     // }
 ]
 

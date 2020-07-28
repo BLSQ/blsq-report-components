@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
+import { withRouter } from "react-router-dom";
 import { withNamespaces } from "react-i18next";
 import moment from 'moment'
+import qs from 'qs'
 
 import {
     Box,
@@ -14,11 +16,32 @@ import filtersConfig from "./filters";
 import { filterItems } from "./utils";
 
 
-const ContractFilters = ({setFilteredContracts, t, contracts, contractsOverlaps}) => {
+const ContractFilters = ({
+  setFilteredContracts,
+  t,
+  contracts,
+  contractsOverlaps,
+  history,
+  location,
+}) => {
   const [filters, setFilters] = React.useState(filtersConfig);
   const [isTouched, setIsTouched] = React.useState(false);
   const [hasError, setHasError] = React.useState(false);
 
+  useEffect(() => {
+    const filtersFromUrl = qs.parse(location.search.substr(1))
+    const newFilters = []
+    filters.forEach((f, index) => {
+      let queryValue = f.urlDecode ? f.urlDecode(filtersFromUrl[f.id]) : filtersFromUrl[f.id]
+      newFilters[index] = {
+        ...f,
+        value: queryValue
+      }
+    })
+    const filteredContracts = filterItems(newFilters, contracts, contractsOverlaps)
+    setFilteredContracts(filteredContracts)
+    setFilters(newFilters)
+  }, []);
 
   const checkErrors = () => {
     setHasError(false)
@@ -28,15 +51,30 @@ const ContractFilters = ({setFilteredContracts, t, contracts, contractsOverlaps}
       }
     })
   }
+
+  const getQueryParams= () => {
+    let queryParams = {}
+    filters.forEach((f) => {
+      queryParams[f.id] = f.urlEncode ? f.urlEncode(f.value) : f.value
+    })
+    queryParams = qs.stringify(queryParams)
+    return queryParams
+  }
+
   const setFilterValue = (filterId, value) => {
     const newFilters = [...filters]
     const filterIndex = newFilters.findIndex(f => f.id === filterId)
     const filter = newFilters[filterIndex]
+
     if (filterIndex !== -1 && filter && filter.value !== value) {
       filter.value = value
       setFilters(newFilters)
       setIsTouched(true)
       checkErrors()
+      history.push({
+        pathname: location.pathname,
+        search: getQueryParams()
+      });
     }
   }
 
@@ -81,10 +119,12 @@ const ContractFilters = ({setFilteredContracts, t, contracts, contractsOverlaps}
 };
 
 ContractFilters.propTypes = {
+  history: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
   contracts: PropTypes.array.isRequired,
   contractsOverlaps: PropTypes.object.isRequired,
   setFilteredContracts: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired,
 };
 
-export default withNamespaces()(ContractFilters);
+export default withRouter(withNamespaces()(ContractFilters));

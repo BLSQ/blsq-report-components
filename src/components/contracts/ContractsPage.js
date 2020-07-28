@@ -37,7 +37,6 @@ class ContractsPage extends Component {
       contractService: PluginRegistry.extension("contracts.service"),
     };
   }
-
   shouldComponentUpdate(nextProps, nextState) {
     return !isEqual(nextState.filteredContracts, this.state.filteredContracts)
       || (nextState.isLoading !== this.state.isLoading)
@@ -100,7 +99,6 @@ class ContractsPage extends Component {
       }.
       </span>
     )
-    console.log('filteredContracts', filteredContracts)
     return (
       <>
         {
@@ -115,26 +113,28 @@ class ContractsPage extends Component {
               </Typography>
             </Box>
           </Breadcrumbs>
-          <ContractFilters
-            contracts={contracts}
-            contractsOverlaps={contractsOverlaps}
-            setFilteredContracts={newFilteredContracts => this.setState({filteredContracts: newFilteredContracts})}
-            />
-          <Divider />
           {
               !isLoading
               && (
-                <MUIDataTable
-                  selectableRows="none"
-                  selectableRowsHideCheckboxes={true}
-                  classes={{
+                <>
+                  <ContractFilters
+                    contracts={contracts}
+                    contractsOverlaps={contractsOverlaps}
+                    setFilteredContracts={newFilteredContracts => this.setState({filteredContracts: newFilteredContracts})}
+                  />
+                  <Divider />
+                  <MUIDataTable
+                    selectableRows="none"
+                    selectableRowsHideCheckboxes={true}
+                    classes={{
                       paper: classes.tableContainer,
                   }}
-                  title={contracts.length > 0 ? tableTitle : ''}
-                  data={filteredContracts}
-                  columns={contractsColumns(t, classes, contracts)}
-                  options={contractsOptions(t, contracts, contractsById, contractsOverlaps, classes)}
+                    title={contracts.length > 0 ? tableTitle : ''}
+                    data={filteredContracts}
+                    columns={contractsColumns(t, classes, contracts)}
+                    options={contractsOptions(t, contracts, contractsById, contractsOverlaps, classes)}
                   />
+                  </>
               )
           }
         </Paper>

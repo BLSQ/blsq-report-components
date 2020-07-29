@@ -8,6 +8,7 @@ const contractsRoute = (props) => {
     <Route
       key="contractsRoute"
       path="/contracts/"
+      exact={true}
       render={(routerProps) => (
         <ContractsPage
           {...routerProps}
@@ -20,7 +21,6 @@ const contractsRoute = (props) => {
     <Route
       key="contractRoute"
       path="/contracts/:orgUnitId"
-      exact={true}
       render={(routerProps) => (
         <ContractPage
           {...routerProps}

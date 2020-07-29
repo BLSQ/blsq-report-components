@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 import { withNamespaces } from "react-i18next";
 import moment from 'moment'
-import qs from 'qs'
 
 import {
     Box,
@@ -13,7 +12,7 @@ import {
 
 import Filter from "../shared/Filter"
 import filtersConfig from "./filters";
-import { filterItems } from "./utils";
+import { filterItems, encodeFiltersQueryParams, decodeFiltersQueryParams } from "./utils";
 
 
 const ContractFilters = ({
@@ -23,21 +22,14 @@ const ContractFilters = ({
   contractsOverlaps,
   history,
   location,
+  changeTable,
 }) => {
   const [filters, setFilters] = React.useState(filtersConfig);
   const [isTouched, setIsTouched] = React.useState(false);
   const [hasError, setHasError] = React.useState(false);
 
   useEffect(() => {
-    const filtersFromUrl = qs.parse(location.search.substr(1))
-    const newFilters = []
-    filters.forEach((f, index) => {
-      let queryValue = f.urlDecode ? f.urlDecode(filtersFromUrl[f.id]) : filtersFromUrl[f.id]
-      newFilters[index] = {
-        ...f,
-        value: queryValue
-      }
-    })
+    const newFilters = decodeFiltersQueryParams(location, filters)
     const filteredContracts = filterItems(newFilters, contracts, contractsOverlaps)
     setFilteredContracts(filteredContracts)
     setFilters(newFilters)
@@ -52,15 +44,6 @@ const ContractFilters = ({
     })
   }
 
-  const getQueryParams= () => {
-    let queryParams = {}
-    filters.forEach((f) => {
-      queryParams[f.id] = f.urlEncode ? f.urlEncode(f.value) : f.value
-    })
-    queryParams = qs.stringify(queryParams)
-    return queryParams
-  }
-
   const setFilterValue = (filterId, value) => {
     const newFilters = [...filters]
     const filterIndex = newFilters.findIndex(f => f.id === filterId)
@@ -73,7 +56,7 @@ const ContractFilters = ({
       checkErrors()
       history.push({
         pathname: location.pathname,
-        search: getQueryParams()
+        search: encodeFiltersQueryParams(location, filters)
       });
     }
   }
@@ -81,6 +64,7 @@ const ContractFilters = ({
   const handleSearch = () => {
     setIsTouched(false)
     setFilteredContracts(filterItems(filters, contracts, contractsOverlaps))
+    changeTable('page', 0)
   }
   return (
     <Box mb={3}>
@@ -124,6 +108,7 @@ ContractFilters.propTypes = {
   contracts: PropTypes.array.isRequired,
   contractsOverlaps: PropTypes.object.isRequired,
   setFilteredContracts: PropTypes.func.isRequired,
+  changeTable: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired,
 };
 

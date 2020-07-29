@@ -114,7 +114,7 @@ const Filter = ({filter, setFilterValue, onSearch, t}) => {
               value={filter.value === '' ? null : filter.value}
               onChange={(newValue) =>
                     setFilterValue(
-                        filter.id, newValue ? newValue.format('DD/MM/YYYY') : null,
+                        filter.id, newValue ? newValue.format('MM/DD/YYYY') : null,
                     )
                 }
             />
@@ -143,11 +143,12 @@ const Filter = ({filter, setFilterValue, onSearch, t}) => {
     case "select":{
         let shrink = (filter.value && filter.value !== "") || selectInputValue !== "";
         if (filter.multi) {
-          shrink =  filter.value.length > 0
+          shrink =  filter.value && filter.value.length > 0 || selectInputValue !== ""
         }
         return (
           <FormControl className={classes.formControl}>
             <Autocomplete
+              noOptionsText={t('noResult')}
               multiple={filter.multi}
               id={filter.id}
               value={filter.value}

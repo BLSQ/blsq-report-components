@@ -11,14 +11,15 @@ import { withStyles } from "@material-ui/core/styles";
 import MUIDataTable from "mui-datatables";
 import { withNamespaces } from 'react-i18next';
 import isEqual from "lodash/isEqual";
+import { withRouter } from "react-router-dom";
 
 import PluginRegistry from "../core/PluginRegistry";
 import ContractFilters from "./ContractFilters";
-import { contractsColumns, contractsOptions } from "./config";
+import { contractsTableColumns, contractsTableOptions } from "./config";
 import tablesStyles from "../styles/tables";
 import containersStyles from "../styles/containers";
 import LoadingSpinner from "../shared/LoadingSpinner";
-import { toContractsById, toOverlappings } from "./utils";
+import { toContractsById, toOverlappings, encodeTableQueryParams, decodeTableQueryParams } from "./utils";
 
 const styles = theme => ({
     ...tablesStyles(theme),
@@ -37,6 +38,7 @@ class ContractsPage extends Component {
       contractService: PluginRegistry.extension("contracts.service"),
     };
   }
+
   shouldComponentUpdate(nextProps, nextState) {
     return !isEqual(nextState.filteredContracts, this.state.filteredContracts)
       || (nextState.isLoading !== this.state.isLoading)
@@ -52,6 +54,14 @@ class ContractsPage extends Component {
     this.setState({
       ...data,
     })
+  }
+
+  onTableChange(key, value) {
+    const { location, history } = this.props;
+    history.push({
+      pathname: location.pathname,
+      search: encodeTableQueryParams(location, key, value )
+    });
   }
 
   async fetchData() {
@@ -74,7 +84,7 @@ class ContractsPage extends Component {
   }
 
   render() {
-    const { t, classes } = this.props;
+    const { t, classes, location } = this.props;
     const { contracts, contractsOverlaps, isLoading, contractsById, filteredContracts } = this.state;
     const overlapsTotal = Object.keys(contractsOverlaps).length;
     const tableTitle = (
@@ -119,20 +129,27 @@ class ContractsPage extends Component {
                 <>
                   <ContractFilters
                     contracts={contracts}
+                    changeTable={(key, value) => this.onTableChange(key, value)}
                     contractsOverlaps={contractsOverlaps}
                     setFilteredContracts={newFilteredContracts => this.setState({filteredContracts: newFilteredContracts})}
                   />
                   <Divider />
                   <MUIDataTable
-                    selectableRows="none"
-                    selectableRowsHideCheckboxes={true}
                     classes={{
                       paper: classes.tableContainer,
-                  }}
+                    }}
                     title={contracts.length > 0 ? tableTitle : ''}
                     data={filteredContracts}
-                    columns={contractsColumns(t, classes, contracts)}
-                    options={contractsOptions(t, contracts, contractsById, contractsOverlaps, classes)}
+                    columns={contractsTableColumns(t, classes, contracts)}
+                    options={contractsTableOptions(
+                      t,
+                      contracts,
+                      contractsById,
+                      contractsOverlaps,
+                      classes,
+                      (key, value) => this.onTableChange(key, value),
+                      decodeTableQueryParams(location),
+                    )}
                   />
                   </>
               )
@@ -145,7 +162,9 @@ class ContractsPage extends Component {
 
 ContractsPage.propTypes = {
   t: PropTypes.func.isRequired,
+  location: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
-export default withNamespaces()(withStyles(styles)(ContractsPage));
+export default withRouter(withNamespaces()(withStyles(styles)(ContractsPage)));

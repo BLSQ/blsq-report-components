@@ -20,6 +20,7 @@
     "limit_org_unit_under": "Limit to the child organisation unit",
     "missing_invoice_types": "Missing invoice...",
     "name": "Name",
+    "noResult": "No result",
     "orgUnit_name": "Organisation Unit name",
     "period": "Period",
     "print": "Print",

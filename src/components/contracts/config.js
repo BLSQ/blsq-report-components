@@ -12,7 +12,7 @@ import { defaultOptions } from '../../support/table';
 import { getOverlaps, getOrgUnitAncestors, getStartDateFromPeriod, getEndDateFromPeriod } from "./utils";
 
 
-export const contractsColumns = (t, classes, contracts) => [
+export const contractsTableColumns = (t, classes, contracts) => [
     {
      name: "orgUnit.name",
      label: t('orgUnit_name'),
@@ -49,7 +49,16 @@ export const contractsColumns = (t, classes, contracts) => [
      options: {
       filter: true,
       sort: true,
-      customBodyRender: (startPeriod, tableMeta, updateValue) => getStartDateFromPeriod(startPeriod).format('DD/MM/YYYY')
+      customBodyRender: (startPeriod, tableMeta, updateValue) => {
+        return (<Tooltip
+          arrow
+          title={startPeriod}
+        >
+          <span>
+            {getStartDateFromPeriod(startPeriod).format('DD/MM/YYYY')}
+          </span>
+        </Tooltip>)
+      }
      }
     },
     {
@@ -58,7 +67,16 @@ export const contractsColumns = (t, classes, contracts) => [
      options: {
       filter: true,
       sort: true,
-      customBodyRender: (endPeriod, tableMeta, updateValue) => getEndDateFromPeriod(endPeriod).format('DD/MM/YYYY')
+      customBodyRender: (endPeriod, tableMeta, updateValue) => {
+        return (<Tooltip
+          arrow
+          title={endPeriod}
+        >
+          <span>
+            {getEndDateFromPeriod(endPeriod).format('DD/MM/YYYY')}
+          </span>
+        </Tooltip>)
+      }
      }
     },
     {
@@ -86,11 +104,34 @@ export const contractsColumns = (t, classes, contracts) => [
     },
    ];
 
-export const contractsOptions = (t, contracts, contractsById, contractsOverlaps, classes) => ({
+export const contractsTableOptions = (
+  t,
+  contracts,
+  contractsById,
+  contractsOverlaps,
+  classes,
+  onTableChange,
+  tableParams,
+) => ({
     ...defaultOptions(t),
     search: false,
     filter: false,
     print: false,
+    rowsPerPage: tableParams.rowsPerPage,
+    page: tableParams.page,
+    sortOrder: {
+      name: tableParams.sort.column,
+      direction: tableParams.sort.direction
+    },
+    selectableRowsHideCheckboxes: false,
+    selectableRows: 'none',
+    rowsPerPageOptions: [10,25,50,100],
+    onChangeRowsPerPage: numberOfRows => {
+      onTableChange('page', 0)
+      onTableChange('rowsPerPage', numberOfRows)
+    },
+    onChangePage: currentPage => onTableChange('page', currentPage),
+    onColumnSortChange: (column, direction) => onTableChange('sort', {column, direction}),
     setRowProps: (row, dataIndex, rowIndex) => {
         const contract = contracts[dataIndex]
         const isOverlaping = getOverlaps(contract.id, contractsOverlaps, contractsById).length > 0

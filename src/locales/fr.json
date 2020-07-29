@@ -20,6 +20,7 @@
     "limit_org_unit_under": "Limiter à l'unité d'organisation enfant",
     "missing_invoice_types": "Facture introuvable...",
     "name": "Nom",
+    "noResult": "Aucun résultat",
     "orgUnit_name": "Nom d'unité d'organisation",
     "period": "Période",
     "print": "Imprimer",

@@ -1,4 +1,5 @@
 import moment from 'moment'
+import qs from 'qs'
 import DatePeriods  from "../../support/DatePeriods"
 
 export const toContractsById = (contracts) => {
@@ -96,3 +97,49 @@ export const getContractDates = (contract) => ({
   startDate: getStartDateFromPeriod(contract.startPeriod),
   endDate: getEndDateFromPeriod(contract.endPeriod)
 })
+
+export const encodeFiltersQueryParams= (location, filters) => {
+  let queryParams = {
+    ...qs.parse(location.search.substr(1)),
+  }
+  filters.forEach((f) => {
+    queryParams[f.id] = f.urlEncode ? f.urlEncode(f.value) : f.value
+  })
+  queryParams = qs.stringify(queryParams)
+  return queryParams
+}
+
+export const decodeFiltersQueryParams= (location, filters) => {
+  const filtersFromUrl = qs.parse(location.search.substr(1))
+  const newFilters = []
+  filters.forEach((f, index) => {
+    let queryValue = f.urlDecode ? f.urlDecode(filtersFromUrl[f.id]) : filtersFromUrl[f.id]
+    newFilters[index] = {
+      ...f,
+      value: queryValue || f.value
+    }
+  })
+  return newFilters
+}
+
+
+export const encodeTableQueryParams= (location, key, value) => {
+  let queryParams = {
+    ...qs.parse(location.search.substr(1)),
+    [key]: value,
+  }
+  queryParams = qs.stringify(queryParams)
+  return queryParams
+}
+
+export const decodeTableQueryParams= location => {
+  let queryParams = {
+    ...qs.parse(location.search.substr(1)),
+  }
+  const tableParams = {
+    page: queryParams.page ? parseInt(queryParams.page, 10) : 0,
+    sort: queryParams.sort || {column: "", direction: ""},
+    rowsPerPage: queryParams.rowsPerPage ? parseInt(queryParams.rowsPerPage, 10) : 10,
+  }
+  return tableParams
+}

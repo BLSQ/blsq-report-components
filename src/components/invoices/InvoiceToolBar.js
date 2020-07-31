@@ -14,13 +14,28 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import InvoiceLinks from "./InvoiceLinks";
+import Tooltip from "@material-ui/core/Tooltip";
 
 import ExtensionsComponent from "../core/ExtensionsComponent";
 
 const styles = {
   center: {
-    textAlign: "center"
-  }
+    textAlign: "center",
+  },
+};
+
+const asTooltip = (stats) => {
+  return (
+    <div>
+      {Object.keys(stats).map((k) => (
+        <span>
+          <>
+            {k} : {stats[k]} <br></br>
+          </>
+        </span>
+      ))}
+    </div>
+  );
 };
 
 class InvoiceToolBar extends Component {
@@ -28,7 +43,7 @@ class InvoiceToolBar extends Component {
     super(props);
     this.recalculateInvoice = this.recalculateInvoice.bind(this);
     this.state = {
-      open: false
+      open: false,
     };
   }
 
@@ -121,7 +136,6 @@ class InvoiceToolBar extends Component {
     const invoicesCodes = this.props.invoices.getInvoiceTypeCodes(
       this.props.invoice.orgUnit
     );
-
     return (
       <div className={classes.center + " no-print"}>
         <Button component={Link} to={previous}>
@@ -149,13 +163,43 @@ class InvoiceToolBar extends Component {
           )}
         <Button onClick={() => window.print()}>{this.props.t("print")}</Button>
         {recalculateButton}
-        {this.props.warning && (
-          <Typography color="error">{this.props.warning}</Typography>
+        {this.props.lockState && this.props.lockState.stats && (
+          <React.Fragment>
+            {this.props.lockState.stats.UNAPPROVED_READY && (
+              <Tooltip title={asTooltip(this.props.lockState.stats)}>
+                <Button
+                  onClick={() => this.props.onToggleLock("LOCK")}
+                  disabled={this.props.lockState.running}
+                >
+                  Lock
+                  {this.props.lockState.running && (
+                    <CircularProgress size={15} />
+                  )}
+                </Button>
+              </Tooltip>
+            )}
+            {this.props.lockState.stats.APPROVED_HERE && (
+              <Tooltip title={asTooltip(this.props.lockState.stats)}>
+                <Button
+                  onClick={() => this.props.onToggleLock("UNLOCK")}
+                  disabled={this.props.lockState.running}
+                >
+                  Unlock
+                  {this.props.lockState.running && (
+                    <CircularProgress size={15} />
+                  )}
+                </Button>
+              </Tooltip>
+            )}
+          </React.Fragment>
         )}
         <ExtensionsComponent
           extensionKey="invoices.actions"
           invoice={this.props.invoice}
         />
+        {this.props.warning && (
+          <Typography color="error">{this.props.warning}</Typography>
+        )}
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}

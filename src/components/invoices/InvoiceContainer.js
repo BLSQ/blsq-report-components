@@ -13,6 +13,8 @@ class InvoiceContainer extends Component {
     super(props);
     this.state = {};
     this.recalculate = this.recalculate.bind(this);
+    this.toggleLock = this.toggleLock.bind(this);
+    this.loadLockState = this.loadLockState.bind(this);
     this.loadData = this.loadData.bind(this);
     this.fetchInvoicingJobs = this.fetchInvoicingJobs.bind(this);
   }
@@ -31,7 +33,7 @@ class InvoiceContainer extends Component {
   async componentWillReceiveProps(nextProps) {
     this.props = nextProps;
     this.setState({
-      invoice: undefined
+      invoice: undefined,
     });
     this.loadData();
   }
@@ -44,6 +46,9 @@ class InvoiceContainer extends Component {
       this.nextReq(5000);
       return;
     }
+
+    await this.loadLockState();
+
     let invoicingJobs;
     try {
       invoicingJobs = await Orbf2.invoicingJobs(
@@ -52,12 +57,13 @@ class InvoiceContainer extends Component {
       );
     } catch (error) {
       this.setState({
-        warning: "Sorry was not able to contact ORBF2 backend: " + error.message
+        warning:
+          "Sorry was not able to contact ORBF2 backend: " + error.message,
       });
       throw error;
     }
 
-    const runningCount = invoicingJobs.data.filter(invoicingJob => {
+    const runningCount = invoicingJobs.data.filter((invoicingJob) => {
       return invoicingJob.attributes.isAlive;
     });
 
@@ -68,8 +74,8 @@ class InvoiceContainer extends Component {
       invoicingJobs: invoicingJobs.data,
       calculateState: {
         running: runningCount.length,
-        total: this.state.invoice.calculations.length
-      }
+        total: this.state.invoice.calculations.length,
+      },
     });
 
     if (runningCount.length > 0) {
@@ -115,7 +121,7 @@ class InvoiceContainer extends Component {
       );
       invoice.calculations = calculations;
       this.setState({
-        invoice: invoice
+        invoice: invoice,
       });
       document.title =
         invoiceTypeCode +
@@ -127,16 +133,67 @@ class InvoiceContainer extends Component {
       this.setState({
         error:
           "Sorry something went wrong, try refreshing or contact the support : " +
-          error.message
+          error.message,
       });
       throw error;
     }
   }
 
+  async loadLockState() {
+
+    const api = await this.props.dhis2.api();
+
+    const approvals = this.props.invoices.getDataApprovals
+      ? this.props.invoices.getDataApprovals(
+          this.state.invoice,
+          this.props.currentUser
+        )
+      : [];
+    const currentApprovals = [];
+    for (let approval of approvals) {
+      const approvalStatus = await api.get("dataApprovals", {
+        wf: approval.wf.id,
+        pe: approval.period,
+        ou: approval.orgUnit,
+      });
+      currentApprovals.push(approvalStatus);
+    }
+
+    const stats = {};
+    for (let a of currentApprovals) {
+      if (stats[a.state] === undefined) {
+        stats[a.state] = 1;
+      } else {
+        stats[a.state] = stats[a.state] + 1;
+      }
+    }
+
+    const locked =
+      currentApprovals.filter((a) => a.mayApprove === true).length === 0;
+    console.log("locked ?", locked);
+    console.log(
+      "orgunits to approve " + new Set(approvals.map((a) => a.orgUnit)).size
+    );
+    console.log("approval stats", stats);
+    console.log(
+      currentApprovals.length +
+        " approvals  : mayApprove " +
+        currentApprovals.filter((a) => a.mayApprove == true).length
+    );
+    this.setState({
+      lockState: {
+        approvals: approvals,
+        currentApprovals: currentApprovals,
+        locked: locked,
+        stats: stats,
+      },
+    });
+  }
+
   async recalculate() {
     try {
       const calculations = this.state.invoice.calculations;
-      calculations.forEach(calculation => {
+      calculations.forEach((calculation) => {
         Orbf2.calculate(calculation);
       });
       this.nextReq(100);
@@ -144,10 +201,39 @@ class InvoiceContainer extends Component {
       this.setState({
         error:
           "Sorry something went wrong, when triggering calculation try refreshing or contact the support : " +
-            error.message || error
+            error.message || error,
       });
       throw error;
     }
+  }
+
+  async toggleLock(mode) {
+    const api = await this.props.dhis2.api();
+    const approvals = this.state.lockState.approvals;
+    this.setState({ lockState: { running: true, ...this.state.lockState } });
+
+    for (let approval of approvals) {
+      if (mode === "UNLOCK") {
+        await api.delete(
+          "dataApprovals?pe=" +
+            approval.period +
+            "&ou=" +
+            approval.orgUnit +
+            "&wf=" +
+            approval.wf.id
+        );
+      } else if (mode === "LOCK") {
+        await api.post(
+          "dataApprovals?pe=" +
+            approval.period +
+            "&ou=" +
+            approval.orgUnit +
+            "&wf=" +
+            approval.wf.id
+        );
+      }
+    }
+    await this.loadLockState();
   }
 
   boolBarButtons = () => {
@@ -163,6 +249,8 @@ class InvoiceContainer extends Component {
         invoiceCode={this.props.invoiceCode}
         onRecalculate={calculable && this.recalculate}
         calculateState={this.state.calculateState}
+        onToggleLock={this.toggleLock}
+        lockState={this.state.lockState}
         warning={this.state.warning}
         periodFormat={this.props.periodFormat}
         invoices={this.props.invoices}

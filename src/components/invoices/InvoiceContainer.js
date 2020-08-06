@@ -67,6 +67,10 @@ class InvoiceContainer extends Component {
       return invoicingJob.attributes.isAlive;
     });
 
+    const errors = invoicingJobs.data.filter((invoicingJob) => {
+      return invoicingJob.attributes.lastError;
+    });
+
     const wasRunning =
       this.state.calculateState && this.state.calculateState.running > 0;
 
@@ -75,6 +79,7 @@ class InvoiceContainer extends Component {
       calculateState: {
         running: runningCount.length,
         total: this.state.invoice.calculations.length,
+        errors: errors
       },
     });
 
@@ -168,9 +173,6 @@ class InvoiceContainer extends Component {
       }
     }
 
-    const locked =
-      currentApprovals.filter((a) => a.mayApprove === true).length === 0;
-    console.log("locked ?", locked);
     console.log(
       "orgunits to approve " + new Set(approvals.map((a) => a.orgUnit)).size
     );
@@ -184,7 +186,6 @@ class InvoiceContainer extends Component {
       lockState: {
         approvals: approvals,
         currentApprovals: currentApprovals,
-        locked: locked,
         stats: stats,
       },
     });
@@ -236,7 +237,7 @@ class InvoiceContainer extends Component {
     await this.loadLockState();
   }
 
-  boolBarButtons = () => {
+  toolBarButtons = () => {
     const calculable = this.props.invoices.isCalculable(
       this.state.invoice,
       this.props.currentUser
@@ -282,13 +283,13 @@ class InvoiceContainer extends Component {
         <PageOrientation
           orientation={this.state.invoice.invoiceType.orientation}
         />
-        {this.boolBarButtons()}
+        {this.toolBarButtons()}
         <SelectedInvoice
           invoice={this.state.invoice}
           orgUnitId={this.props.orgUnitId}
           period={this.props.period}
         />
-        {this.boolBarButtons()}
+        {this.toolBarButtons()}
       </div>
     );
   }

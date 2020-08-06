@@ -67,5 +67,14 @@
             "title": "Show Columns",
             "titleAria": "Show/Hide Table Columns"
         }
+    },
+    "invoicing": {
+        "job": {
+            "errors":"Error for the last calculate",
+            "period": "Period",
+            "orgUnit": "Org unit",
+            "erroredAt": "When",
+            "error": "Message"
+        }
     }
 }

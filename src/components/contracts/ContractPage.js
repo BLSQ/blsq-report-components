@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import PluginRegistry from "../core/PluginRegistry";
 import Typography from "@material-ui/core/Typography";
 import ContractCard from "./ContractCard";
@@ -20,9 +21,9 @@ function ContractPage({ match }) {
         const allContracts = await contractService.findAll();
 
         const contracts = allContracts.filter(
-          (c) => c.orgUnit.id === match.params.orgUnitId
+          (c) => c.orgUnit.id === match.params.orgUnitId,
         );
-        contracts.sort((a, b) => (a.startPeriod > b.startPeriod) ? 1 : -1)
+        contracts.sort((a, b) => (a.startPeriod > b.startPeriod ? 1 : -1));
         setContractsOverlaps(toOverlappings(contracts));
         setContractsById(toContractsById(contracts));
         setContracts(contracts);
@@ -79,5 +80,9 @@ function ContractPage({ match }) {
     </div>
   );
 }
+
+ContractPage.propTypes = {
+  match: PropTypes.object.isRequired,
+};
 
 export default ContractPage;

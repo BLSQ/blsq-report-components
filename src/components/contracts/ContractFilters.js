@@ -33,7 +33,7 @@ const ContractFilters = ({
     const filteredContracts = filterItems(
       newFilters,
       contracts,
-      contractsOverlaps
+      contractsOverlaps,
     );
     setFilteredContracts(filteredContracts);
     setFilters(newFilters);
@@ -79,7 +79,8 @@ const ContractFilters = ({
     <Box mb={3}>
       <Grid container item xs={12} spacing={4}>
         {filters
-          .map((f) => f.column).sort()
+          .map((f) => f.column)
+          .sort()
           .map((column) => (
             <Grid
               container

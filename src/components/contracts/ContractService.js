@@ -3,12 +3,12 @@ class ContractService {
   constructor(api, program, allEventsSqlViewId) {
     this.api = api;
     this.program = program;
-    const toMappings = program => {
-      const dataElements = program.programStages.flatMap(ps =>
-        ps.programStageDataElements.map(psde => psde.dataElement)
+    const toMappings = (program) => {
+      const dataElements = program.programStages.flatMap((ps) =>
+        ps.programStageDataElements.map((psde) => psde.dataElement),
       );
       const mappings = {};
-      dataElements.forEach(de => (mappings[de.id] = de));
+      dataElements.forEach((de) => (mappings[de.id] = de));
       return mappings;
     };
     this.mappings = toMappings(this.program);
@@ -17,7 +17,7 @@ class ContractService {
 
   toContract(event) {
     const contract = { id: event.event };
-    event.dataValues.forEach(dv => {
+    event.dataValues.forEach((dv) => {
       const de = this.mappings[dv.dataElement];
       contract[de.code] = dv.value;
     });
@@ -25,7 +25,7 @@ class ContractService {
       id: event.orgUnit,
       name: event.orgUnitName,
       path: event.orgUnitPath,
-      ancestors: event.ancestors || []
+      ancestors: event.ancestors || [],
     };
 
     return new Contract(contract);
@@ -39,12 +39,12 @@ class ContractService {
         this.allEventsSqlViewId +
         "/data.json?var=programId:" +
         this.program.id +
-        "&paging=false"
+        "&paging=false",
     );
     const indexes = {};
     rawEvents.listGrid.headers.forEach((h, index) => (indexes[h.name] = index));
 
-    events = rawEvents.listGrid.rows.map(row => {
+    events = rawEvents.listGrid.rows.map((row) => {
       let dataVals = [];
       try {
         dataVals = JSON.parse(row[indexes.data_values].value);
@@ -53,13 +53,13 @@ class ContractService {
           "failed to parse : " +
             row[indexes.data_values].value +
             " " +
-            err.message
+            err.message,
         );
       }
-      const dataValues = Object.keys(dataVals).map(k => {
+      const dataValues = Object.keys(dataVals).map((k) => {
         return {
           dataElement: k,
-          ...dataVals[k]
+          ...dataVals[k],
         };
       });
       const ancestors = [];
@@ -69,7 +69,7 @@ class ContractService {
         const nameIndex = indexes["namelevel" + i];
         ancestors.push({
           id: row[idIndex],
-          name: row[nameIndex]
+          name: row[nameIndex],
         });
       }
 
@@ -81,11 +81,11 @@ class ContractService {
         ancestors: ancestors,
         program: row[indexes.program_id],
         programStage: row[indexes.program_stage_id],
-        dataValues: dataValues
+        dataValues: dataValues,
       };
     });
 
-    const contracts = events.map(e => this.toContract(e));
+    const contracts = events.map((e) => this.toContract(e));
 
     return contracts;
   }
@@ -95,12 +95,12 @@ class ContractService {
   }
 
   async createContract(orgUnitIds, contractInfo) {
-    const events = orgUnitIds.map(orgUnitId => {
+    const events = orgUnitIds.map((orgUnitId) => {
       const dataValues = [];
 
-      Object.keys(contractInfo).forEach(field => {
+      Object.keys(contractInfo).forEach((field) => {
         const dataElement = Object.values(this.mappings).find(
-          mapping => mapping.code === field
+          (mapping) => mapping.code === field,
         );
         if (dataElement === undefined) {
           throw new Error(
@@ -108,13 +108,13 @@ class ContractService {
               field +
               " vs " +
               Object.values(this.mappings)
-                .map(m => m.code)
-                .join(",")
+                .map((m) => m.code)
+                .join(","),
           );
         }
         dataValues.push({
           dataElement: dataElement.id,
-          value: contractInfo[field]
+          value: contractInfo[field],
         });
       });
 
@@ -123,7 +123,7 @@ class ContractService {
         program: this.program.id,
         eventDate: contractInfo.contract_start_date,
         programStage: this.program.programStages[0].id,
-        dataValues: dataValues
+        dataValues: dataValues,
       };
       return event;
     });

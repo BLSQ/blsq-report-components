@@ -1,5 +1,5 @@
-
 import React from "react";
+import PropTypes from "prop-types";
 import Card from "@material-ui/core/Card";
 import Chip from "@material-ui/core/Chip";
 import CardContent from "@material-ui/core/CardContent";
@@ -40,14 +40,13 @@ const ContractCard = ({ contract, contractsOverlaps, contractsById }) => (
       {contractsOverlaps[contract.id] && (
         <span style={{ color: "red" }}>
           overlaps with :
-          {
-            getOverlaps(contract.id, contractsOverlaps, contractsById)
-            .map((c) => (
+          {getOverlaps(contract.id, contractsOverlaps, contractsById).map(
+            (c) => (
               <li key={c.id}>
                 {c.startPeriod} {c.endPeriod} {c.codes.join(",")}
               </li>
-            ))
-          }
+            ),
+          )}
         </span>
       )}
       <Typography color="textSecondary" title={contract.orgUnit.path}>
@@ -65,5 +64,14 @@ const ContractCard = ({ contract, contractsOverlaps, contractsById }) => (
     </CardActions>
   </Card>
 );
+ContractCard.defaultProps = {
+  contractsById: null,
+};
+
+ContractCard.propTypes = {
+  contract: PropTypes.object.isRequired,
+  contractsOverlaps: PropTypes.object.isRequired,
+  contractsById: PropTypes.object,
+};
 
 export default ContractCard;

@@ -162,7 +162,7 @@ class ContractsPage extends Component {
                   contractsOverlaps,
                   classes,
                   (key, value) => this.onTableChange(key, value),
-                  decodeTableQueryParams(location)
+                  decodeTableQueryParams(location),
                 )}
               />
             </>

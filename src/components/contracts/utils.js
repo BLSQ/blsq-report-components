@@ -12,7 +12,7 @@ const standardContractFields = [
 // perhaps move it to ContractService ?
 export const toContractFields = (program) => {
   const dataElements = program.programStages.flatMap((ps) =>
-    ps.programStageDataElements.map((psde) => psde.dataElement)
+    ps.programStageDataElements.map((psde) => psde.dataElement),
   );
 
   return dataElements.map((de) => {
@@ -82,7 +82,7 @@ export const getOverlaps = (contractId, contractsOverlaps, contractsById) => {
     return [];
   }
   return Array.from(contractsOverlaps[contractId]).map(
-    (contractId) => contractsById[contractId]
+    (contractId) => contractsById[contractId],
   );
 };
 
@@ -111,7 +111,7 @@ export const getStartDateFromPeriod = (startPeriod) => {
 export const getEndDateFromPeriod = (endPeriod) => {
   const endPeriodMonths = DatePeriods.split(endPeriod, "monthly");
   return moment(endPeriodMonths[endPeriodMonths.length - 1], "YYYYMM").endOf(
-    "month"
+    "month",
   );
 };
 

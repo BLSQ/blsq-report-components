@@ -24,7 +24,7 @@ class ContractPlugin {
       const contractService = new ContractService(
         api,
         program,
-        config.allEventsSqlViewId
+        config.allEventsSqlViewId,
       );
       this.extensions["contracts.service"] = [contractService];
       this.extensions["contracts.program"] = [program];

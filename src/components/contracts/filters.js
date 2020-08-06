@@ -33,7 +33,7 @@ const defaultFilters = [
           c.codes.includes(value) ||
           c.orgUnit.name.toLowerCase().includes(value.toLowerCase()) ||
           c.startPeriod.includes(value) ||
-          c.endPeriod.includes(value)
+          c.endPeriod.includes(value),
       ),
   },
   {
@@ -50,7 +50,7 @@ const defaultFilters = [
         const contractDates = getContractDates(c);
         return moment(value).isBetween(
           contractDates.startDate,
-          contractDates.endDate
+          contractDates.endDate,
         );
       });
     },
@@ -68,7 +68,7 @@ const defaultFilters = [
         return contracts;
       }
       return contracts.filter(
-        (c) => contractsOverlaps[c.id] && contractsOverlaps[c.id].size > 0
+        (c) => contractsOverlaps[c.id] && contractsOverlaps[c.id].size > 0,
       );
     },
     urlEncode: (value) => (value ? "true" : "false"),
@@ -103,7 +103,7 @@ const filterConfig = (contractFields) => {
           }
 
           return contracts.filter((c) =>
-            c.codes.some((c) => groups.findIndex((g) => g.value === c) >= 0)
+            c.codes.some((c) => groups.findIndex((g) => g.value === c) >= 0),
           );
         },
         // turn selected options [{label: ,value:}, {label: ,value:}] into string value1,value2,...
@@ -117,7 +117,7 @@ const filterConfig = (contractFields) => {
             ? []
             : value.split(",").map((v) => {
                 const option = field.optionSet.options.find(
-                  (o) => o.code === v
+                  (o) => o.code === v,
                 );
                 return { label: option.name, value: option.code };
               }),

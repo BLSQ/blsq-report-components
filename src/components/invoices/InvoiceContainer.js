@@ -79,7 +79,7 @@ class InvoiceContainer extends Component {
       calculateState: {
         running: runningCount.length,
         total: this.state.invoice.calculations.length,
-        errors: errors
+        errors: errors,
       },
     });
 
@@ -145,7 +145,6 @@ class InvoiceContainer extends Component {
   }
 
   async loadLockState() {
-
     const api = await this.props.dhis2.api();
 
     const approvals = this.props.invoices.getDataApprovals
@@ -161,6 +160,10 @@ class InvoiceContainer extends Component {
         pe: approval.period,
         ou: approval.orgUnit,
       });
+      approvalStatus.orgUnit = approval.orgUnit;
+      approvalStatus.period = approval.period;
+      approvalStatus.wf = approval.wf;
+
       currentApprovals.push(approvalStatus);
     }
 
@@ -182,6 +185,10 @@ class InvoiceContainer extends Component {
         " approvals  : mayApprove " +
         currentApprovals.filter((a) => a.mayApprove == true).length
     );
+    this.state.invoice.approvals = approvals;
+    this.state.invoice.currentApprovals = currentApprovals;
+    this.state.invoice.approvalStats = stats;
+
     this.setState({
       lockState: {
         approvals: approvals,
@@ -193,8 +200,29 @@ class InvoiceContainer extends Component {
 
   async recalculate() {
     try {
-      const calculations = this.state.invoice.calculations;
-      calculations.forEach((calculation) => {
+      const invoice = this.state.invoice;
+      const calculations = invoice.calculations;
+      const orgUnitsById = {};
+      invoice.orgUnits.forEach((ou) => (orgUnitsById[ou.id] = ou));
+
+      const approvableOrgUnitIds = new Set(
+        invoice.currentApprovals
+          .filter((approval) => approval.mayApprove)
+          .map((approval) => approval.orgUnit)
+      );
+
+      const allowedCalculations = calculations.filter((calculation) => {
+        const orgUnit = orgUnitsById[calculation.orgUnitId];
+        return orgUnit.ancestors.some((ou) => approvableOrgUnitIds.has(ou.id));
+      });
+      console.log(
+        "will schedule " +
+          allowedCalculations.length +
+          " out of " +
+          calculations.length +
+          " due to already approved data"
+      );
+      allowedCalculations.forEach((calculation) => {
         Orbf2.calculate(calculation);
       });
       this.nextReq(100);

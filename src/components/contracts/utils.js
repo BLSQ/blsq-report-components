@@ -168,3 +168,17 @@ export const decodeTableQueryParams = (location) => {
   };
   return tableParams;
 };
+
+export const getOptionFromField = (field, code) => {
+  const option = field.optionSet.options.find((o) => o.code === code);
+  if (!code) {
+    return {
+      label: "",
+      value: undefined,
+    };
+  }
+  return {
+    label: option ? option.name : code,
+    value: code,
+  };
+};

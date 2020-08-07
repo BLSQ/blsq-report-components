@@ -1,5 +1,4 @@
 import React from "react";
-import Chip from "@material-ui/core/Chip";
 import { IconButton, Tooltip } from "@material-ui/core";
 import Visibility from "@material-ui/icons/Visibility";
 
@@ -10,80 +9,94 @@ import {
   getOrgUnitAncestors,
   getStartDateFromPeriod,
   getEndDateFromPeriod,
+  getOptionFromField,
 } from "./utils";
 
-export const contractsTableColumns = (t, classes, contracts) => [
-  {
-    name: "orgUnit.name",
-    label: t("orgUnit_name"),
-    options: {
-      filter: false,
-      sort: true,
-      customBodyRender: (orgUnitName, tableMeta, updateValue) => {
-        return (
-          <Tooltip
-            arrow
-            title={getOrgUnitAncestors(contracts[tableMeta.rowIndex].orgUnit)}
-          >
-            <span>{orgUnitName}</span>
-          </Tooltip>
-        );
+export const contractsTableColumns = (
+  t,
+  classes,
+  contracts,
+  contractFields,
+) => {
+  const columns = [
+    {
+      name: "orgUnit.name",
+      label: t("orgUnit_name"),
+      options: {
+        filter: false,
+        sort: true,
+        customBodyRender: (orgUnitName, tableMeta) => {
+          return (
+            <Tooltip
+              arrow
+              title={getOrgUnitAncestors(contracts[tableMeta.rowIndex].orgUnit)}
+            >
+              <span>{orgUnitName}</span>
+            </Tooltip>
+          );
+        },
       },
     },
-  },
-  {
-    name: "codes",
-    label: t("group"),
-    options: {
-      filter: true,
-      sort: true,
-      sortCompare: (order) => (a, b) =>
-        (a.data < b.data ? -1 : 1) * (order === "desc" ? 1 : -1),
-      customBodyRender: (codes, tableMeta, updateValue) =>
-        codes.map((code) => (
-          <Chip key={code} label={code} className={classes.chip} />
-        )),
-    },
-  },
-  {
-    name: "startPeriod",
-    label: t("start_period"),
-    options: {
-      filter: true,
-      sort: true,
-      customBodyRender: (startPeriod, tableMeta, updateValue) => {
-        return (
-          <Tooltip arrow title={startPeriod}>
-            <span>
-              {getStartDateFromPeriod(startPeriod).format("DD/MM/YYYY")}
-            </span>
-          </Tooltip>
-        );
+    {
+      name: "startPeriod",
+      label: t("start_period"),
+      options: {
+        filter: false,
+        sort: true,
+        customBodyRender: (startPeriod) => {
+          return (
+            <Tooltip arrow title={startPeriod}>
+              <span>
+                {getStartDateFromPeriod(startPeriod).format("DD/MM/YYYY")}
+              </span>
+            </Tooltip>
+          );
+        },
       },
     },
-  },
-  {
-    name: "endPeriod",
-    label: t("end_period"),
-    options: {
-      filter: true,
-      sort: true,
-      customBodyRender: (endPeriod, tableMeta, updateValue) => {
-        return (
-          <Tooltip arrow title={endPeriod}>
-            <span>{getEndDateFromPeriod(endPeriod).format("DD/MM/YYYY")}</span>
-          </Tooltip>
-        );
+    {
+      name: "endPeriod",
+      label: t("end_period"),
+      options: {
+        filter: false,
+        sort: true,
+        customBodyRender: (endPeriod) => {
+          return (
+            <Tooltip arrow title={endPeriod}>
+              <span>
+                {getEndDateFromPeriod(endPeriod).format("DD/MM/YYYY")}
+              </span>
+            </Tooltip>
+          );
+        },
       },
     },
-  },
-  {
+  ];
+  contractFields.forEach((field) => {
+    if (!field.standardField) {
+      columns.push({
+        name: `fieldValues.${field.code}`,
+        label: field.name,
+        options: {
+          filter: false,
+          sort: true,
+          sortCompare: (order) => (a, b) => {
+            const aLabel = getOptionFromField(field, a.data).label;
+            const bLabel = getOptionFromField(field, b.data).label;
+            return (aLabel < bLabel ? -1 : 1) * (order === "desc" ? 1 : -1);
+          },
+          customBodyRender: (code) => getOptionFromField(field, code).label,
+        },
+      });
+    }
+  });
+  columns.push({
     name: "orgUnit.id",
     label: t("table.actions.title"),
     options: {
       filter: false,
       sort: false,
-      customBodyRender: (orgUnitId, tableMeta, updateValue) => (
+      customBodyRender: (orgUnitId) => (
         <Tooltip placement="bottom" title={t("table.actions.see")} arrow>
           <span>
             <IconButton size="small">
@@ -95,8 +108,9 @@ export const contractsTableColumns = (t, classes, contracts) => [
         </Tooltip>
       ),
     },
-  },
-];
+  });
+  return columns;
+};
 
 export const contractsTableOptions = (
   t,

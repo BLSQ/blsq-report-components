@@ -43,6 +43,7 @@ class ContractsPage extends Component {
       contractsOverlaps: {},
       contractService: PluginRegistry.extension("contracts.service"),
       program: PluginRegistry.extension("contracts.program"),
+      contractFields: [],
     };
   }
 
@@ -101,6 +102,7 @@ class ContractsPage extends Component {
       isLoading,
       contractsById,
       filteredContracts,
+      contractFields,
     } = this.state;
     const overlapsTotal = Object.keys(contractsOverlaps).length;
     const tableTitle = (
@@ -136,17 +138,15 @@ class ContractsPage extends Component {
           </Breadcrumbs>
           {!isLoading && (
             <>
-              {this.state.contractFields && (
-                <ContractFilters
-                  contractFields={this.state.contractFields}
-                  contracts={contracts}
-                  changeTable={(key, value) => this.onTableChange(key, value)}
-                  contractsOverlaps={contractsOverlaps}
-                  setFilteredContracts={(newFilteredContracts) =>
-                    this.setState({ filteredContracts: newFilteredContracts })
-                  }
-                />
-              )}
+              <ContractFilters
+                contractFields={contractFields}
+                contracts={contracts}
+                changeTable={(key, value) => this.onTableChange(key, value)}
+                contractsOverlaps={contractsOverlaps}
+                setFilteredContracts={(newFilteredContracts) =>
+                  this.setState({ filteredContracts: newFilteredContracts })
+                }
+              />
               <Divider />
               <MUIDataTable
                 classes={{
@@ -154,7 +154,12 @@ class ContractsPage extends Component {
                 }}
                 title={contracts.length > 0 ? tableTitle : ""}
                 data={filteredContracts}
-                columns={contractsTableColumns(t, classes, contracts)}
+                columns={contractsTableColumns(
+                  t,
+                  classes,
+                  contracts,
+                  contractFields,
+                )}
                 options={contractsTableOptions(
                   t,
                   contracts,

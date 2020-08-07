@@ -64,6 +64,7 @@ const ContractCard = ({ contract, contractsOverlaps, contractsById }) => (
     </CardActions>
   </Card>
 );
+
 ContractCard.defaultProps = {
   contractsById: null,
 };

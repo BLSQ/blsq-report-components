@@ -7,7 +7,7 @@ import moment from "moment";
 import { Box, Grid, Button } from "@material-ui/core";
 
 import Filter from "../shared/Filter";
-import filtersConfig from "./filters";
+import filtersConfig, { columnsCount } from "./filters";
 import {
   filterItems,
   encodeFiltersQueryParams,
@@ -27,7 +27,6 @@ const ContractFilters = ({
   const [filters, setFilters] = React.useState(filtersConfig(contractFields));
   const [isTouched, setIsTouched] = React.useState(false);
   const [hasError, setHasError] = React.useState(false);
-
   useEffect(() => {
     const newFilters = decodeFiltersQueryParams(location, filters);
     const filteredContracts = filterItems(
@@ -78,9 +77,9 @@ const ContractFilters = ({
   return (
     <Box mb={3}>
       <Grid container item xs={12} spacing={4}>
-        {filters
-          .map((f) => f.column)
-          .sort()
+        {Array(columnsCount)
+          .fill()
+          .map((x, i) => i + 1)
           .map((column) => (
             <Grid
               container
@@ -88,7 +87,7 @@ const ContractFilters = ({
               xs={12}
               md={3}
               key={`column-${column}`}
-              alignItems="center"
+              // alignItems="center"
             >
               {filters
                 .filter((f) => f.column === column)

@@ -1,5 +1,5 @@
 import moment from "moment";
-import { getContractDates } from "./utils";
+import { getContractDates, getOptionFromField } from "./utils";
 
 /**
  * A Filters list
@@ -9,7 +9,7 @@ import { getContractDates } from "./utils";
  * @property {string} key - Key label used by the translation tool
  * @property {string} keyInfo - Optionnal - Key of the info tooltip used by the translation tool
  * @property {string} type - Type of filter to display (search, date, array)
- * @property {number} column - column where to display the filter (1, 2 ,3, 4)
+ * @property {number} column - column where to display the filter (1, 2 ,3, 4, ...) - max is the value of columnsCount
  * @property {any} value - default value
  * @property {function} onFilter - function used to filter the items
  * @property {array} options - Optionnal - array of options for the select type
@@ -19,6 +19,7 @@ import { getContractDates } from "./utils";
  * @property {function} urlDecode - Optionnal - function used decode filter from url
  */
 
+export const columnsCount = 4;
 const defaultFilters = [
   {
     id: "search",
@@ -61,7 +62,7 @@ const defaultFilters = [
     id: "only_overlaps",
     key: "contracts.onlyOverlaps",
     type: "checkbox",
-    column: 4,
+    column: 1,
     value: false,
     onFilter: (onlyOverlaps, contracts, contractsOverlaps) => {
       if (!onlyOverlaps) {
@@ -81,11 +82,14 @@ const filterConfig = (contractFields) => {
     return [];
   }
   const config = [...defaultFilters];
-  let lastIndex = 0;
+  let lastIndex = defaultFilters.length;
   contractFields
     .filter((c) => c.standardField === false)
     .forEach((field, index) => {
-      lastIndex = 3 + index;
+      lastIndex += index;
+      if (lastIndex > columnsCount) {
+        lastIndex -= columnsCount;
+      }
       config.push({
         id: field.code,
         key: field.name,
@@ -115,17 +119,9 @@ const filterConfig = (contractFields) => {
         urlDecode: (value) =>
           !value || value === ""
             ? []
-            : value.split(",").map((v) => {
-                const option = field.optionSet.options.find(
-                  (o) => o.code === v,
-                );
-                return { label: option.name, value: option.code };
-              }),
+            : value.split(",").map((v) => getOptionFromField(field, v)),
       });
     });
-
-  // move the "filter on overlapping" as last filter
-  config[2].column = lastIndex + 1;
   return config;
 };
 

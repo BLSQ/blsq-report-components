@@ -1,23 +1,29 @@
 const ORBF2_URL = process.env.REACT_APP_ORBF2_URL;
 const ORBF2_TOKEN = process.env.REACT_APP_ORBF2_TOKEN;
 
-const HEADERS =     {
-  "content-type": "application/json",
-  "X-token": ORBF2_TOKEN
-}
-
 class Orbf2 {
+  constructor(config) {
+    this.url = ORBF2_URL || config.url;
+    this.token = ORBF2_TOKEN || config.token;
+  }
+
+  headers() {
+    return {
+      "content-type": "application/json",
+      "X-token": this.token,
+    };
+  }
   calculate(request) {
-    const url = `${ORBF2_URL}/api/invoices`;
+    const url = `${this.url}/api/invoices`;
     const body = JSON.stringify({
       pe: request.period,
       ou: request.orgUnitId,
-      dhis2UserId: request.currentUserId
+      dhis2UserId: request.currentUserId,
     });
     return fetch(url, {
-      headers: HEADERS,
+      headers: this.headers,
       method: "post",
-      body: body
+      body: body,
     }).then(this.handleResponse);
   }
 
@@ -25,19 +31,19 @@ class Orbf2 {
     const url = `${ORBF2_URL}/api/invoicing_jobs`;
     const body = JSON.stringify({
       period: calculations[0].period,
-      orgUnitIds: calculations.map( (c) => c.orgUnitId).join(","),
-      dhis2UserId: currentUserId
+      orgUnitIds: calculations.map((c) => c.orgUnitId).join(","),
+      dhis2UserId: currentUserId,
     });
 
     return fetch(url, {
-      headers: HEADERS,
+      headers: this.headers,
       method: "post",
-      body: body
+      body: body,
     }).then(this.handleResponse);
   }
 
   handleResponse(response) {
-    return response.json().then(json => {
+    return response.json().then((json) => {
       if (response.ok) {
         return json;
       } else {
@@ -47,4 +53,4 @@ class Orbf2 {
   }
 }
 
-export default new Orbf2();
+export default Orbf2;

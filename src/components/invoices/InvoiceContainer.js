@@ -4,7 +4,7 @@ import Warning from "../shared/Warning";
 import PageOrientation from "../shared/PageOrientation";
 import InvoiceService from "./support/InvoiceService";
 
-import Orbf2 from "../../support/Orbf2";
+import PluginRegistry from "../core/PluginRegistry";
 
 import InvoiceToolBar from "./InvoiceToolBar";
 
@@ -17,6 +17,7 @@ class InvoiceContainer extends Component {
     this.loadLockState = this.loadLockState.bind(this);
     this.loadData = this.loadData.bind(this);
     this.fetchInvoicingJobs = this.fetchInvoicingJobs.bind(this);
+    this.orbf2 = PluginRegistry.extension("invoices.hesabu")
   }
 
   componentWillUnmount() {
@@ -51,7 +52,7 @@ class InvoiceContainer extends Component {
 
     let invoicingJobs;
     try {
-      invoicingJobs = await Orbf2.invoicingJobs(
+      invoicingJobs = await this.orbf2.invoicingJobs(
         this.state.invoice.calculations,
         this.props.currentUser.id
       );
@@ -223,7 +224,7 @@ class InvoiceContainer extends Component {
           " due to already approved data"
       );
       allowedCalculations.forEach((calculation) => {
-        Orbf2.calculate(calculation);
+        this.orbf2.calculate(calculation);
       });
       this.nextReq(100);
     } catch (error) {

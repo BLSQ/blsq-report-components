@@ -67,5 +67,14 @@
             "title": "Colonnes visibles",
             "titleAria": "Montrer/cacher des colonnes"
         }
+    },
+    "invoicing": {
+        "job": {
+            "errors":"Erreurs lors des derniers calculs",
+            "period": "Période",
+            "orgUnit": "Org unit",
+            "erroredAt": "Quand",
+            "error": "Message"
+        }
     }
 }

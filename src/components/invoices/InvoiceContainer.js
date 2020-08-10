@@ -67,6 +67,10 @@ class InvoiceContainer extends Component {
       return invoicingJob.attributes.isAlive;
     });
 
+    const errors = invoicingJobs.data.filter((invoicingJob) => {
+      return invoicingJob.attributes.lastError;
+    });
+
     const wasRunning =
       this.state.calculateState && this.state.calculateState.running > 0;
 
@@ -75,6 +79,7 @@ class InvoiceContainer extends Component {
       calculateState: {
         running: runningCount.length,
         total: this.state.invoice.calculations.length,
+        errors: errors,
       },
     });
 
@@ -140,7 +145,6 @@ class InvoiceContainer extends Component {
   }
 
   async loadLockState() {
-
     const api = await this.props.dhis2.api();
 
     const approvals = this.props.invoices.getDataApprovals
@@ -156,6 +160,10 @@ class InvoiceContainer extends Component {
         pe: approval.period,
         ou: approval.orgUnit,
       });
+      approvalStatus.orgUnit = approval.orgUnit;
+      approvalStatus.period = approval.period;
+      approvalStatus.wf = approval.wf;
+
       currentApprovals.push(approvalStatus);
     }
 
@@ -168,9 +176,6 @@ class InvoiceContainer extends Component {
       }
     }
 
-    const locked =
-      currentApprovals.filter((a) => a.mayApprove === true).length === 0;
-    console.log("locked ?", locked);
     console.log(
       "orgunits to approve " + new Set(approvals.map((a) => a.orgUnit)).size
     );
@@ -180,11 +185,14 @@ class InvoiceContainer extends Component {
         " approvals  : mayApprove " +
         currentApprovals.filter((a) => a.mayApprove == true).length
     );
+    this.state.invoice.approvals = approvals;
+    this.state.invoice.currentApprovals = currentApprovals;
+    this.state.invoice.approvalStats = stats;
+
     this.setState({
       lockState: {
         approvals: approvals,
         currentApprovals: currentApprovals,
-        locked: locked,
         stats: stats,
       },
     });
@@ -192,8 +200,29 @@ class InvoiceContainer extends Component {
 
   async recalculate() {
     try {
-      const calculations = this.state.invoice.calculations;
-      calculations.forEach((calculation) => {
+      const invoice = this.state.invoice;
+      const calculations = invoice.calculations;
+      const orgUnitsById = {};
+      invoice.orgUnits.forEach((ou) => (orgUnitsById[ou.id] = ou));
+
+      const approvableOrgUnitIds = new Set(
+        invoice.currentApprovals
+          .filter((approval) => approval.mayApprove)
+          .map((approval) => approval.orgUnit)
+      );
+
+      const allowedCalculations = calculations.filter((calculation) => {
+        const orgUnit = orgUnitsById[calculation.orgUnitId];
+        return orgUnit.ancestors.some((ou) => approvableOrgUnitIds.has(ou.id));
+      });
+      console.log(
+        "will schedule " +
+          allowedCalculations.length +
+          " out of " +
+          calculations.length +
+          " due to already approved data"
+      );
+      allowedCalculations.forEach((calculation) => {
         Orbf2.calculate(calculation);
       });
       this.nextReq(100);
@@ -236,7 +265,7 @@ class InvoiceContainer extends Component {
     await this.loadLockState();
   }
 
-  boolBarButtons = () => {
+  toolBarButtons = () => {
     const calculable = this.props.invoices.isCalculable(
       this.state.invoice,
       this.props.currentUser
@@ -282,13 +311,13 @@ class InvoiceContainer extends Component {
         <PageOrientation
           orientation={this.state.invoice.invoiceType.orientation}
         />
-        {this.boolBarButtons()}
+        {this.toolBarButtons()}
         <SelectedInvoice
           invoice={this.state.invoice}
           orgUnitId={this.props.orgUnitId}
           period={this.props.period}
         />
-        {this.boolBarButtons()}
+        {this.toolBarButtons()}
       </div>
     );
   }

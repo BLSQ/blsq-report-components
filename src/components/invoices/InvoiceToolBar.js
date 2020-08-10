@@ -15,8 +15,9 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import InvoiceLinks from "./InvoiceLinks";
 import Tooltip from "@material-ui/core/Tooltip";
-
+import ReportProblemIcon from "@material-ui/icons/ReportProblem";
 import ExtensionsComponent from "../core/ExtensionsComponent";
+import ErrorsTable from "./ErrorsTable";
 
 const styles = {
   center: {
@@ -27,14 +28,34 @@ const styles = {
 const asTooltip = (stats) => {
   return (
     <div>
-      {Object.keys(stats).map((k) => (
-        <span>
+      {Object.keys(stats).map((k, index) => (
+        <span key={index}>
           <>
-            {k} : {stats[k]} <br></br>
+            {k} : {stats[k]} <br />
           </>
         </span>
       ))}
     </div>
+  );
+};
+
+const tooltipStyles = {
+  tooltip: {
+    maxWidth: "600px",
+  },
+};
+
+const CustomTooltip = withStyles(tooltipStyles)(Tooltip);
+
+const InvoiceAlert = ({ errors, indexedOrgUnits, onToggleErrors }) => {
+  return (
+    <CustomTooltip
+      title={<ErrorsTable errors={errors} indexedOrgUnits={indexedOrgUnits} />}
+    >
+      <Button onClick={onToggleErrors}>
+        <ReportProblemIcon style={{ fill: "orange" }} />
+      </Button>
+    </CustomTooltip>
   );
 };
 
@@ -44,11 +65,16 @@ class InvoiceToolBar extends Component {
     this.recalculateInvoice = this.recalculateInvoice.bind(this);
     this.state = {
       open: false,
+      showErrors: false,
     };
   }
 
   handleClickOpen = () => {
     this.setState({ open: true });
+  };
+
+  handleToggleErrors = () => {
+    this.setState({ showErrors: !this.state.showErrors });
   };
 
   handleClose = () => {
@@ -136,6 +162,12 @@ class InvoiceToolBar extends Component {
     const invoicesCodes = this.props.invoices.getInvoiceTypeCodes(
       this.props.invoice.orgUnit
     );
+    const indexedOrgUnits = {};
+    if (this.props.invoice.orgUnits) {
+      this.props.invoice.orgUnits.forEach(
+        (ou) => (indexedOrgUnits[ou.id] = ou)
+      );
+    }
     return (
       <div className={classes.center + " no-print"}>
         <Button component={Link} to={previous}>
@@ -163,6 +195,15 @@ class InvoiceToolBar extends Component {
           )}
         <Button onClick={() => window.print()}>{this.props.t("print")}</Button>
         {recalculateButton}
+        {this.props.calculateState &&
+          this.props.calculateState.errors &&
+          this.props.calculateState.errors.length > 0 && (
+            <InvoiceAlert
+              errors={this.props.calculateState.errors}
+              indexedOrgUnits={indexedOrgUnits}
+              onToggleErrors={this.handleToggleErrors}
+            />
+          )}
         {this.props.lockState && this.props.lockState.stats && (
           <React.Fragment>
             {this.props.lockState.stats.UNAPPROVED_READY && (
@@ -197,6 +238,15 @@ class InvoiceToolBar extends Component {
           extensionKey="invoices.actions"
           invoice={this.props.invoice}
         />
+        {this.props.calculateState &&
+          this.state.showErrors &&
+          this.props.calculateState.errors &&
+          this.props.calculateState.errors.length > 0 && (
+            <ErrorsTable
+              errors={this.props.calculateState.errors}
+              indexedOrgUnits={indexedOrgUnits}
+            />
+          )}
         {this.props.warning && (
           <Typography color="error">{this.props.warning}</Typography>
         )}

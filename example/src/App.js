@@ -88,7 +88,7 @@ class ContractBasedResolver {
     let mainOrgUnit;
     let orgUnits = [];
     let categoryCombo = "";
-    const contractService = PluginRegistry.extensions("contracts.service")[0];
+    const contractService = PluginRegistry.extension("contracts.service");
 
     const contracts = await contractService.findAll();
 

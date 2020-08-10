@@ -13,7 +13,7 @@ class InvoicePlugin {
 
   initializer = async (options) => {
     const api = options.api;
-    const config = api.get("dataStore/hesabu/hesabu");
+    const config = await api.get("dataStore/hesabu/hesabu");
     const orbf2 = new Orbf2(config);
     this.extensions["invoices.hesabu"] = [orbf2];
   };

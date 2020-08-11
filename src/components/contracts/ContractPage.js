@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import PluginRegistry from "../core/PluginRegistry";
 import Typography from "@material-ui/core/Typography";
 import ContractCard from "./ContractCard";
-import { toOverlappings, toContractsById } from "./utils";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
+import PluginRegistry from "../core/PluginRegistry";
+
+import { toOverlappings, toContractsById } from "./utils";
 function ContractPage({ match }) {
   const [isLoading, setIsLoading] = useState(false);
   const [contracts, setContracts] = useState(null);
@@ -33,12 +34,12 @@ function ContractPage({ match }) {
     fetchData();
   }, [setIsLoading, setContracts]);
 
-  const filteredContracts = contracts;
-
+  const location = useLocation();
+  const contractLink = `/contracts${location.search}`;
   return (
     <div>
       <Breadcrumbs aria-label="breadcrumb">
-        <Link color="inherit" to="/contracts">
+        <Link color="inherit" to={contractLink}>
           Contracts
         </Link>
 
@@ -67,7 +68,7 @@ function ContractPage({ match }) {
             alignContent: "space-around",
           }}
         >
-          {filteredContracts.map((contract) => (
+          {contracts.map((contract) => (
             <ContractCard
               key={contract.id}
               contract={contract}

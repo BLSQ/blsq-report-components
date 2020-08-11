@@ -119,6 +119,7 @@ class ContractsPage extends Component {
         .
       </span>
     );
+    console.log("location", location);
     return (
       <>
         {isLoading && <LoadingSpinner />}
@@ -159,6 +160,7 @@ class ContractsPage extends Component {
                   classes,
                   contracts,
                   contractFields,
+                  location,
                 )}
                 options={contractsTableOptions(
                   t,

@@ -15,12 +15,15 @@ import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import DatePeriods from "../support/DatePeriods";
 import { Typography } from "@material-ui/core";
+import { Provider } from "react-redux";
 
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Dashboard from "@material-ui/icons/Dashboard";
+
 import { withNamespaces } from "react-i18next";
+import { store } from "./redux/store";
 import PluginRegistry from "./core/PluginRegistry";
 import ExtensionsComponent from "./core/ExtensionsComponent";
 
@@ -164,7 +167,7 @@ const AppDrawer = withNamespaces()(RawAppDrawer);
 
 RawAppDrawer.defaultProps = {
   drawerLinks: null,
-}
+};
 
 RawAppDrawer.propTypes = {
   classes: PropTypes.object.isRequired,
@@ -177,13 +180,20 @@ RawAppDrawer.propTypes = {
 class RawAppToolBar extends React.Component {
   shouldComponentUpdate(nextProps) {
     return (
-      this.props.currentUser !== nextProps.currentUser
-      || this.props.open !== nextProps.open
+      this.props.currentUser !== nextProps.currentUser ||
+      this.props.open !== nextProps.open
     );
   }
 
   render() {
-    const { classes, open, currentUser, handleDrawerOpen, t, handleDrawerClose } = this.props;
+    const {
+      classes,
+      open,
+      currentUser,
+      handleDrawerOpen,
+      t,
+      handleDrawerClose,
+    } = this.props;
     return (
       <Toolbar disableGutters={!open} className={classes.drawerHeader}>
         <IconButton
@@ -204,12 +214,7 @@ class RawAppToolBar extends React.Component {
         <Typography
           variant="h6"
           color="inherit"
-          className={
-            classNames(
-              classes.flex,
-              classes.appBarItem,
-            )
-          }
+          className={classNames(classes.flex, classes.appBarItem)}
         >
           {t("app_name")}
         </Typography>
@@ -262,8 +267,6 @@ RawAppToolBar.propTypes = {
   handleDrawerClose: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired,
 };
-
-
 
 const AppToolBar = withNamespaces()(RawAppToolBar);
 
@@ -333,49 +336,58 @@ class App extends React.Component {
     };
 
     return (
-      <Router>
-        <div className={classes.root}>
-          <div className={classes.appFrame}>
-            <AppBar
-              className={
-                classNames(classes.appBar, {
-                  [classes.appBarShift]: open,
-                  [classes[`appBarShift-left`]]: open,
-                }) + " no-print"
-              }
-            >
-              <AppToolBar
+      <Provider store={store}>
+        <Router>
+          <div className={classes.root}>
+            <div className={classes.appFrame}>
+              <AppBar
+                className={
+                  classNames(classes.appBar, {
+                    [classes.appBarShift]: open,
+                    [classes[`appBarShift-left`]]: open,
+                  }) + " no-print"
+                }
+              >
+                <AppToolBar
+                  classes={classes}
+                  open={open}
+                  currentUser={this.state.currentUser}
+                  handleDrawerOpen={this.handleDrawerOpen}
+                  handleDrawerClose={this.handleDrawerClose}
+                />
+              </AppBar>
+              <AppDrawer
                 classes={classes}
                 open={open}
-                currentUser={this.state.currentUser}
-                handleDrawerOpen={this.handleDrawerOpen}
                 handleDrawerClose={this.handleDrawerClose}
+                drawerLinks={this.props.drawerLinks}
+                period={this.state.period}
+                defaultPathName={this.props.defaultPathName || "/select"}
               />
-            </AppBar>
-            <AppDrawer
-              classes={classes}
-              open={open}
-              handleDrawerClose={this.handleDrawerClose}
-              drawerLinks={this.props.drawerLinks}
-              period={this.state.period}
-              defaultPathName={this.props.defaultPathName || "/select"}
-            />
-            <main
-              className={classNames(classes.content, classes[`content-left`], {
-                [classes.contentShift]: open,
-                [classes[`contentShift-left`]]: open,
-              })}
-            >
-              <div className={classes.drawerHeader + " no-print"} />
-              {this.state.currentUser && (
-                <Switch>
-                  <ExtensionsComponent extensionKey="core.routes" {...params} />
-                </Switch>
-              )}
-            </main>
+              <main
+                className={classNames(
+                  classes.content,
+                  classes[`content-left`],
+                  {
+                    [classes.contentShift]: open,
+                    [classes[`contentShift-left`]]: open,
+                  },
+                )}
+              >
+                <div className={classes.drawerHeader + " no-print"} />
+                {this.state.currentUser && (
+                  <Switch>
+                    <ExtensionsComponent
+                      extensionKey="core.routes"
+                      {...params}
+                    />
+                  </Switch>
+                )}
+              </main>
+            </div>
           </div>
-        </div>
-      </Router>
+        </Router>
+      </Provider>
     );
   }
 }

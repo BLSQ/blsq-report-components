@@ -21,7 +21,7 @@ import ContractPlugin from "./components/contracts/ContractPlugin";
 import InvoicePlugin from "./components/invoices/InvoicePlugin";
 import IncentivePlugin from "./components/incentives/IncentivePlugin";
 import BrowseDataPlugin from "./components/browsedata/BrowseDataPlugin";
-import PyramidPlugin from "./components/pyramid/PyramidPlugin"
+import PyramidPlugin from "./components/pyramid/PyramidPlugin";
 
 import { indexBy } from "./support/Arrays";
 import configureI18N from "./support/configureI18N";
@@ -48,5 +48,5 @@ export {
   InvoicePlugin,
   IncentivePlugin,
   BrowseDataPlugin,
-  PyramidPlugin
+  PyramidPlugin,
 };

@@ -17,6 +17,7 @@ export const contractsTableColumns = (
   classes,
   contracts,
   contractFields,
+  location,
 ) => {
   const columns = [
     {
@@ -100,7 +101,10 @@ export const contractsTableColumns = (
         <Tooltip placement="bottom" title={t("table.actions.see")} arrow>
           <span>
             <IconButton size="small">
-              <Link to={`/contracts/${orgUnitId}`} className={classes.iconLink}>
+              <Link
+                to={`/contracts/${orgUnitId}${location.search}`}
+                className={classes.iconLink}
+              >
                 <Visibility />
               </Link>
             </IconButton>

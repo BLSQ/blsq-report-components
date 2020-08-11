@@ -1,8 +1,14 @@
 import Contract from "./Contract";
+
 class ContractService {
   constructor(api, program, allEventsSqlViewId) {
     this.api = api;
     this.program = program;
+    this.standardContractFields = [
+      "contract_start_date",
+      "contract_end_date",
+      "contract_main_orgunit",
+    ];
     const toMappings = (program) => {
       const dataElements = program.programStages.flatMap((ps) =>
         ps.programStageDataElements.map((psde) => psde.dataElement),
@@ -29,6 +35,70 @@ class ContractService {
     };
 
     return new Contract(contract);
+  }
+
+  toContractsById = (contracts) => {
+    const contractsById = {};
+    contracts.forEach((contract) => (contractsById[contract.id] = contract));
+    return contractsById;
+  };
+
+  toContractFields = (program) => {
+    const dataElements = program.programStages.flatMap((ps) =>
+      ps.programStageDataElements.map((psde) => psde.dataElement),
+    );
+    return dataElements.map((de) => {
+      return {
+        standardField: this.standardContractFields.includes(de.code),
+        ...de,
+      };
+    });
+  };
+
+  toOverlappings = (contracts) => {
+    const contractsByOrgUnits = {};
+    contracts.forEach((contract) => {
+      if (contractsByOrgUnits[contract.orgUnit.id] === undefined) {
+        contractsByOrgUnits[contract.orgUnit.id] = [];
+      }
+      contractsByOrgUnits[contract.orgUnit.id].push(contract);
+    });
+
+    const contractsOverlaps = {};
+    for (const [, contractsForOrgUnit] of Object.entries(contractsByOrgUnits)) {
+      contractsForOrgUnit.forEach((contract1) => {
+        contractsForOrgUnit.forEach((contract2) => {
+          if (contract1.overlaps(contract2)) {
+            if (contractsOverlaps[contract1.id] === undefined) {
+              contractsOverlaps[contract1.id] = new Set();
+            }
+            if (contractsOverlaps[contract2.id] === undefined) {
+              contractsOverlaps[contract2.id] = new Set();
+            }
+            contractsOverlaps[contract1.id].add(contract2.id);
+            contractsOverlaps[contract2.id].add(contract1.id);
+          }
+        });
+      });
+    }
+    return contractsOverlaps;
+  };
+
+  async fetchContracts(orgUnitId, sort = false) {
+    let contracts = await this.findAll();
+    if (orgUnitId) {
+      contracts = contracts.filter((c) => c.orgUnit.id === orgUnitId);
+    }
+    if (sort) {
+      contracts.sort((a, b) => (a.startPeriod > b.startPeriod ? 1 : -1));
+    }
+    return {
+      contracts,
+      filteredContracts: contracts,
+      contractsById: this.toContractsById(contracts),
+      contractsOverlaps: this.toOverlappings(contracts),
+      contractFields: this.toContractFields(this.program),
+    };
   }
 
   async findAll() {

@@ -10,22 +10,16 @@ import {
 import { withStyles } from "@material-ui/core/styles";
 import MUIDataTable from "mui-datatables";
 import { withNamespaces } from "react-i18next";
-import isEqual from "lodash/isEqual";
 import { withRouter } from "react-router-dom";
 
 import PluginRegistry from "../core/PluginRegistry";
 import ContractFilters from "./ContractFilters";
+import ContractsResume from "./ContractsResume";
 import { contractsTableColumns, contractsTableOptions } from "./config";
 import tablesStyles from "../styles/tables";
 import containersStyles from "../styles/containers";
 import LoadingSpinner from "../shared/LoadingSpinner";
-import {
-  toContractFields,
-  toContractsById,
-  toOverlappings,
-  encodeTableQueryParams,
-  decodeTableQueryParams,
-} from "./utils";
+import { encodeTableQueryParams, decodeTableQueryParams } from "./utils";
 
 const styles = (theme) => ({
   ...tablesStyles(theme),
@@ -42,16 +36,8 @@ class ContractsPage extends Component {
       contractsById: null,
       contractsOverlaps: {},
       contractService: PluginRegistry.extension("contracts.service"),
-      program: PluginRegistry.extension("contracts.program"),
       contractFields: [],
     };
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return (
-      !isEqual(nextState.filteredContracts, this.state.filteredContracts) ||
-      nextState.isLoading !== this.state.isLoading
-    );
   }
 
   setIsLoading(isLoading) {
@@ -75,18 +61,15 @@ class ContractsPage extends Component {
   }
 
   async fetchData() {
-    const { contractService, program } = this.state;
-    if (contractService && program) {
+    const { contractService } = this.state;
+    if (contractService) {
       this.setIsLoading(true);
-      const contracts = await contractService.findAll();
-      this.setContracts({
-        contracts,
-        filteredContracts: contracts,
-        contractsById: toContractsById(contracts),
-        contractsOverlaps: toOverlappings(contracts),
-        contractFields: toContractFields(program),
+      contractService.fetchContracts().then((contracts) => {
+        this.setContracts({
+          ...contracts,
+        });
+        this.setIsLoading(false);
       });
-      this.setIsLoading(false);
     }
   }
 
@@ -105,21 +88,6 @@ class ContractsPage extends Component {
       contractFields,
     } = this.state;
     const overlapsTotal = Object.keys(contractsOverlaps).length;
-    const tableTitle = (
-      <span className={classes.tableTitle}>
-        {filteredContracts.length === contracts.length &&
-          t("contracts.results", { total: contracts.length })}
-        {filteredContracts.length < contracts.length &&
-          t("contracts.resultsFiltered", {
-            filtered: filteredContracts.length,
-            total: contracts.length,
-          })}
-        {overlapsTotal > 0 &&
-          t("contracts.overlaps", { overlap: overlapsTotal })}
-        .
-      </span>
-    );
-    console.log("location", location);
     return (
       <>
         {isLoading && <LoadingSpinner />}
@@ -153,7 +121,13 @@ class ContractsPage extends Component {
                 classes={{
                   paper: classes.tableContainer,
                 }}
-                title={contracts.length > 0 ? tableTitle : ""}
+                title={
+                  <ContractsResume
+                    filteredContracts={filteredContracts}
+                    contracts={contracts}
+                    overlapsTotal={overlapsTotal}
+                  />
+                }
                 data={filteredContracts}
                 columns={contractsTableColumns(
                   t,
@@ -164,7 +138,7 @@ class ContractsPage extends Component {
                 )}
                 options={contractsTableOptions(
                   t,
-                  contracts,
+                  filteredContracts,
                   contractsById,
                   contractsOverlaps,
                   classes,

@@ -6,6 +6,7 @@
         "activeAt": "Actif le",
         "onlyOverlaps": "Seulement les contracts se chevauchant",
         "overlaps": ", dont {{overlap}} se chevauchant",
+        "result": "1 contrat",
         "results": "{{total}} contrats",
         "resultsFiltered": "{{filtered}} contrats filtrés sur {{total}}",
         "searchInfos": "Chercher sur le nom ou le code du contrat",
@@ -17,6 +18,15 @@
     "group": "Groupe",
     "groups": "Groupes",
     "invoice": "Facture",
+    "invoicing": {
+        "job": {
+            "error": "Message",
+            "erroredAt": "Quand",
+            "errors": "Erreurs lors des derniers calculs",
+            "orgUnit": "Org unit",
+            "period": "Période"
+        }
+    },
     "limit_org_unit_under": "Limiter à l'unité d'organisation enfant",
     "missing_invoice_types": "Facture introuvable...",
     "name": "Nom",
@@ -66,15 +76,6 @@
         "viewColumns": {
             "title": "Colonnes visibles",
             "titleAria": "Montrer/cacher des colonnes"
-        }
-    },
-    "invoicing": {
-        "job": {
-            "errors":"Erreurs lors des derniers calculs",
-            "period": "Période",
-            "orgUnit": "Org unit",
-            "erroredAt": "Quand",
-            "error": "Message"
         }
     }
 }

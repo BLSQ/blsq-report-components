@@ -7,19 +7,14 @@ class ExtensionsComponent extends Component {
     return PluginRegistry.extensions(this.props.extensionKey).map(
       (Extension, index) => {
         const key = `${this.props.extensionKey}-${index}`;
-        return (
-          <Extension
-            key={key}
-            {...this.props}
-          />
-        );
-      }
+        return <Extension key={key} {...this.props} />;
+      },
     );
   }
 }
 
 ExtensionsComponent.propTypes = {
-  extensionKey: PropTypes.string.isRequired
+  extensionKey: PropTypes.string.isRequired,
 };
 
 export default ExtensionsComponent;

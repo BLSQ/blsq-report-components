@@ -74,6 +74,7 @@ const ContractFilters = ({
     setFilteredContracts(filterItems(filters, contracts, contractsOverlaps));
     changeTable("page", 0);
   };
+
   return (
     <Box mb={3}>
       <Grid container item xs={12} spacing={4}>
@@ -81,14 +82,7 @@ const ContractFilters = ({
           .fill()
           .map((x, i) => i + 1)
           .map((column) => (
-            <Grid
-              container
-              item
-              xs={12}
-              md={3}
-              key={`column-${column}`}
-              // alignItems="center"
-            >
+            <Grid container item xs={12} md={3} key={`column-${column}`}>
               {filters
                 .filter((f) => f.column === column)
                 .map((filter) => (

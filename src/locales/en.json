@@ -6,6 +6,7 @@
         "activeAt": "Active at",
         "onlyOverlaps": "Only with overlaps",
         "overlaps": ", {{overlap}} overlapping globaly",
+        "result": "1 contract",
         "results": "{{total}} contracts",
         "resultsFiltered": "{{filtered}} results filtered out {{total}} contracts",
         "searchInfos": "Filter on name or contract codes",
@@ -70,7 +71,7 @@
     },
     "invoicing": {
         "job": {
-            "errors":"Error for the last calculate",
+            "errors": "Error for the last calculate",
             "period": "Period",
             "orgUnit": "Org unit",
             "erroredAt": "When",

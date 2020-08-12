@@ -4,7 +4,10 @@
     "codes": "Codes",
     "contracts": {
         "activeAt": "Actif le",
+        "createTitle": "Créer un contrat",
+        "editTitle": "Editer le contrat",
         "onlyOverlaps": "Seulement les contracts se chevauchant",
+        "overlappingWith": "Se chevauchant avec",
         "overlaps": ", dont {{overlap}} se chevauchant",
         "result": "1 contrat",
         "results": "{{total}} contrats",
@@ -12,6 +15,7 @@
         "searchInfos": "Chercher sur le nom ou le code du contrat",
         "title": "Contrats"
     },
+    "edit": "Editer",
     "end_period": "Fin",
     "filter": "Filtrer",
     "generated_at": "Généré le",
@@ -35,6 +39,7 @@
     "period": "Période",
     "print": "Imprimer",
     "report_and_invoices": "Rapports",
+    "save": "Sauver",
     "search": "Recherche",
     "search_org_unit": "Rechercher ou sélectionner l'unité d'organisation parente",
     "show_avalaible_invoices": "Choisir une facture",

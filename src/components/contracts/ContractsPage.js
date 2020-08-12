@@ -132,7 +132,7 @@ class ContractsPage extends Component {
                 columns={contractsTableColumns(
                   t,
                   classes,
-                  contracts,
+                  filteredContracts,
                   contractFields,
                   location,
                 )}

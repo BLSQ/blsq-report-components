@@ -1,16 +1,12 @@
 import React from "react";
-import { IconButton, Tooltip } from "@material-ui/core";
-import Visibility from "@material-ui/icons/Visibility";
+import moment from "moment";
+import { Tooltip } from "@material-ui/core";
 
 import { Link } from "react-router-dom";
+
+import ContractsDialog from "./ContractsDialog";
 import { defaultOptions } from "../../support/table";
-import {
-  getOverlaps,
-  getOrgUnitAncestors,
-  getStartDateFromPeriod,
-  getEndDateFromPeriod,
-  getOptionFromField,
-} from "./utils";
+import { getOverlaps, getOrgUnitAncestors, getOptionFromField } from "./utils";
 
 export const contractsTableColumns = (
   t,
@@ -32,41 +28,44 @@ export const contractsTableColumns = (
               arrow
               title={getOrgUnitAncestors(contracts[tableMeta.rowIndex].orgUnit)}
             >
-              <span>{orgUnitName}</span>
+              <Link
+                to={`/contracts/${contracts[tableMeta.rowIndex].orgUnit.id}${
+                  location.search
+                }`}
+                className={classes.iconLink}
+              >
+                <span>{orgUnitName}</span>
+              </Link>
             </Tooltip>
           );
         },
       },
     },
     {
-      name: "startPeriod",
+      name: "fieldValues.contract_start_date",
       label: t("start_period"),
       options: {
         filter: false,
         sort: true,
-        customBodyRender: (startPeriod) => {
+        customBodyRender: (contractStartDate) => {
           return (
-            <Tooltip arrow title={startPeriod}>
-              <span>
-                {getStartDateFromPeriod(startPeriod).format("DD/MM/YYYY")}
-              </span>
+            <Tooltip arrow title={contractStartDate}>
+              <span>{moment(contractStartDate).format("DD/MM/YYYY")}</span>
             </Tooltip>
           );
         },
       },
     },
     {
-      name: "endPeriod",
+      name: "fieldValues.contract_end_date",
       label: t("end_period"),
       options: {
         filter: false,
         sort: true,
-        customBodyRender: (endPeriod) => {
+        customBodyRender: (contractEndDate) => {
           return (
-            <Tooltip arrow title={endPeriod}>
-              <span>
-                {getEndDateFromPeriod(endPeriod).format("DD/MM/YYYY")}
-              </span>
+            <Tooltip arrow title={contractEndDate}>
+              <span>{moment(contractEndDate).format("DD/MM/YYYY")}</span>
             </Tooltip>
           );
         },
@@ -92,24 +91,18 @@ export const contractsTableColumns = (
     }
   });
   columns.push({
-    name: "orgUnit.id",
-    label: t("table.actions.title"),
+    name: "id",
+    label: (
+      <span className={classes.cellCentered}>{t("table.actions.title")}</span>
+    ),
     options: {
       filter: false,
       sort: false,
-      customBodyRender: (orgUnitId) => (
-        <Tooltip placement="bottom" title={t("table.actions.see")} arrow>
-          <span>
-            <IconButton size="small">
-              <Link
-                to={`/contracts/${orgUnitId}${location.search}`}
-                className={classes.iconLink}
-              >
-                <Visibility />
-              </Link>
-            </IconButton>
-          </span>
-        </Tooltip>
+      setCellProps: () => ({
+        align: "center",
+      }),
+      customBodyRender: (id, tableMeta) => (
+        <ContractsDialog contract={contracts[tableMeta.rowIndex]} />
       ),
     },
   });

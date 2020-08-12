@@ -23,6 +23,7 @@ const ContractPage = ({ match, location, t }) => {
     contracts: [],
     contractsById: null,
     contractsOverlaps: {},
+    contractFields: [],
   });
 
   const contractService = PluginRegistry.extension("contracts.service");
@@ -81,6 +82,7 @@ const ContractPage = ({ match, location, t }) => {
               contract={contract}
               contractsById={contractsDatas.contractsById}
               contractsOverlaps={contractsDatas.contractsOverlaps}
+              contractFields={contractsDatas.contractFields}
             />
           </Grid>
         ))}

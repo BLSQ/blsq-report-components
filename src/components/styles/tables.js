@@ -22,6 +22,11 @@ const tables = (theme) => ({
     marginLeft: -theme.spacing(2),
     display: "inline-block",
   },
+  cellCentered: {
+    width: "100%",
+    textAlign: "center",
+    display: "block",
+  },
 });
 
 export default tables;

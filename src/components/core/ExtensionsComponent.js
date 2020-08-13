@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 
 class ExtensionsComponent extends Component {
   render() {
-    // console.log("ExtensionsComponent", this.props.extensionKey);
     return PluginRegistry.extensions(this.props.extensionKey).map(
       (Extension, index) => {
         const key = `${this.props.extensionKey}-${index}`;

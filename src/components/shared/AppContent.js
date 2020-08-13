@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import { Switch } from "react-router-dom";
+import { Switch, withRouter } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 
@@ -167,6 +167,6 @@ const MapDispatchToProps = (dispatch) => ({
   dispatch,
 });
 
-export default withStyles(styles)(
-  connect(MapStateToProps, MapDispatchToProps)(AppContent),
+export default withRouter(
+  withStyles(styles)(connect(MapStateToProps, MapDispatchToProps)(AppContent)),
 );

@@ -6,7 +6,7 @@ import { Provider } from "react-redux";
 
 import { store } from "./redux/store";
 
-import AppDrawer from "./shared/RawAppDrawer";
+import RawAppDrawer from "./shared/RawAppDrawer";
 import AppToolBar from "./shared/RawAppToolBar";
 import AppContent from "./shared/AppContent";
 
@@ -41,13 +41,15 @@ class App extends React.Component {
       defaultPathName,
     } = this.props;
 
+    console.log("render AppDrawer");
+    console.log("drawerLinks", drawerLinks);
     return (
       <Provider store={store}>
         <Router>
           <div className={classes.root}>
             <div className={classes.appFrame}>
               <AppToolBar />
-              <AppDrawer
+              <RawAppDrawer
                 drawerLinks={drawerLinks}
                 defaultPathName={defaultPathName || "/select"}
               />

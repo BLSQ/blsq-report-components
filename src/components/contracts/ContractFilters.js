@@ -36,7 +36,7 @@ const ContractFilters = ({
     );
     setFilteredContracts(filteredContracts);
     setFilters(newFilters);
-  }, []);
+  }, [contracts]);
 
   const checkErrors = () => {
     setHasError(false);

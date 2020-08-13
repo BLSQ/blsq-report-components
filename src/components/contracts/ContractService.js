@@ -94,7 +94,6 @@ class ContractService {
     }
     return {
       contracts,
-      filteredContracts: contracts,
       contractsById: this.toContractsById(contracts),
       contractsOverlaps: this.toOverlappings(contracts),
       contractFields: this.toContractFields(this.program),

@@ -4,12 +4,13 @@ import Typography from "@material-ui/core/Typography";
 import { withNamespaces } from "react-i18next";
 import { Breadcrumbs, Grid, makeStyles } from "@material-ui/core";
 import { Link, withRouter } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 import PluginRegistry from "../core/PluginRegistry";
 import ContractsResume from "./ContractsResume";
-import LoadingSpinner from "../shared/LoadingSpinner";
 import ContractCard from "./ContractCard";
 import linksStyles from "../styles/links";
+import { setIsLoading } from "../redux/actions/load";
 
 const styles = (theme) => ({
   ...linksStyles(theme),
@@ -18,7 +19,7 @@ const styles = (theme) => ({
 const useStyles = makeStyles((theme) => styles(theme));
 const ContractPage = ({ match, location, t }) => {
   const classes = useStyles();
-  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
   const [contractsDatas, setContractsDatas] = useState({
     contracts: [],
     contractsById: null,
@@ -29,7 +30,7 @@ const ContractPage = ({ match, location, t }) => {
   const contractService = PluginRegistry.extension("contracts.service");
   useEffect(() => {
     if (contractService) {
-      setIsLoading(true);
+      dispatch(setIsLoading(true));
       contractService
         .fetchContracts(match.params.orgUnitId, true)
         .then((contractsDatas) => {
@@ -37,21 +38,14 @@ const ContractPage = ({ match, location, t }) => {
             ...contractsDatas,
           });
 
-          setIsLoading(false);
+          dispatch(setIsLoading(false));
         });
     }
-  }, [
-    setIsLoading,
-    setContractsDatas,
-    contractService,
-    match.params.orgUnitId,
-  ]);
+  }, [setContractsDatas, contractService, match.params.orgUnitId, dispatch]);
   const overlapsTotal = Object.keys(contractsDatas.contractsOverlaps).length;
 
   return (
     <>
-      {isLoading && <LoadingSpinner />}
-
       <Grid container item xs={12} spacing={4}>
         <Grid container item xs={12} md={8}>
           <Breadcrumbs aria-label="breadcrumb">

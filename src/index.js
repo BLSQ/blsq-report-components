@@ -12,7 +12,7 @@ import * as NumberFormatter from "./support/NumberFormatter";
 
 import Cell from "./components/shared/Cell";
 import Warning from "./components/shared/Warning";
-import AppDrawer from "./components/AppDrawer";
+import AppDrawer from "./components/App";
 import PluginRegistry from "./components/core/PluginRegistry";
 import ExtensionsComponent from "./components/core/ExtensionsComponent";
 import ContractService from "./components/contracts/ContractService";

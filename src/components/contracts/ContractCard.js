@@ -20,6 +20,7 @@ import WarningBox from "../shared/WarningBox";
 const styles = (theme) => ({
   path: {
     fontSize: 11,
+    width: "100%",
   },
   overlapsList: {
     width: "100%",

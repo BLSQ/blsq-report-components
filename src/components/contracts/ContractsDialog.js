@@ -14,6 +14,7 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import Edit from "@material-ui/icons/Edit";
+import OuSearch from "../shared/OuSearch";
 
 const styles = (theme) => ({
   title: {
@@ -31,7 +32,7 @@ const useStyles = makeStyles((theme) => styles(theme));
 const ContractsDialog = ({ t, contract }) => {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
-  console.log(contract);
+  // console.log(contract);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -69,7 +70,10 @@ const ContractsDialog = ({ t, contract }) => {
           </IconButton>
         </DialogTitle>
         <DialogContent dividers>
-          <Typography gutterBottom>{contract.orgUnit.name}</Typography>
+          <OuSearch
+            onChange={(orgUnit) => console.log(orgUnit)}
+            orgUnit={contract.orgUnit}
+          />
           <Typography gutterBottom>
             {contract.fieldValues.contract_start_date}
           </Typography>

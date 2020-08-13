@@ -1,6 +1,6 @@
 import React from "react";
 import InvoiceSelectionContainer from "./InvoiceSelectionContainer";
-import InvoicePage from "./InvoicePage"
+import InvoicePage from "./InvoicePage";
 import { Route, Redirect } from "react-router-dom";
 import PluginRegistry from "../core/PluginRegistry";
 
@@ -29,7 +29,7 @@ const invoiceRoutes = (props) => {
       exact
       component={(routerProps) => {
         const params = new URLSearchParams(
-          routerProps.location.search.substring(1)
+          routerProps.location.search.substring(1),
         );
         const period = params.get("period");
         const parent = params.get("parent");
@@ -55,7 +55,7 @@ const invoiceRoutes = (props) => {
           />
         );
       }}
-    />
+    />,
     /*
     TODO this break things ?
     ,

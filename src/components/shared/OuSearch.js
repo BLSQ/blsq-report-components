@@ -17,6 +17,7 @@ const styles = (theme) => ({
     marginBottom: theme.spacing(),
     flexDirection: "row",
     alignItems: "center",
+    position: "relative",
   },
   autoComplete: {
     width: `calc(100% - ${theme.spacing(2)}px)`,
@@ -27,10 +28,10 @@ const styles = (theme) => ({
 });
 const useStyles = makeStyles((theme) => styles(theme));
 
-const OuSearch = ({ t, dhis2, orgUnit }) => {
+const OuSearch = ({ t, orgUnit, onChange }) => {
   const classes = useStyles();
   const currentUser = useSelector((state) => state.currentUser.profile);
-  console.log("currentUser", currentUser);
+  const dhis2 = useSelector((state) => state.dhis2.support);
   const [searchValue, setSearchValue] = React.useState("");
   const [options, setOptions] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -56,7 +57,7 @@ const OuSearch = ({ t, dhis2, orgUnit }) => {
 
   const handleChange = (newvalue) => {
     setSearchValue(newvalue);
-    if (newvalue.length > minChar) {
+    if (newvalue !== orgUnit.name && newvalue.length >= minChar) {
       if (!searchTriggered) {
         setSearchTriggered(true);
       }
@@ -83,7 +84,7 @@ const OuSearch = ({ t, dhis2, orgUnit }) => {
         }}
         onInputChange={(event, newInputValue) => handleChange(newInputValue)}
         onChange={(event, newValue) => {
-          console.log("newValue", newValue);
+          onChange(newValue);
         }}
         renderInput={(params) => (
           <TextField
@@ -111,7 +112,6 @@ OuSearch.defaultProps = {
 
 OuSearch.propTypes = {
   t: PropTypes.func.isRequired,
-  dhis2: PropTypes.object.isRequired,
   orgUnit: PropTypes.object,
   onChange: PropTypes.func.isRequired,
 };

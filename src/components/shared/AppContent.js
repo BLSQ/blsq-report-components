@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 
 import { setCurrentUser } from "../redux/actions/currentUser";
 import { setCurrentPeriod } from "../redux/actions/period";
+import { setDhis2 } from "../redux/actions/dhis2";
 
 import ExtensionsComponent from "../core/ExtensionsComponent";
 import PluginRegistry from "../core/PluginRegistry";
@@ -70,6 +71,8 @@ class AppContent extends React.Component {
   }
 
   componentDidMount() {
+    const { dhis2, dispatch } = this.props;
+    dispatch(setDhis2(dhis2));
     this.fetchCurrentUser();
   }
 

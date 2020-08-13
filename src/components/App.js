@@ -23,50 +23,39 @@ const styles = (theme) => ({
     display: "flex",
     width: "100%",
   },
-  hide: {
-    display: "none",
-  },
 });
 
-class App extends React.Component {
-  render() {
-    const {
-      classes,
-      dhis2,
-      config,
-      invoices,
-      incentivesDescriptors,
-      dataElementGroups,
-      drawerLinks,
-      defaultPathName,
-    } = this.props;
-
-    console.log("render AppDrawer");
-    console.log("drawerLinks", drawerLinks);
-    return (
-      <Provider store={store}>
-        <Router>
-          <div className={classes.root}>
-            <div className={classes.appFrame}>
-              <AppToolBar />
-              <RawAppDrawer
-                drawerLinks={drawerLinks}
-                defaultPathName={defaultPathName || "/select"}
-              />
-              <AppContent
-                dhis2={dhis2}
-                config={config}
-                invoices={invoices}
-                incentivesDescriptors={incentivesDescriptors}
-                dataElementGroups={dataElementGroups}
-              />
-            </div>
-          </div>
-        </Router>
-      </Provider>
-    );
-  }
-}
+const App = ({
+  classes,
+  dhis2,
+  config,
+  invoices,
+  incentivesDescriptors,
+  dataElementGroups,
+  drawerLinks,
+  defaultPathName,
+}) => (
+  <Provider store={store}>
+    <Router>
+      <div className={classes.root}>
+        <div className={classes.appFrame}>
+          <AppToolBar />
+          <RawAppDrawer
+            drawerLinks={drawerLinks}
+            defaultPathName={defaultPathName || "/select"}
+          />
+          <AppContent
+            dhis2={dhis2}
+            config={config}
+            invoices={invoices}
+            incentivesDescriptors={incentivesDescriptors}
+            dataElementGroups={dataElementGroups}
+          />
+        </div>
+      </div>
+    </Router>
+  </Provider>
+);
 
 App.propTypes = {
   classes: PropTypes.object.isRequired,

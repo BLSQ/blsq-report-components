@@ -8,7 +8,6 @@ import { useDispatch } from "react-redux";
 
 import PluginRegistry from "../core/PluginRegistry";
 import ContractsResume from "./ContractsResume";
-import OuSearch from "../shared/OuSearch";
 import ContractCard from "./ContractCard";
 import linksStyles from "../styles/links";
 import { setIsLoading } from "../redux/actions/load";
@@ -18,7 +17,7 @@ const styles = (theme) => ({
 });
 
 const useStyles = makeStyles((theme) => styles(theme));
-const ContractPage = ({ match, location, t, dhis2, currentUser }) => {
+const ContractPage = ({ match, location, t }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [contractsDatas, setContractsDatas] = useState({
@@ -47,11 +46,6 @@ const ContractPage = ({ match, location, t, dhis2, currentUser }) => {
 
   return (
     <>
-      <OuSearch
-        dhis2={dhis2}
-        currentUser={currentUser}
-        onChange={(orgUnit) => console.log(orgUnit)}
-      />
       <Grid container item xs={12} spacing={4}>
         <Grid container item xs={12} md={8}>
           <Breadcrumbs aria-label="breadcrumb">
@@ -94,9 +88,7 @@ const ContractPage = ({ match, location, t, dhis2, currentUser }) => {
 ContractPage.propTypes = {
   match: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
-  dhis2: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  currentUser: PropTypes.object.isRequired,
 };
 
 export default withRouter(withNamespaces()(ContractPage));

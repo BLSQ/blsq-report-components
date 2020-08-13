@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => styles(theme));
 const ContractsDialog = ({ t, contract }) => {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
-  console.log(contract);
+  // console.log(contract);
   const handleClickOpen = () => {
     setOpen(true);
   };

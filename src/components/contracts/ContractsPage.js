@@ -11,15 +11,20 @@ import { withStyles } from "@material-ui/core/styles";
 import MUIDataTable from "mui-datatables";
 import { withNamespaces } from "react-i18next";
 import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
 
 import PluginRegistry from "../core/PluginRegistry";
+
 import ContractFilters from "./ContractFilters";
 import ContractsResume from "./ContractsResume";
+
 import { contractsTableColumns, contractsTableOptions } from "./config";
+import { encodeTableQueryParams, decodeTableQueryParams } from "./utils";
+
 import tablesStyles from "../styles/tables";
 import containersStyles from "../styles/containers";
-import LoadingSpinner from "../shared/LoadingSpinner";
-import { encodeTableQueryParams, decodeTableQueryParams } from "./utils";
+
+import { setIsLoading } from "../redux/actions/load";
 
 const styles = (theme) => ({
   ...tablesStyles(theme),
@@ -30,7 +35,6 @@ class ContractsPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoading: false,
       contracts: [],
       filteredContracts: [],
       contractsById: null,
@@ -38,12 +42,6 @@ class ContractsPage extends Component {
       contractService: PluginRegistry.extension("contracts.service"),
       contractFields: [],
     };
-  }
-
-  setIsLoading(isLoading) {
-    this.setState({
-      isLoading,
-    });
   }
 
   setContracts(data) {
@@ -62,13 +60,14 @@ class ContractsPage extends Component {
 
   async fetchData() {
     const { contractService } = this.state;
+    const { dispatch } = this.props;
     if (contractService) {
-      this.setIsLoading(true);
+      dispatch(setIsLoading(true));
       contractService.fetchContracts().then((contracts) => {
+        dispatch(setIsLoading(false));
         this.setContracts({
           ...contracts,
         });
-        this.setIsLoading(false);
       });
     }
   }
@@ -90,8 +89,6 @@ class ContractsPage extends Component {
     const overlapsTotal = Object.keys(contractsOverlaps).length;
     return (
       <>
-        {isLoading && <LoadingSpinner />}
-
         <Paper square className={classes.rootContainer}>
           <Breadcrumbs aria-label="breadcrumb">
             <Box mb={2}>
@@ -159,6 +156,15 @@ ContractsPage.propTypes = {
   location: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
-export default withRouter(withNamespaces()(withStyles(styles)(ContractsPage)));
+const MapDispatchToProps = (dispatch) => ({
+  dispatch,
+});
+
+export default withRouter(
+  withNamespaces()(
+    withStyles(styles)(connect(() => ({}), MapDispatchToProps)(ContractsPage)),
+  ),
+);

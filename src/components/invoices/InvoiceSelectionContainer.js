@@ -12,27 +12,27 @@ import SelectionResultsContainer from "./SelectionResultsContainer";
 import PluginRegistry from "../core/PluginRegistry";
 import debounce from "lodash/debounce";
 
-const styles = theme => ({
+const styles = (theme) => ({
   paper: theme.mixins.gutters({
     paddingTop: 16,
     paddingBottom: 16,
     marginTop: theme.spacing(3),
-    minHeight: "600px"
+    minHeight: "600px",
   }),
   table: {
-    minWidth: "100%"
+    minWidth: "100%",
   },
   filters: {
-    marginLeft: "30px"
-  }
+    marginLeft: "30px",
+  },
 });
 
 class InvoiceSelectionContainer extends Component {
   static defaultProps = {
     periodFormat: {
       quarterly: "quarter",
-      monthly: "yearMonth"
-    }
+      monthly: "yearMonth",
+    },
   };
 
   constructor(props) {
@@ -54,7 +54,7 @@ class InvoiceSelectionContainer extends Component {
     this.synchronizeHistory(
       this.props.parent,
       ouSearchValue,
-      this.props.period
+      this.props.period,
     );
   }
 
@@ -63,7 +63,7 @@ class InvoiceSelectionContainer extends Component {
     synchronizeHistory(
       this.props.parent,
       this.props.ouSearchValue,
-      this.props.period
+      this.props.period,
     );
   }
 
@@ -74,7 +74,7 @@ class InvoiceSelectionContainer extends Component {
     const parentParam = parent ? "&parent=" + parent : "";
     this.props.history.replace({
       pathname: this.props.defaultPathName,
-      search: "?q=" + ouSearchValue + "&period=" + period + parentParam
+      search: "?q=" + ouSearchValue + "&period=" + period + parentParam,
     });
   }
 
@@ -82,7 +82,7 @@ class InvoiceSelectionContainer extends Component {
     this.synchronizeHistory(
       orgUnit,
       this.props.ouSearchValue,
-      this.props.period
+      this.props.period,
     );
   }
 
@@ -90,7 +90,7 @@ class InvoiceSelectionContainer extends Component {
     this.synchronizeHistory(
       this.props.parent,
       this.props.ouSearchValue,
-      period
+      period,
     );
   }
 
@@ -105,42 +105,42 @@ class InvoiceSelectionContainer extends Component {
         searchvalue,
         user.dataViewOrganisationUnits,
         this.props.contractedOrgUnitGroupId,
-        this.props.parent
+        this.props.parent,
       );
       let categoryList = [];
       if (this.props.dhis2.categoryComboId) {
         categoryList = await this.searchCategoryCombo(searchvalue);
-        categoryList.forEach(cl =>
+        categoryList.forEach((cl) =>
           orgUnitsResp.organisationUnits.push({
             id: cl.id,
             shortName: cl.shortName,
             name: cl.name,
             ancestors: [],
             level: cl.level,
-            organisationUnitGroups: cl.organisationUnitGroups
-          })
+            organisationUnitGroups: cl.organisationUnitGroups,
+          }),
         );
       }
       const contractService = PluginRegistry.extension("contracts.service");
       if (contractService) {
         const contracts = await contractService.findAll();
         const contractByOrgUnitId = {};
-        contracts.forEach(contract => {
+        contracts.forEach((contract) => {
           if (contractByOrgUnitId[contract.orgUnit.id] == undefined) {
             contractByOrgUnitId[contract.orgUnit.id] = [];
           }
           contractByOrgUnitId[contract.orgUnit.id].push(contract);
         });
-        orgUnitsResp.organisationUnits.forEach(orgUnit => {
+        orgUnitsResp.organisationUnits.forEach((orgUnit) => {
           orgUnit.contracts = contractByOrgUnitId[orgUnit.id] || [];
-          orgUnit.activeContracts = orgUnit.contracts.filter(c =>
-            c.matchPeriod(this.props.period)
+          orgUnit.activeContracts = orgUnit.contracts.filter((c) =>
+            c.matchPeriod(this.props.period),
           );
         });
       }
       this.setState({
         orgUnits: orgUnitsResp.organisationUnits,
-        loading: false
+        loading: false,
       });
     }
   }
@@ -148,9 +148,9 @@ class InvoiceSelectionContainer extends Component {
   async searchCategoryCombo(searchvalue) {
     const categoryCombos = await this.props.dhis2.getCategoryComboById();
     let optionsCombos = categoryCombos.categoryOptionCombos.filter(
-      cc => cc.name.toLowerCase().indexOf(searchvalue.toLowerCase()) > -1
+      (cc) => cc.name.toLowerCase().indexOf(searchvalue.toLowerCase()) > -1,
     );
-    return optionsCombos.map(option => {
+    return optionsCombos.map((option) => {
       return {
         id: option.id,
         shortName: option.shortName,
@@ -158,8 +158,8 @@ class InvoiceSelectionContainer extends Component {
         ancestors: [],
         level: 0,
         organisationUnitGroups: [
-          { name: "", id: this.props.contractedOrgUnitGroupId }
-        ]
+          { name: "", id: this.props.contractedOrgUnitGroupId },
+        ],
       };
     });
   }
@@ -216,7 +216,7 @@ class InvoiceSelectionContainer extends Component {
 }
 
 InvoiceSelectionContainer.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(withNamespaces()(InvoiceSelectionContainer));

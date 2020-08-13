@@ -6,7 +6,7 @@ import { Provider } from "react-redux";
 
 import { store } from "./redux/store";
 
-import RawAppDrawer from "./shared/RawAppDrawer";
+import AppDrawer from "./shared/RawAppDrawer";
 import AppToolBar from "./shared/RawAppToolBar";
 import AppContent from "./shared/AppContent";
 
@@ -28,7 +28,7 @@ const styles = (theme) => ({
   },
 });
 
-class AppDrawer extends React.Component {
+class App extends React.Component {
   render() {
     const {
       classes,
@@ -41,15 +41,13 @@ class AppDrawer extends React.Component {
       defaultPathName,
     } = this.props;
 
-    console.log("render AppDrawer");
-    console.log("drawerLinks", drawerLinks);
     return (
       <Provider store={store}>
         <Router>
           <div className={classes.root}>
             <div className={classes.appFrame}>
               <AppToolBar />
-              <RawAppDrawer
+              <AppDrawer
                 drawerLinks={drawerLinks}
                 defaultPathName={defaultPathName || "/select"}
               />
@@ -68,7 +66,7 @@ class AppDrawer extends React.Component {
   }
 }
 
-AppDrawer.propTypes = {
+App.propTypes = {
   classes: PropTypes.object.isRequired,
   dhis2: PropTypes.object.isRequired,
   config: PropTypes.object.isRequired,
@@ -79,4 +77,4 @@ AppDrawer.propTypes = {
   defaultPathName: PropTypes.any,
 };
 
-export default withStyles(styles)(AppDrawer);
+export default withStyles(styles)(App);

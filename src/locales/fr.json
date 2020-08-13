@@ -41,6 +41,7 @@
     "report_and_invoices": "Rapports",
     "save": "Sauver",
     "search": "Recherche",
+    "searchHelp": "Minimum {{minChar}} charactères, maximum {{maxResult}} résultats.",
     "search_org_unit": "Rechercher ou sélectionner l'unité d'organisation parente",
     "show_avalaible_invoices": "Choisir une facture",
     "start_period": "Début",

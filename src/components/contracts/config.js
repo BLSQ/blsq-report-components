@@ -22,19 +22,15 @@ export const contractsTableColumns = (
       options: {
         filter: false,
         sort: true,
-        customBodyRender: (orgUnitName, tableMeta) => {
+        customBodyRenderLite: (dataIndex) => {
+          const { orgUnit } = contracts[dataIndex];
           return (
-            <Tooltip
-              arrow
-              title={getOrgUnitAncestors(contracts[tableMeta.rowIndex].orgUnit)}
-            >
+            <Tooltip arrow title={getOrgUnitAncestors(orgUnit)}>
               <Link
-                to={`/contracts/${contracts[tableMeta.rowIndex].orgUnit.id}${
-                  location.search
-                }`}
+                to={`/contracts/${orgUnit.id}${location.search}`}
                 className={classes.iconLink}
               >
-                <span>{orgUnitName}</span>
+                <span>{orgUnit.name}</span>
               </Link>
             </Tooltip>
           );
@@ -92,17 +88,18 @@ export const contractsTableColumns = (
   });
   columns.push({
     name: "id",
-    label: (
-      <span className={classes.cellCentered}>{t("table.actions.title")}</span>
-    ),
+    label: t("table.actions.title"),
     options: {
       filter: false,
       sort: false,
       setCellProps: () => ({
         align: "center",
       }),
-      customBodyRender: (id, tableMeta) => (
-        <ContractsDialog contract={contracts[tableMeta.rowIndex]} />
+      setCellHeaderProps: () => ({
+        className: classes.cellCentered,
+      }),
+      customBodyRenderLite: (dataIndex) => (
+        <ContractsDialog contract={contracts[dataIndex]} />
       ),
     },
   });

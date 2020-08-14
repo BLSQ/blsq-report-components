@@ -3,6 +3,9 @@ const tables = (theme) => ({
     padding: 0,
     margin: 0,
     boxShadow: "none",
+    "& .MuiTableSortLabel-active": {
+      top: 6,
+    },
   },
   rowError: {
     "& .MuiTableCell-body": {
@@ -23,9 +26,7 @@ const tables = (theme) => ({
     display: "inline-block",
   },
   cellCentered: {
-    width: "100%",
     textAlign: "center",
-    display: "block",
   },
 });
 

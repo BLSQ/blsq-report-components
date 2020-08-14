@@ -3,7 +3,13 @@ import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { withNamespaces } from "react-i18next";
 import debounce from "lodash/debounce";
-import { makeStyles, Tooltip, FormControl, TextField } from "@material-ui/core";
+import {
+  makeStyles,
+  Tooltip,
+  FormControl,
+  TextField,
+  ClickAwayListener,
+} from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import InfoIcon from "@material-ui/icons/Info";
 import LoadingSpinner from "../shared/LoadingSpinner";
@@ -52,10 +58,13 @@ const OuSearch = ({ t, orgUnit, onChange }) => {
       maxResult,
     );
     setIsLoading(false);
+    if (!orgUnitsResp.organisationUnits.find((o) => o.id === orgUnit.id)) {
+      orgUnitsResp.organisationUnits.push(orgUnit);
+    }
     setOptions(orgUnitsResp.organisationUnits);
   };
 
-  const handleChange = (newvalue) => {
+  const handleInputChange = (newvalue) => {
     setSearchValue(newvalue);
     if (newvalue !== orgUnit.name && newvalue.length >= minChar) {
       if (!searchTriggered) {
@@ -67,43 +76,57 @@ const OuSearch = ({ t, orgUnit, onChange }) => {
     }
   };
 
+  const handleSelect = (newOrgUnit) => {
+    setSearchTriggered(false);
+    onChange(newOrgUnit);
+  };
+
   return (
-    <FormControl className={classes.formControl}>
-      <Autocomplete
-        noOptionsText={t("noResult")}
-        multiple={false}
-        options={options}
-        value={orgUnit}
-        open={searchTriggered}
-        loading={isLoading}
-        className={classes.autoComplete}
-        filterSelectedOptions
-        loadingText={<LoadingSpinner fixed={false} padding={20} />}
-        getOptionLabel={(option) => {
-          return option ? option.name : "";
-        }}
-        onInputChange={(event, newInputValue) => handleChange(newInputValue)}
-        onChange={(event, newValue) => {
-          onChange(newValue);
-        }}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            autoFocus
-            label={t("orgUnit_name")}
-            InputLabelProps={{
-              shrink: Boolean(searchValue && searchValue !== ""),
-            }}
-            placeholder=""
-          />
-        )}
-      />
-      <span className={classes.tooltip}>
-        <Tooltip arrow title={t("searchHelp", { minChar, maxResult })}>
-          <InfoIcon color="action" />
-        </Tooltip>
-      </span>
-    </FormControl>
+    <ClickAwayListener onClickAway={() => setSearchTriggered(false)}>
+      <FormControl className={classes.formControl}>
+        <Autocomplete
+          clearOnEscape
+          noOptionsText={t("noResult")}
+          multiple={false}
+          options={options === [] && Boolean(orgUnit) ? [orgUnit] : options}
+          value={orgUnit}
+          open={searchTriggered}
+          loading={isLoading}
+          className={classes.autoComplete}
+          filterSelectedOptions
+          popupIcon={null}
+          loadingText={<LoadingSpinner fixed={false} padding={20} />}
+          getOptionLabel={(option) => {
+            return option ? option.name : "";
+          }}
+          onInputChange={(event, newInputValue) =>
+            handleInputChange(newInputValue)
+          }
+          onChange={(event, newValue) => handleSelect(newValue)}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              autoFocus
+              label={t("orgUnit_name")}
+              onKeyUp={(event) => {
+                if (event.key === "Escape") {
+                  setSearchTriggered(false);
+                }
+              }}
+              InputLabelProps={{
+                shrink: Boolean(searchValue && searchValue !== ""),
+              }}
+              placeholder=""
+            />
+          )}
+        />
+        <span className={classes.tooltip}>
+          <Tooltip arrow title={t("searchHelp", { minChar, maxResult })}>
+            <InfoIcon color="action" />
+          </Tooltip>
+        </span>
+      </FormControl>
+    </ClickAwayListener>
   );
 };
 OuSearch.defaultProps = {

@@ -6,7 +6,7 @@ import Paper from "@material-ui/core/Paper";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Typography from "@material-ui/core/Typography";
 import OrgUnitAutoComplete from "./OrgUnitAutoComplete";
-import PeriodPicker from "./PeriodPicker";
+import PeriodPicker from "../shared/PeriodPicker";
 import OuPicker from "./OuPicker";
 import SelectionResultsContainer from "./SelectionResultsContainer";
 import PluginRegistry from "../core/PluginRegistry";

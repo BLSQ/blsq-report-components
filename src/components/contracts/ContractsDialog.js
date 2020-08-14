@@ -14,7 +14,9 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import Edit from "@material-ui/icons/Edit";
+
 import OuSearch from "../shared/OuSearch";
+import PeriodPicker from "../shared/PeriodPicker";
 
 const styles = (theme) => ({
   title: {
@@ -32,7 +34,7 @@ const useStyles = makeStyles((theme) => styles(theme));
 const ContractsDialog = ({ t, contract }) => {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
-  // console.log(contract);
+  console.log(contract);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -74,7 +76,17 @@ const ContractsDialog = ({ t, contract }) => {
             onChange={(orgUnit) => console.log(orgUnit)}
             orgUnit={contract.orgUnit}
           />
+
+          <PeriodPicker
+            period={contract.startPeriod}
+            onPeriodChange={(startPeriod) => console.log(startPeriod)}
+            periodFormat={{
+              quarterly: "quarter",
+              monthly: "yearMonth",
+            }}
+          />
           <Typography gutterBottom>
+            {contract.startPeriod}
             {contract.fieldValues.contract_start_date}
           </Typography>
           <Typography gutterBottom>

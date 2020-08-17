@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { withNamespaces } from "react-i18next";
 
 import { Grid } from "@material-ui/core";
 
@@ -20,4 +19,4 @@ ContractField.propTypes = {
   value: PropTypes.string.isRequired,
 };
 
-export default withNamespaces()(ContractField);
+export default ContractField;

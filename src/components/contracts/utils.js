@@ -126,3 +126,11 @@ export const getOptionFromField = (field, code) => {
     value: code,
   };
 };
+
+export const getNonStandartContractFields = (contractFields) =>
+  contractFields.filter((c) => !c.standardField);
+
+export const getNonStandartContractFieldValue = (contract, field) =>
+  (contract.fieldValues &&
+    getOptionFromField(field, contract.fieldValues[field.code]).label) ||
+  "--";

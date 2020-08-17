@@ -99,7 +99,10 @@ export const contractsTableColumns = (
         className: classes.cellCentered,
       }),
       customBodyRenderLite: (dataIndex) => (
-        <ContractsDialog contract={contracts[dataIndex]} />
+        <ContractsDialog
+          contract={contracts[dataIndex]}
+          contractFields={contractFields}
+        />
       ),
     },
   });

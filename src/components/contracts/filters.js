@@ -1,5 +1,9 @@
 import moment from "moment";
-import { getContractDates, getOptionFromField } from "./utils";
+import {
+  getContractDates,
+  getOptionFromField,
+  getNonStandartContractFields,
+} from "./utils";
 
 /**
  * A Filters list
@@ -83,45 +87,41 @@ const filterConfig = (contractFields) => {
   }
   const config = [...defaultFilters];
   let lastIndex = defaultFilters.length;
-  contractFields
-    .filter((c) => c.standardField === false)
-    .forEach((field, index) => {
-      lastIndex += index;
-      if (lastIndex > columnsCount) {
-        lastIndex -= columnsCount;
-      }
-      config.push({
-        id: field.code,
-        key: field.name,
-        type: "select",
-        multi: true,
-        column: lastIndex,
-        value: [],
-        options: field.optionSet.options.map((o) => {
-          return { label: o.name, value: o.code };
-        }),
+  getNonStandartContractFields(contractFields).forEach((field, index) => {
+    lastIndex += index;
+    if (lastIndex > columnsCount) {
+      lastIndex -= columnsCount;
+    }
+    config.push({
+      id: field.code,
+      key: field.name,
+      type: "select",
+      multi: true,
+      column: lastIndex,
+      value: [],
+      options: field.optionSet.options.map((o) => {
+        return { label: o.name, value: o.code };
+      }),
 
-        onFilter: (groups, contracts) => {
-          if (groups.length === 0) {
-            return contracts;
-          }
+      onFilter: (groups, contracts) => {
+        if (groups.length === 0) {
+          return contracts;
+        }
 
-          return contracts.filter((c) =>
-            c.codes.some((c) => groups.findIndex((g) => g.value === c) >= 0),
-          );
-        },
-        // turn selected options [{label: ,value:}, {label: ,value:}] into string value1,value2,...
-        urlEncode: (value) =>
-          !value || value.length === 0
-            ? ""
-            : value.map((c) => c.value).join(","),
-        // turn  value1,value2 in to array of option {label: ,value:} based on optionSet.options
-        urlDecode: (value) =>
-          !value || value === ""
-            ? []
-            : value.split(",").map((v) => getOptionFromField(field, v)),
-      });
+        return contracts.filter((c) =>
+          c.codes.some((c) => groups.findIndex((g) => g.value === c) >= 0),
+        );
+      },
+      // turn selected options [{label: ,value:}, {label: ,value:}] into string value1,value2,...
+      urlEncode: (value) =>
+        !value || value.length === 0 ? "" : value.map((c) => c.value).join(","),
+      // turn  value1,value2 in to array of option {label: ,value:} based on optionSet.options
+      urlDecode: (value) =>
+        !value || value === ""
+          ? []
+          : value.split(",").map((v) => getOptionFromField(field, v)),
     });
+  });
   return config;
 };
 

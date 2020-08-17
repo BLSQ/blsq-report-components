@@ -20,7 +20,6 @@ const maxResult = 100;
 const styles = (theme) => ({
   formControl: {
     width: "100%",
-    marginBottom: theme.spacing(),
     flexDirection: "row",
     alignItems: "center",
     position: "relative",
@@ -80,7 +79,6 @@ const OuSearch = ({ t, orgUnit, onChange }) => {
     setSearchTriggered(false);
     onChange(newOrgUnit);
   };
-
   return (
     <ClickAwayListener onClickAway={() => setSearchTriggered(false)}>
       <FormControl className={classes.formControl}>
@@ -92,6 +90,7 @@ const OuSearch = ({ t, orgUnit, onChange }) => {
           value={orgUnit}
           open={searchTriggered}
           loading={isLoading}
+          getOptionSelected={(option, value) => value.id === option.id}
           className={classes.autoComplete}
           filterSelectedOptions
           popupIcon={null}

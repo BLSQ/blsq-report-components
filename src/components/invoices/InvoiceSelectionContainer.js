@@ -5,6 +5,7 @@ import { withNamespaces } from "react-i18next";
 import Paper from "@material-ui/core/Paper";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Typography from "@material-ui/core/Typography";
+import FormControl from "@material-ui/core/FormControl";
 import OrgUnitAutoComplete from "./OrgUnitAutoComplete";
 import PeriodPicker from "../shared/PeriodPicker";
 import OuPicker from "./OuPicker";
@@ -24,6 +25,10 @@ const styles = (theme) => ({
   },
   filters: {
     marginLeft: "30px",
+  },
+  periodContainer: {
+    margin: theme.spacing(2, 1, 1, 1),
+    width: 150,
   },
 });
 
@@ -180,6 +185,8 @@ class InvoiceSelectionContainer extends Component {
     const { classes, t } = this.props;
     const SelectionResults =
       this.props.resultsElements || SelectionResultsContainer;
+
+    console.log("this.props.period", this.props.period);
     return (
       <Paper className={classes.paper} square>
         <Typography variant="h5" component="h5" gutterBottom>
@@ -192,17 +199,17 @@ class InvoiceSelectionContainer extends Component {
             selected={this.props.parent}
           />
           <br />
-
           <OuPicker
             onOuSearchChange={this.onOuSearchChange}
             ouSearchValue={this.props.ouSearchValue}
           />
-
-          <PeriodPicker
-            period={this.props.period}
-            onPeriodChange={this.onPeriodChange}
-            periodFormat={this.props.periodFormat}
-          />
+          <FormControl className={classes.periodContainer}>
+            <PeriodPicker
+              period={this.props.period}
+              onPeriodChange={this.onPeriodChange}
+              periodFormat={this.props.periodFormat}
+            />
+          </FormControl>
           <br />
           {this.state.loading ? <LinearProgress variant="query" /> : ""}
         </div>

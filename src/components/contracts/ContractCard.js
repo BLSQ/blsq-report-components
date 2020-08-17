@@ -11,7 +11,12 @@ import {
 import moment from "moment";
 import { withNamespaces } from "react-i18next";
 
-import { getOverlaps, getOrgUnitAncestors, getOptionFromField } from "./utils";
+import {
+  getOverlaps,
+  getOrgUnitAncestors,
+  getNonStandartContractFieldValue,
+  getNonStandartContractFields,
+} from "./utils";
 import ContractsDialog from "./ContractsDialog";
 import ContractField from "./ContractField";
 import ContractShort from "./ContractShort";
@@ -53,7 +58,10 @@ const ContractCard = ({
             </Typography>
           </Grid>
           <Grid container item xs={2} justify="flex-end" alignContent="center">
-            <ContractsDialog contract={contract} />
+            <ContractsDialog
+              contract={contract}
+              contractFields={contractFields}
+            />
           </Grid>
         </Grid>
       </CardContent>
@@ -71,20 +79,13 @@ const ContractCard = ({
             "DD/MM/YYYY",
           )}
         />
-        {contractFields
-          .filter((c) => !c.standardField)
-          .map((field) => (
-            <ContractField
-              key={field.id}
-              label={field.name}
-              value={
-                (contract.fieldValues &&
-                  getOptionFromField(field, contract.fieldValues[field.code])
-                    .label) ||
-                "--"
-              }
-            />
-          ))}
+        {getNonStandartContractFields(contractFields).map((field) => (
+          <ContractField
+            key={field.id}
+            label={field.name}
+            value={getNonStandartContractFieldValue(contract, field)}
+          />
+        ))}
       </CardContent>
       {contractsOverlaps[contract.id] && (
         <WarningBox>

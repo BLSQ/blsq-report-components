@@ -28,7 +28,10 @@ const ContractFilters = ({
   const [isTouched, setIsTouched] = React.useState(false);
   const [hasError, setHasError] = React.useState(false);
   useEffect(() => {
-    const newFilters = decodeFiltersQueryParams(location, filters);
+    const newFilters = decodeFiltersQueryParams(
+      location,
+      filtersConfig(contractFields),
+    );
     const filteredContracts = filterItems(
       newFilters,
       contracts,

@@ -1,79 +1,91 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
+import {
+  InputLabel,
+  FormControl,
+  Select,
+  MenuItem,
+  makeStyles,
+} from "@material-ui/core";
+
 import DatePeriods from "../../support/DatePeriods";
 import { withNamespaces } from "react-i18next";
 
-const styles = theme => ({
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-    verticalAlign: "bottom"
-  }
-});
-
-class PeriodPicker extends Component {
-  constructor(props) {
-    super(props);
-    this.handleChange = this.handleChange.bind(this);
-  }
-
-  handleChange(event) {
-    this.props.onPeriodChange(event.target.value);
-  }
-
-  render() {
-    const classes = this.props.classes;
-    const period = this.props.period;
-    const periods = this.buildPeriods(period);
-    return (
-      <FormControl className={classes.formControl}>
-        <InputLabel>{this.props.t("period")}</InputLabel>
-        <Select
-          value={this.props.period}
-          onChange={this.handleChange}
-          title={this.props.period}
-        >
-          {periods.map(dhis2period => (
-            <MenuItem key={dhis2period} value={dhis2period} title={dhis2period}>
-              {DatePeriods.displayName(
-                dhis2period,
-                this.props.periodFormat.quarterly
-              )}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    );
-  }
-
-  buildPeriods(period) {
-    const nextPeriod = DatePeriods.nextQuarter(period);
-    const nextPeriod2 = DatePeriods.nextQuarter(nextPeriod);
-    const previous = DatePeriods.previousQuarter(period);
-    const previous2 = DatePeriods.previousQuarter(previous);
-    const previous3 = DatePeriods.previousQuarter(previous2);
-    const previous4 = DatePeriods.previousQuarter(previous3);
-    const previous5 = DatePeriods.previousQuarter(previous4);
-    return [
-      previous5,
-      previous4,
-      previous3,
-      previous2,
-      previous,
-      period,
-      nextPeriod,
-      nextPeriod2
-    ];
-  }
-}
-
-PeriodPicker.propTypes = {
-  classes: PropTypes.object.isRequired
+const buildPeriods = (period, periodDelta) => {
+  const periods = [];
+  Array(periodDelta.before)
+    .fill()
+    .forEach((x, i) => {
+      periods.unshift(
+        DatePeriods.previousQuarter(i === 0 ? period : periods[0]),
+      );
+    });
+  periods.push(period);
+  Array(periodDelta.after)
+    .fill()
+    .forEach((x, i) => {
+      const currentIndex = periods.length - 1;
+      periods.push(
+        DatePeriods.nextQuarter(i === 0 ? period : periods[currentIndex]),
+      );
+    });
+  return periods;
 };
 
-export default withStyles(styles)(withNamespaces()(PeriodPicker));
+const styles = (theme) => ({
+  formControl: {
+    width: "100%",
+    verticalAlign: "bottom",
+  },
+});
+
+const useStyles = makeStyles((theme) => styles(theme));
+const PeriodPicker = ({
+  period,
+  periodFormat,
+  t,
+  onPeriodChange,
+  periodDelta,
+  labelKey,
+}) => {
+  const periods = buildPeriods(period, periodDelta);
+  const classes = useStyles();
+  return (
+    <FormControl className={classes.formControl}>
+      <InputLabel>{t(labelKey)}</InputLabel>
+      <Select
+        value={period}
+        onChange={(event) => onPeriodChange(event.target.value)}
+        title={period}
+      >
+        {periods.map((dhis2period) => (
+          <MenuItem key={dhis2period} value={dhis2period} title={dhis2period}>
+            {DatePeriods.displayName(dhis2period, periodFormat.quarterly)}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  );
+};
+
+PeriodPicker.defaultProps = {
+  periodFormat: {
+    quarterly: "quarter",
+  },
+  periodDelta: {
+    before: 5,
+    after: 2,
+  },
+  labelKey: "period",
+};
+
+PeriodPicker.propTypes = {
+  periodFormat: PropTypes.object,
+  period: PropTypes.string.isRequired,
+  t: PropTypes.func.isRequired,
+  onPeriodChange: PropTypes.func.isRequired,
+  periodDelta: PropTypes.object,
+  labelKey: PropTypes.string,
+};
+
+export default withNamespaces()(PeriodPicker);

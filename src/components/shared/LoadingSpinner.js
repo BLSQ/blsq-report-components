@@ -17,7 +17,7 @@ const styles = () => ({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(255, 255, 255, 0.4)",
-    zIndex: "10000",
+    zIndex: "1000000",
   },
   root: {
     position: "relative",

@@ -65,7 +65,7 @@ const OuSearch = ({ t, orgUnit, onChange }) => {
 
   const handleInputChange = (newvalue) => {
     setSearchValue(newvalue);
-    if (newvalue !== orgUnit.name && newvalue.length >= minChar) {
+    if ((!orgUnit || newvalue !== orgUnit.name) && newvalue.length >= minChar) {
       if (!searchTriggered) {
         setSearchTriggered(true);
       }
@@ -106,7 +106,7 @@ const OuSearch = ({ t, orgUnit, onChange }) => {
             <TextField
               {...params}
               autoFocus
-              label={t("orgUnit_name")}
+              label={t("orgUnit")}
               onKeyUp={(event) => {
                 if (event.key === "Escape") {
                   setSearchTriggered(false);

@@ -35,15 +35,25 @@
     "missing_invoice_types": "Facture introuvable...",
     "name": "Nom",
     "noResult": "Aucun résultat",
+    "orgUnit": "Unité d'organisation",
     "orgUnit_name": "Nom d'unité d'organisation",
     "period": "Période",
     "print": "Imprimer",
     "report_and_invoices": "Rapports",
     "save": "Sauver",
     "search": "Recherche",
-    "searchHelp": "Minimum {{minChar}} charactères, maximum {{maxResult}} résultats.",
     "search_org_unit": "Rechercher ou sélectionner l'unité d'organisation parente",
+    "searchHelp": "Minimum {{minChar}} charactères, maximum {{maxResult}} résultats.",
     "show_avalaible_invoices": "Choisir une facture",
+    "snackBar": {
+        "copyError": "Copier l'erreur",
+        "error": {
+            "save": "Un erreur est survenue lors de la sauvegarde"
+        },
+        "success": {
+            "save": "Sauvegarde effectuée avec succés"
+        }
+    },
     "start_period": "Début",
     "table": {
         "actions": {

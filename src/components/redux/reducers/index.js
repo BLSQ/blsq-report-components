@@ -5,6 +5,7 @@ import load from "./load";
 import drawer from "./drawer";
 import period from "./period";
 import dhis2 from "./dhis2";
+import snackBar from "./snackBar";
 
 const index = combineReducers({
   routing: routerReducer,
@@ -13,6 +14,7 @@ const index = combineReducers({
   drawer,
   period,
   dhis2,
+  snackBar,
 });
 
 export default index;

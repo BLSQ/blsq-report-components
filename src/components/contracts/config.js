@@ -14,6 +14,7 @@ export const contractsTableColumns = (
   contracts,
   contractFields,
   location,
+  fetchContracts,
 ) => {
   const columns = [
     {
@@ -44,11 +45,7 @@ export const contractsTableColumns = (
         filter: false,
         sort: true,
         customBodyRender: (contractStartDate) => {
-          return (
-            <Tooltip arrow title={contractStartDate}>
-              <span>{moment(contractStartDate).format("DD/MM/YYYY")}</span>
-            </Tooltip>
-          );
+          return <span>{moment(contractStartDate).format("DD/MM/YYYY")}</span>;
         },
       },
     },
@@ -59,11 +56,7 @@ export const contractsTableColumns = (
         filter: false,
         sort: true,
         customBodyRender: (contractEndDate) => {
-          return (
-            <Tooltip arrow title={contractEndDate}>
-              <span>{moment(contractEndDate).format("DD/MM/YYYY")}</span>
-            </Tooltip>
-          );
+          return <span>{moment(contractEndDate).format("DD/MM/YYYY")}</span>;
         },
       },
     },
@@ -102,6 +95,7 @@ export const contractsTableColumns = (
         <ContractsDialog
           contract={contracts[dataIndex]}
           contractFields={contractFields}
+          onSavedSuccessfull={fetchContracts}
         />
       ),
     },

@@ -3,12 +3,14 @@ import PropTypes from "prop-types";
 import { HashRouter as Router } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import { Provider } from "react-redux";
+import { SnackbarProvider } from "notistack";
 
 import { store } from "./redux/store";
 
-import RawAppDrawer from "./shared/RawAppDrawer";
+import AppDrawer from "./shared/RawAppDrawer";
 import AppToolBar from "./shared/RawAppToolBar";
 import AppContent from "./shared/AppContent";
+import SnackBarContainer from "./shared/snackBars/SnackBarContainer";
 
 const styles = (theme) => ({
   root: {
@@ -35,26 +37,36 @@ const App = ({
   drawerLinks,
   defaultPathName,
 }) => (
-  <Provider store={store}>
-    <Router>
-      <div className={classes.root}>
-        <div className={classes.appFrame}>
-          <AppToolBar />
-          <RawAppDrawer
-            drawerLinks={drawerLinks}
-            defaultPathName={defaultPathName || "/select"}
-          />
-          <AppContent
-            dhis2={dhis2}
-            config={config}
-            invoices={invoices}
-            incentivesDescriptors={incentivesDescriptors}
-            dataElementGroups={dataElementGroups}
-          />
+  <SnackbarProvider
+    maxSnack={3}
+    autoHideDuration={4000}
+    anchorOrigin={{
+      vertical: "bottom",
+      horizontal: "center",
+    }}
+  >
+    <Provider store={store}>
+      <Router>
+        <div className={classes.root}>
+          <div className={classes.appFrame}>
+            <AppToolBar />
+            <AppDrawer
+              drawerLinks={drawerLinks}
+              defaultPathName={defaultPathName || "/select"}
+            />
+            <AppContent
+              dhis2={dhis2}
+              config={config}
+              invoices={invoices}
+              incentivesDescriptors={incentivesDescriptors}
+              dataElementGroups={dataElementGroups}
+            />
+          </div>
+          <SnackBarContainer />
         </div>
-      </div>
-    </Router>
-  </Provider>
+      </Router>
+    </Provider>
+  </SnackbarProvider>
 );
 
 App.propTypes = {

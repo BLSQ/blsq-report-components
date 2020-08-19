@@ -28,7 +28,8 @@ const ContractPage = ({ match, location, t }) => {
   });
 
   const contractService = PluginRegistry.extension("contracts.service");
-  useEffect(() => {
+
+  const fetchContracts = () => {
     if (contractService) {
       dispatch(setIsLoading(true));
       contractService
@@ -41,7 +42,10 @@ const ContractPage = ({ match, location, t }) => {
           dispatch(setIsLoading(false));
         });
     }
-  }, [setContractsDatas, contractService, match.params.orgUnitId, dispatch]);
+  };
+  useEffect(() => {
+    fetchContracts();
+  }, []);
   const overlapsTotal = Object.keys(contractsDatas.contractsOverlaps).length;
 
   return (
@@ -77,6 +81,7 @@ const ContractPage = ({ match, location, t }) => {
               contractsById={contractsDatas.contractsById}
               contractsOverlaps={contractsDatas.contractsOverlaps}
               contractFields={contractsDatas.contractFields}
+              fetchContracts
             />
           </Grid>
         ))}

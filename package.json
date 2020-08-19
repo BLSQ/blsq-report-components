@@ -75,6 +75,7 @@
     "@material-ui/pickers": "^3.2.10",
     "history": "^5.0.0",
     "moment": "^2.27.0",
+    "notistack": "^0.9.17",
     "qs": "^6.9.4",
     "react-redux": "^7.2.1",
     "react-router-redux": "^4.0.8",

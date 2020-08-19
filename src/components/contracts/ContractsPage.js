@@ -58,7 +58,7 @@ class ContractsPage extends Component {
     });
   }
 
-  async fetchData() {
+  async fetchContracts() {
     const { contractService } = this.state;
     const { dispatch } = this.props;
     if (contractService) {
@@ -73,7 +73,7 @@ class ContractsPage extends Component {
   }
 
   componentDidMount() {
-    this.fetchData();
+    this.fetchContracts();
   }
 
   render() {
@@ -132,6 +132,7 @@ class ContractsPage extends Component {
                   filteredContracts,
                   contractFields,
                   location,
+                  () => this.fetchContracts(),
                 )}
                 options={contractsTableOptions(
                   t,

@@ -33,7 +33,6 @@ class ContractService {
       path: event.orgUnitPath,
       ancestors: event.ancestors || [],
     };
-
     return new Contract(contract);
   }
 
@@ -83,22 +82,6 @@ class ContractService {
     }
     return contractsOverlaps;
   };
-
-  async fetchContracts(orgUnitId, sort = false) {
-    let contracts = await this.findAll();
-    if (orgUnitId) {
-      contracts = contracts.filter((c) => c.orgUnit.id === orgUnitId);
-    }
-    if (sort) {
-      contracts.sort((a, b) => (a.startPeriod > b.startPeriod ? 1 : -1));
-    }
-    return {
-      contracts,
-      contractsById: this.toContractsById(contracts),
-      contractsOverlaps: this.toOverlappings(contracts),
-      contractFields: this.toContractFields(this.program),
-    };
-  }
 
   async findAll() {
     let events;
@@ -159,22 +142,39 @@ class ContractService {
     return contracts;
   }
 
-  async deleteContract(contractId) {
-    await this.api.delete("events/" + contractId);
+  async fetchContracts(orgUnitId, sort = false) {
+    let contracts = await this.findAll();
+    if (orgUnitId) {
+      contracts = contracts.filter((c) => c.orgUnit.id === orgUnitId);
+    }
+    if (sort) {
+      contracts.sort((a, b) => (a.startPeriod > b.startPeriod ? 1 : -1));
+    }
+    return {
+      contracts,
+      contractsById: this.toContractsById(contracts),
+      contractsOverlaps: this.toOverlappings(contracts),
+      contractFields: this.toContractFields(this.program),
+    };
   }
 
-  async createContract(orgUnitIds, contractInfo) {
-    const events = orgUnitIds.map((orgUnitId) => {
-      const dataValues = [];
+  async deleteContract(contractId) {
+    await this.api.delete(`events/${contractId}`);
+  }
 
-      Object.keys(contractInfo).forEach((field) => {
+  getEvent = (contractInfo, orgUnitId) => {
+    const dataValues = [];
+    const ignoredFields = ["id", "orgUnit"];
+
+    Object.keys(contractInfo).forEach((fieldKey) => {
+      if (!ignoredFields.includes(fieldKey)) {
         const dataElement = Object.values(this.mappings).find(
-          (mapping) => mapping.code === field,
+          (mapping) => mapping.code === fieldKey,
         );
         if (dataElement === undefined) {
           throw new Error(
             "no mapping for field " +
-              field +
+              fieldKey +
               " vs " +
               Object.values(this.mappings)
                 .map((m) => m.code)
@@ -183,22 +183,38 @@ class ContractService {
         }
         dataValues.push({
           dataElement: dataElement.id,
-          value: contractInfo[field],
+          value: contractInfo[fieldKey],
         });
-      });
-
-      const event = {
-        orgUnit: orgUnitId,
-        program: this.program.id,
-        eventDate: contractInfo.contract_start_date,
-        programStage: this.program.programStages[0].id,
-        dataValues: dataValues,
-      };
-      return event;
+      }
     });
 
-    const createResp = await this.api.post("events", { events });
-    return createResp;
+    const event = {
+      orgUnit: orgUnitId,
+      program: this.program.id,
+      eventDate: contractInfo.contract_start_date,
+      programStage: this.program.programStages[0].id,
+      dataValues,
+    };
+    return event;
+  };
+
+  async createContract(orgUnitIds, contract) {
+    const events = orgUnitIds.map((orgUnitId) =>
+      this.getEvent(contract.fieldValues, orgUnitId),
+    );
+    const res = await this.api.post("events", { events });
+    return res;
+  }
+
+  async updateContract(contract) {
+    const event = this.getEvent(
+      contract.fieldValues,
+      contract.fieldValues.orgUnit.id,
+    );
+    const res = await this.api.update(`events/${contract.id}`, {
+      event,
+    });
+    return res;
   }
 }
 

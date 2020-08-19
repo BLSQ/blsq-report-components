@@ -15,12 +15,22 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import Edit from "@material-ui/icons/Edit";
+import { useDispatch } from "react-redux";
 
 import DatePeriods from "../../support/DatePeriods";
+import PluginRegistry from "../core/PluginRegistry";
+
 import OuSearch from "../shared/OuSearch";
 import PeriodPicker from "../shared/PeriodPicker";
+import {
+  errorSnackBar,
+  succesfullSnackBar,
+} from "../shared/snackBars/snackBar";
+
 import ContractFieldSelect from "./ContractFieldSelect";
 import { getNonStandartContractFields } from "./utils";
+
+import { enqueueSnackbar } from "../redux/actions/snackBars";
 
 const styles = (theme) => ({
   title: {
@@ -39,10 +49,19 @@ const styles = (theme) => ({
 
 const useStyles = makeStyles((theme) => styles(theme));
 
-const ContractsDialog = ({ t, contract, contractFields }) => {
+const ContractsDialog = ({
+  t,
+  contract,
+  contractFields,
+  onSavedSuccessfull,
+}) => {
   const [open, setOpen] = React.useState(false);
+
+  const contractService = PluginRegistry.extension("contracts.service");
   const [currentContract, setCurrentContract] = React.useState(contract);
+  const [isLoading, setIsLoading] = React.useState(false);
   const classes = useStyles();
+  const dispatch = useDispatch();
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -61,8 +80,20 @@ const ContractsDialog = ({ t, contract, contractFields }) => {
     });
   };
   const handleSave = () => {
-    console.log("Save:", currentContract);
+    setIsLoading(true);
+    contractService
+      .updateContract(currentContract)
+      .then(() => {
+        setIsLoading(false);
+        onSavedSuccessfull();
+        dispatch(enqueueSnackbar(succesfullSnackBar("snackBar.success.save")));
+      })
+      .catch(() => {
+        setIsLoading(false);
+        dispatch(enqueueSnackbar(errorSnackBar("snackBar.error.save")));
+      });
   };
+
   return (
     <div>
       <Tooltip
@@ -80,12 +111,7 @@ const ContractsDialog = ({ t, contract, contractFields }) => {
       <Dialog onClose={handleClose} open={open} fullWidth maxWidth="sm">
         <DialogTitle disableTypography>
           <Typography variant="h6" className={classes.title}>
-            {currentContract.id !== 0 && (
-              <>
-                {t("contracts.editTitle")}
-                <code>{` ${currentContract.id}`}</code>
-              </>
-            )}
+            {currentContract.id !== 0 && t("contracts.editTitle")}
             {currentContract.id === 0 && t("contracts.createTitle")}
           </Typography>
           <IconButton className={classes.closeButton} onClick={handleClose}>
@@ -96,8 +122,10 @@ const ContractsDialog = ({ t, contract, contractFields }) => {
           <Grid container spacing={2}>
             <Grid container item xs={12}>
               <OuSearch
-                onChange={(orgUnit) => handleChange("orgUnit", orgUnit)}
-                orgUnit={currentContract.orgUnit}
+                onChange={(orgUnit) =>
+                  handleChange("fieldValues", orgUnit, "orgUnit")
+                }
+                orgUnit={currentContract.fieldValues.orgUnit}
               />
             </Grid>
             <Grid container item xs={6}>
@@ -127,7 +155,7 @@ const ContractsDialog = ({ t, contract, contractFields }) => {
             {getNonStandartContractFields(contractFields).map((field) => (
               <Grid container item xs={6} key={field.id}>
                 <ContractFieldSelect
-                  contract={contract}
+                  contract={currentContract}
                   field={field}
                   handleChange={(newValue) =>
                     handleChange("fieldValues", newValue, field.code)
@@ -138,7 +166,12 @@ const ContractsDialog = ({ t, contract, contractFields }) => {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleSave} color="primary">
+          <Button
+            autoFocus
+            onClick={handleSave}
+            color="primary"
+            disabled={isLoading}
+          >
             {t("save")}
           </Button>
         </DialogActions>
@@ -152,6 +185,7 @@ ContractsDialog.defaultProps = {
     orgUnit: null,
     codes: [],
     fieldValues: {},
+    onSavedSuccessfull: () => null,
   },
 };
 
@@ -159,6 +193,7 @@ ContractsDialog.propTypes = {
   t: PropTypes.func.isRequired,
   contract: PropTypes.object,
   contractFields: PropTypes.array.isRequired,
+  onSavedSuccessfull: PropTypes.func,
 };
 
 export default withNamespaces()(ContractsDialog);

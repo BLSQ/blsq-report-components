@@ -129,7 +129,7 @@ class AppContent extends React.Component {
           [classes[`contentShift-left`]]: drawerOpen,
         })}
       >
-        {(!currentUser || isLoading) && <LoadingSpinner />}
+        {(!currentUser || isLoading) && <LoadingSpinner fixed />}
         <div className={classes.drawerHeader + " no-print"} />
         {currentUser && (
           <Switch>

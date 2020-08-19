@@ -40,6 +40,7 @@ const ContractCard = ({
   contractsOverlaps,
   contractsById,
   contractFields,
+  fetchContracts,
   t,
 }) => {
   const classes = useStyles();
@@ -61,6 +62,7 @@ const ContractCard = ({
             <ContractsDialog
               contract={contract}
               contractFields={contractFields}
+              onSavedSuccessfull={fetchContracts}
             />
           </Grid>
         </Grid>
@@ -120,6 +122,7 @@ ContractCard.propTypes = {
   contractFields: PropTypes.array.isRequired,
   contractsById: PropTypes.object,
   t: PropTypes.func.isRequired,
+  fetchContracts: PropTypes.func.isRequired,
 };
 
 export default withNamespaces()(ContractCard);

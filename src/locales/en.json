@@ -35,15 +35,25 @@
     "missing_invoice_types": "Missing invoice...",
     "name": "Name",
     "noResult": "No result",
+    "orgUnit": "Organisation Unit",
     "orgUnit_name": "Organisation Unit name",
     "period": "Period",
     "print": "Print",
     "report_and_invoices": "Report & Invoices",
     "save": "Save",
     "search": "Search",
-    "searchHelp": "Min {{minChar}} characters, max {{maxResult}} results",
     "search_org_unit": "Search or select parent organisation unit",
+    "searchHelp": "Min {{minChar}} characters, max {{maxResult}} results",
     "show_avalaible_invoices": "Select invoice",
+    "snackBar": {
+        "copyError": "Copy error",
+        "error": {
+            "save": "An error occurred while saving"
+        },
+        "success": {
+            "save": "Saved successfully"
+        }
+    },
     "start_period": "Start",
     "table": {
         "actions": {

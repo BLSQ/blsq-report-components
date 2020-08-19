@@ -24,7 +24,6 @@ const ContractFieldSelect = ({ contract, field, handleChange, t }) => {
   const classes = useStyles();
   const code = contract.fieldValues && contract.fieldValues[field.code];
   const options = field.optionSet.options.map((o) => o.code);
-
   return (
     <FormControl className={classes.formControl}>
       <Autocomplete

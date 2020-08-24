@@ -31,7 +31,7 @@ const ContractFieldSelect = ({ contract, field, handleChange, t }) => {
         noOptionsText={t("noResult")}
         multiple={false}
         id={field.id}
-        value={code}
+        value={code || null}
         options={options}
         getOptionLabel={(code) => getOptionFromField(field, code).label}
         onChange={(event, newValue) => handleChange(newValue)}

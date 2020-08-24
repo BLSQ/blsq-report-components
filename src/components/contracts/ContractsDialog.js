@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { withNamespaces } from "react-i18next";
 import {
@@ -58,6 +58,7 @@ const ContractsDialog = ({
   contract,
   contractFields,
   onSavedSuccessfull,
+  children,
 }) => {
   const [open, setOpen] = React.useState(false);
 
@@ -66,6 +67,11 @@ const ContractsDialog = ({
   const [isLoading, setIsLoading] = React.useState(false);
   const classes = useStyles();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setCurrentContract(contract);
+  }, [contract]);
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -88,33 +94,51 @@ const ContractsDialog = ({
 
   const handleSave = () => {
     setIsLoading(true);
-    contractService
-      .updateContract(currentContract)
+    const saveContract =
+      currentContract.id !== 0
+        ? contractService.updateContract(currentContract)
+        : contractService.createContract(
+            [currentContract.fieldValues.orgUnit.id],
+            currentContract,
+          );
+    saveContract
       .then(() => {
         setIsLoading(false);
         onSavedSuccessfull();
         dispatch(enqueueSnackbar(succesfullSnackBar("snackBar.success.save")));
       })
-      .catch(() => {
+      .catch((err) => {
         setIsLoading(false);
-        dispatch(enqueueSnackbar(errorSnackBar("snackBar.error.save")));
+        dispatch(
+          enqueueSnackbar(errorSnackBar("snackBar.error.save", null, err)),
+        );
       });
   };
 
+  const childrenWithProps = React.Children.map(children, (child) => {
+    const props = { onClick: () => handleClickOpen() };
+    if (React.isValidElement(child)) {
+      return React.cloneElement(child, props);
+    }
+    return child;
+  });
   return (
     <div>
-      <Tooltip
-        onClick={() => handleClickOpen()}
-        placement="bottom"
-        title={t("edit")}
-        arrow
-      >
-        <span>
-          <IconButton size="small">
-            <Edit />
-          </IconButton>
-        </span>
-      </Tooltip>
+      {!children && (
+        <Tooltip
+          onClick={() => handleClickOpen()}
+          placement="bottom"
+          title={t("edit")}
+          arrow
+        >
+          <span>
+            <IconButton size="small">
+              <Edit />
+            </IconButton>
+          </span>
+        </Tooltip>
+      )}
+      {Boolean(children) && childrenWithProps}
       <Dialog onClose={handleClose} open={open} fullWidth maxWidth="sm">
         <DialogTitle disableTypography>
           <Typography variant="h6" className={classes.title}>
@@ -191,7 +215,7 @@ const ContractsDialog = ({
             autoFocus
             onClick={handleSave}
             color="primary"
-            disabled={isLoading}
+            disabled={isLoading || !currentContract.fieldValues.orgUnit}
           >
             {t("save")}
           </Button>
@@ -202,20 +226,15 @@ const ContractsDialog = ({
 };
 
 ContractsDialog.defaultProps = {
-  contract: {
-    id: 0,
-    orgUnit: null,
-    codes: [],
-    fieldValues: {},
-    onSavedSuccessfull: () => null,
-  },
+  onSavedSuccessfull: () => null,
 };
 
 ContractsDialog.propTypes = {
   t: PropTypes.func.isRequired,
-  contract: PropTypes.object,
+  contract: PropTypes.object.isRequired,
   contractFields: PropTypes.array.isRequired,
   onSavedSuccessfull: PropTypes.func,
+  children: PropTypes.any,
 };
 
 export default withNamespaces()(ContractsDialog);

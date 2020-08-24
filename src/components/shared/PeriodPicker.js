@@ -21,12 +21,6 @@ const buildPeriods = (period, periodDelta, min, max) => {
       const currentQuarter = i === 0 ? period : periods[0];
       if (currentQuarter) {
         const previousQuarter = DatePeriods.previousQuarter(currentQuarter);
-        // console.log(previousQuarter);
-        console.log(
-          moment(previousQuarter, "YYYY[Q]Q")
-            .startOf("quarter")
-            .format("MM/DD/YYYY"),
-        );
         const isValidPeriod =
           min === ""
             ? true

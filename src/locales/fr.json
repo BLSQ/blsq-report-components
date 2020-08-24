@@ -15,6 +15,7 @@
         "searchInfos": "Chercher sur le nom ou le code du contrat",
         "title": "Contrats"
     },
+    "create": "Créer",
     "edit": "Editer",
     "end_period": "Fin",
     "filter": "Filtrer",

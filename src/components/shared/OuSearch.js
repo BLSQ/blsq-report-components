@@ -57,7 +57,10 @@ const OuSearch = ({ t, orgUnit, onChange }) => {
       maxResult,
     );
     setIsLoading(false);
-    if (!orgUnitsResp.organisationUnits.find((o) => o.id === orgUnit.id)) {
+    if (
+      orgUnit &&
+      !orgUnitsResp.organisationUnits.find((o) => o.id === orgUnit.id)
+    ) {
       orgUnitsResp.organisationUnits.push(orgUnit);
     }
     setOptions(orgUnitsResp.organisationUnits);

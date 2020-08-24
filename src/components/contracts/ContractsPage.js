@@ -107,6 +107,7 @@ class ContractsPage extends Component {
               <ContractFilters
                 contractFields={contractFields}
                 contracts={contracts}
+                fetchContracts={() => this.fetchContracts()}
                 changeTable={(key, value) => this.onTableChange(key, value)}
                 contractsOverlaps={contractsOverlaps}
                 setFilteredContracts={(newFilteredContracts) =>

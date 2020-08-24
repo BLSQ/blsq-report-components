@@ -15,6 +15,7 @@
         "searchInfos": "Filter on name or contract codes",
         "title": "Contracts"
     },
+    "create": "Create",
     "edit": "Edit",
     "end_period": "End",
     "filter": "Filter",

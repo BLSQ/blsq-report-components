@@ -1,21 +1,14 @@
-import React, { useRef } from "react";
+import React from "react";
 import { Button, Tooltip, makeStyles } from "@material-ui/core";
 
 import PropTypes from "prop-types";
 import { withNamespaces } from "react-i18next";
-import { useDispatch } from "react-redux";
 
 import { closeFixedSnackbar } from "../../redux/actions/snackBars";
 
 const useStyles = makeStyles((theme) => ({
   tooltip: {
     marginRight: theme.spacing(),
-  },
-  textarea: {
-    position: "absolute",
-    top: -5000,
-    left: -5000,
-    zIndex: -100,
   },
   errorMessage: {
     display: "-webkit-box",
@@ -25,18 +18,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SnackBarErrorMessage = ({ errorLog, messageKey, t }) => {
+const SnackBarErrorMessage = ({ errorLog, messageKey, t, dispatch }) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const textAreaRef = useRef(null);
-  if (!errorLog || errorLog === "") return null;
-  const handleClick = (e) => {
-    textAreaRef.current.select();
-    document.execCommand("copy");
-    e.target.focus();
-  };
   const errorMessage =
     typeof errorLog === "string" ? errorLog : JSON.stringify(errorLog);
+  if (!errorLog || errorLog === "") return null;
+  const handleClick = (e) => {
+    navigator.clipboard.writeText(errorMessage);
+    e.target.focus();
+  };
   const handleClose = () => dispatch(closeFixedSnackbar(messageKey));
   return (
     <>
@@ -63,12 +53,6 @@ const SnackBarErrorMessage = ({ errorLog, messageKey, t }) => {
       >
         {t("close")}
       </Button>
-      <textarea
-        onChange={() => null}
-        className={classes.textarea}
-        ref={textAreaRef}
-        value={errorMessage}
-      />
     </>
   );
 };
@@ -80,6 +64,7 @@ SnackBarErrorMessage.propTypes = {
   errorLog: PropTypes.any,
   messageKey: PropTypes.string.isRequired,
   t: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
 export default withNamespaces()(SnackBarErrorMessage);

@@ -62,9 +62,9 @@ const App = ({
               dataElementGroups={dataElementGroups}
             />
           </div>
-          <SnackBarContainer />
         </div>
       </Router>
+      <SnackBarContainer />
     </Provider>
   </SnackbarProvider>
 );

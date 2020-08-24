@@ -48,10 +48,12 @@ class SnackBarContainer extends Component {
     const message = t(notification.messageKey);
 
     if (notification.errorLog) {
+      const { dispatch } = this.props;
       options.action = (
         <SnackBarErrorMessage
           messageKey={notification.messageKey}
           errorLog={notification.errorLog}
+          dispatch={dispatch}
         />
       );
     }

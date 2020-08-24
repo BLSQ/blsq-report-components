@@ -91,13 +91,17 @@ export const contractsTableColumns = (
       setCellHeaderProps: () => ({
         className: classes.cellCentered,
       }),
-      customBodyRenderLite: (dataIndex) => (
-        <ContractsDialog
-          contract={contracts[dataIndex]}
-          contractFields={contractFields}
-          onSavedSuccessfull={fetchContracts}
-        />
-      ),
+      customBodyRender: (contractId) => {
+        const contract = contracts.find((c) => c.id === contractId);
+        if (!contract) return null;
+        return (
+          <ContractsDialog
+            contract={contract}
+            contractFields={contractFields}
+            onSavedSuccessfull={fetchContracts}
+          />
+        );
+      },
     },
   });
   return columns;
@@ -111,33 +115,39 @@ export const contractsTableOptions = (
   classes,
   onTableChange,
   tableParams,
-) => ({
-  ...defaultOptions(t),
-  search: false,
-  filter: false,
-  print: false,
-  rowsPerPage: tableParams.rowsPerPage,
-  page: tableParams.page,
-  sortOrder: {
-    name: tableParams.sort.column,
-    direction: tableParams.sort.direction,
-  },
-  selectableRowsHideCheckboxes: false,
-  selectableRows: "none",
-  rowsPerPageOptions: [10, 25, 50, 100],
-  onChangeRowsPerPage: (numberOfRows) => {
-    onTableChange("page", 0);
-    onTableChange("rowsPerPage", numberOfRows);
-  },
-  onChangePage: (currentPage) => onTableChange("page", currentPage),
-  onColumnSortChange: (column, direction) =>
-    onTableChange("sort", { column, direction }),
-  setRowProps: (row, dataIndex, rowIndex) => {
-    const contract = contracts[dataIndex];
-    const isOverlaping =
-      getOverlaps(contract.id, contractsOverlaps, contractsById).length > 0;
-    return {
-      className: isOverlaping ? classes.rowError : "",
-    };
-  },
-});
+) => {
+  let page;
+  if (tableParams.page && contracts.length > 0) {
+    page = parseInt(tableParams.page, 10);
+  }
+  return {
+    ...defaultOptions(t),
+    search: false,
+    filter: false,
+    print: false,
+    rowsPerPage: tableParams.rowsPerPage,
+    page,
+    sortOrder: {
+      name: tableParams.sort.column,
+      direction: tableParams.sort.direction,
+    },
+    selectableRowsHideCheckboxes: false,
+    selectableRows: "none",
+    rowsPerPageOptions: [10, 25, 50, 100],
+    onChangeRowsPerPage: (numberOfRows) => {
+      onTableChange("page", 0);
+      onTableChange("rowsPerPage", numberOfRows);
+    },
+    onChangePage: (currentPage) => onTableChange("page", currentPage),
+    onColumnSortChange: (column, direction) =>
+      onTableChange("sort", { column, direction }),
+    setRowProps: (row, dataIndex, rowIndex) => {
+      const contract = contracts[dataIndex];
+      const isOverlaping =
+        getOverlaps(contract.id, contractsOverlaps, contractsById).length > 0;
+      return {
+        className: isOverlaping ? classes.rowError : "",
+      };
+    },
+  };
+};

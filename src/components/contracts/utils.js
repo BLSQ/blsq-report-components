@@ -58,6 +58,11 @@ export const getEndDateFromPeriod = (endPeriod) => {
     "month",
   );
 };
+export const getQuarterFromDate = (date) => {
+  const month = parseInt(moment(date).format("MM"), 10);
+  const year = moment(date).format("YYYY");
+  return DatePeriods.dhis2QuarterPeriod(year, month);
+};
 
 export const getContractDates = (contract) => ({
   startDate: getStartDateFromPeriod(contract.startPeriod),

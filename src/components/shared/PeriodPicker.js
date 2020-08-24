@@ -8,26 +8,54 @@ import {
   makeStyles,
 } from "@material-ui/core";
 
-import DatePeriods from "../../support/DatePeriods";
 import { withNamespaces } from "react-i18next";
+import moment from "moment";
 
-const buildPeriods = (period, periodDelta) => {
+import DatePeriods from "../../support/DatePeriods";
+
+const buildPeriods = (period, periodDelta, min, max) => {
   const periods = [];
   Array(periodDelta.before)
     .fill()
     .forEach((x, i) => {
-      periods.unshift(
-        DatePeriods.previousQuarter(i === 0 ? period : periods[0]),
-      );
+      const currentQuarter = i === 0 ? period : periods[0];
+      if (currentQuarter) {
+        const previousQuarter = DatePeriods.previousQuarter(currentQuarter);
+        // console.log(previousQuarter);
+        console.log(
+          moment(previousQuarter, "YYYY[Q]Q")
+            .startOf("quarter")
+            .format("MM/DD/YYYY"),
+        );
+        const isValidPeriod =
+          min === ""
+            ? true
+            : moment(previousQuarter, "YYYY[Q]Q")
+                .startOf("quarter")
+                .isAfter(moment(min, "YYYY[Q]Q").startOf("quarter"));
+        if (isValidPeriod) {
+          periods.unshift(previousQuarter);
+        }
+      }
     });
   periods.push(period);
   Array(periodDelta.after)
     .fill()
     .forEach((x, i) => {
       const currentIndex = periods.length - 1;
-      periods.push(
-        DatePeriods.nextQuarter(i === 0 ? period : periods[currentIndex]),
-      );
+      const currentQuarter = i === 0 ? period : periods[currentIndex];
+      if (currentQuarter) {
+        const nextQuarter = DatePeriods.nextQuarter(currentQuarter);
+        const isValidPeriod =
+          max === ""
+            ? true
+            : moment(nextQuarter, "YYYY[Q]Q")
+                .endOf("quarter")
+                .isBefore(moment(max, "YYYY[Q]Q").endOf("quarter"));
+        if (isValidPeriod) {
+          periods.push(nextQuarter);
+        }
+      }
     });
   return periods;
 };
@@ -47,8 +75,10 @@ const PeriodPicker = ({
   onPeriodChange,
   periodDelta,
   labelKey,
+  min,
+  max,
 }) => {
-  const periods = buildPeriods(period, periodDelta);
+  const periods = buildPeriods(period, periodDelta, min, max);
   const classes = useStyles();
   return (
     <FormControl className={classes.formControl}>
@@ -69,6 +99,7 @@ const PeriodPicker = ({
 };
 
 PeriodPicker.defaultProps = {
+  currentPeriodFormat: "quarter",
   periodFormat: {
     quarterly: "quarter",
   },
@@ -77,6 +108,8 @@ PeriodPicker.defaultProps = {
     after: 2,
   },
   labelKey: "period",
+  min: "",
+  max: "",
 };
 
 PeriodPicker.propTypes = {
@@ -86,6 +119,8 @@ PeriodPicker.propTypes = {
   onPeriodChange: PropTypes.func.isRequired,
   periodDelta: PropTypes.object,
   labelKey: PropTypes.string,
+  min: PropTypes.string,
+  max: PropTypes.string,
 };
 
 export default withNamespaces()(PeriodPicker);

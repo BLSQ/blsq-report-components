@@ -43,9 +43,11 @@ const ContractPage = ({ match, location, t }) => {
         });
     }
   };
+
   useEffect(() => {
     fetchContracts();
   }, []);
+
   const overlapsTotal = Object.keys(contractsDatas.contractsOverlaps).length;
 
   return (

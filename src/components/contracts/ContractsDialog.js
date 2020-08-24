@@ -17,7 +17,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import Edit from "@material-ui/icons/Edit";
 import { useDispatch } from "react-redux";
 
-import DatePeriods from "../../support/DatePeriods";
 import PluginRegistry from "../core/PluginRegistry";
 
 import OuSearch from "../shared/OuSearch";
@@ -28,7 +27,12 @@ import {
 } from "../shared/snackBars/snackBar";
 
 import ContractFieldSelect from "./ContractFieldSelect";
-import { getNonStandartContractFields } from "./utils";
+import {
+  getNonStandartContractFields,
+  getStartDateFromPeriod,
+  getEndDateFromPeriod,
+  getQuarterFromDate,
+} from "./utils";
 
 import { enqueueSnackbar } from "../redux/actions/snackBars";
 
@@ -65,9 +69,11 @@ const ContractsDialog = ({
   const handleClickOpen = () => {
     setOpen(true);
   };
+
   const handleClose = () => {
     setOpen(false);
   };
+
   const handleChange = (key, value, subKey) => {
     setCurrentContract({
       ...currentContract,
@@ -79,6 +85,7 @@ const ContractsDialog = ({
           },
     });
   };
+
   const handleSave = () => {
     setIsLoading(true);
     contractService
@@ -131,24 +138,38 @@ const ContractsDialog = ({
             <Grid container item xs={6}>
               <PeriodPicker
                 periodDelta={{ before: 20, after: 20 }}
-                period={
-                  DatePeriods.split(currentContract.startPeriod, "quarterly")[0]
-                }
+                period={getQuarterFromDate(
+                  currentContract.fieldValues.contract_start_date,
+                )}
+                max={getQuarterFromDate(
+                  currentContract.fieldValues.contract_end_date,
+                )}
                 labelKey="start_period"
                 onPeriodChange={(startPeriod) =>
-                  handleChange("startPeriod", startPeriod)
+                  handleChange(
+                    "fieldValues",
+                    getStartDateFromPeriod(startPeriod),
+                    "contract_start_date",
+                  )
                 }
               />
             </Grid>
             <Grid container item xs={6}>
               <PeriodPicker
                 periodDelta={{ before: 20, after: 20 }}
-                period={
-                  DatePeriods.split(currentContract.endPeriod, "quarterly")[0]
-                }
+                period={getQuarterFromDate(
+                  currentContract.fieldValues.contract_end_date,
+                )}
                 labelKey="end_period"
+                min={getQuarterFromDate(
+                  currentContract.fieldValues.contract_start_date,
+                )}
                 onPeriodChange={(endPeriod) =>
-                  handleChange("endPeriod", endPeriod)
+                  handleChange(
+                    "fieldValues",
+                    getEndDateFromPeriod(endPeriod),
+                    "contract_end_date",
+                  )
                 }
               />
             </Grid>
@@ -179,6 +200,7 @@ const ContractsDialog = ({
     </div>
   );
 };
+
 ContractsDialog.defaultProps = {
   contract: {
     id: 0,

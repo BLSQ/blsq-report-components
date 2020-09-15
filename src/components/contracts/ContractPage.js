@@ -83,7 +83,7 @@ const ContractPage = ({ match, location, t }) => {
               contractsById={contractsDatas.contractsById}
               contractsOverlaps={contractsDatas.contractsOverlaps}
               contractFields={contractsDatas.contractFields}
-              fetchContracts
+              fetchContracts={fetchContracts}
             />
           </Grid>
         ))}

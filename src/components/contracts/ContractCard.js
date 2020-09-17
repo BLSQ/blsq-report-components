@@ -1,69 +1,117 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Card from "@material-ui/core/Card";
-import Chip from "@material-ui/core/Chip";
-import CardContent from "@material-ui/core/CardContent";
-import ArrowIcon from "@material-ui/icons/ArrowRightAlt";
-import Typography from "@material-ui/core/Typography";
-import CardActions from "@material-ui/core/CardActions";
-import Button from "@material-ui/core/Button";
-import { Link } from "react-router-dom";
-import { getOverlaps, getOrgUnitAncestors } from "./utils";
-const ContractCard = ({ contract, contractsOverlaps, contractsById }) => (
-  <Card
-    key={contract.id}
-    style={{
-      minWidth: "500px",
-      margin: "20px",
-      flex: "10 10 20%",
-      alignSelf: "stretch",
-      alignContent: "stretch",
-    }}
-  >
-    <CardContent>
-      <Typography color="textPrimary" style={{ fontWeight: "bold" }}>
-        {contract.orgUnit.name} <code>{contract.orgUnit.id}</code>
-      </Typography>
-      <Typography
-        style={{
-          display: "flex",
-          alignItems: "center",
-        }}
-        component="span"
-      >
-        {contract.startPeriod} <ArrowIcon /> {contract.endPeriod}{" "}
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        {contract.codes.map((code) => (
-          <Chip key={code} label={code} />
-        ))}
-      </Typography>
-      {contractsOverlaps[contract.id] && (
-        <span style={{ color: "red" }}>
-          overlaps with :
-          {getOverlaps(contract.id, contractsOverlaps, contractsById).map(
-            (c) => (
-              <li key={c.id}>
-                {c.startPeriod} {c.endPeriod} {c.codes.join(",")}
-              </li>
-            ),
+import {
+  Card,
+  CardContent,
+  Typography,
+  makeStyles,
+  Grid,
+  Divider,
+} from "@material-ui/core";
+import moment from "moment";
+import { withNamespaces } from "react-i18next";
+
+import {
+  getOverlaps,
+  getOrgUnitAncestors,
+  getNonStandartContractFieldValue,
+  getNonStandartContractFields,
+} from "./utils";
+import ContractsDialog from "./ContractsDialog";
+import ContractField from "./ContractField";
+import ContractShort from "./ContractShort";
+import WarningBox from "../shared/WarningBox";
+
+const styles = (theme) => ({
+  path: {
+    fontSize: 11,
+    width: "100%",
+  },
+  overlapsList: {
+    width: "100%",
+    margin: 0,
+  },
+});
+
+const useStyles = makeStyles((theme) => styles(theme));
+
+const ContractCard = ({
+  contract,
+  contractsOverlaps,
+  contractsById,
+  contractFields,
+  fetchContracts,
+  t,
+}) => {
+  const classes = useStyles();
+  return (
+    <Card>
+      <CardContent>
+        <Grid container spacing={4}>
+          <Grid container item xs={10}>
+            <Typography color="textPrimary">{contract.orgUnit.name}</Typography>
+            <Typography
+              className={classes.path}
+              color="textSecondary"
+              title={contract.orgUnit.path}
+            >
+              {getOrgUnitAncestors(contract.orgUnit)}
+            </Typography>
+          </Grid>
+          <Grid container item xs={2} justify="flex-end" alignContent="center">
+            <ContractsDialog
+              contract={contract}
+              contractFields={contractFields}
+              onSavedSuccessfull={fetchContracts}
+            />
+          </Grid>
+        </Grid>
+      </CardContent>
+      <Divider mb={2} />
+      <CardContent>
+        <ContractField
+          label={t("start_period")}
+          value={moment(contract.fieldValues.contract_start_date).format(
+            "DD/MM/YYYY",
           )}
-        </span>
+        />
+        <ContractField
+          label={t("end_period")}
+          value={moment(contract.fieldValues.contract_end_date).format(
+            "DD/MM/YYYY",
+          )}
+        />
+        {getNonStandartContractFields(contractFields).map((field) => (
+          <ContractField
+            key={field.id}
+            label={field.name}
+            value={getNonStandartContractFieldValue(contract, field)}
+          />
+        ))}
+      </CardContent>
+      {contractsOverlaps[contract.id] && (
+        <WarningBox>
+          <>
+            {t("contracts.overlappingWith")} :
+            <ul className={classes.overlapsList}>
+              {getOverlaps(contract.id, contractsOverlaps, contractsById).map(
+                (c) => (
+                  <li key={c.id}>
+                    <ContractShort
+                      contract={c}
+                      contractFields={contractFields}
+                    />
+                  </li>
+                ),
+              )}
+            </ul>
+          </>
+        </WarningBox>
       )}
-      <Typography color="textSecondary" title={contract.orgUnit.path}>
-        {getOrgUnitAncestors(contract.orgUnit)}
-      </Typography>
-    </CardContent>
-    <CardActions>
-      <Button
-        size="small"
-        to={"/contracts/" + contract.orgUnit.id}
-        component={Link}
-      >
-        Edit
-      </Button>
-    </CardActions>
-  </Card>
-);
+    </Card>
+  );
+};
+
 ContractCard.defaultProps = {
   contractsById: null,
 };
@@ -71,7 +119,10 @@ ContractCard.defaultProps = {
 ContractCard.propTypes = {
   contract: PropTypes.object.isRequired,
   contractsOverlaps: PropTypes.object.isRequired,
+  contractFields: PropTypes.array.isRequired,
   contractsById: PropTypes.object,
+  t: PropTypes.func.isRequired,
+  fetchContracts: PropTypes.func.isRequired,
 };
 
-export default ContractCard;
+export default withNamespaces()(ContractCard);

@@ -10,22 +10,21 @@ import {
 import { withStyles } from "@material-ui/core/styles";
 import MUIDataTable from "mui-datatables";
 import { withNamespaces } from "react-i18next";
-import isEqual from "lodash/isEqual";
 import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
 
 import PluginRegistry from "../core/PluginRegistry";
+
 import ContractFilters from "./ContractFilters";
+import ContractsResume from "./ContractsResume";
+
 import { contractsTableColumns, contractsTableOptions } from "./config";
+import { encodeTableQueryParams, decodeTableQueryParams } from "./utils";
+
 import tablesStyles from "../styles/tables";
 import containersStyles from "../styles/containers";
-import LoadingSpinner from "../shared/LoadingSpinner";
-import {
-  toContractFields,
-  toContractsById,
-  toOverlappings,
-  encodeTableQueryParams,
-  decodeTableQueryParams,
-} from "./utils";
+
+import { setIsLoading } from "../redux/actions/load";
 
 const styles = (theme) => ({
   ...tablesStyles(theme),
@@ -36,27 +35,13 @@ class ContractsPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoading: false,
       contracts: [],
       filteredContracts: [],
       contractsById: null,
       contractsOverlaps: {},
       contractService: PluginRegistry.extension("contracts.service"),
-      program: PluginRegistry.extension("contracts.program"),
+      contractFields: [],
     };
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return (
-      !isEqual(nextState.filteredContracts, this.state.filteredContracts) ||
-      nextState.isLoading !== this.state.isLoading
-    );
-  }
-
-  setIsLoading(isLoading) {
-    this.setState({
-      isLoading,
-    });
   }
 
   setContracts(data) {
@@ -73,24 +58,22 @@ class ContractsPage extends Component {
     });
   }
 
-  async fetchData() {
-    const { contractService, program } = this.state;
-    if (contractService && program) {
-      this.setIsLoading(true);
-      const contracts = await contractService.findAll();
-      this.setContracts({
-        contracts,
-        filteredContracts: contracts,
-        contractsById: toContractsById(contracts),
-        contractsOverlaps: toOverlappings(contracts),
-        contractFields: toContractFields(program),
+  async fetchContracts() {
+    const { contractService } = this.state;
+    const { dispatch } = this.props;
+    if (contractService) {
+      dispatch(setIsLoading(true));
+      contractService.fetchContracts().then((contracts) => {
+        dispatch(setIsLoading(false));
+        this.setContracts({
+          ...contracts,
+        });
       });
-      this.setIsLoading(false);
     }
   }
 
   componentDidMount() {
-    this.fetchData();
+    this.fetchContracts();
   }
 
   render() {
@@ -101,26 +84,11 @@ class ContractsPage extends Component {
       isLoading,
       contractsById,
       filteredContracts,
+      contractFields,
     } = this.state;
     const overlapsTotal = Object.keys(contractsOverlaps).length;
-    const tableTitle = (
-      <span className={classes.tableTitle}>
-        {filteredContracts.length === contracts.length &&
-          t("contracts.results", { total: contracts.length })}
-        {filteredContracts.length < contracts.length &&
-          t("contracts.resultsFiltered", {
-            filtered: filteredContracts.length,
-            total: contracts.length,
-          })}
-        {overlapsTotal > 0 &&
-          t("contracts.overlaps", { overlap: overlapsTotal })}
-        .
-      </span>
-    );
     return (
       <>
-        {isLoading && <LoadingSpinner />}
-
         <Paper square className={classes.rootContainer}>
           <Breadcrumbs aria-label="breadcrumb">
             <Box mb={2}>
@@ -136,28 +104,40 @@ class ContractsPage extends Component {
           </Breadcrumbs>
           {!isLoading && (
             <>
-              {this.state.contractFields && (
-                <ContractFilters
-                  contractFields={this.state.contractFields}
-                  contracts={contracts}
-                  changeTable={(key, value) => this.onTableChange(key, value)}
-                  contractsOverlaps={contractsOverlaps}
-                  setFilteredContracts={(newFilteredContracts) =>
-                    this.setState({ filteredContracts: newFilteredContracts })
-                  }
-                />
-              )}
+              <ContractFilters
+                contractFields={contractFields}
+                contracts={contracts}
+                fetchContracts={() => this.fetchContracts()}
+                changeTable={(key, value) => this.onTableChange(key, value)}
+                contractsOverlaps={contractsOverlaps}
+                setFilteredContracts={(newFilteredContracts) =>
+                  this.setState({ filteredContracts: newFilteredContracts })
+                }
+              />
               <Divider />
               <MUIDataTable
                 classes={{
                   paper: classes.tableContainer,
                 }}
-                title={contracts.length > 0 ? tableTitle : ""}
+                title={
+                  <ContractsResume
+                    filteredContracts={filteredContracts}
+                    contracts={contracts}
+                    overlapsTotal={overlapsTotal}
+                  />
+                }
                 data={filteredContracts}
-                columns={contractsTableColumns(t, classes, contracts)}
+                columns={contractsTableColumns(
+                  t,
+                  classes,
+                  filteredContracts,
+                  contractFields,
+                  location,
+                  () => this.fetchContracts(),
+                )}
                 options={contractsTableOptions(
                   t,
-                  contracts,
+                  filteredContracts,
                   contractsById,
                   contractsOverlaps,
                   classes,
@@ -178,6 +158,15 @@ ContractsPage.propTypes = {
   location: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
-export default withRouter(withNamespaces()(withStyles(styles)(ContractsPage)));
+const MapDispatchToProps = (dispatch) => ({
+  dispatch,
+});
+
+export default withRouter(
+  withNamespaces()(
+    withStyles(styles)(connect(() => ({}), MapDispatchToProps)(ContractsPage)),
+  ),
+);

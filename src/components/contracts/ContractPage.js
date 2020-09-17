@@ -1,88 +1,101 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import PluginRegistry from "../core/PluginRegistry";
 import Typography from "@material-ui/core/Typography";
-import ContractCard from "./ContractCard";
-import { toOverlappings, toContractsById } from "./utils";
-import Breadcrumbs from "@material-ui/core/Breadcrumbs";
-import { Link } from "react-router-dom";
+import { withNamespaces } from "react-i18next";
+import { Breadcrumbs, Grid, makeStyles } from "@material-ui/core";
+import { Link, withRouter } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
-function ContractPage({ match }) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [contracts, setContracts] = useState(null);
-  const [contractsById, setContractsById] = useState(null);
-  const [contractsOverlaps, setContractsOverlaps] = useState({});
+import PluginRegistry from "../core/PluginRegistry";
+import ContractsResume from "./ContractsResume";
+import ContractCard from "./ContractCard";
+import linksStyles from "../styles/links";
+import { setIsLoading } from "../redux/actions/load";
+
+const styles = (theme) => ({
+  ...linksStyles(theme),
+});
+
+const useStyles = makeStyles((theme) => styles(theme));
+const ContractPage = ({ match, location, t }) => {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const [contractsDatas, setContractsDatas] = useState({
+    contracts: [],
+    contractsById: null,
+    contractsOverlaps: {},
+    contractFields: [],
+  });
 
   const contractService = PluginRegistry.extension("contracts.service");
+
+  const fetchContracts = () => {
+    if (contractService) {
+      dispatch(setIsLoading(true));
+      contractService
+        .fetchContracts(match.params.orgUnitId, true)
+        .then((contractsDatas) => {
+          setContractsDatas({
+            ...contractsDatas,
+          });
+
+          dispatch(setIsLoading(false));
+        });
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      if (contractService) {
-        setIsLoading(true);
-        const allContracts = await contractService.findAll();
+    fetchContracts();
+  }, []);
 
-        const contracts = allContracts.filter(
-          (c) => c.orgUnit.id === match.params.orgUnitId,
-        );
-        contracts.sort((a, b) => (a.startPeriod > b.startPeriod ? 1 : -1));
-        setContractsOverlaps(toOverlappings(contracts));
-        setContractsById(toContractsById(contracts));
-        setContracts(contracts);
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, [setIsLoading, setContracts]);
-
-  const filteredContracts = contracts;
+  const overlapsTotal = Object.keys(contractsDatas.contractsOverlaps).length;
 
   return (
-    <div>
-      <Breadcrumbs aria-label="breadcrumb">
-        <Link color="inherit" to="/contracts">
-          Contracts
-        </Link>
+    <>
+      <Grid container item xs={12} spacing={4}>
+        <Grid container item xs={12} md={8}>
+          <Breadcrumbs aria-label="breadcrumb">
+            <Link className={classes.link} to={`/contracts${location.search}`}>
+              {t("contracts.title")}
+            </Link>
 
-        <Typography color="textPrimary">
-          {contracts && contracts.length > 0
-            ? contracts[0].orgUnit.name
-            : "..."}
-        </Typography>
-      </Breadcrumbs>
-      {isLoading ? <div>Loading ...</div> : <div />}
+            <Typography color="textPrimary">
+              {contractsDatas.contracts && contractsDatas.contracts.length > 0
+                ? contractsDatas.contracts[0].orgUnit.name
+                : "..."}
+            </Typography>
+          </Breadcrumbs>
+        </Grid>
+        <Grid container item xs={12} md={4} justify="flex-end">
+          <ContractsResume
+            filteredContracts={contractsDatas.contracts}
+            contracts={contractsDatas.contracts}
+            overlapsTotal={overlapsTotal}
+          />
+        </Grid>
+      </Grid>
 
-      {contracts && (
-        <Typography>
-          {contracts.length} contracts, {Object.keys(contractsOverlaps).length}{" "}
-          overlapping.
-        </Typography>
-      )}
-      {contracts && (
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
-            justifyContent: "flex-start",
-            flexWrap: "wrap",
-            alignItems: "flex-start",
-            alignContent: "space-around",
-          }}
-        >
-          {filteredContracts.map((contract) => (
+      <Grid container item xs={12} spacing={4}>
+        {contractsDatas.contracts.map((contract) => (
+          <Grid container item xs={12} md={4} key={contract.id}>
             <ContractCard
-              key={contract.id}
               contract={contract}
-              contractsById={contractsById}
-              contractsOverlaps={contractsOverlaps}
+              contractsById={contractsDatas.contractsById}
+              contractsOverlaps={contractsDatas.contractsOverlaps}
+              contractFields={contractsDatas.contractFields}
+              fetchContracts={fetchContracts}
             />
-          ))}
-        </div>
-      )}
-    </div>
+          </Grid>
+        ))}
+      </Grid>
+    </>
   );
-}
+};
 
 ContractPage.propTypes = {
   match: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
 };
 
-export default ContractPage;
+export default withRouter(withNamespaces()(ContractPage));

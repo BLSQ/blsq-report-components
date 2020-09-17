@@ -1,5 +1,5 @@
 import InvoiceSelectionContainer from "./components/invoices/InvoiceSelectionContainer";
-import PeriodPicker from "./components/invoices/PeriodPicker";
+import PeriodPicker from "./components/shared/PeriodPicker";
 import Values from "./components/invoices/support/Values";
 
 import GenericInvoices from "./components/generic_invoice/GenericInvoices";
@@ -12,7 +12,7 @@ import * as NumberFormatter from "./support/NumberFormatter";
 
 import Cell from "./components/shared/Cell";
 import Warning from "./components/shared/Warning";
-import AppDrawer from "./components/AppDrawer";
+import AppDrawer from "./components/App";
 import PluginRegistry from "./components/core/PluginRegistry";
 import ExtensionsComponent from "./components/core/ExtensionsComponent";
 import ContractService from "./components/contracts/ContractService";
@@ -21,7 +21,7 @@ import ContractPlugin from "./components/contracts/ContractPlugin";
 import InvoicePlugin from "./components/invoices/InvoicePlugin";
 import IncentivePlugin from "./components/incentives/IncentivePlugin";
 import BrowseDataPlugin from "./components/browsedata/BrowseDataPlugin";
-import PyramidPlugin from "./components/pyramid/PyramidPlugin"
+import PyramidPlugin from "./components/pyramid/PyramidPlugin";
 
 import { indexBy } from "./support/Arrays";
 import configureI18N from "./support/configureI18N";
@@ -48,5 +48,5 @@ export {
   InvoicePlugin,
   IncentivePlugin,
   BrowseDataPlugin,
-  PyramidPlugin
+  PyramidPlugin,
 };

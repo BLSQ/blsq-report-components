@@ -4,30 +4,57 @@
     "codes": "Codes",
     "contracts": {
         "activeAt": "Active at",
+        "createTitle": "Create a contract",
+        "editTitle": "Edit contract",
         "onlyOverlaps": "Only with overlaps",
+        "overlappingWith": "Overlaps with",
         "overlaps": ", {{overlap}} overlapping globaly",
+        "result": "1 contract",
         "results": "{{total}} contracts",
         "resultsFiltered": "{{filtered}} results filtered out {{total}} contracts",
         "searchInfos": "Filter on name or contract codes",
         "title": "Contracts"
     },
+    "create": "Create",
+    "edit": "Edit",
     "end_period": "End",
     "filter": "Filter",
     "generated_at": "Generated on",
     "group": "Group",
     "groups": "Groups",
     "invoice": "Invoice",
+    "invoicing": {
+        "job": {
+            "error": "Message",
+            "erroredAt": "When",
+            "errors": "Error for the last calculate",
+            "orgUnit": "Org unit",
+            "period": "Period"
+        }
+    },
     "limit_org_unit_under": "Limit to the child organisation unit",
     "missing_invoice_types": "Missing invoice...",
     "name": "Name",
     "noResult": "No result",
+    "orgUnit": "Organisation Unit",
     "orgUnit_name": "Organisation Unit name",
     "period": "Period",
     "print": "Print",
     "report_and_invoices": "Report & Invoices",
+    "save": "Save",
     "search": "Search",
     "search_org_unit": "Search or select parent organisation unit",
+    "searchHelp": "Min {{minChar}} characters, max {{maxResult}} results",
     "show_avalaible_invoices": "Select invoice",
+    "snackBar": {
+        "copyError": "Copy error",
+        "error": {
+            "save": "An error occurred while saving"
+        },
+        "success": {
+            "save": "Saved successfully"
+        }
+    },
     "start_period": "Start",
     "table": {
         "actions": {
@@ -66,15 +93,6 @@
         "viewColumns": {
             "title": "Show Columns",
             "titleAria": "Show/Hide Table Columns"
-        }
-    },
-    "invoicing": {
-        "job": {
-            "errors":"Error for the last calculate",
-            "period": "Period",
-            "orgUnit": "Org unit",
-            "erroredAt": "When",
-            "error": "Message"
         }
     }
 }

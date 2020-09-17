@@ -2,62 +2,6 @@ import moment from "moment";
 import qs from "qs";
 import DatePeriods from "../../support/DatePeriods";
 
-// perhaps move it to ContractService ?
-const standardContractFields = [
-  "contract_start_date",
-  "contract_end_date",
-  "contract_main_orgunit",
-];
-
-// perhaps move it to ContractService ?
-export const toContractFields = (program) => {
-  const dataElements = program.programStages.flatMap((ps) =>
-    ps.programStageDataElements.map((psde) => psde.dataElement),
-  );
-
-  return dataElements.map((de) => {
-    return {
-      standardField: standardContractFields.includes(de.code),
-      ...de,
-    };
-  });
-};
-
-export const toContractsById = (contracts) => {
-  const contractsById = {};
-  contracts.forEach((contract) => (contractsById[contract.id] = contract));
-  return contractsById;
-};
-
-export const toOverlappings = (contracts) => {
-  const contractsByOrgUnits = {};
-  contracts.forEach((contract) => {
-    if (contractsByOrgUnits[contract.orgUnit.id] === undefined) {
-      contractsByOrgUnits[contract.orgUnit.id] = [];
-    }
-    contractsByOrgUnits[contract.orgUnit.id].push(contract);
-  });
-
-  const contractsOverlaps = {};
-  for (const [, contractsForOrgUnit] of Object.entries(contractsByOrgUnits)) {
-    contractsForOrgUnit.forEach((contract1) => {
-      contractsForOrgUnit.forEach((contract2) => {
-        if (contract1.overlaps(contract2)) {
-          if (contractsOverlaps[contract1.id] === undefined) {
-            contractsOverlaps[contract1.id] = new Set();
-          }
-          if (contractsOverlaps[contract2.id] === undefined) {
-            contractsOverlaps[contract2.id] = new Set();
-          }
-          contractsOverlaps[contract1.id].add(contract2.id);
-          contractsOverlaps[contract2.id].add(contract1.id);
-        }
-      });
-    });
-  }
-  return contractsOverlaps;
-};
-
 export const getFilteredContracts = (filters, contracts, contractsOverlaps) => {
   let filteredContracts = contracts;
   Object.keys(filters).forEach((filterKey) => {
@@ -114,6 +58,11 @@ export const getEndDateFromPeriod = (endPeriod) => {
     "month",
   );
 };
+export const getQuarterFromDate = (date) => {
+  const month = parseInt(moment(date).format("MM"), 10);
+  const year = moment(date).format("YYYY");
+  return DatePeriods.dhis2QuarterPeriod(year, month);
+};
 
 export const getContractDates = (contract) => ({
   startDate: getStartDateFromPeriod(contract.startPeriod),
@@ -168,3 +117,25 @@ export const decodeTableQueryParams = (location) => {
   };
   return tableParams;
 };
+
+export const getOptionFromField = (field, code) => {
+  const option = field.optionSet.options.find((o) => o.code === code);
+  if (!code) {
+    return {
+      label: "",
+      value: undefined,
+    };
+  }
+  return {
+    label: option ? option.name : code,
+    value: code,
+  };
+};
+
+export const getNonStandartContractFields = (contractFields) =>
+  contractFields.filter((c) => !c.standardField);
+
+export const getNonStandartContractFieldValue = (contract, field) =>
+  (contract.fieldValues &&
+    getOptionFromField(field, contract.fieldValues[field.code]).label) ||
+  "--";

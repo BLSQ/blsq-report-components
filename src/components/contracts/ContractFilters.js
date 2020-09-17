@@ -4,15 +4,27 @@ import { withRouter } from "react-router-dom";
 import { withNamespaces } from "react-i18next";
 import moment from "moment";
 
-import { Box, Grid, Button } from "@material-ui/core";
+import { Box, Grid, Button, makeStyles } from "@material-ui/core";
+import Add from "@material-ui/icons/Add";
 
 import Filter from "../shared/Filter";
-import filtersConfig from "./filters";
+import filtersConfig, { columnsCount } from "./filters";
+
+import ContractsDialog from "./ContractsDialog";
+
 import {
   filterItems,
   encodeFiltersQueryParams,
   decodeFiltersQueryParams,
 } from "./utils";
+
+const styles = (theme) => ({
+  createButton: {
+    marginRight: theme.spacing(2),
+  },
+});
+
+const useStyles = makeStyles((theme) => styles(theme));
 
 const ContractFilters = ({
   setFilteredContracts,
@@ -23,13 +35,17 @@ const ContractFilters = ({
   history,
   location,
   changeTable,
+  fetchContracts,
 }) => {
   const [filters, setFilters] = React.useState(filtersConfig(contractFields));
   const [isTouched, setIsTouched] = React.useState(false);
   const [hasError, setHasError] = React.useState(false);
-
+  const classes = useStyles();
   useEffect(() => {
-    const newFilters = decodeFiltersQueryParams(location, filters);
+    const newFilters = decodeFiltersQueryParams(
+      location,
+      filtersConfig(contractFields),
+    );
     const filteredContracts = filterItems(
       newFilters,
       contracts,
@@ -37,7 +53,7 @@ const ContractFilters = ({
     );
     setFilteredContracts(filteredContracts);
     setFilters(newFilters);
-  }, []);
+  }, [contracts]);
 
   const checkErrors = () => {
     setHasError(false);
@@ -75,21 +91,15 @@ const ContractFilters = ({
     setFilteredContracts(filterItems(filters, contracts, contractsOverlaps));
     changeTable("page", 0);
   };
+
   return (
     <Box mb={3}>
       <Grid container item xs={12} spacing={4}>
-        {filters
-          .map((f) => f.column)
-          .sort()
+        {Array(columnsCount)
+          .fill()
+          .map((x, i) => i + 1)
           .map((column) => (
-            <Grid
-              container
-              item
-              xs={12}
-              md={3}
-              key={`column-${column}`}
-              alignItems="center"
-            >
+            <Grid container item xs={12} md={3} key={`column-${column}`}>
               {filters
                 .filter((f) => f.column === column)
                 .map((filter) => (
@@ -105,6 +115,26 @@ const ContractFilters = ({
       </Grid>
       <Grid container item xs={12} spacing={4}>
         <Grid container item xs={12} justify="flex-end">
+          <ContractsDialog
+            contract={{
+              id: 0,
+              orgUnit: null,
+              codes: [],
+              fieldValues: {},
+              children: null,
+            }}
+            contractFields={contractFields}
+            onSavedSuccessfull={fetchContracts}
+          >
+            <Button
+              color="primary"
+              variant="contained"
+              startIcon={<Add />}
+              className={classes.createButton}
+            >
+              {t("create")}
+            </Button>
+          </ContractsDialog>
           <Button
             onClick={handleSearch}
             color="primary"
@@ -127,6 +157,7 @@ ContractFilters.propTypes = {
   contractsOverlaps: PropTypes.object.isRequired,
   setFilteredContracts: PropTypes.func.isRequired,
   changeTable: PropTypes.func.isRequired,
+  fetchContracts: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired,
 };
 

@@ -6,7 +6,12 @@ import { Link } from "react-router-dom";
 
 import ContractsDialog from "./ContractsDialog";
 import { defaultOptions } from "../../support/table";
-import { getOverlaps, getOrgUnitAncestors, getOptionFromField } from "./utils";
+import {
+  getOverlaps,
+  getOrgUnitAncestors,
+  getOptionFromField,
+  getContractByOrgUnit,
+} from "./utils";
 
 export const contractsTableColumns = (
   t,
@@ -44,6 +49,12 @@ export const contractsTableColumns = (
       options: {
         filter: false,
         sort: true,
+        setCellProps: () => ({
+          align: "center",
+        }),
+        setCellHeaderProps: () => ({
+          className: classes.cellCentered,
+        }),
         customBodyRender: (contractStartDate) => {
           return <span>{moment(contractStartDate).format("DD/MM/YYYY")}</span>;
         },
@@ -55,8 +66,46 @@ export const contractsTableColumns = (
       options: {
         filter: false,
         sort: true,
+        setCellProps: () => ({
+          align: "center",
+        }),
+        setCellHeaderProps: () => ({
+          className: classes.cellCentered,
+        }),
         customBodyRender: (contractEndDate) => {
           return <span>{moment(contractEndDate).format("DD/MM/YYYY")}</span>;
+        },
+      },
+    },
+    {
+      name: "fieldValues.contract_main_orgunit",
+      label: t("contracts.contract_main_orgunit"),
+      options: {
+        filter: false,
+        sort: true,
+        setCellProps: () => ({
+          align: "center",
+        }),
+        setCellHeaderProps: () => ({
+          className: classes.cellCentered,
+        }),
+        customBodyRender: (contractMainOrgunitId) => {
+          if (!contractMainOrgunitId) return "";
+          const mainContract = getContractByOrgUnit(
+            contracts,
+            contractMainOrgunitId,
+          );
+          if (!mainContract) return "";
+          return (
+            <Tooltip arrow title={getOrgUnitAncestors(mainContract.orgUnit)}>
+              <Link
+                to={`/contracts/${mainContract.orgUnit.id}${location.search}`}
+                className={classes.iconLink}
+              >
+                <span>{mainContract.orgUnit.name}</span>
+              </Link>
+            </Tooltip>
+          );
         },
       },
     },
@@ -69,6 +118,12 @@ export const contractsTableColumns = (
         options: {
           filter: false,
           sort: true,
+          setCellProps: () => ({
+            align: "center",
+          }),
+          setCellHeaderProps: () => ({
+            className: classes.cellCentered,
+          }),
           sortCompare: (order) => (a, b) => {
             const aLabel = getOptionFromField(field, a.data).label;
             const bLabel = getOptionFromField(field, b.data).label;

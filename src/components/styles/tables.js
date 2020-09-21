@@ -15,8 +15,6 @@ const tables = (theme) => ({
   iconLink: {
     color: "inherit",
     height: 24,
-    display: "flex",
-    alignItems: "baseline",
   },
   chip: {
     marginRight: theme.spacing(2),
@@ -27,6 +25,14 @@ const tables = (theme) => ({
   },
   cellCentered: {
     textAlign: "center",
+    "&>span": {
+      justifyContent: "center",
+    },
+  },
+  spanCentered: {
+    textAlign: "center",
+    display: "block",
+    margin: "auto",
   },
 });
 

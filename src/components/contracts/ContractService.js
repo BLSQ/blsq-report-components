@@ -144,14 +144,25 @@ class ContractService {
 
   async fetchContracts(orgUnitId, sort = false) {
     let contracts = await this.findAll();
+    let subContracts = [];
     if (orgUnitId) {
-      contracts = contracts.filter((c) => c.orgUnit.id === orgUnitId);
+      subContracts = contracts.filter(
+        (c) =>
+          c.fieldValues.contract_main_orgunit &&
+          c.fieldValues.contract_main_orgunit === orgUnitId,
+      );
+      contracts = contracts.filter(
+        (c) =>
+          c.orgUnit.id === orgUnitId && !c.fieldValues.contract_main_orgunit,
+      );
     }
     if (sort) {
       contracts.sort((a, b) => (a.startPeriod > b.startPeriod ? 1 : -1));
+      subContracts.sort((a, b) => (a.startPeriod > b.startPeriod ? 1 : -1));
     }
     return {
       contracts,
+      subContracts,
       contractsById: this.toContractsById(contracts),
       contractsOverlaps: this.toOverlappings(contracts),
       contractFields: this.toContractFields(this.program),

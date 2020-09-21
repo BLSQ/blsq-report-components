@@ -4,6 +4,7 @@
     "codes": "Codes",
     "contracts": {
         "activeAt": "Actif le",
+        "contract_main_orgunit": "Org unit principale",
         "createTitle": "Créer un contrat",
         "editTitle": "Editer le contrat",
         "onlyOverlaps": "Seulement les contracts se chevauchant",

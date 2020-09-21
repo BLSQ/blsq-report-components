@@ -139,3 +139,6 @@ export const getNonStandartContractFieldValue = (contract, field) =>
   (contract.fieldValues &&
     getOptionFromField(field, contract.fieldValues[field.code]).label) ||
   "--";
+
+export const getContractByOrgUnit = (contracts = [], orgUnitId) =>
+  contracts.find((c) => c.orgUnit.id === orgUnitId);

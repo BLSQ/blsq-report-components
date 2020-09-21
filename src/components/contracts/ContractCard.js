@@ -23,6 +23,9 @@ import ContractShort from "./ContractShort";
 import WarningBox from "../shared/WarningBox";
 
 const styles = (theme) => ({
+  root: {
+    width: "100%",
+  },
   path: {
     fontSize: 11,
     width: "100%",
@@ -45,7 +48,11 @@ const ContractCard = ({
 }) => {
   const classes = useStyles();
   return (
-    <Card>
+    <Card
+      classes={{
+        root: classes.root,
+      }}
+    >
       <CardContent>
         <Grid container spacing={4}>
           <Grid container item xs={10}>

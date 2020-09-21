@@ -4,6 +4,7 @@
     "codes": "Codes",
     "contracts": {
         "activeAt": "Active at",
+        "contract_main_orgunit": "Main org unit",
         "createTitle": "Create a contract",
         "editTitle": "Edit contract",
         "onlyOverlaps": "Only with overlaps",

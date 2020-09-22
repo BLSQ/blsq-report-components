@@ -8,7 +8,6 @@ import {
   Box,
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import MUIDataTable from "mui-datatables";
 import { withNamespaces } from "react-i18next";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
@@ -21,7 +20,10 @@ import ContractsResume from "./ContractsResume";
 import { contractsTableColumns, contractsTableOptions } from "./config";
 import { encodeTableQueryParams, decodeTableQueryParams } from "./utils";
 
+import Table from "../shared/Table";
+
 import tablesStyles from "../styles/tables";
+import mainStyles from "../styles/main";
 import containersStyles from "../styles/containers";
 
 import { setIsLoading } from "../redux/actions/load";
@@ -29,6 +31,7 @@ import { setIsLoading } from "../redux/actions/load";
 const styles = (theme) => ({
   ...tablesStyles(theme),
   ...containersStyles(theme),
+  ...mainStyles(theme),
 });
 
 class ContractsPage extends Component {
@@ -64,10 +67,10 @@ class ContractsPage extends Component {
     if (contractService) {
       dispatch(setIsLoading(true));
       contractService.fetchContracts().then((contracts) => {
-        dispatch(setIsLoading(false));
         this.setContracts({
           ...contracts,
         });
+        dispatch(setIsLoading(false));
       });
     }
   }
@@ -77,11 +80,10 @@ class ContractsPage extends Component {
   }
 
   render() {
-    const { t, classes, location } = this.props;
+    const { t, classes, location, isLoading } = this.props;
     const {
       contracts,
       contractsOverlaps,
-      isLoading,
       contractsById,
       filteredContracts,
       contractFields,
@@ -102,51 +104,47 @@ class ContractsPage extends Component {
               </Typography>
             </Box>
           </Breadcrumbs>
-          {!isLoading && (
-            <>
-              <ContractFilters
-                contractFields={contractFields}
+          <ContractFilters
+            contractFields={contractFields}
+            contracts={contracts}
+            fetchContracts={() => this.fetchContracts()}
+            changeTable={(key, value) => this.onTableChange(key, value)}
+            contractsOverlaps={contractsOverlaps}
+            setFilteredContracts={(newFilteredContracts) =>
+              this.setState({ filteredContracts: newFilteredContracts })
+            }
+          />
+          <Divider />
+          <Table
+            isLoading={isLoading}
+            title={
+              <ContractsResume
+                filteredContracts={filteredContracts}
                 contracts={contracts}
-                fetchContracts={() => this.fetchContracts()}
-                changeTable={(key, value) => this.onTableChange(key, value)}
-                contractsOverlaps={contractsOverlaps}
-                setFilteredContracts={(newFilteredContracts) =>
-                  this.setState({ filteredContracts: newFilteredContracts })
-                }
+                overlapsTotal={overlapsTotal}
               />
-              <Divider />
-              <MUIDataTable
-                classes={{
-                  paper: classes.tableContainer,
-                }}
-                title={
-                  <ContractsResume
-                    filteredContracts={filteredContracts}
-                    contracts={contracts}
-                    overlapsTotal={overlapsTotal}
-                  />
-                }
-                data={filteredContracts}
-                columns={contractsTableColumns(
-                  t,
-                  classes,
-                  filteredContracts,
-                  contractFields,
-                  location,
-                  () => this.fetchContracts(),
-                )}
-                options={contractsTableOptions(
-                  t,
-                  filteredContracts,
-                  contractsById,
-                  contractsOverlaps,
-                  classes,
-                  (key, value) => this.onTableChange(key, value),
-                  decodeTableQueryParams(location),
-                )}
-              />
-            </>
-          )}
+            }
+            data={filteredContracts}
+            columns={contractsTableColumns(
+              t,
+              classes,
+              filteredContracts,
+              contractFields,
+              location,
+              () => this.fetchContracts(),
+              false,
+              contracts,
+            )}
+            options={contractsTableOptions(
+              t,
+              filteredContracts,
+              contractsById,
+              contractsOverlaps,
+              classes,
+              (key, value) => this.onTableChange(key, value),
+              decodeTableQueryParams(location),
+            )}
+          />
         </Paper>
       </>
     );
@@ -159,7 +157,15 @@ ContractsPage.propTypes = {
   classes: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool.isRequired,
 };
+
+const MapStateToProps = (state) => ({
+  currentUser: state.currentUser.profile,
+  isLoading: state.load.isLoading,
+  drawerOpen: state.drawer.isOpen,
+  period: state.period.current,
+});
 
 const MapDispatchToProps = (dispatch) => ({
   dispatch,
@@ -167,6 +173,8 @@ const MapDispatchToProps = (dispatch) => ({
 
 export default withRouter(
   withNamespaces()(
-    withStyles(styles)(connect(() => ({}), MapDispatchToProps)(ContractsPage)),
+    withStyles(styles)(
+      connect(MapStateToProps, MapDispatchToProps)(ContractsPage),
+    ),
   ),
 );

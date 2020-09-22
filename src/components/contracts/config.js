@@ -1,11 +1,14 @@
 import React from "react";
 import moment from "moment";
-import { Tooltip } from "@material-ui/core";
+import { Tooltip, IconButton } from "@material-ui/core";
+import classNames from "classnames";
 
 import { Link } from "react-router-dom";
 
 import ContractsDialog from "./ContractsDialog";
 import { defaultOptions } from "../../support/table";
+import OrgUnitIcon from "../shared/icons/OrgUnitIcon";
+
 import {
   getOverlaps,
   getOrgUnitAncestors,
@@ -16,10 +19,12 @@ import {
 export const contractsTableColumns = (
   t,
   classes,
-  contracts,
+  filteredContracts,
   contractFields,
   location,
   fetchContracts,
+  isDetail = false,
+  contracts,
 ) => {
   const columns = [
     {
@@ -28,16 +33,14 @@ export const contractsTableColumns = (
       options: {
         filter: false,
         sort: true,
+        setCellHeaderProps: () => ({
+          className: classes.headerCell,
+        }),
         customBodyRenderLite: (dataIndex) => {
-          const { orgUnit } = contracts[dataIndex];
+          const { orgUnit } = filteredContracts[dataIndex];
           return (
             <Tooltip arrow title={getOrgUnitAncestors(orgUnit)}>
-              <Link
-                to={`/contracts/${orgUnit.id}${location.search}`}
-                className={classes.iconLink}
-              >
-                <span>{orgUnit.name}</span>
-              </Link>
+              <span>{orgUnit.name}</span>
             </Tooltip>
           );
         },
@@ -53,7 +56,7 @@ export const contractsTableColumns = (
           align: "center",
         }),
         setCellHeaderProps: () => ({
-          className: classes.cellCentered,
+          className: classNames(classes.cellCentered, classes.headerCell),
         }),
         customBodyRender: (contractStartDate) => {
           return <span>{moment(contractStartDate).format("DD/MM/YYYY")}</span>;
@@ -70,7 +73,7 @@ export const contractsTableColumns = (
           align: "center",
         }),
         setCellHeaderProps: () => ({
-          className: classes.cellCentered,
+          className: classNames(classes.cellCentered, classes.headerCell),
         }),
         customBodyRender: (contractEndDate) => {
           return <span>{moment(contractEndDate).format("DD/MM/YYYY")}</span>;
@@ -87,7 +90,7 @@ export const contractsTableColumns = (
           align: "center",
         }),
         setCellHeaderProps: () => ({
-          className: classes.cellCentered,
+          className: classNames(classes.cellCentered, classes.headerCell),
         }),
         customBodyRender: (contractMainOrgunitId) => {
           if (!contractMainOrgunitId) return "";
@@ -98,12 +101,7 @@ export const contractsTableColumns = (
           if (!mainContract) return "";
           return (
             <Tooltip arrow title={getOrgUnitAncestors(mainContract.orgUnit)}>
-              <Link
-                to={`/contracts/${mainContract.orgUnit.id}${location.search}`}
-                className={classes.iconLink}
-              >
-                <span>{mainContract.orgUnit.name}</span>
-              </Link>
+              <span>{mainContract.orgUnit.name}</span>
             </Tooltip>
           );
         },
@@ -122,7 +120,7 @@ export const contractsTableColumns = (
             align: "center",
           }),
           setCellHeaderProps: () => ({
-            className: classes.cellCentered,
+            className: classNames(classes.cellCentered, classes.headerCell),
           }),
           sortCompare: (order) => (a, b) => {
             const aLabel = getOptionFromField(field, a.data).label;
@@ -144,17 +142,39 @@ export const contractsTableColumns = (
         align: "center",
       }),
       setCellHeaderProps: () => ({
-        className: classes.cellCentered,
+        className: classNames(classes.cellCentered, classes.headerCell),
       }),
       customBodyRender: (contractId) => {
-        const contract = contracts.find((c) => c.id === contractId);
+        const contract = filteredContracts.find((c) => c.id === contractId);
         if (!contract) return null;
         return (
-          <ContractsDialog
-            contract={contract}
-            contractFields={contractFields}
-            onSavedSuccessfull={fetchContracts}
-          />
+          <>
+            <ContractsDialog
+              contract={contract}
+              contractFields={contractFields}
+              onSavedSuccessfull={fetchContracts}
+            />
+            {!isDetail && (
+              <Tooltip
+                placement="bottom"
+                title={t("contracts.seeOrgUnit")}
+                arrow
+              >
+                <Link
+                  to={`/contracts/${
+                    contract.fieldValues.contract_main_orgunit
+                      ? contract.fieldValues.contract_main_orgunit
+                      : contract.orgUnit.id
+                  }${location.search}`}
+                  className={classes.marginLeft}
+                >
+                  <IconButton size="small">
+                    <OrgUnitIcon />
+                  </IconButton>
+                </Link>
+              </Tooltip>
+            )}
+          </>
         );
       },
     },
@@ -196,6 +216,33 @@ export const contractsTableOptions = (
     onChangePage: (currentPage) => onTableChange("page", currentPage),
     onColumnSortChange: (column, direction) =>
       onTableChange("sort", { column, direction }),
+    setRowProps: (row, dataIndex, rowIndex) => {
+      const contract = contracts[dataIndex];
+      const isOverlaping =
+        getOverlaps(contract.id, contractsOverlaps, contractsById).length > 0;
+      return {
+        className: isOverlaping ? classes.rowError : "",
+      };
+    },
+  };
+};
+
+export const orgUnitContractTableOptions = (
+  t,
+  contracts,
+  contractsById,
+  contractsOverlaps,
+  classes,
+  isLoading,
+) => {
+  return {
+    ...defaultOptions(t, isLoading),
+    search: false,
+    filter: false,
+    print: false,
+    selectableRowsHideCheckboxes: false,
+    selectableRows: "none",
+    rowsPerPageOptions: [10, 25, 50, 100],
     setRowProps: (row, dataIndex, rowIndex) => {
       const contract = contracts[dataIndex];
       const isOverlaping =

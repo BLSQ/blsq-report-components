@@ -7,6 +7,7 @@
         "contract_main_orgunit": "Org unit principale",
         "createTitle": "Créer un contrat",
         "editTitle": "Editer le contrat",
+        "mainContracts": "Contrat(s) direct(s)",
         "onlyOverlaps": "Seulement les contracts se chevauchant",
         "overlappingWith": "Se chevauchant avec",
         "overlaps": ", dont {{overlap}} se chevauchant",
@@ -14,6 +15,8 @@
         "results": "{{total}} contrats",
         "resultsFiltered": "{{filtered}} contrats filtrés sur {{total}}",
         "searchInfos": "Chercher sur le nom ou le code du contrat",
+        "seeOrgUnit": "Voir l'unité d'organisation",
+        "subContracts": "Sous-contrat(s)",
         "title": "Contrats"
     },
     "create": "Créer",

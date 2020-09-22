@@ -29,6 +29,9 @@ const tables = (theme) => ({
       justifyContent: "center",
     },
   },
+  headerCell: {
+    fontWeight: "bold",
+  },
   spanCentered: {
     textAlign: "center",
     display: "block",

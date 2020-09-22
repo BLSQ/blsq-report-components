@@ -123,7 +123,7 @@ const ContractsDialog = ({
     return child;
   });
   return (
-    <div>
+    <>
       {!children && (
         <Tooltip
           onClick={() => handleClickOpen()}
@@ -221,7 +221,7 @@ const ContractsDialog = ({
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </>
   );
 };
 

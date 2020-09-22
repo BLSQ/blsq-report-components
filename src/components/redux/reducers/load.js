@@ -1,7 +1,7 @@
 import { SET_IS_LOADING } from "../actions/load";
 
 const initialState = {
-  isLoading: false,
+  isLoading: true,
 };
 
 const reducer = (state = initialState, action = {}) => {

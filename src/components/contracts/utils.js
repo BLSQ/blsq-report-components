@@ -48,6 +48,16 @@ export const filterItems = (filters, items, extra) => {
   return filteredItems;
 };
 
+export const getStartMonthFromQuarter = (startPeriod) => {
+  const startPeriodMonths = DatePeriods.split(startPeriod, "monthly");
+  return DatePeriods.monthName(startPeriodMonths[0]);
+};
+
+export const getEndMonthFromQuarter = (endPeriod) => {
+  const endPeriodMonths = DatePeriods.split(endPeriod, "monthly");
+  return DatePeriods.monthName(endPeriodMonths[endPeriodMonths.length - 1]);
+};
+
 export const getStartDateFromPeriod = (startPeriod) => {
   const startPeriodMonths = DatePeriods.split(startPeriod, "monthly");
   return moment(startPeriodMonths[0], "YYYYMM");

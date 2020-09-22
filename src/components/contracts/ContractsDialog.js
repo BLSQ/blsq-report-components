@@ -32,6 +32,8 @@ import {
   getStartDateFromPeriod,
   getEndDateFromPeriod,
   getQuarterFromDate,
+  getStartMonthFromQuarter,
+  getEndMonthFromQuarter,
 } from "./utils";
 
 import { enqueueSnackbar } from "../redux/actions/snackBars";
@@ -168,6 +170,9 @@ const ContractsDialog = ({
                 max={getQuarterFromDate(
                   currentContract.fieldValues.contract_end_date,
                 )}
+                renderPeriod={(p) =>
+                  `${getStartMonthFromQuarter(p)} ${p.substring(0, 4)}`
+                }
                 labelKey="start_period"
                 onPeriodChange={(startPeriod) =>
                   handleChange(
@@ -184,6 +189,9 @@ const ContractsDialog = ({
                 period={getQuarterFromDate(
                   currentContract.fieldValues.contract_end_date,
                 )}
+                renderPeriod={(p) =>
+                  `${getEndMonthFromQuarter(p)} ${p.substring(0, 4)}`
+                }
                 labelKey="end_period"
                 min={getQuarterFromDate(
                   currentContract.fieldValues.contract_start_date,

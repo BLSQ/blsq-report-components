@@ -9,6 +9,7 @@
         "editTitle": "Edit contract",
         "mainContracts": "Main contract(s)",
         "onlyOverlaps": "Only with overlaps",
+        "onlySubContracts": "Only sub contracts",
         "overlappingWith": "Overlaps with",
         "overlaps": ", {{overlap}} overlapping globaly",
         "result": "1 contract",

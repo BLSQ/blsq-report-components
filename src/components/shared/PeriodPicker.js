@@ -71,9 +71,14 @@ const PeriodPicker = ({
   labelKey,
   min,
   max,
+  renderPeriod,
 }) => {
   const periods = buildPeriods(period, periodDelta, min, max);
   const classes = useStyles();
+  const displayPeriod = (dhis2period) =>
+    renderPeriod === null
+      ? DatePeriods.displayName(dhis2period, periodFormat.quarterly)
+      : renderPeriod(dhis2period);
   return (
     <FormControl className={classes.formControl}>
       <InputLabel>{t(labelKey)}</InputLabel>
@@ -84,7 +89,7 @@ const PeriodPicker = ({
       >
         {periods.map((dhis2period) => (
           <MenuItem key={dhis2period} value={dhis2period} title={dhis2period}>
-            {DatePeriods.displayName(dhis2period, periodFormat.quarterly)}
+            {displayPeriod(dhis2period)}
           </MenuItem>
         ))}
       </Select>
@@ -104,6 +109,7 @@ PeriodPicker.defaultProps = {
   labelKey: "period",
   min: "",
   max: "",
+  renderPeriod: null,
 };
 
 PeriodPicker.propTypes = {
@@ -115,6 +121,7 @@ PeriodPicker.propTypes = {
   labelKey: PropTypes.string,
   min: PropTypes.string,
   max: PropTypes.string,
+  renderPeriod: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
 };
 
 export default withNamespaces()(PeriodPicker);

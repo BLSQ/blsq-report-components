@@ -96,7 +96,7 @@ class ContractBasedResolver {
       .filter(
         (contract) =>
           contract.matchPeriod(period) &&
-          contract.orgUnit.path.includes(orgUnitId)
+          contract.orgUnit.path.includes(orgUnitId),
       )
       .map((contract) => contract.orgUnit);
     mainOrgUnit = orgUnits[0];
@@ -136,7 +136,8 @@ const incentivesDescriptors = [
   },
 ];
 const customDefaultRoute = (
-  <Route key="defaultRoute"
+  <Route
+    key="defaultRoute"
     exact
     path="/"
     render={() => {
@@ -151,7 +152,7 @@ const routeToCustomSelector = (props) => (
     path="/selection"
     component={(routerProps) => {
       const params = new URLSearchParams(
-        routerProps.location.search.substring(1)
+        routerProps.location.search.substring(1),
       );
       const period = params.get("period");
       const parent = params.get("parent");
@@ -211,7 +212,7 @@ const appConfig = {
     },
     levels: ["Country", "Territory", "Land", "Facility"],
   },
-}
+};
 
 const dhis2 = new Dhis2();
 

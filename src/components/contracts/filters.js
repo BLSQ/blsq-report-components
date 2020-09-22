@@ -61,7 +61,6 @@ const defaultFilters = [
     },
     urlDecode: (value) => (!value || value === "" ? null : value),
   },
-
   {
     id: "only_overlaps",
     key: "contracts.onlyOverlaps",
@@ -79,6 +78,25 @@ const defaultFilters = [
     urlEncode: (value) => (value ? "true" : "false"),
     urlDecode: (value) => value === "true",
   },
+  {
+    id: "only_sub_contracts",
+    key: "contracts.onlySubContracts",
+    type: "checkbox",
+    column: 2,
+    value: false,
+    onFilter: (onlySubContracts, contracts, contractsOverlaps) => {
+      if (!onlySubContracts) {
+        return contracts;
+      }
+      return contracts.filter(
+        (c) =>
+          c.fieldValues.contract_main_orgunit &&
+          c.fieldValues.contract_main_orgunit !== "",
+      );
+    },
+    urlEncode: (value) => (value ? "true" : "false"),
+    urlDecode: (value) => value === "true",
+  },
 ];
 
 const filterConfig = (contractFields) => {
@@ -86,7 +104,12 @@ const filterConfig = (contractFields) => {
     return [];
   }
   const config = [...defaultFilters];
-  let lastIndex = defaultFilters.length;
+  let lastIndex = 0;
+  defaultFilters.forEach((f) => {
+    if (f.column > lastIndex) {
+      lastIndex = f.column + 2;
+    }
+  });
   getNonStandartContractFields(contractFields).forEach((field, index) => {
     lastIndex += index;
     if (lastIndex > columnsCount) {

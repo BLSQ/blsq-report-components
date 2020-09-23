@@ -15,7 +15,7 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import Edit from "@material-ui/icons/Edit";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import PluginRegistry from "../core/PluginRegistry";
 
@@ -25,6 +25,7 @@ import {
   errorSnackBar,
   succesfullSnackBar,
 } from "../shared/snackBars/snackBar";
+import { setIsLoading } from "../redux/actions/load";
 
 import ContractFieldSelect from "./ContractFieldSelect";
 import {
@@ -34,9 +35,12 @@ import {
   getQuarterFromDate,
   getStartMonthFromQuarter,
   getEndMonthFromQuarter,
+  getContractByOrgUnit,
 } from "./utils";
 
 import { enqueueSnackbar } from "../redux/actions/snackBars";
+
+import LoadingSpinner from "../shared/LoadingSpinner";
 
 const styles = (theme) => ({
   title: {
@@ -61,12 +65,15 @@ const ContractsDialog = ({
   contractFields,
   onSavedSuccessfull,
   children,
+  contracts,
+  displayOrgUnit,
+  displayMainOrgUnit,
 }) => {
   const [open, setOpen] = React.useState(false);
 
   const contractService = PluginRegistry.extension("contracts.service");
   const [currentContract, setCurrentContract] = React.useState(contract);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const isLoading = useSelector((state) => state.load.isLoading);
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -95,7 +102,7 @@ const ContractsDialog = ({
   };
 
   const handleSave = () => {
-    setIsLoading(true);
+    dispatch(setIsLoading(true));
     const saveContract =
       currentContract.id !== 0
         ? contractService.updateContract(currentContract)
@@ -105,7 +112,7 @@ const ContractsDialog = ({
           );
     saveContract
       .then(() => {
-        setIsLoading(false);
+        dispatch(setIsLoading(false));
         onSavedSuccessfull();
         dispatch(enqueueSnackbar(succesfullSnackBar("snackBar.success.save")));
       })
@@ -124,6 +131,16 @@ const ContractsDialog = ({
     }
     return child;
   });
+  let mainOrgUnit;
+  if (currentContract.fieldValues.contract_main_orgunit) {
+    const mainContract = getContractByOrgUnit(
+      contracts,
+      currentContract.fieldValues.contract_main_orgunit,
+    );
+    if (mainContract) {
+      mainOrgUnit = mainContract.orgUnit;
+    }
+  }
   return (
     <>
       {!children && (
@@ -142,6 +159,7 @@ const ContractsDialog = ({
       )}
       {Boolean(children) && childrenWithProps}
       <Dialog onClose={handleClose} open={open} fullWidth maxWidth="sm">
+        {isLoading && <LoadingSpinner />}
         <DialogTitle disableTypography>
           <Typography variant="h6" className={classes.title}>
             {currentContract.id !== 0 && t("contracts.editTitle")}
@@ -153,14 +171,31 @@ const ContractsDialog = ({
         </DialogTitle>
         <DialogContent dividers>
           <Grid container spacing={2}>
-            <Grid container item xs={12}>
-              <OuSearch
-                onChange={(orgUnit) =>
-                  handleChange("fieldValues", orgUnit, "orgUnit")
-                }
-                orgUnit={currentContract.fieldValues.orgUnit}
-              />
-            </Grid>
+            {(displayOrgUnit || displayMainOrgUnit) && (
+              <Grid container item xs={12}>
+                {displayOrgUnit && (
+                  <OuSearch
+                    onChange={(orgUnit) =>
+                      handleChange("fieldValues", orgUnit, "orgUnit")
+                    }
+                    orgUnit={currentContract.fieldValues.orgUnit}
+                  />
+                )}
+                {displayMainOrgUnit && (
+                  <OuSearch
+                    onChange={(orgUnit) =>
+                      handleChange(
+                        "fieldValues",
+                        orgUnit,
+                        "contract_main_orgunit",
+                      )
+                    }
+                    label={t("contracts.contract_main_orgunit")}
+                    orgUnit={mainOrgUnit}
+                  />
+                )}
+              </Grid>
+            )}
             <Grid container item xs={6}>
               <PeriodPicker
                 periodDelta={{ before: 20, after: 20 }}
@@ -223,7 +258,10 @@ const ContractsDialog = ({
             autoFocus
             onClick={handleSave}
             color="primary"
-            disabled={isLoading || !currentContract.fieldValues.orgUnit}
+            disabled={
+              isLoading ||
+              (displayOrgUnit && !currentContract.fieldValues.orgUnit)
+            }
           >
             {t("save")}
           </Button>
@@ -235,14 +273,20 @@ const ContractsDialog = ({
 
 ContractsDialog.defaultProps = {
   onSavedSuccessfull: () => null,
+  contracts: [],
+  displayOrgUnit: true,
+  displayMainOrgUnit: true,
 };
 
 ContractsDialog.propTypes = {
   t: PropTypes.func.isRequired,
   contract: PropTypes.object.isRequired,
+  contracts: PropTypes.array,
   contractFields: PropTypes.array.isRequired,
   onSavedSuccessfull: PropTypes.func,
   children: PropTypes.any,
+  displayOrgUnit: PropTypes.bool,
+  displayMainOrgUnit: PropTypes.bool,
 };
 
 export default withNamespaces()(ContractsDialog);

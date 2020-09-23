@@ -1,6 +1,7 @@
 import moment from "moment";
 import qs from "qs";
 import DatePeriods from "../../support/DatePeriods";
+import { contractsTableColumns, orgUnitContractTableOptions } from "./config";
 
 export const getFilteredContracts = (filters, contracts, contractsOverlaps) => {
   let filteredContracts = contracts;
@@ -152,3 +153,42 @@ export const getNonStandartContractFieldValue = (contract, field) =>
 
 export const getContractByOrgUnit = (contracts = [], orgUnitId) =>
   contracts.find((c) => c.orgUnit.id === orgUnitId);
+
+export const getContractTableProps = (
+  t,
+  classes,
+  contractsData,
+  allContracts,
+  fetchContracts,
+  location,
+  contractFields,
+  columnsFilterArray,
+  displayOrgUnit,
+  displayMainOrgUnit,
+) => {
+  const options = orgUnitContractTableOptions(
+    t,
+    contractsData.contracts,
+    contractsData.contractsById,
+    contractsData.contractsOverlaps,
+    classes,
+  );
+  const overlapsTotal = Object.keys(contractsData.contractsOverlaps).length;
+  const columns = contractsTableColumns(
+    t,
+    classes,
+    contractsData.contracts,
+    contractFields,
+    location,
+    () => fetchContracts(),
+    true,
+    allContracts,
+    displayOrgUnit,
+    displayMainOrgUnit,
+  ).filter((c) => !columnsFilterArray.includes(c.name));
+  return {
+    options,
+    columns,
+    overlapsTotal,
+  };
+};

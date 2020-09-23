@@ -2,7 +2,15 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import Typography from "@material-ui/core/Typography";
 import { withNamespaces } from "react-i18next";
-import { Breadcrumbs, Grid, makeStyles, Divider, Box } from "@material-ui/core";
+import {
+  Breadcrumbs,
+  Grid,
+  makeStyles,
+  Divider,
+  Box,
+  Button,
+} from "@material-ui/core";
+import Add from "@material-ui/icons/Add";
 import { Link, withRouter } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -10,7 +18,8 @@ import PluginRegistry from "../core/PluginRegistry";
 import ContractsResume from "./ContractsResume";
 import linksStyles from "../styles/links";
 import { setIsLoading } from "../redux/actions/load";
-import { contractsTableColumns, orgUnitContractTableOptions } from "./config";
+import ContractsDialog from "./ContractsDialog";
+import { getContractTableProps } from "./utils";
 import tablesStyles from "../styles/tables";
 import containersStyles from "../styles/containers";
 
@@ -28,10 +37,17 @@ const ContractPage = ({ match, location, t }) => {
   const isLoading = useSelector((state) => state.load.isLoading);
   const dispatch = useDispatch();
   const [contractsDatas, setContractsDatas] = useState({
-    contracts: [],
-    subContracts: [],
-    contractsById: null,
-    contractsOverlaps: {},
+    allContracts: [],
+    subContracts: {
+      contracts: [],
+      contractsById: null,
+      contractsOverlaps: {},
+    },
+    mainContracts: {
+      contracts: [],
+      contractsById: null,
+      contractsOverlaps: {},
+    },
     contractFields: [],
   });
 
@@ -55,36 +71,42 @@ const ContractPage = ({ match, location, t }) => {
   useEffect(() => {
     fetchContracts();
   }, []);
-  const overlapsTotal = Object.keys(contractsDatas.contractsOverlaps).length;
-  const options = orgUnitContractTableOptions(
-    t,
-    contractsDatas.contracts,
-    contractsDatas.contractsById,
-    contractsDatas.contractsOverlaps,
-    classes,
-  );
-  const { contracts, subContracts } = contractsDatas;
-  const columns = contractsTableColumns(
+  const {
+    allContracts,
+    subContracts,
+    mainContracts,
+    contractFields,
+  } = contractsDatas;
+
+  const mainContractProps = getContractTableProps(
     t,
     classes,
-    contracts,
-    contractsDatas.contractFields,
+    mainContracts,
+    allContracts,
+    fetchContracts,
     location,
-    () => fetchContracts(),
-    true,
-  ).filter(
-    (c) =>
-      !["orgUnit.name", "fieldValues.contract_main_orgunit"].includes(c.name),
+    contractFields,
+    ["orgUnit.name", "fieldValues.contract_main_orgunit"],
+    false,
+    false,
   );
-  const subColumns = contractsTableColumns(
+
+  const subContractProps = getContractTableProps(
     t,
     classes,
     subContracts,
-    contractsDatas.contractFields,
+    allContracts,
+    fetchContracts,
     location,
-    () => fetchContracts(),
+    contractFields,
+    ["fieldValues.contract_main_orgunit"],
     true,
-  ).filter((c) => !["fieldValues.contract_main_orgunit"].includes(c.name));
+    false,
+  );
+  const mainOrgUnit =
+    mainContracts.contracts.length > 0
+      ? mainContracts.contracts[0].orgUnit
+      : null;
   return (
     <>
       <Grid container item xs={12} spacing={4}>
@@ -95,9 +117,7 @@ const ContractPage = ({ match, location, t }) => {
             </Link>
 
             <Typography color="textPrimary">
-              {contractsDatas.contracts && contractsDatas.contracts.length > 0
-                ? contractsDatas.contracts[0].orgUnit.name
-                : "..."}
+              {mainOrgUnit ? mainOrgUnit.name : "..."}
             </Typography>
           </Breadcrumbs>
         </Grid>
@@ -110,17 +130,43 @@ const ContractPage = ({ match, location, t }) => {
           isLoading={isLoading}
           title={
             <ContractsResume
-              filteredContracts={contracts}
-              contracts={contracts}
-              overlapsTotal={overlapsTotal}
+              filteredContracts={mainContracts.contracts}
+              contracts={mainContracts.contracts}
+              overlapsTotal={mainContractProps.overlapsTotal}
             />
           }
-          data={contracts}
-          columns={columns}
-          options={options}
+          data={mainContracts.contracts}
+          columns={mainContractProps.columns}
+          options={mainContractProps.options}
         />
+
+        <Box mt={4} pr={4} justifyContent="flex-end" display="flex">
+          <ContractsDialog
+            contract={{
+              id: 0,
+              orgUnit: mainOrgUnit,
+              codes: [],
+              fieldValues: { orgUnit: mainOrgUnit },
+              children: null,
+            }}
+            contracts={allContracts}
+            contractFields={contractFields}
+            onSavedSuccessfull={fetchContracts}
+            displayOrgUnit={false}
+            displayMainOrgUnit={false}
+          >
+            <Button
+              color="primary"
+              variant="contained"
+              startIcon={<Add />}
+              className={classes.createButton}
+            >
+              {t("create")}
+            </Button>
+          </ContractsDialog>
+        </Box>
       </Box>
-      {subContracts.length > 0 && (
+      {subContracts.contracts.length > 0 && (
         <>
           <Divider />
           <Box mb={4} mt={2}>
@@ -131,15 +177,43 @@ const ContractPage = ({ match, location, t }) => {
               isLoading={isLoading}
               title={
                 <ContractsResume
-                  filteredContracts={subContracts}
-                  subContracts={subContracts}
-                  overlapsTotal={overlapsTotal}
+                  filteredContracts={subContracts.contracts}
+                  contracts={subContracts.contracts}
+                  overlapsTotal={subContractProps.overlapsTotal}
                 />
               }
-              data={subContracts}
-              columns={subColumns}
-              options={options}
+              data={subContracts.contracts}
+              columns={subContractProps.columns}
+              options={subContractProps.options}
             />
+            <Box mt={4} pr={4} justifyContent="flex-end" display="flex">
+              <ContractsDialog
+                contract={{
+                  id: 0,
+                  orgUnit: null,
+                  codes: [],
+                  fieldValues: {
+                    contract_main_orgunit: mainOrgUnit
+                      ? mainOrgUnit.id
+                      : undefined,
+                  },
+                  children: null,
+                }}
+                contracts={allContracts}
+                contractFields={contractFields}
+                onSavedSuccessfull={fetchContracts}
+                displayMainOrgUnit={false}
+              >
+                <Button
+                  color="primary"
+                  variant="contained"
+                  startIcon={<Add />}
+                  className={classes.createButton}
+                >
+                  {t("create")}
+                </Button>
+              </ContractsDialog>
+            </Box>
           </Box>
         </>
       )}

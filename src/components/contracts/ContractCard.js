@@ -44,6 +44,7 @@ const ContractCard = ({
   contractsById,
   contractFields,
   fetchContracts,
+  contracts,
   t,
 }) => {
   const classes = useStyles();
@@ -68,6 +69,7 @@ const ContractCard = ({
           <Grid container item xs={2} justify="flex-end" alignContent="center">
             <ContractsDialog
               contract={contract}
+              contracts={contracts}
               contractFields={contractFields}
               onSavedSuccessfull={fetchContracts}
             />
@@ -130,6 +132,7 @@ ContractCard.propTypes = {
   contractsById: PropTypes.object,
   t: PropTypes.func.isRequired,
   fetchContracts: PropTypes.func.isRequired,
+  contracts: PropTypes.array.isRequired,
 };
 
 export default withNamespaces()(ContractCard);

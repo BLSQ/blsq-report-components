@@ -12,6 +12,17 @@ const styles = (theme) => ({
 const useStyles = makeStyles((theme) => styles(theme));
 const Table = ({ options, title, data, columns, isLoading }) => {
   const classes = useStyles();
+  const activeOptions = !isLoading
+    ? options
+    : {
+        ...options,
+        textLabels: {
+          ...options.textLabels,
+          body: { ...options.textLabels.body, noMatch: "" },
+        },
+      };
+  activeOptions.pagination = data.length > options.rowsPerPage;
+
   const dataTable = useMemo(() => {
     return (
       <MUIDataTable
@@ -21,17 +32,7 @@ const Table = ({ options, title, data, columns, isLoading }) => {
         title={title}
         data={data}
         columns={columns}
-        options={
-          !isLoading
-            ? options
-            : {
-                ...options,
-                textLabels: {
-                  ...options.textLabels,
-                  body: { ...options.textLabels.body, noMatch: "" },
-                },
-              }
-        }
+        options={activeOptions}
       />
     );
   }, [data, isLoading]);
@@ -43,7 +44,7 @@ Table.propTypes = {
   columns: PropTypes.array.isRequired,
   data: PropTypes.array.isRequired,
   title: PropTypes.any,
-  //   isLoading: PropTypes.bool.isRequired,
+  isLoading: PropTypes.bool.isRequired,
 };
 
 export default Table;

@@ -123,6 +123,7 @@ const ContractFilters = ({
               fieldValues: {},
               children: null,
             }}
+            contracts={contracts}
             contractFields={contractFields}
             onSavedSuccessfull={fetchContracts}
           >

@@ -145,24 +145,37 @@ class ContractService {
   async fetchContracts(orgUnitId, sort = false) {
     let contracts = await this.findAll();
     let subContracts = [];
+    let mainContracts = [];
+    if (sort) {
+      contracts.sort((a, b) => (a.startPeriod > b.startPeriod ? 1 : -1));
+    }
     if (orgUnitId) {
       subContracts = contracts.filter(
         (c) =>
           c.fieldValues.contract_main_orgunit &&
           c.fieldValues.contract_main_orgunit === orgUnitId,
       );
-      contracts = contracts.filter(
+      mainContracts = contracts.filter(
         (c) =>
           c.orgUnit.id === orgUnitId && !c.fieldValues.contract_main_orgunit,
       );
-    }
-    if (sort) {
-      contracts.sort((a, b) => (a.startPeriod > b.startPeriod ? 1 : -1));
-      subContracts.sort((a, b) => (a.startPeriod > b.startPeriod ? 1 : -1));
+      return {
+        allContracts: contracts,
+        subContracts: {
+          contracts: subContracts,
+          contractsById: this.toContractsById(subContracts),
+          contractsOverlaps: this.toOverlappings(subContracts),
+        },
+        mainContracts: {
+          contracts: mainContracts,
+          contractsById: this.toContractsById(mainContracts),
+          contractsOverlaps: this.toOverlappings(mainContracts),
+        },
+        contractFields: this.toContractFields(this.program),
+      };
     }
     return {
       contracts,
-      subContracts,
       contractsById: this.toContractsById(contracts),
       contractsOverlaps: this.toOverlappings(contracts),
       contractFields: this.toContractFields(this.program),

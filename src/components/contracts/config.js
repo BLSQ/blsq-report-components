@@ -25,6 +25,8 @@ export const contractsTableColumns = (
   fetchContracts,
   isDetail = false,
   contracts,
+  displayOrgUnit,
+  displayMainOrgUnit,
 ) => {
   const columns = [
     {
@@ -151,8 +153,11 @@ export const contractsTableColumns = (
           <>
             <ContractsDialog
               contract={contract}
+              contracts={contracts}
               contractFields={contractFields}
               onSavedSuccessfull={fetchContracts}
+              displayOrgUnit={displayOrgUnit}
+              displayMainOrgUnit={displayMainOrgUnit}
             />
             {!isDetail && (
               <Tooltip

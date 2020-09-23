@@ -4,7 +4,7 @@
     "codes": "Codes",
     "contracts": {
         "activeAt": "Actif le",
-        "contract_main_orgunit": "Org unit principale",
+        "contract_main_orgunit": "Unité d'organisation principale",
         "createTitle": "Créer un contrat",
         "editTitle": "Editer le contrat",
         "mainContracts": "Contrat(s) direct(s)",

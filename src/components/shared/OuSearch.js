@@ -23,6 +23,8 @@ const styles = (theme) => ({
     flexDirection: "row",
     alignItems: "center",
     position: "relative",
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
   autoComplete: {
     width: `calc(100% - ${theme.spacing(2)}px)`,
@@ -33,7 +35,7 @@ const styles = (theme) => ({
 });
 const useStyles = makeStyles((theme) => styles(theme));
 
-const OuSearch = ({ t, orgUnit, onChange }) => {
+const OuSearch = ({ t, orgUnit, onChange, label }) => {
   const classes = useStyles();
   const currentUser = useSelector((state) => state.currentUser.profile);
   const dhis2 = useSelector((state) => state.dhis2.support);
@@ -109,7 +111,7 @@ const OuSearch = ({ t, orgUnit, onChange }) => {
             <TextField
               {...params}
               autoFocus
-              label={t("orgUnit")}
+              label={label || t("orgUnit")}
               onKeyUp={(event) => {
                 if (event.key === "Escape") {
                   setSearchTriggered(false);
@@ -133,12 +135,14 @@ const OuSearch = ({ t, orgUnit, onChange }) => {
 };
 OuSearch.defaultProps = {
   orgUnit: null,
+  label: null,
 };
 
 OuSearch.propTypes = {
   t: PropTypes.func.isRequired,
   orgUnit: PropTypes.object,
   onChange: PropTypes.func.isRequired,
+  label: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
 };
 
 export default withNamespaces()(OuSearch);

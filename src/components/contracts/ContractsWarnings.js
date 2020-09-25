@@ -3,10 +3,11 @@ import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box } from "@material-ui/core";
 import { withNamespaces } from "react-i18next";
-import moment from "moment";
 
 import containers from "../styles/containers";
 import icons from "../styles/icons";
+
+import { getOrgUnitCoverage, checkSubContractCoverage } from "./utils";
 
 import ContractsNotVisibleOverlaps from "./ContractsNotVisibleOverlaps";
 
@@ -14,43 +15,13 @@ const styles = (theme) => ({
   ...containers(theme),
   ...icons(theme),
 });
-
-//  ! attention !
-// - le contrat 4 est plus large que le contrat principal
-const checkSubContractCoverage = (subContracts, mainContracts) => {
+const checkSubContractsCoverage = (subContracts, mainContracts) => {
   if (mainContracts.length === 0) return "";
-  let mainContractStartDate;
-  let mainContractEndDate;
-  mainContracts.contracts.forEach((c) => {
-    if (
-      !mainContractStartDate ||
-      (mainContractStartDate &&
-        moment(mainContractStartDate).isAfter(
-          moment(c.fieldValues.contract_start_date),
-        ))
-    ) {
-      mainContractStartDate = c.fieldValues.contract_start_date;
-    }
-    if (
-      !mainContractEndDate ||
-      (mainContractEndDate &&
-        moment(mainContractEndDate).isBefore(
-          moment(c.fieldValues.contract_end_date),
-        ))
-    ) {
-      mainContractEndDate = c.fieldValues.contract_end_date;
-    }
-  });
+  const coverage = getOrgUnitCoverage(mainContracts.contracts);
   const warnings = [];
   subContracts.contracts.forEach((c) => {
-    if (
-      moment(mainContractStartDate).isAfter(
-        moment(c.fieldValues.contract_start_date),
-      ) ||
-      moment(mainContractEndDate).isBefore(
-        moment(c.fieldValues.contract_end_date),
-      )
-    ) {
+    const hasCoverageIssue = checkSubContractCoverage(c, coverage);
+    if (hasCoverageIssue) {
       warnings.push(c);
     }
   });
@@ -67,7 +38,7 @@ const ContractsWarnings = ({
   allContractsOverlaps,
 }) => {
   const classes = useStyles();
-  const subWarnings = checkSubContractCoverage(subContracts, mainContracts);
+  const subWarnings = checkSubContractsCoverage(subContracts, mainContracts);
   return (
     <Box display="flex" justifyContent="center">
       <Box className={classes.warningBox}>

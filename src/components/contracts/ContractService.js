@@ -1,4 +1,10 @@
 import Contract from "./Contract";
+import {
+  getOrgUnitCoverage,
+  checkSubContractCoverage,
+  checkNonVisibleOverlap,
+  getOverlaps,
+} from "./utils";
 
 class ContractService {
   constructor(api, program, allEventsSqlViewId) {
@@ -146,6 +152,7 @@ class ContractService {
     let contracts = await this.findAll();
     let subContracts = [];
     let mainContracts = [];
+    const allContractsOverlaps = this.toOverlappings(contracts);
     contracts.sort((a, b) => (a.endPeriod < b.endPeriod ? 1 : -1));
     if (orgUnitId) {
       subContracts = contracts.filter(
@@ -153,34 +160,85 @@ class ContractService {
           c.fieldValues.contract_main_orgunit &&
           c.fieldValues.contract_main_orgunit === orgUnitId,
       );
-      subContracts.forEach((c, i) => {
-        c.rowIndex = i + 1;
-      });
       mainContracts = contracts.filter(
         (c) =>
           c.orgUnit.id === orgUnitId && !c.fieldValues.contract_main_orgunit,
       );
+
+      const orgUnitCoverage = getOrgUnitCoverage(mainContracts);
+      const subContractsOverlaps = this.toOverlappings(subContracts);
+      const subContractsById = this.toContractsById(subContracts);
+      const mainContractsOverlaps = this.toOverlappings(mainContracts);
+      const mainContractsById = this.toContractsById(mainContracts);
+      subContracts.forEach((c, i) => {
+        const coverageIssue = checkSubContractCoverage(c, orgUnitCoverage);
+        const nonVisibleOverlaps = checkNonVisibleOverlap(
+          c,
+          mainContracts,
+          subContracts,
+          contracts,
+          allContractsOverlaps,
+        );
+        const visibleOverlaps = getOverlaps(
+          c.id,
+          subContractsOverlaps,
+          subContractsById,
+        );
+        c.status =
+          !coverageIssue && !nonVisibleOverlaps && visibleOverlaps.length === 0;
+        c.statusDetail = {
+          coverageIssue,
+          nonVisibleOverlaps,
+          visibleOverlaps,
+        };
+        c.rowIndex = i + 1;
+      });
+      mainContracts.forEach((c, i) => {
+        const visibleOverlaps = getOverlaps(
+          c.id,
+          mainContractsOverlaps,
+          mainContractsById,
+        );
+        c.status = visibleOverlaps.length === 0;
+        c.statusDetail = {
+          visibleOverlaps,
+        };
+        c.rowIndex = i + 1;
+      });
       return {
         allContracts: contracts,
-        allContractsOverlaps: this.toOverlappings(contracts),
+        allContractsOverlaps,
         subContracts: {
           contracts: subContracts,
-          contractsById: this.toContractsById(subContracts),
-          contractsOverlaps: this.toOverlappings(subContracts),
+          contractsById: subContractsById,
+          contractsOverlaps: subContractsOverlaps,
         },
         mainContracts: {
           contracts: mainContracts,
-          contractsById: this.toContractsById(mainContracts),
-          contractsOverlaps: this.toOverlappings(mainContracts),
+          contractsById: mainContractsById,
+          contractsOverlaps: mainContractsOverlaps,
         },
         contractFields: this.toContractFields(this.program),
       };
     }
+    const contractsOverlaps = this.toOverlappings(contracts);
+    const contractsById = this.toContractsById(contracts);
+    contracts.forEach((c) => {
+      const visibleOverlaps = getOverlaps(
+        c.id,
+        contractsOverlaps,
+        contractsById,
+      );
+      c.status = visibleOverlaps.length === 0;
+      c.statusDetail = {
+        visibleOverlaps,
+      };
+    });
 
     return {
       contracts,
-      contractsById: this.toContractsById(contracts),
-      contractsOverlaps: this.toOverlappings(contracts),
+      contractsById,
+      contractsOverlaps,
       contractFields: this.toContractFields(this.program),
     };
   }

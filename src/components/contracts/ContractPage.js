@@ -22,6 +22,7 @@ import ContractsDialog from "./ContractsDialog";
 import ContractsWarnings from "./ContractsWarnings";
 import { getContractTableProps } from "./utils";
 import tablesStyles from "../styles/tables";
+import icons from "../styles/icons";
 import containersStyles from "../styles/containers";
 
 import Table from "../shared/Table";
@@ -30,6 +31,7 @@ const styles = (theme) => ({
   ...linksStyles(theme),
   ...tablesStyles(theme),
   ...containersStyles(theme),
+  ...icons(theme),
 });
 
 const useStyles = makeStyles((theme) => styles(theme));

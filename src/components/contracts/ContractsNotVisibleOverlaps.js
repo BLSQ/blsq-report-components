@@ -10,6 +10,8 @@ import tables from "../styles/tables";
 import links from "../styles/links";
 import icons from "../styles/icons";
 
+import { checkNonVisibleOverlap } from "./utils";
+
 const styles = (theme) => ({
   ...tables(theme),
   ...icons(theme),
@@ -37,24 +39,19 @@ const checkNotVivibleOverlaps = (
   let warnings;
   subContracts.contracts.forEach((c) => {
     if (allContractsOverlaps[c.id]) {
-      allContractsOverlaps[c.id].forEach((contractOverlapId) => {
-        if (
-          !mainContracts.contracts.find((mc) => mc.id === contractOverlapId) &&
-          !subContracts.contracts.find((sc) => sc.id === contractOverlapId)
-        ) {
-          const notVisibleContract = allContracts.find(
-            (c) => c.id === contractOverlapId,
-          );
-          if (!warnings) {
-            warnings = {};
-          }
-          if (notVisibleContract) {
-            warnings[c.id] = warnings[c.id]
-              ? [...warnings[c.id], notVisibleContract]
-              : [notVisibleContract];
-          }
+      const notVisibleOverlaps = checkNonVisibleOverlap(
+        c,
+        mainContracts.contracts,
+        subContracts.contracts,
+        allContracts,
+        allContractsOverlaps,
+      );
+      if (notVisibleOverlaps) {
+        if (!warnings) {
+          warnings = {};
         }
-      });
+        warnings[c.id] = notVisibleOverlaps;
+      }
     }
   });
   return warnings;
@@ -124,7 +121,7 @@ const ContractsNotVisibleOverlaps = ({
               }}
             >
               {notVivibleOverlaps[currentContract.id].map((c) => (
-                <Box p={2}>
+                <Box p={2} key={c.id}>
                   <Link
                     to={`/contracts/${
                       c.fieldValues.contract_main_orgunit

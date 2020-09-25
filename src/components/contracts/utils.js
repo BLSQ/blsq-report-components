@@ -167,13 +167,7 @@ export const getContractTableProps = (
   displayMainOrgUnit,
   withIndex,
 ) => {
-  const options = orgUnitContractTableOptions(
-    t,
-    contractsData.contracts,
-    contractsData.contractsById,
-    contractsData.contractsOverlaps,
-    classes,
-  );
+  const options = orgUnitContractTableOptions(t);
   const overlapsTotal = Object.keys(contractsData.contractsOverlaps).length;
   const columns = contractsTableColumns(
     t,
@@ -193,4 +187,72 @@ export const getContractTableProps = (
     columns,
     overlapsTotal,
   };
+};
+
+export const checkNonVisibleOverlap = (
+  contract,
+  mainContracts,
+  subContracts,
+  allContracts,
+  allContractsOverlaps,
+) => {
+  let warnings;
+  if (allContractsOverlaps[contract.id]) {
+    allContractsOverlaps[contract.id].forEach((contractOverlapId) => {
+      if (
+        !mainContracts.find((mc) => mc.id === contractOverlapId) &&
+        !subContracts.find((sc) => sc.id === contractOverlapId)
+      ) {
+        const notVisibleContract = allContracts.find(
+          (c) => c.id === contractOverlapId,
+        );
+        if (notVisibleContract) {
+          if (!warnings) {
+            warnings = [];
+          }
+          warnings.push(notVisibleContract);
+        }
+      }
+    });
+  }
+  return warnings;
+};
+
+export const getOrgUnitCoverage = (mainContracts) => {
+  let startDate;
+  let endDate;
+  mainContracts.forEach((c) => {
+    if (
+      !startDate ||
+      (startDate &&
+        moment(startDate).isAfter(moment(c.fieldValues.contract_start_date)))
+    ) {
+      startDate = c.fieldValues.contract_start_date;
+    }
+    if (
+      !endDate ||
+      (endDate &&
+        moment(endDate).isBefore(moment(c.fieldValues.contract_end_date)))
+    ) {
+      endDate = c.fieldValues.contract_end_date;
+    }
+  });
+  return {
+    startDate,
+    endDate,
+  };
+};
+
+export const checkSubContractCoverage = (contract, coverage) => {
+  if (
+    moment(coverage.startDate).isAfter(
+      moment(contract.fieldValues.contract_start_date),
+    ) ||
+    moment(coverage.endDate).isBefore(
+      moment(contract.fieldValues.contract_end_date),
+    )
+  ) {
+    return true;
+  }
+  return false;
 };

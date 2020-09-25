@@ -25,6 +25,7 @@ import Table from "../shared/Table";
 import tablesStyles from "../styles/tables";
 import mainStyles from "../styles/main";
 import containersStyles from "../styles/containers";
+import icons from "../styles/icons";
 
 import { setIsLoading } from "../redux/actions/load";
 
@@ -32,6 +33,7 @@ const styles = (theme) => ({
   ...tablesStyles(theme),
   ...containersStyles(theme),
   ...mainStyles(theme),
+  ...icons(theme),
 });
 
 class ContractsPage extends Component {

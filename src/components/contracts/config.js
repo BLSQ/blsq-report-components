@@ -8,9 +8,10 @@ import { Link } from "react-router-dom";
 import ContractsDialog from "./ContractsDialog";
 import { defaultOptions } from "../../support/table";
 import OrgUnitIcon from "../shared/icons/OrgUnitIcon";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import CancelIcon from "@material-ui/icons/Cancel";
 
 import {
-  getOverlaps,
   getOrgUnitAncestors,
   getOptionFromField,
   getContractByOrgUnit,
@@ -31,14 +32,25 @@ export const contractsTableColumns = (
 ) => {
   const columns = [
     {
-      name: "id",
-      label: "id",
+      name: "status",
+      label: t("status"),
       options: {
         filter: false,
         sort: true,
-        setCellHeaderProps: () => ({
-          className: classes.headerCell,
+        setCellProps: () => ({
+          align: "center",
         }),
+        setCellHeaderProps: () => ({
+          className: classNames(classes.cellCentered, classes.headerCell),
+        }),
+        customBodyRenderLite: (dataIndex) => {
+          const contract = filteredContracts[dataIndex];
+          return contract.status ? (
+            <CheckCircleIcon className={classes.success} />
+          ) : (
+            <CancelIcon className={classes.error} />
+          );
+        },
       },
     },
     {
@@ -246,27 +258,12 @@ export const contractsTableOptions = (
     onChangePage: (currentPage) => onTableChange("page", currentPage),
     onColumnSortChange: (column, direction) =>
       onTableChange("sort", { column, direction }),
-    setRowProps: (row, dataIndex, rowIndex) => {
-      const contract = contracts[dataIndex];
-      const isOverlaping =
-        getOverlaps(contract.id, contractsOverlaps, contractsById).length > 0;
-      return {
-        className: isOverlaping ? classes.rowError : "",
-      };
-    },
   };
 };
 
-export const orgUnitContractTableOptions = (
-  t,
-  contracts,
-  contractsById,
-  contractsOverlaps,
-  classes,
-  isLoading,
-) => {
+export const orgUnitContractTableOptions = (t) => {
   return {
-    ...defaultOptions(t, isLoading),
+    ...defaultOptions(t),
     search: false,
     filter: false,
     print: false,
@@ -277,13 +274,5 @@ export const orgUnitContractTableOptions = (
     selectableRowsHideCheckboxes: false,
     selectableRows: "none",
     rowsPerPageOptions: [10, 25, 50, 100],
-    setRowProps: (row, dataIndex, rowIndex) => {
-      const contract = contracts[dataIndex];
-      const isOverlaping =
-        getOverlaps(contract.id, contractsOverlaps, contractsById).length > 0;
-      return {
-        className: isOverlaping ? classes.rowError : "",
-      };
-    },
   };
 };

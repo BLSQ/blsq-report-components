@@ -12,13 +12,12 @@ class Contract {
     this.fieldValues = fieldValues;
     this.id = this.fieldValues.id;
     this.orgUnit = fieldValues.orgUnit;
-
     this.startPeriod = fieldValues.contract_start_date
-      .replace("-", "")
-      .substring(0, 6);
+      ? fieldValues.contract_start_date.replace("-", "").substring(0, 6)
+      : null;
     this.endPeriod = fieldValues.contract_end_date
-      .replace("-", "")
-      .substring(0, 6);
+      ? fieldValues.contract_end_date.replace("-", "").substring(0, 6)
+      : null;
 
     this.codes = [];
 

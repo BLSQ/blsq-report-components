@@ -17,10 +17,10 @@
         "resultsFiltered": "{{filtered}} results filtered out {{total}} contracts",
         "searchInfos": "Filter on name or contract codes",
         "seeOrgUnit": "Voir l'unité d'organisation",
-        "subContracts": "Sub contract(s)",
-        "subContractCoveragesWarningSingle": "Sub contract {{rowIndex}} is more large than the main contract coverage",
         "subContractCoveragesWarningPlural": "Sub contracts {{rowIndexes}} are more large than the main contract coverage",
+        "subContractCoveragesWarningSingle": "Sub contract {{rowIndex}} is more large than the main contract coverage",
         "subContractNotVisibleOverlap": "Sub contract {{rowIndex}} overlaps with {{count}} contract(s) not visible on this page",
+        "subContracts": "Sub contract(s)",
         "title": "Contracts"
     },
     "create": "Create",
@@ -64,6 +64,7 @@
         }
     },
     "start_period": "Start",
+    "status": "Status",
     "table": {
         "actions": {
             "edit": "Edit",

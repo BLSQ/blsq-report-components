@@ -165,6 +165,7 @@ export const getContractTableProps = (
   columnsFilterArray,
   displayOrgUnit,
   displayMainOrgUnit,
+  withIndex,
 ) => {
   const options = orgUnitContractTableOptions(
     t,
@@ -185,6 +186,7 @@ export const getContractTableProps = (
     allContracts,
     displayOrgUnit,
     displayMainOrgUnit,
+    withIndex,
   ).filter((c) => !columnsFilterArray.includes(c.name));
   return {
     options,

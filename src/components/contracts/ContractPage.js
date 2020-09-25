@@ -19,6 +19,7 @@ import ContractsResume from "./ContractsResume";
 import linksStyles from "../styles/links";
 import { setIsLoading } from "../redux/actions/load";
 import ContractsDialog from "./ContractsDialog";
+import ContractsWarnings from "./ContractsWarnings";
 import { getContractTableProps } from "./utils";
 import tablesStyles from "../styles/tables";
 import containersStyles from "../styles/containers";
@@ -38,6 +39,7 @@ const ContractPage = ({ match, location, t }) => {
   const dispatch = useDispatch();
   const [contractsDatas, setContractsDatas] = useState({
     allContracts: [],
+    allContractsOverlaps: {},
     subContracts: {
       contracts: [],
       contractsById: null,
@@ -57,7 +59,7 @@ const ContractPage = ({ match, location, t }) => {
     if (contractService) {
       dispatch(setIsLoading(true));
       contractService
-        .fetchContracts(match.params.orgUnitId, true)
+        .fetchContracts(match.params.orgUnitId)
         .then((contractsDatas) => {
           setContractsDatas({
             ...contractsDatas,
@@ -73,6 +75,7 @@ const ContractPage = ({ match, location, t }) => {
   }, []);
   const {
     allContracts,
+    allContractsOverlaps,
     subContracts,
     mainContracts,
     contractFields,
@@ -102,6 +105,7 @@ const ContractPage = ({ match, location, t }) => {
     ["fieldValues.contract_main_orgunit"],
     true,
     false,
+    true,
   );
   const mainOrgUnit =
     mainContracts.contracts.length > 0
@@ -214,6 +218,14 @@ const ContractPage = ({ match, location, t }) => {
                 </Button>
               </ContractsDialog>
             </Box>
+          </Box>
+          <Box mt={4} mb={4}>
+            <ContractsWarnings
+              subContracts={subContracts}
+              mainContracts={mainContracts}
+              allContracts={allContracts}
+              allContractsOverlaps={allContractsOverlaps}
+            />
           </Box>
         </>
       )}

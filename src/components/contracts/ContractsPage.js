@@ -88,7 +88,9 @@ class ContractsPage extends Component {
       filteredContracts,
       contractFields,
     } = this.state;
-    const overlapsTotal = Object.keys(contractsOverlaps).length;
+    const overlapsTotal = Object.keys(contractsOverlaps).filter((ouId) =>
+      filteredContracts.find((fc) => fc.id === ouId),
+    ).length;
     return (
       <>
         <Paper square className={classes.rootContainer}>

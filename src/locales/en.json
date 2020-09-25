@@ -18,6 +18,9 @@
         "searchInfos": "Filter on name or contract codes",
         "seeOrgUnit": "Voir l'unité d'organisation",
         "subContracts": "Sub contract(s)",
+        "subContractCoveragesWarningSingle": "Sub contract {{rowIndex}} is more large than the main contract coverage",
+        "subContractCoveragesWarningPlural": "Sub contracts {{rowIndexes}} are more large than the main contract coverage",
+        "subContractNotVisibleOverlap": "Sub contract {{rowIndex}} overlaps with {{count}} contract(s) not visible on this page",
         "title": "Contracts"
     },
     "create": "Create",

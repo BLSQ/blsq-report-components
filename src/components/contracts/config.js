@@ -27,8 +27,20 @@ export const contractsTableColumns = (
   contracts,
   displayOrgUnit,
   displayMainOrgUnit,
+  withIndex,
 ) => {
   const columns = [
+    {
+      name: "id",
+      label: "id",
+      options: {
+        filter: false,
+        sort: true,
+        setCellHeaderProps: () => ({
+          className: classes.headerCell,
+        }),
+      },
+    },
     {
       name: "orgUnit.name",
       label: t("orgUnit_name"),
@@ -184,6 +196,19 @@ export const contractsTableColumns = (
       },
     },
   });
+  if (withIndex) {
+    columns.unshift({
+      name: "rowIndex",
+      label: " ",
+      options: {
+        filter: false,
+        sort: true,
+        setCellHeaderProps: () => ({
+          className: classes.headerCell,
+        }),
+      },
+    });
+  }
   return columns;
 };
 
@@ -208,8 +233,8 @@ export const contractsTableOptions = (
     rowsPerPage: tableParams.rowsPerPage,
     page,
     sortOrder: {
-      name: tableParams.sort.column,
-      direction: tableParams.sort.direction,
+      name: tableParams.sort.column || "fieldValues.contract_end_date",
+      direction: tableParams.sort.direction || "desc",
     },
     selectableRowsHideCheckboxes: false,
     selectableRows: "none",
@@ -245,6 +270,10 @@ export const orgUnitContractTableOptions = (
     search: false,
     filter: false,
     print: false,
+    sortOrder: {
+      name: "fieldValues.contract_end_date",
+      direction: "desc",
+    },
     selectableRowsHideCheckboxes: false,
     selectableRows: "none",
     rowsPerPageOptions: [10, 25, 50, 100],

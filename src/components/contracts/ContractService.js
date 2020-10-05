@@ -148,8 +148,7 @@ class ContractService {
     return contracts;
   }
 
-  async fetchContracts(orgUnitId) {
-    let contracts = await this.findAll();
+  computeContracts = (contracts, orgUnitId) => {
     let subContracts = [];
     let mainContracts = [];
     const allContractsOverlaps = this.toOverlappings(contracts);
@@ -241,6 +240,11 @@ class ContractService {
       contractsOverlaps,
       contractFields: this.toContractFields(this.program),
     };
+  };
+
+  async fetchContracts(orgUnitId) {
+    let contracts = await this.findAll();
+    return this.computeContracts(contracts, orgUnitId);
   }
 
   async deleteContract(contractId) {

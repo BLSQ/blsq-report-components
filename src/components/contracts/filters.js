@@ -23,6 +23,28 @@ import {
  * @property {function} urlDecode - Optionnal - function used decode filter from url
  */
 
+export const activeAtFilter = {
+  id: "active_at",
+  key: "contracts.activeAt",
+  type: "date",
+  column: 2,
+  value: null,
+  onFilter: (value, contracts) => {
+    if (!value) {
+      return contracts;
+    }
+    const filteredContracts = contracts.filter((c) => {
+      const contractDates = getContractDates(c);
+      return moment(value).isBetween(
+        contractDates.startDate,
+        contractDates.endDate,
+      );
+    });
+    return filteredContracts;
+  },
+  urlDecode: (value) => (!value || value === "" ? null : value),
+};
+
 export const columnsCount = 4;
 const defaultFilters = [
   {
@@ -42,24 +64,7 @@ const defaultFilters = [
       ),
   },
   {
-    id: "active_at",
-    key: "contracts.activeAt",
-    type: "date",
-    column: 2,
-    value: null,
-    onFilter: (value, contracts) => {
-      if (!value) {
-        return contracts;
-      }
-      return contracts.filter((c) => {
-        const contractDates = getContractDates(c);
-        return moment(value).isBetween(
-          contractDates.startDate,
-          contractDates.endDate,
-        );
-      });
-    },
-    urlDecode: (value) => (!value || value === "" ? null : value),
+    ...activeAtFilter,
   },
   {
     id: "only_overlaps",
@@ -104,6 +109,9 @@ const filterConfig = (contractFields) => {
     return [];
   }
   const config = [...defaultFilters];
+  if (contractFields.length === 0) {
+    return config;
+  }
   let lastIndex = 0;
   defaultFilters.forEach((f) => {
     if (f.column > lastIndex) {

@@ -19,7 +19,12 @@ import ContractsResume from "./ContractsResume";
 import { setIsLoading } from "../redux/actions/load";
 import ContractsDialog from "./ContractsDialog";
 
-import { getContractTableProps } from "./utils";
+import {
+  getContractTableProps,
+  filterItems,
+  encodeFiltersQueryParams,
+  decodeFiltersQueryParams,
+} from "./utils";
 
 import tablesStyles from "../styles/tables";
 import icons from "../styles/icons";
@@ -27,6 +32,9 @@ import containersStyles from "../styles/containers";
 import linksStyles from "../styles/links";
 
 import Table from "../shared/Table";
+import Filter from "../shared/Filter";
+
+import filtersConfig from "./filters";
 
 const styles = (theme) => ({
   ...linksStyles(theme),
@@ -36,10 +44,13 @@ const styles = (theme) => ({
 });
 
 const useStyles = makeStyles((theme) => styles(theme));
-const ContractPage = ({ match, location, t }) => {
+
+const ContractPage = ({ match, location, t, history }) => {
   const classes = useStyles();
   const isLoading = useSelector((state) => state.load.isLoading);
   const dispatch = useDispatch();
+  const [filters, setFilters] = useState(filtersConfig([]));
+
   const [contractsDatas, setContractsDatas] = useState({
     allContracts: [],
     allContractsOverlaps: {},
@@ -76,6 +87,28 @@ const ContractPage = ({ match, location, t }) => {
   useEffect(() => {
     fetchContracts();
   }, []);
+
+  useEffect(() => {
+    const newFilters = decodeFiltersQueryParams(
+      location,
+      filtersConfig(contractFields),
+    );
+    setFilters(newFilters);
+    const newContractData = {
+      ...contractService.computeContracts(
+        filterItems(
+          newFilters,
+          contractsDatas.allContracts,
+          contractsDatas.allContractsOverlaps,
+        ),
+        match.params.orgUnitId,
+      ),
+      allContracts: contractsDatas.allContracts,
+      allContractsOverlaps: contractsDatas.allContractsOverlaps,
+    };
+    setContractsDatas(newContractData);
+  }, [contractsDatas.allContracts]);
+
   const {
     allContracts,
     subContracts,
@@ -113,6 +146,35 @@ const ContractPage = ({ match, location, t }) => {
     mainContracts.contracts.length > 0
       ? mainContracts.contracts[0].orgUnit
       : null;
+
+  const setFilterValue = (filterId, value) => {
+    const newFilters = [...filters];
+    const filterIndex = newFilters.findIndex((f) => f.id === filterId);
+    const filter = newFilters[filterIndex];
+    if (filterIndex !== -1 && filter && filter.value !== value) {
+      filter.value = value;
+      setFilters(newFilters);
+      const newContractData = {
+        ...contractService.computeContracts(
+          filterItems(
+            newFilters,
+            contractsDatas.allContracts,
+            contractsDatas.allContractsOverlaps,
+          ),
+          match.params.orgUnitId,
+        ),
+        allContracts: contractsDatas.allContracts,
+        allContractsOverlaps: contractsDatas.allContractsOverlaps,
+      };
+      setContractsDatas(newContractData);
+
+      history.push({
+        pathname: location.pathname,
+        search: encodeFiltersQueryParams(location, filters),
+      });
+    }
+  };
+
   return (
     <>
       <Grid container item xs={12} spacing={4}>
@@ -128,6 +190,13 @@ const ContractPage = ({ match, location, t }) => {
           </Breadcrumbs>
         </Grid>
       </Grid>
+      <Box mb={3}>
+        <Grid container item xs={12} spacing={4}>
+          <Grid container item xs={12} md={3}>
+            <Filter filter={filters[1]} setFilterValue={setFilterValue} />
+          </Grid>
+        </Grid>
+      </Box>
       <Box mb={4} mt={4}>
         <Typography variant="h5" component="h5" gutterBottom>
           {t("contracts.mainContracts")}
@@ -231,6 +300,7 @@ ContractPage.propTypes = {
   match: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
 export default withRouter(withNamespaces()(ContractPage));

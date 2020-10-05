@@ -198,6 +198,9 @@ const Filter = ({ filter, setFilterValue, onSearch, t }) => {
       return "";
   }
 };
+Filter.defaultProps = {
+  onSearch: () => null,
+};
 
 Filter.propTypes = {
   filter: PropTypes.object.isRequired,

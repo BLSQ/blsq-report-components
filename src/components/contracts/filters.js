@@ -45,6 +45,26 @@ export const activeAtFilter = {
   urlDecode: (value) => (!value || value === "" ? null : value),
 };
 
+export const activeToday = {
+  id: "active_today",
+  key: "contracts.activeToday",
+  type: "checkbox",
+  column: 2,
+  value: false,
+  onFilter: (value, contracts) => {
+    if (!value) {
+      return contracts;
+    }
+    const filteredContracts = contracts.filter((c) => {
+      const contractDates = getContractDates(c);
+      return moment().isBetween(contractDates.startDate, contractDates.endDate);
+    });
+    return filteredContracts;
+  },
+  urlEncode: (value) => (value ? "true" : "false"),
+  urlDecode: (value) => value === "true",
+};
+
 export const columnsCount = 4;
 const defaultFilters = [
   {

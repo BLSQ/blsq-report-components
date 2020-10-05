@@ -3,6 +3,7 @@
     "clear": "Clear",
     "codes": "Codes",
     "contracts": {
+        "activeToday": "Actove today",
         "activeAt": "Active at",
         "contract_main_orgunit": "Main org unit",
         "createTitle": "Create a contract",
@@ -17,6 +18,11 @@
         "resultsFiltered": "{{filtered}} results filtered out {{total}} contracts",
         "searchInfos": "Filter on name or contract codes",
         "seeOrgUnit": "Voir l'unité d'organisation",
+        "status": {
+            "coverageIssue": "This contract ismore large than the main contract coverage",
+            "nonVisibleOverlaps": "This contract overlaps with {{count}} contract(s) not visible on this page",
+            "visibleOverlaps": "This contract overlaps with {{count}} contract(s)"
+        },
         "subContractCoveragesWarningPlural": "Sub contracts {{rowIndexes}} are more large than the main contract coverage",
         "subContractCoveragesWarningSingle": "Sub contract {{rowIndex}} is more large than the main contract coverage",
         "subContractNotVisibleOverlap": "Sub contract {{rowIndex}} overlaps with {{count}} contract(s) not visible on this page",

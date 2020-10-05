@@ -3,6 +3,7 @@
     "clear": "Supprimer",
     "codes": "Codes",
     "contracts": {
+        "activeToday": "Actif aujourd'hui",
         "activeAt": "Actif le",
         "contract_main_orgunit": "Unité d'organisation principale",
         "createTitle": "Créer un contrat",
@@ -22,9 +23,6 @@
             "nonVisibleOverlaps": "Ce contrat se chevauche avec {{count}} contrat(s) non visible(s) sur cette page",
             "visibleOverlaps": "Ce contrat se chevauche avec {{count}} contrat(s)"
         },
-        "subContractCoveragesWarningPlural": "Les contrats {{rowIndexes}} sont plus larges que la couverture du contrat principal",
-        "subContractCoveragesWarningSingle": "Le contrat {{rowIndex}} est plus large que la couverture du contrat principal",
-        "subContractNotVisibleOverlap": "Le contrat {{rowIndex}} se chevauche avec {{count}} contrat(s) non visible(s) sur cette page",
         "subContracts": "Sous-contrat(s)",
         "title": "Contrats"
     },

@@ -13,6 +13,7 @@ import {
 import Add from "@material-ui/icons/Add";
 import { Link, withRouter } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import moment from "moment";
 
 import PluginRegistry from "../core/PluginRegistry";
 import ContractsResume from "./ContractsResume";
@@ -34,7 +35,7 @@ import linksStyles from "../styles/links";
 import Table from "../shared/Table";
 import Filter from "../shared/Filter";
 
-import filtersConfig from "./filters";
+import filtersConfig, { activeToday } from "./filters";
 
 const styles = (theme) => ({
   ...linksStyles(theme),
@@ -49,7 +50,7 @@ const ContractPage = ({ match, location, t, history }) => {
   const classes = useStyles();
   const isLoading = useSelector((state) => state.load.isLoading);
   const dispatch = useDispatch();
-  const [filters, setFilters] = useState(filtersConfig([]));
+  const [filters, setFilters] = useState([activeToday, ...filtersConfig([])]);
 
   const [contractsDatas, setContractsDatas] = useState({
     allContracts: [],
@@ -89,10 +90,43 @@ const ContractPage = ({ match, location, t, history }) => {
   }, []);
 
   useEffect(() => {
-    const newFilters = decodeFiltersQueryParams(
-      location,
-      filtersConfig(contractFields),
+    // TO-DO: this can be clearly optimized !!!
+    const newFilters = decodeFiltersQueryParams(location, [
+      activeToday,
+      ...filtersConfig(contractFields),
+    ]);
+
+    const filterActiveTodayIndex = newFilters.findIndex(
+      (f) => f.id === "active_today",
     );
+    const filterActiveAtIndex = newFilters.findIndex(
+      (f) => f.id === "active_at",
+    );
+    if (
+      newFilters[filterActiveTodayIndex] &&
+      newFilters[filterActiveTodayIndex].value
+    ) {
+      if (newFilters[filterActiveAtIndex]) {
+        newFilters[filterActiveAtIndex].value = moment().format("MM/DD/YYYY");
+      }
+    }
+    if (
+      newFilters[filterActiveAtIndex] &&
+      newFilters[filterActiveAtIndex].value &&
+      moment(newFilters[filterActiveAtIndex].value, "MM/DD/YYYY").isSame(
+        moment(),
+        "day",
+      )
+    ) {
+      newFilters[filterActiveTodayIndex].value = true;
+    }
+    if (
+      newFilters[filterActiveAtIndex] &&
+      (!newFilters[filterActiveAtIndex].value ||
+        newFilters[filterActiveAtIndex].value === "")
+    ) {
+      newFilters[filterActiveTodayIndex].value = false;
+    }
     setFilters(newFilters);
     const newContractData = {
       ...contractService.computeContracts(
@@ -142,14 +176,33 @@ const ContractPage = ({ match, location, t, history }) => {
     false,
     true,
   );
-  const mainOrgUnit =
-    mainContracts.contracts.length > 0
-      ? mainContracts.contracts[0].orgUnit
-      : null;
+  let mainOrgUnit;
+  const tempContract = allContracts.find(
+    (c) => c.orgUnit.id === match.params.orgUnitId,
+  );
+  if (tempContract) {
+    mainOrgUnit = tempContract.orgUnit;
+  }
 
   const setFilterValue = (filterId, value) => {
     const newFilters = [...filters];
     const filterIndex = newFilters.findIndex((f) => f.id === filterId);
+    if (filterId === "active_today") {
+      const filterActiveAtIndex = newFilters.findIndex(
+        (f) => f.id === "active_at",
+      );
+      newFilters[filterActiveAtIndex].value = value
+        ? moment().format("MM/DD/YYYY")
+        : null;
+    }
+    if (filterId === "active_at") {
+      const filterActiveTodayIndex = newFilters.findIndex(
+        (f) => f.id === "active_today",
+      );
+      newFilters[filterActiveTodayIndex].value = !!(
+        value && moment(value, "MM/DD/YYYY").isSame(moment(), "day")
+      );
+    }
     const filter = newFilters[filterIndex];
     if (filterIndex !== -1 && filter && filter.value !== value) {
       filter.value = value;
@@ -174,7 +227,6 @@ const ContractPage = ({ match, location, t, history }) => {
       });
     }
   };
-
   return (
     <>
       <Grid container item xs={12} spacing={4}>
@@ -193,7 +245,10 @@ const ContractPage = ({ match, location, t, history }) => {
       <Box mb={3}>
         <Grid container item xs={12} spacing={4}>
           <Grid container item xs={12} md={3}>
-            <Filter filter={filters[1]} setFilterValue={setFilterValue} />
+            <Filter filter={filters[2]} setFilterValue={setFilterValue} />
+          </Grid>
+          <Grid container item xs={12} md={3}>
+            <Filter filter={filters[0]} setFilterValue={setFilterValue} />
           </Grid>
         </Grid>
       </Box>

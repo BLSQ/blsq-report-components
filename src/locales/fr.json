@@ -17,6 +17,11 @@
         "resultsFiltered": "{{filtered}} contrats filtrés sur {{total}}",
         "searchInfos": "Chercher sur le nom ou le code du contrat",
         "seeOrgUnit": "Voir l'unité d'organisation",
+        "status": {
+            "coverageIssue": "Ce contrat est plus large que la couverture du contrat principal",
+            "nonVisibleOverlaps": "Ce contrat se chevauche avec {{count}} contrat(s) non visible(s) sur cette page",
+            "visibleOverlaps": "Ce contrat se chevauche avec {{count}} contrat(s)"
+        },
         "subContractCoveragesWarningPlural": "Les contrats {{rowIndexes}} sont plus larges que la couverture du contrat principal",
         "subContractCoveragesWarningSingle": "Le contrat {{rowIndex}} est plus large que la couverture du contrat principal",
         "subContractNotVisibleOverlap": "Le contrat {{rowIndex}} se chevauche avec {{count}} contrat(s) non visible(s) sur cette page",

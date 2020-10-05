@@ -8,8 +8,7 @@ import { Link } from "react-router-dom";
 import ContractsDialog from "./ContractsDialog";
 import { defaultOptions } from "../../support/table";
 import OrgUnitIcon from "../shared/icons/OrgUnitIcon";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import CancelIcon from "@material-ui/icons/Cancel";
+import ContractStatus from "./ContractStatus";
 
 import {
   getOrgUnitAncestors,
@@ -43,14 +42,9 @@ export const contractsTableColumns = (
         setCellHeaderProps: () => ({
           className: classNames(classes.cellCentered, classes.headerCell),
         }),
-        customBodyRenderLite: (dataIndex) => {
-          const contract = filteredContracts[dataIndex];
-          return contract.status ? (
-            <CheckCircleIcon className={classes.success} />
-          ) : (
-            <CancelIcon className={classes.error} />
-          );
-        },
+        customBodyRenderLite: (dataIndex) => (
+          <ContractStatus contract={filteredContracts[dataIndex]} />
+        ),
       },
     },
     {

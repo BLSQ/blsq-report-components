@@ -16,14 +16,15 @@ import { useDispatch, useSelector } from "react-redux";
 
 import PluginRegistry from "../core/PluginRegistry";
 import ContractsResume from "./ContractsResume";
-import linksStyles from "../styles/links";
 import { setIsLoading } from "../redux/actions/load";
 import ContractsDialog from "./ContractsDialog";
-import ContractsWarnings from "./ContractsWarnings";
+
 import { getContractTableProps } from "./utils";
+
 import tablesStyles from "../styles/tables";
 import icons from "../styles/icons";
 import containersStyles from "../styles/containers";
+import linksStyles from "../styles/links";
 
 import Table from "../shared/Table";
 
@@ -77,7 +78,6 @@ const ContractPage = ({ match, location, t }) => {
   }, []);
   const {
     allContracts,
-    allContractsOverlaps,
     subContracts,
     mainContracts,
     contractFields,
@@ -220,14 +220,6 @@ const ContractPage = ({ match, location, t }) => {
                 </Button>
               </ContractsDialog>
             </Box>
-          </Box>
-          <Box mt={4} mb={4}>
-            <ContractsWarnings
-              subContracts={subContracts}
-              mainContracts={mainContracts}
-              allContracts={allContracts}
-              allContractsOverlaps={allContractsOverlaps}
-            />
           </Box>
         </>
       )}

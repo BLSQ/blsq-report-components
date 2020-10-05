@@ -37,6 +37,10 @@ const tables = (theme) => ({
     display: "block",
     margin: "auto",
   },
+  tableIcon: {
+    position: "relative",
+    top: 3,
+  },
 });
 
 export default tables;

@@ -256,3 +256,27 @@ export const checkSubContractCoverage = (contract, coverage) => {
   }
   return false;
 };
+
+export const getFilterIndexById = (filterId, filters) =>
+  filters.findIndex((f) => f.id === filterId);
+
+export const updateFilters = (value, filterId, filters) => {
+  const newFilters = [...filters];
+  const filterIndex = filters.findIndex((f) => f.id === filterId);
+  if (filterIndex || filterIndex === 0) {
+    newFilters[filterIndex].value = value;
+  }
+  return newFilters;
+};
+
+export const getFilterValueById = (filterId, filters) => {
+  const filterIndex = getFilterIndexById(filterId, filters);
+  let value;
+  if (filterIndex && filters[filterIndex] && filters[filterIndex].value) {
+    value = filters[filterIndex].value;
+  }
+  return value;
+};
+
+export const isToday = (dateString) =>
+  moment(dateString, "MM/DD/YYYY").isSame(moment(), "day");

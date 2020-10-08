@@ -25,6 +25,9 @@ import {
   filterItems,
   encodeFiltersQueryParams,
   decodeFiltersQueryParams,
+  updateFilters,
+  getFilterValueById,
+  isToday,
 } from "./utils";
 
 import tablesStyles from "../styles/tables";
@@ -90,42 +93,24 @@ const ContractPage = ({ match, location, t, history }) => {
   }, []);
 
   useEffect(() => {
-    // TO-DO: this can be clearly optimized !!!
-    const newFilters = decodeFiltersQueryParams(location, [
+    let newFilters = decodeFiltersQueryParams(location, [
       activeToday,
       ...filtersConfig(contractFields),
     ]);
 
-    const filterActiveTodayIndex = newFilters.findIndex(
-      (f) => f.id === "active_today",
-    );
-    const filterActiveAtIndex = newFilters.findIndex(
-      (f) => f.id === "active_at",
-    );
-    if (
-      newFilters[filterActiveTodayIndex] &&
-      newFilters[filterActiveTodayIndex].value
-    ) {
-      if (newFilters[filterActiveAtIndex]) {
-        newFilters[filterActiveAtIndex].value = moment().format("MM/DD/YYYY");
-      }
+    const activeAtValue = getFilterValueById("active_at", newFilters);
+    if (getFilterValueById("active_today", newFilters) === true) {
+      newFilters = updateFilters(
+        moment().format("MM/DD/YYYY"),
+        "active_at",
+        newFilters,
+      );
     }
-    if (
-      newFilters[filterActiveAtIndex] &&
-      newFilters[filterActiveAtIndex].value &&
-      moment(newFilters[filterActiveAtIndex].value, "MM/DD/YYYY").isSame(
-        moment(),
-        "day",
-      )
-    ) {
-      newFilters[filterActiveTodayIndex].value = true;
+    if (activeAtValue && isToday(activeAtValue)) {
+      newFilters = updateFilters(true, "active_today", newFilters);
     }
-    if (
-      newFilters[filterActiveAtIndex] &&
-      (!newFilters[filterActiveAtIndex].value ||
-        newFilters[filterActiveAtIndex].value === "")
-    ) {
-      newFilters[filterActiveTodayIndex].value = false;
+    if (!activeAtValue || activeAtValue === "") {
+      newFilters = updateFilters(false, "active_today", newFilters);
     }
     setFilters(newFilters);
     const newContractData = {
@@ -185,27 +170,24 @@ const ContractPage = ({ match, location, t, history }) => {
   }
 
   const setFilterValue = (filterId, value) => {
-    const newFilters = [...filters];
-    const filterIndex = newFilters.findIndex((f) => f.id === filterId);
+    let newFilters = [...filters];
     if (filterId === "active_today") {
-      const filterActiveAtIndex = newFilters.findIndex(
-        (f) => f.id === "active_at",
+      newFilters = updateFilters(
+        value ? moment().format("MM/DD/YYYY") : null,
+        "active_at",
+        newFilters,
       );
-      newFilters[filterActiveAtIndex].value = value
-        ? moment().format("MM/DD/YYYY")
-        : null;
     }
     if (filterId === "active_at") {
-      const filterActiveTodayIndex = newFilters.findIndex(
-        (f) => f.id === "active_today",
-      );
-      newFilters[filterActiveTodayIndex].value = !!(
-        value && moment(value, "MM/DD/YYYY").isSame(moment(), "day")
+      newFilters = updateFilters(
+        !!(value && isToday(value)),
+        "active_today",
+        newFilters,
       );
     }
-    const filter = newFilters[filterIndex];
-    if (filterIndex !== -1 && filter && filter.value !== value) {
-      filter.value = value;
+    const filterValue = getFilterValueById(filterId, newFilters);
+    if ((filterValue && filterValue !== value) || !filterValue) {
+      newFilters = updateFilters(value, filterId, newFilters);
       setFilters(newFilters);
       const newContractData = {
         ...contractService.computeContracts(

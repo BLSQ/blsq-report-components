@@ -2,19 +2,12 @@ import React from "react";
 import moment from "moment";
 import { Tooltip, IconButton } from "@material-ui/core";
 import classNames from "classnames";
-
 import { Link } from "react-router-dom";
-
 import ContractsDialog from "./ContractsDialog";
 import { defaultOptions } from "../../support/table";
 import OrgUnitIcon from "../shared/icons/OrgUnitIcon";
 import ContractStatus from "./ContractStatus";
-
-import {
-  getOrgUnitAncestors,
-  getOptionFromField,
-  getContractByOrgUnit,
-} from "./utils";
+import { getOrgUnitAncestors, getOptionFromField, getContractByOrgUnit } from "./utils";
 
 export const contractsTableColumns = (
   t,
@@ -42,9 +35,7 @@ export const contractsTableColumns = (
         setCellHeaderProps: () => ({
           className: classNames(classes.cellCentered, classes.headerCell),
         }),
-        customBodyRenderLite: (dataIndex) => (
-          <ContractStatus contract={filteredContracts[dataIndex]} />
-        ),
+        customBodyRenderLite: (dataIndex) => <ContractStatus contract={filteredContracts[dataIndex]} />,
       },
     },
     {
@@ -114,10 +105,7 @@ export const contractsTableColumns = (
         }),
         customBodyRender: (contractMainOrgunitId) => {
           if (!contractMainOrgunitId) return "";
-          const mainContract = getContractByOrgUnit(
-            contracts,
-            contractMainOrgunitId,
-          );
+          const mainContract = getContractByOrgUnit(contracts, contractMainOrgunitId);
           if (!mainContract) return "";
           return (
             <Tooltip arrow title={getOrgUnitAncestors(mainContract.orgUnit)}>
@@ -178,11 +166,7 @@ export const contractsTableColumns = (
               displayMainOrgUnit={displayMainOrgUnit}
             />
             {!isDetail && (
-              <Tooltip
-                placement="bottom"
-                title={t("contracts.seeOrgUnit")}
-                arrow
-              >
+              <Tooltip placement="bottom" title={t("contracts.seeOrgUnit")} arrow>
                 <Link
                   to={`/contracts/${
                     contract.fieldValues.contract_main_orgunit
@@ -218,15 +202,7 @@ export const contractsTableColumns = (
   return columns;
 };
 
-export const contractsTableOptions = (
-  t,
-  contracts,
-  contractsById,
-  contractsOverlaps,
-  classes,
-  onTableChange,
-  tableParams,
-) => {
+export const contractsTableOptions = (t, contracts, onTableChange, tableParams) => {
   let page;
   if (tableParams.page && contracts.length > 0) {
     page = parseInt(tableParams.page, 10);
@@ -250,8 +226,7 @@ export const contractsTableOptions = (
       onTableChange("rowsPerPage", numberOfRows);
     },
     onChangePage: (currentPage) => onTableChange("page", currentPage),
-    onColumnSortChange: (column, direction) =>
-      onTableChange("sort", { column, direction }),
+    onColumnSortChange: (column, direction) => onTableChange("sort", { column, direction }),
   };
 };
 

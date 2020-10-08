@@ -2,42 +2,31 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import Typography from "@material-ui/core/Typography";
 import { withNamespaces } from "react-i18next";
-import {
-  Breadcrumbs,
-  Grid,
-  makeStyles,
-  Divider,
-  Box,
-  Button,
-} from "@material-ui/core";
+import { Breadcrumbs, Grid, makeStyles, Divider, Box, Button } from "@material-ui/core";
 import Add from "@material-ui/icons/Add";
 import { Link, withRouter } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
-
 import PluginRegistry from "../core/PluginRegistry";
 import ContractsResume from "./ContractsResume";
 import { setIsLoading } from "../redux/actions/load";
 import ContractsDialog from "./ContractsDialog";
-
+import { getContractTableProps, detailInitialState, getMainOrgUnit, defaultContract } from "./utils";
 import {
-  getContractTableProps,
   filterItems,
   encodeFiltersQueryParams,
   decodeFiltersQueryParams,
   updateFilters,
   getFilterValueById,
-  isToday,
-} from "./utils";
-
+  checkFilters,
+} from "./utils/filtersUtils";
+import { isToday } from "./periodsUtils";
 import tablesStyles from "../styles/tables";
 import icons from "../styles/icons";
 import containersStyles from "../styles/containers";
 import linksStyles from "../styles/links";
-
 import Table from "../shared/Table";
 import Filter from "../shared/Filter";
-
 import filtersConfig, { activeToday } from "./filters";
 
 const styles = (theme) => ({
@@ -46,7 +35,6 @@ const styles = (theme) => ({
   ...containersStyles(theme),
   ...icons(theme),
 });
-
 const useStyles = makeStyles((theme) => styles(theme));
 
 const ContractPage = ({ match, location, t, history }) => {
@@ -54,87 +42,21 @@ const ContractPage = ({ match, location, t, history }) => {
   const isLoading = useSelector((state) => state.load.isLoading);
   const dispatch = useDispatch();
   const [filters, setFilters] = useState([activeToday, ...filtersConfig([])]);
-
-  const [contractsDatas, setContractsDatas] = useState({
-    allContracts: [],
-    allContractsOverlaps: {},
-    subContracts: {
-      contracts: [],
-      contractsById: null,
-      contractsOverlaps: {},
-    },
-    mainContracts: {
-      contracts: [],
-      contractsById: null,
-      contractsOverlaps: {},
-    },
-    contractFields: [],
-  });
-
+  const [contractsDatas, setContractsDatas] = useState(detailInitialState);
   const contractService = PluginRegistry.extension("contracts.service");
-
   const fetchContracts = () => {
     if (contractService) {
       dispatch(setIsLoading(true));
-      contractService
-        .fetchContracts(match.params.orgUnitId)
-        .then((contractsDatas) => {
-          setContractsDatas({
-            ...contractsDatas,
-          });
-
-          dispatch(setIsLoading(false));
+      contractService.fetchContracts(match.params.orgUnitId).then((contractsDatas) => {
+        setContractsDatas({
+          ...contractsDatas,
         });
+
+        dispatch(setIsLoading(false));
+      });
     }
   };
-
-  useEffect(() => {
-    fetchContracts();
-  }, []);
-
-  useEffect(() => {
-    let newFilters = decodeFiltersQueryParams(location, [
-      activeToday,
-      ...filtersConfig(contractFields),
-    ]);
-
-    const activeAtValue = getFilterValueById("active_at", newFilters);
-    if (getFilterValueById("active_today", newFilters) === true) {
-      newFilters = updateFilters(
-        moment().format("MM/DD/YYYY"),
-        "active_at",
-        newFilters,
-      );
-    }
-    if (activeAtValue && isToday(activeAtValue)) {
-      newFilters = updateFilters(true, "active_today", newFilters);
-    }
-    if (!activeAtValue || activeAtValue === "") {
-      newFilters = updateFilters(false, "active_today", newFilters);
-    }
-    setFilters(newFilters);
-    const newContractData = {
-      ...contractService.computeContracts(
-        filterItems(
-          newFilters,
-          contractsDatas.allContracts,
-          contractsDatas.allContractsOverlaps,
-        ),
-        match.params.orgUnitId,
-      ),
-      allContracts: contractsDatas.allContracts,
-      allContractsOverlaps: contractsDatas.allContractsOverlaps,
-    };
-    setContractsDatas(newContractData);
-  }, [contractsDatas.allContracts]);
-
-  const {
-    allContracts,
-    subContracts,
-    mainContracts,
-    contractFields,
-  } = contractsDatas;
-
+  const { allContracts, subContracts, mainContracts, contractFields } = contractsDatas;
   const mainContractProps = getContractTableProps(
     t,
     classes,
@@ -147,7 +69,6 @@ const ContractPage = ({ match, location, t, history }) => {
     false,
     false,
   );
-
   const subContractProps = getContractTableProps(
     t,
     classes,
@@ -161,29 +82,34 @@ const ContractPage = ({ match, location, t, history }) => {
     false,
     true,
   );
-  let mainOrgUnit;
-  const tempContract = allContracts.find(
-    (c) => c.orgUnit.id === match.params.orgUnitId,
-  );
-  if (tempContract) {
-    mainOrgUnit = tempContract.orgUnit;
-  }
+  const mainOrgUnit = getMainOrgUnit(allContracts, match.params.orgUnitId);
+
+  useEffect(() => {
+    fetchContracts();
+  }, []);
+
+  useEffect(() => {
+    let newFilters = decodeFiltersQueryParams(location, [activeToday, ...filtersConfig(contractFields)]);
+    newFilters = checkFilters(newFilters);
+    setFilters(newFilters);
+    const newContractData = {
+      ...contractService.computeContracts(
+        filterItems(newFilters, contractsDatas.allContracts, contractsDatas.allContractsOverlaps),
+        match.params.orgUnitId,
+      ),
+      allContracts: contractsDatas.allContracts,
+      allContractsOverlaps: contractsDatas.allContractsOverlaps,
+    };
+    setContractsDatas(newContractData);
+  }, [contractsDatas.allContracts]);
 
   const setFilterValue = (filterId, value) => {
     let newFilters = [...filters];
     if (filterId === "active_today") {
-      newFilters = updateFilters(
-        value ? moment().format("MM/DD/YYYY") : null,
-        "active_at",
-        newFilters,
-      );
+      newFilters = updateFilters(value ? moment().format("MM/DD/YYYY") : null, "active_at", newFilters);
     }
     if (filterId === "active_at") {
-      newFilters = updateFilters(
-        !!(value && isToday(value)),
-        "active_today",
-        newFilters,
-      );
+      newFilters = updateFilters(!!(value && isToday(value)), "active_today", newFilters);
     }
     const filterValue = getFilterValueById(filterId, newFilters);
     if ((filterValue && filterValue !== value) || !filterValue) {
@@ -191,11 +117,7 @@ const ContractPage = ({ match, location, t, history }) => {
       setFilters(newFilters);
       const newContractData = {
         ...contractService.computeContracts(
-          filterItems(
-            newFilters,
-            contractsDatas.allContracts,
-            contractsDatas.allContractsOverlaps,
-          ),
+          filterItems(newFilters, contractsDatas.allContracts, contractsDatas.allContractsOverlaps),
           match.params.orgUnitId,
         ),
         allContracts: contractsDatas.allContracts,
@@ -218,9 +140,7 @@ const ContractPage = ({ match, location, t, history }) => {
               {t("contracts.title")}
             </Link>
 
-            <Typography color="textPrimary">
-              {mainOrgUnit ? mainOrgUnit.name : "..."}
-            </Typography>
+            <Typography color="textPrimary">{mainOrgUnit ? mainOrgUnit.name : "..."}</Typography>
           </Breadcrumbs>
         </Grid>
       </Grid>
@@ -254,25 +174,14 @@ const ContractPage = ({ match, location, t, history }) => {
 
         <Box mt={4} pr={4} justifyContent="flex-end" display="flex">
           <ContractsDialog
-            contract={{
-              id: 0,
-              orgUnit: mainOrgUnit,
-              codes: [],
-              fieldValues: { orgUnit: mainOrgUnit },
-              children: null,
-            }}
+            contract={defaultContract({ orgUnit: mainOrgUnit })}
             contracts={allContracts}
             contractFields={contractFields}
             onSavedSuccessfull={fetchContracts}
             displayOrgUnit={false}
             displayMainOrgUnit={false}
           >
-            <Button
-              color="primary"
-              variant="contained"
-              startIcon={<Add />}
-              className={classes.createButton}
-            >
+            <Button color="primary" variant="contained" startIcon={<Add />} className={classes.createButton}>
               {t("create")}
             </Button>
           </ContractsDialog>
@@ -300,28 +209,15 @@ const ContractPage = ({ match, location, t, history }) => {
             />
             <Box mt={4} pr={4} justifyContent="flex-end" display="flex">
               <ContractsDialog
-                contract={{
-                  id: 0,
-                  orgUnit: null,
-                  codes: [],
-                  fieldValues: {
-                    contract_main_orgunit: mainOrgUnit
-                      ? mainOrgUnit.id
-                      : undefined,
-                  },
-                  children: null,
-                }}
+                contract={defaultContract({
+                  contract_main_orgunit: mainOrgUnit ? mainOrgUnit.id : undefined,
+                })}
                 contracts={allContracts}
                 contractFields={contractFields}
                 onSavedSuccessfull={fetchContracts}
                 displayMainOrgUnit={false}
               >
-                <Button
-                  color="primary"
-                  variant="contained"
-                  startIcon={<Add />}
-                  className={classes.createButton}
-                >
+                <Button color="primary" variant="contained" startIcon={<Add />} className={classes.createButton}>
                   {t("create")}
                 </Button>
               </ContractsDialog>

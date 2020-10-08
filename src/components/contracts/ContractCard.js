@@ -1,13 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {
-  Card,
-  CardContent,
-  Typography,
-  makeStyles,
-  Grid,
-  Divider,
-} from "@material-ui/core";
+import { Card, CardContent, Typography, makeStyles, Grid, Divider } from "@material-ui/core";
 import moment from "moment";
 import { withNamespaces } from "react-i18next";
 
@@ -38,15 +31,7 @@ const styles = (theme) => ({
 
 const useStyles = makeStyles((theme) => styles(theme));
 
-const ContractCard = ({
-  contract,
-  contractsOverlaps,
-  contractsById,
-  contractFields,
-  fetchContracts,
-  contracts,
-  t,
-}) => {
+const ContractCard = ({ contract, contractsOverlaps, contractsById, contractFields, fetchContracts, contracts, t }) => {
   const classes = useStyles();
   return (
     <Card
@@ -58,11 +43,7 @@ const ContractCard = ({
         <Grid container spacing={4}>
           <Grid container item xs={10}>
             <Typography color="textPrimary">{contract.orgUnit.name}</Typography>
-            <Typography
-              className={classes.path}
-              color="textSecondary"
-              title={contract.orgUnit.path}
-            >
+            <Typography className={classes.path} color="textSecondary" title={contract.orgUnit.path}>
               {getOrgUnitAncestors(contract.orgUnit)}
             </Typography>
           </Grid>
@@ -80,22 +61,14 @@ const ContractCard = ({
       <CardContent>
         <ContractField
           label={t("start_period")}
-          value={moment(contract.fieldValues.contract_start_date).format(
-            "DD/MM/YYYY",
-          )}
+          value={moment(contract.fieldValues.contract_start_date).format("DD/MM/YYYY")}
         />
         <ContractField
           label={t("end_period")}
-          value={moment(contract.fieldValues.contract_end_date).format(
-            "DD/MM/YYYY",
-          )}
+          value={moment(contract.fieldValues.contract_end_date).format("DD/MM/YYYY")}
         />
         {getNonStandartContractFields(contractFields).map((field) => (
-          <ContractField
-            key={field.id}
-            label={field.name}
-            value={getNonStandartContractFieldValue(contract, field)}
-          />
+          <ContractField key={field.id} label={field.name} value={getNonStandartContractFieldValue(contract, field)} />
         ))}
       </CardContent>
       {contractsOverlaps[contract.id] && (
@@ -103,16 +76,11 @@ const ContractCard = ({
           <>
             {t("contracts.overlappingWith")} :
             <ul className={classes.overlapsList}>
-              {getOverlaps(contract.id, contractsOverlaps, contractsById).map(
-                (c) => (
-                  <li key={c.id}>
-                    <ContractShort
-                      contract={c}
-                      contractFields={contractFields}
-                    />
-                  </li>
-                ),
-              )}
+              {getOverlaps(contract.id, contractsOverlaps, contractsById).map((c) => (
+                <li key={c.id}>
+                  <ContractShort contract={c} contractFields={contractFields} />
+                </li>
+              ))}
             </ul>
           </>
         </WarningBox>

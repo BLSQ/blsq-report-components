@@ -19,16 +19,13 @@ const ContractResume = ({ contracts, filteredContracts, overlapsTotal, t }) => {
       {filteredContracts.length === contracts.length &&
         contracts.length > 1 &&
         t("contracts.results", { total: contracts.length })}
-      {filteredContracts.length === contracts.length &&
-        contracts.length === 1 &&
-        t("contracts.result")}
+      {filteredContracts.length === contracts.length && contracts.length === 1 && t("contracts.result")}
       {filteredContracts.length < contracts.length &&
         t("contracts.resultsFiltered", {
           filtered: filteredContracts.length,
           total: contracts.length,
         })}
-      {overlapsTotal > 0 && t("contracts.overlaps", { overlap: overlapsTotal })}
-      .
+      {overlapsTotal > 0 && t("contracts.overlaps", { overlap: overlapsTotal })}.
     </span>
   );
 };

@@ -1,12 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import {
-  Typography,
-  Breadcrumbs,
-  Paper,
-  Divider,
-  Box,
-} from "@material-ui/core";
+import { Typography, Breadcrumbs, Paper, Divider, Box } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import { withNamespaces } from "react-i18next";
 import { withRouter } from "react-router-dom";
@@ -83,13 +77,7 @@ class ContractsPage extends Component {
 
   render() {
     const { t, classes, location, isLoading } = this.props;
-    const {
-      contracts,
-      contractsOverlaps,
-      contractsById,
-      filteredContracts,
-      contractFields,
-    } = this.state;
+    const { contracts, contractsOverlaps, filteredContracts, contractFields } = this.state;
     const overlapsTotal = Object.keys(contractsOverlaps).filter((ouId) =>
       filteredContracts.find((fc) => fc.id === ouId),
     ).length;
@@ -98,12 +86,7 @@ class ContractsPage extends Component {
         <Paper square className={classes.rootContainer}>
           <Breadcrumbs aria-label="breadcrumb">
             <Box mb={2}>
-              <Typography
-                variant="h5"
-                component="h5"
-                gutterBottom
-                color="textPrimary"
-              >
+              <Typography variant="h5" component="h5" gutterBottom color="textPrimary">
                 {t("contracts.title")}
               </Typography>
             </Box>
@@ -114,9 +97,7 @@ class ContractsPage extends Component {
             fetchContracts={() => this.fetchContracts()}
             changeTable={(key, value) => this.onTableChange(key, value)}
             contractsOverlaps={contractsOverlaps}
-            setFilteredContracts={(newFilteredContracts) =>
-              this.setState({ filteredContracts: newFilteredContracts })
-            }
+            setFilteredContracts={(newFilteredContracts) => this.setState({ filteredContracts: newFilteredContracts })}
           />
           <Divider />
           <Table
@@ -142,9 +123,6 @@ class ContractsPage extends Component {
             options={contractsTableOptions(
               t,
               filteredContracts,
-              contractsById,
-              contractsOverlaps,
-              classes,
               (key, value) => this.onTableChange(key, value),
               decodeTableQueryParams(location),
             )}
@@ -176,9 +154,5 @@ const MapDispatchToProps = (dispatch) => ({
 });
 
 export default withRouter(
-  withNamespaces()(
-    withStyles(styles)(
-      connect(MapStateToProps, MapDispatchToProps)(ContractsPage),
-    ),
-  ),
+  withNamespaces()(withStyles(styles)(connect(MapStateToProps, MapDispatchToProps)(ContractsPage))),
 );

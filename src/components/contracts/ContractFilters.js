@@ -12,11 +12,7 @@ import filtersConfig, { columnsCount } from "./filters";
 
 import ContractsDialog from "./ContractsDialog";
 
-import {
-  filterItems,
-  encodeFiltersQueryParams,
-  decodeFiltersQueryParams,
-} from "./utils";
+import { filterItems, encodeFiltersQueryParams, decodeFiltersQueryParams } from "./utils/filtersUtils";
 
 const styles = (theme) => ({
   createButton: {
@@ -42,15 +38,8 @@ const ContractFilters = ({
   const [hasError, setHasError] = React.useState(false);
   const classes = useStyles();
   useEffect(() => {
-    const newFilters = decodeFiltersQueryParams(
-      location,
-      filtersConfig(contractFields),
-    );
-    const filteredContracts = filterItems(
-      newFilters,
-      contracts,
-      contractsOverlaps,
-    );
+    const newFilters = decodeFiltersQueryParams(location, filtersConfig(contractFields));
+    const filteredContracts = filterItems(newFilters, contracts, contractsOverlaps);
     setFilteredContracts(filteredContracts);
     setFilters(newFilters);
   }, [contracts]);
@@ -58,12 +47,7 @@ const ContractFilters = ({
   const checkErrors = () => {
     setHasError(false);
     filters.forEach((f) => {
-      if (
-        f.type === "date" &&
-        f.value &&
-        !moment(f.value).isValid() &&
-        !hasError
-      ) {
+      if (f.type === "date" && f.value && !moment(f.value).isValid() && !hasError) {
         setHasError(true);
       }
     });
@@ -103,12 +87,7 @@ const ContractFilters = ({
               {filters
                 .filter((f) => f.column === column)
                 .map((filter) => (
-                  <Filter
-                    key={filter.key}
-                    filter={filter}
-                    onSearch={handleSearch}
-                    setFilterValue={setFilterValue}
-                  />
+                  <Filter key={filter.key} filter={filter} onSearch={handleSearch} setFilterValue={setFilterValue} />
                 ))}
             </Grid>
           ))}
@@ -127,21 +106,11 @@ const ContractFilters = ({
             contractFields={contractFields}
             onSavedSuccessfull={fetchContracts}
           >
-            <Button
-              color="primary"
-              variant="contained"
-              startIcon={<Add />}
-              className={classes.createButton}
-            >
+            <Button color="primary" variant="contained" startIcon={<Add />} className={classes.createButton}>
               {t("create")}
             </Button>
           </ContractsDialog>
-          <Button
-            onClick={handleSearch}
-            color="primary"
-            variant="contained"
-            disabled={!isTouched || hasError}
-          >
+          <Button onClick={handleSearch} color="primary" variant="contained" disabled={!isTouched || hasError}>
             {t("filter")}
           </Button>
         </Grid>

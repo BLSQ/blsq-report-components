@@ -1,9 +1,6 @@
 import moment from "moment";
-import {
-  getContractDates,
-  getOptionFromField,
-  getNonStandartContractFields,
-} from "./utils";
+import { getOptionFromField, getNonStandartContractFields } from "./utils";
+import { getContractDates } from "./periodsUtils";
 
 /**
  * A Filters list
@@ -35,10 +32,7 @@ export const activeAtFilter = {
     }
     const filteredContracts = contracts.filter((c) => {
       const contractDates = getContractDates(c);
-      return moment(value).isBetween(
-        contractDates.startDate,
-        contractDates.endDate,
-      );
+      return moment(value).isBetween(contractDates.startDate, contractDates.endDate);
     });
     return filteredContracts;
   },
@@ -96,9 +90,7 @@ const defaultFilters = [
       if (!onlyOverlaps) {
         return contracts;
       }
-      return contracts.filter(
-        (c) => contractsOverlaps[c.id] && contractsOverlaps[c.id].size > 0,
-      );
+      return contracts.filter((c) => contractsOverlaps[c.id] && contractsOverlaps[c.id].size > 0);
     },
     urlEncode: (value) => (value ? "true" : "false"),
     urlDecode: (value) => value === "true",
@@ -113,11 +105,7 @@ const defaultFilters = [
       if (!onlySubContracts) {
         return contracts;
       }
-      return contracts.filter(
-        (c) =>
-          c.fieldValues.contract_main_orgunit &&
-          c.fieldValues.contract_main_orgunit !== "",
-      );
+      return contracts.filter((c) => c.fieldValues.contract_main_orgunit && c.fieldValues.contract_main_orgunit !== "");
     },
     urlEncode: (value) => (value ? "true" : "false"),
     urlDecode: (value) => value === "true",
@@ -159,18 +147,12 @@ const filterConfig = (contractFields) => {
           return contracts;
         }
 
-        return contracts.filter((c) =>
-          c.codes.some((c) => groups.findIndex((g) => g.value === c) >= 0),
-        );
+        return contracts.filter((c) => c.codes.some((c) => groups.findIndex((g) => g.value === c) >= 0));
       },
       // turn selected options [{label: ,value:}, {label: ,value:}] into string value1,value2,...
-      urlEncode: (value) =>
-        !value || value.length === 0 ? "" : value.map((c) => c.value).join(","),
+      urlEncode: (value) => (!value || value.length === 0 ? "" : value.map((c) => c.value).join(",")),
       // turn  value1,value2 in to array of option {label: ,value:} based on optionSet.options
-      urlDecode: (value) =>
-        !value || value === ""
-          ? []
-          : value.split(",").map((v) => getOptionFromField(field, v)),
+      urlDecode: (value) => (!value || value === "" ? [] : value.split(",").map((v) => getOptionFromField(field, v))),
     });
   });
   return config;

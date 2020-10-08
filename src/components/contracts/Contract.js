@@ -1,11 +1,6 @@
 import DatePeriods from "../../support/DatePeriods";
 
-const KNOWN_FIELDS = [
-  "contract_start_date",
-  "contract_end_date",
-  "id",
-  "orgUnit",
-];
+const KNOWN_FIELDS = ["contract_start_date", "contract_end_date", "id", "orgUnit"];
 
 class Contract {
   constructor(fieldValues) {
@@ -33,19 +28,14 @@ class Contract {
     const startMonthPeriods = DatePeriods.split(period, "monthly");
 
     return startMonthPeriods.some(
-      (startMonthPeriod) =>
-        this.startPeriod <= startMonthPeriod &&
-        startMonthPeriod <= this.endPeriod,
+      (startMonthPeriod) => this.startPeriod <= startMonthPeriod && startMonthPeriod <= this.endPeriod,
     );
   }
   overlaps(contract) {
     if (contract.id === this.id) {
       return false;
     }
-    return (
-      contract.startPeriod <= this.endPeriod &&
-      this.startPeriod <= contract.endPeriod
-    );
+    return contract.startPeriod <= this.endPeriod && this.startPeriod <= contract.endPeriod;
   }
 }
 

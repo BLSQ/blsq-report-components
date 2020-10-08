@@ -21,11 +21,7 @@ class ContractPlugin {
       const program = await api.get("programs/" + config.programId, {
         fields: PROGRAM_FIELDS,
       });
-      const contractService = new ContractService(
-        api,
-        program,
-        config.allEventsSqlViewId,
-      );
+      const contractService = new ContractService(api, program, config.allEventsSqlViewId);
       this.extensions["contracts.service"] = [contractService];
       this.extensions["contracts.program"] = [program];
     }

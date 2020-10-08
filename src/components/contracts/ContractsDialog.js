@@ -21,23 +21,19 @@ import PluginRegistry from "../core/PluginRegistry";
 
 import OuSearch from "../shared/OuSearch";
 import PeriodPicker from "../shared/PeriodPicker";
-import {
-  errorSnackBar,
-  succesfullSnackBar,
-} from "../shared/snackBars/snackBar";
+import { errorSnackBar, succesfullSnackBar } from "../shared/snackBars/snackBar";
 import { setIsLoading } from "../redux/actions/load";
 
 import ContractFieldSelect from "./ContractFieldSelect";
+import { getNonStandartContractFields, getContractByOrgUnit } from "./utils";
+
 import {
-  getNonStandartContractFields,
   getStartDateFromPeriod,
   getEndDateFromPeriod,
   getQuarterFromDate,
   getStartMonthFromQuarter,
   getEndMonthFromQuarter,
-  getContractByOrgUnit,
-} from "./utils";
-
+} from "./periodsUtils";
 import { enqueueSnackbar } from "../redux/actions/snackBars";
 
 import LoadingSpinner from "../shared/LoadingSpinner";
@@ -80,15 +76,12 @@ const ContractsDialog = ({
   useEffect(() => {
     setCurrentContract(contract);
   }, [contract]);
-
   const handleClickOpen = () => {
     setOpen(true);
   };
-
   const handleClose = () => {
     setOpen(false);
   };
-
   const handleChange = (key, value, subKey) => {
     setCurrentContract({
       ...currentContract,
@@ -100,16 +93,12 @@ const ContractsDialog = ({
           },
     });
   };
-
   const handleSave = () => {
     dispatch(setIsLoading(true));
     const saveContract =
       currentContract.id !== 0
         ? contractService.updateContract(currentContract)
-        : contractService.createContract(
-            [currentContract.fieldValues.orgUnit.id],
-            currentContract,
-          );
+        : contractService.createContract([currentContract.fieldValues.orgUnit.id], currentContract);
     saveContract
       .then(() => {
         dispatch(setIsLoading(false));
@@ -118,12 +107,9 @@ const ContractsDialog = ({
       })
       .catch((err) => {
         setIsLoading(false);
-        dispatch(
-          enqueueSnackbar(errorSnackBar("snackBar.error.save", null, err)),
-        );
+        dispatch(enqueueSnackbar(errorSnackBar("snackBar.error.save", null, err)));
       });
   };
-
   const childrenWithProps = React.Children.map(children, (child) => {
     const props = { onClick: () => handleClickOpen() };
     if (React.isValidElement(child)) {
@@ -133,10 +119,7 @@ const ContractsDialog = ({
   });
   let mainOrgUnit;
   if (currentContract.fieldValues.contract_main_orgunit) {
-    const mainContract = getContractByOrgUnit(
-      contracts,
-      currentContract.fieldValues.contract_main_orgunit,
-    );
+    const mainContract = getContractByOrgUnit(contracts, currentContract.fieldValues.contract_main_orgunit);
     if (mainContract) {
       mainOrgUnit = mainContract.orgUnit;
     }
@@ -144,12 +127,7 @@ const ContractsDialog = ({
   return (
     <>
       {!children && (
-        <Tooltip
-          onClick={() => handleClickOpen()}
-          placement="bottom"
-          title={t("edit")}
-          arrow
-        >
+        <Tooltip onClick={() => handleClickOpen()} placement="bottom" title={t("edit")} arrow>
           <span>
             <IconButton size="small">
               <Edit />
@@ -175,21 +153,13 @@ const ContractsDialog = ({
               <Grid container item xs={12}>
                 {displayOrgUnit && (
                   <OuSearch
-                    onChange={(orgUnit) =>
-                      handleChange("fieldValues", orgUnit, "orgUnit")
-                    }
+                    onChange={(orgUnit) => handleChange("fieldValues", orgUnit, "orgUnit")}
                     orgUnit={currentContract.fieldValues.orgUnit}
                   />
                 )}
                 {displayMainOrgUnit && (
                   <OuSearch
-                    onChange={(orgUnit) =>
-                      handleChange(
-                        "fieldValues",
-                        orgUnit,
-                        "contract_main_orgunit",
-                      )
-                    }
+                    onChange={(orgUnit) => handleChange("fieldValues", orgUnit, "contract_main_orgunit")}
                     label={t("contracts.contract_main_orgunit")}
                     orgUnit={mainOrgUnit}
                   />
@@ -199,44 +169,24 @@ const ContractsDialog = ({
             <Grid container item xs={6}>
               <PeriodPicker
                 periodDelta={{ before: 20, after: 20 }}
-                period={getQuarterFromDate(
-                  currentContract.fieldValues.contract_start_date,
-                )}
-                max={getQuarterFromDate(
-                  currentContract.fieldValues.contract_end_date,
-                )}
-                renderPeriod={(p) =>
-                  `${getStartMonthFromQuarter(p)} ${p.substring(0, 4)}`
-                }
+                period={getQuarterFromDate(currentContract.fieldValues.contract_start_date)}
+                max={getQuarterFromDate(currentContract.fieldValues.contract_end_date)}
+                renderPeriod={(p) => `${getStartMonthFromQuarter(p)} ${p.substring(0, 4)}`}
                 labelKey="start_period"
                 onPeriodChange={(startPeriod) =>
-                  handleChange(
-                    "fieldValues",
-                    getStartDateFromPeriod(startPeriod),
-                    "contract_start_date",
-                  )
+                  handleChange("fieldValues", getStartDateFromPeriod(startPeriod), "contract_start_date")
                 }
               />
             </Grid>
             <Grid container item xs={6}>
               <PeriodPicker
                 periodDelta={{ before: 20, after: 20 }}
-                period={getQuarterFromDate(
-                  currentContract.fieldValues.contract_end_date,
-                )}
-                renderPeriod={(p) =>
-                  `${getEndMonthFromQuarter(p)} ${p.substring(0, 4)}`
-                }
+                period={getQuarterFromDate(currentContract.fieldValues.contract_end_date)}
+                renderPeriod={(p) => `${getEndMonthFromQuarter(p)} ${p.substring(0, 4)}`}
                 labelKey="end_period"
-                min={getQuarterFromDate(
-                  currentContract.fieldValues.contract_start_date,
-                )}
+                min={getQuarterFromDate(currentContract.fieldValues.contract_start_date)}
                 onPeriodChange={(endPeriod) =>
-                  handleChange(
-                    "fieldValues",
-                    getEndDateFromPeriod(endPeriod),
-                    "contract_end_date",
-                  )
+                  handleChange("fieldValues", getEndDateFromPeriod(endPeriod), "contract_end_date")
                 }
               />
             </Grid>
@@ -245,9 +195,7 @@ const ContractsDialog = ({
                 <ContractFieldSelect
                   contract={currentContract}
                   field={field}
-                  handleChange={(newValue) =>
-                    handleChange("fieldValues", newValue, field.code)
-                  }
+                  handleChange={(newValue) => handleChange("fieldValues", newValue, field.code)}
                 />
               </Grid>
             ))}
@@ -258,10 +206,7 @@ const ContractsDialog = ({
             autoFocus
             onClick={handleSave}
             color="primary"
-            disabled={
-              isLoading ||
-              (displayOrgUnit && !currentContract.fieldValues.orgUnit)
-            }
+            disabled={isLoading || (displayOrgUnit && !currentContract.fieldValues.orgUnit)}
           >
             {t("save")}
           </Button>

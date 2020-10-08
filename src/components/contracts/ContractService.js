@@ -1,20 +1,11 @@
 import Contract from "./Contract";
-import {
-  getOrgUnitCoverage,
-  checkSubContractCoverage,
-  checkNonVisibleOverlap,
-  getOverlaps,
-} from "./utils";
+import { getOrgUnitCoverage, checkSubContractCoverage, checkNonVisibleOverlap, getOverlaps } from "./utils";
 
 class ContractService {
   constructor(api, program, allEventsSqlViewId) {
     this.api = api;
     this.program = program;
-    this.standardContractFields = [
-      "contract_start_date",
-      "contract_end_date",
-      "contract_main_orgunit",
-    ];
+    this.standardContractFields = ["contract_start_date", "contract_end_date", "contract_main_orgunit"];
     const toMappings = (program) => {
       const dataElements = program.programStages.flatMap((ps) =>
         ps.programStageDataElements.map((psde) => psde.dataElement),
@@ -93,11 +84,7 @@ class ContractService {
     let events;
 
     const rawEvents = await this.api.get(
-      "sqlViews/" +
-        this.allEventsSqlViewId +
-        "/data.json?var=programId:" +
-        this.program.id +
-        "&paging=false",
+      "sqlViews/" + this.allEventsSqlViewId + "/data.json?var=programId:" + this.program.id + "&paging=false",
     );
     const indexes = {};
     rawEvents.listGrid.headers.forEach((h, index) => (indexes[h.name] = index));
@@ -107,12 +94,7 @@ class ContractService {
       try {
         dataVals = JSON.parse(row[indexes.data_values].value);
       } catch (err) {
-        throw new Error(
-          "failed to parse : " +
-            row[indexes.data_values].value +
-            " " +
-            err.message,
-        );
+        throw new Error("failed to parse : " + row[indexes.data_values].value + " " + err.message);
       }
       const dataValues = Object.keys(dataVals).map((k) => {
         return {
@@ -155,14 +137,9 @@ class ContractService {
     contracts.sort((a, b) => (a.endPeriod < b.endPeriod ? 1 : -1));
     if (orgUnitId) {
       subContracts = contracts.filter(
-        (c) =>
-          c.fieldValues.contract_main_orgunit &&
-          c.fieldValues.contract_main_orgunit === orgUnitId,
+        (c) => c.fieldValues.contract_main_orgunit && c.fieldValues.contract_main_orgunit === orgUnitId,
       );
-      mainContracts = contracts.filter(
-        (c) =>
-          c.orgUnit.id === orgUnitId && !c.fieldValues.contract_main_orgunit,
-      );
+      mainContracts = contracts.filter((c) => c.orgUnit.id === orgUnitId && !c.fieldValues.contract_main_orgunit);
 
       const orgUnitCoverage = getOrgUnitCoverage(mainContracts);
       const subContractsOverlaps = this.toOverlappings(subContracts);
@@ -178,13 +155,8 @@ class ContractService {
           contracts,
           allContractsOverlaps,
         );
-        const visibleOverlaps = getOverlaps(
-          c.id,
-          subContractsOverlaps,
-          subContractsById,
-        );
-        c.status =
-          !coverageIssue && !nonVisibleOverlaps && visibleOverlaps.length === 0;
+        const visibleOverlaps = getOverlaps(c.id, subContractsOverlaps, subContractsById);
+        c.status = !coverageIssue && !nonVisibleOverlaps && visibleOverlaps.length === 0;
         c.statusDetail = {
           coverageIssue,
           nonVisibleOverlaps,
@@ -193,11 +165,7 @@ class ContractService {
         c.rowIndex = i + 1;
       });
       mainContracts.forEach((c, i) => {
-        const visibleOverlaps = getOverlaps(
-          c.id,
-          mainContractsOverlaps,
-          mainContractsById,
-        );
+        const visibleOverlaps = getOverlaps(c.id, mainContractsOverlaps, mainContractsById);
         c.status = visibleOverlaps.length === 0;
         c.statusDetail = {
           visibleOverlaps,
@@ -223,11 +191,7 @@ class ContractService {
     const contractsOverlaps = this.toOverlappings(contracts);
     const contractsById = this.toContractsById(contracts);
     contracts.forEach((c) => {
-      const visibleOverlaps = getOverlaps(
-        c.id,
-        contractsOverlaps,
-        contractsById,
-      );
+      const visibleOverlaps = getOverlaps(c.id, contractsOverlaps, contractsById);
       c.status = visibleOverlaps.length === 0;
       c.statusDetail = {
         visibleOverlaps,
@@ -257,9 +221,7 @@ class ContractService {
 
     Object.keys(contractInfo).forEach((fieldKey) => {
       if (!ignoredFields.includes(fieldKey)) {
-        const dataElement = Object.values(this.mappings).find(
-          (mapping) => mapping.code === fieldKey,
-        );
+        const dataElement = Object.values(this.mappings).find((mapping) => mapping.code === fieldKey);
         if (dataElement === undefined) {
           throw new Error(
             "no mapping for field " +
@@ -288,18 +250,13 @@ class ContractService {
   };
 
   async createContract(orgUnitIds, contract) {
-    const events = orgUnitIds.map((orgUnitId) =>
-      this.getEvent(contract.fieldValues, orgUnitId),
-    );
+    const events = orgUnitIds.map((orgUnitId) => this.getEvent(contract.fieldValues, orgUnitId));
     const res = await this.api.post("events", { events });
     return res;
   }
 
   async updateContract(contract) {
-    const event = this.getEvent(
-      contract.fieldValues,
-      contract.fieldValues.orgUnit.id,
-    );
+    const event = this.getEvent(contract.fieldValues, contract.fieldValues.orgUnit.id);
     const res = await this.api.update(`events/${contract.id}`, {
       event,
     });

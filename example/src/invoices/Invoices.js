@@ -10,6 +10,9 @@ import DemoMonthlyInvoice from "./demo-chc-monthly/Invoice";
 import DemoConsolidatedMapper from "./demo-chc-consolidated/Mapper";
 import DemoConsolidatedInvoice from "./demo-chc-consolidated/Invoice";
 
+import DemoContractMapper from "./demo-contracts/Mapper";
+import DemoContractInvoice from "./demo-contracts/Invoice";
+
 import {
   indexBy,
   GenericInvoices,
@@ -23,6 +26,7 @@ const INVOICE_DEMO_CHT_CONSOLIDATED = "demo-chc-consolidated";
 const INVOICE_DEMO_CHT_TWO_LAST_MONTH = "demo-chc-2-last_Month";
 const INVOICE_EMPTY = "demo-invoice-category-combo";
 const INVOICE_DEMO_QUARTERLY_FIRST_MONTH = "demo-quarter-first-months";
+const INVOICE_DEMO_CONTRACTS = "demo-contracts";
 
 const INVOICES = {
   [INVOICE_DEMO_CHT]: {
@@ -52,13 +56,17 @@ const INVOICES = {
   [INVOICE_DEMO_QUARTERLY_FIRST_MONTH]: {
     component: DemoInvoice,
     mapper: DemoMapper
+  },
+  [INVOICE_DEMO_CONTRACTS]: {
+    component: DemoContractInvoice,
+    mapper: DemoContractMapper
   }
 };
 
 const DESCRIPTOR_BY_CODE = indexBy(invoiceDescriptors, e => e.code);
 
 class Invoices {
-  getInvoiceTypeCodes(orgUnit) {
+  getInvoiceTypeCodes(orgUnit, period) {
     let invoiceCodes = [
       INVOICE_DEMO_CHT,
       INVOICE_DEMO_CHT_MONTHLY,
@@ -72,6 +80,11 @@ class Invoices {
     if (orgUnit.level === 0) {
       invoiceCodes = [];
       invoiceCodes.push(INVOICE_EMPTY);
+    }
+    if (orgUnit.activeContracts && orgUnit.activeContracts.length > 0) {
+      if (orgUnit.activeContracts[0].codes.includes("province")) {
+        invoiceCodes.push(INVOICE_DEMO_CONTRACTS)
+      }
     }
     return invoiceCodes;
   }

@@ -1,16 +1,5 @@
-import BrowseDataContainer from "./components/browsedata/BrowseDataContainer";
-import BrowseDataPage from "./components/browsedata/BrowseDataPage";
-import browseDataRoute from "./components/browsedata/BrowseDataRoute";
-
-import IncentivePage from "./components/incentives/IncentivePage";
-import IncentiveContainer from "./components/incentives/IncentiveContainer";
-import incentiveRoute from "./components/incentives/IncentiveRoute";
-
-import InvoicePage from "./components/invoices/InvoicePage";
-import invoiceRoute from "./components/invoices/InvoiceRoute";
-import invoiceSelectionRoute from "./components/invoices/InvoiceSelectionRoute";
 import InvoiceSelectionContainer from "./components/invoices/InvoiceSelectionContainer";
-import PeriodPicker from "./components/invoices/PeriodPicker";
+import PeriodPicker from "./components/shared/PeriodPicker";
 import Values from "./components/invoices/support/Values";
 
 import GenericInvoices from "./components/generic_invoice/GenericInvoices";
@@ -23,24 +12,22 @@ import * as NumberFormatter from "./support/NumberFormatter";
 
 import Cell from "./components/shared/Cell";
 import Warning from "./components/shared/Warning";
-import AppDrawer from "./components/AppDrawer";
+import AppDrawer from "./components/App";
 import PluginRegistry from "./components/core/PluginRegistry";
 import ExtensionsComponent from "./components/core/ExtensionsComponent";
+import ContractService from "./components/contracts/ContractService";
+
+import ContractPlugin from "./components/contracts/ContractPlugin";
+import InvoicePlugin from "./components/invoices/InvoicePlugin";
+import IncentivePlugin from "./components/incentives/IncentivePlugin";
+import BrowseDataPlugin from "./components/browsedata/BrowseDataPlugin";
+import PyramidPlugin from "./components/pyramid/PyramidPlugin";
 
 import { indexBy } from "./support/Arrays";
 import configureI18N from "./support/configureI18N";
 export {
   AppDrawer,
-  BrowseDataContainer,
-  BrowseDataPage,
-  browseDataRoute,
-  IncentivePage,
-  incentiveRoute,
-  IncentiveContainer,
-  InvoicePage,
-  invoiceSelectionRoute,
   InvoiceSelectionContainer,
-  invoiceRoute,
   Dhis2,
   Orbf2,
   Values,
@@ -54,5 +41,12 @@ export {
   CompositeInvoices,
   configureI18N,
   PluginRegistry,
-  ExtensionsComponent
+  ExtensionsComponent,
+  ContractService,
+  // plugins
+  ContractPlugin,
+  InvoicePlugin,
+  IncentivePlugin,
+  BrowseDataPlugin,
+  PyramidPlugin,
 };

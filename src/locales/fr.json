@@ -1,0 +1,110 @@
+{
+    "app_name": "Factures & Rapports",
+    "clear": "Supprimer",
+    "codes": "Codes",
+    "contracts": {
+        "activeToday": "Actif aujourd'hui",
+        "activeAt": "Actif le",
+        "contract_main_orgunit": "Unité d'organisation principale",
+        "createTitle": "Créer un contrat",
+        "editTitle": "Editer le contrat",
+        "mainContracts": "Contrat(s) direct(s)",
+        "onlyOverlaps": "Seulement les contracts se chevauchant",
+        "onlySubContracts": "Seulement les sous contrats",
+        "overlappingWith": "Se chevauchant avec",
+        "overlaps": ", dont {{overlap}} se chevauchant",
+        "result": "1 contrat",
+        "results": "{{total}} contrats",
+        "resultsFiltered": "{{filtered}} contrats filtrés sur {{total}}",
+        "searchInfos": "Chercher sur le nom ou le code du contrat",
+        "seeOrgUnit": "Voir l'unité d'organisation",
+        "status": {
+            "coverageIssue": "Ce contrat est plus large que la couverture du contrat principal",
+            "nonVisibleOverlaps": "Ce contrat se chevauche avec {{count}} contrat(s) non visible(s) sur cette page",
+            "visibleOverlaps": "Ce contrat se chevauche avec {{count}} contrat(s)"
+        },
+        "subContracts": "Sous-contrat(s)",
+        "title": "Contrats"
+    },
+    "create": "Créer",
+    "edit": "Editer",
+    "end_period": "Fin",
+    "filter": "Filtrer",
+    "generated_at": "Généré le",
+    "group": "Groupe",
+    "groups": "Groupes",
+    "invoice": "Facture",
+    "invoicing": {
+        "job": {
+            "error": "Message",
+            "erroredAt": "Quand",
+            "errors": "Erreurs lors des derniers calculs",
+            "orgUnit": "Org unit",
+            "period": "Période"
+        }
+    },
+    "limit_org_unit_under": "Limiter à l'unité d'organisation enfant",
+    "missing_invoice_types": "Facture introuvable...",
+    "name": "Nom",
+    "noResult": "Aucun résultat",
+    "orgUnit": "Unité d'organisation",
+    "orgUnit_name": "Nom d'unité d'organisation",
+    "period": "Période",
+    "print": "Imprimer",
+    "report_and_invoices": "Rapports",
+    "save": "Sauver",
+    "search": "Recherche",
+    "search_org_unit": "Rechercher ou sélectionner l'unité d'organisation parente",
+    "searchHelp": "Minimum {{minChar}} charactères, maximum {{maxResult}} résultats.",
+    "show_avalaible_invoices": "Choisir une facture",
+    "snackBar": {
+        "copyError": "Copier l'erreur",
+        "error": {
+            "save": "Un erreur est survenue lors de la sauvegarde"
+        },
+        "success": {
+            "save": "Sauvegarde effectuée avec succés"
+        }
+    },
+    "start_period": "Début",
+    "status": "Statut",
+    "table": {
+        "actions": {
+            "edit": "Editer",
+            "see": "Voir",
+            "title": "Action(s)"
+        },
+        "body": {
+            "columnHeaderTooltip": "Trier sur {{label}}",
+            "noMatch": "Aucun résultat trouvé",
+            "toolTip": "Trier"
+        },
+        "filter": {
+            "all": "Tous",
+            "reset": "ANNULER",
+            "title": "FILTRES"
+        },
+        "pagination": {
+            "displayRows": "de",
+            "next": "Page suivant",
+            "previous": "Page précédente",
+            "rowsPerPage": "Lignes par page :"
+        },
+        "selectedRows": {
+            "delete": "Effacer",
+            "deleteAria": "Effacer les lignes sélectionnées",
+            "text": "ligne(s) séléctionnée(s)"
+        },
+        "toolbar": {
+            "downloadCsv": "Télécharger le CSV",
+            "filterTable": "Filtrer la table",
+            "print": "Imprimer",
+            "search": "Rechercher",
+            "viewColumns": "Colonnes visibles"
+        },
+        "viewColumns": {
+            "title": "Colonnes visibles",
+            "titleAria": "Montrer/cacher des colonnes"
+        }
+    }
+}

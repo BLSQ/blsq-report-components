@@ -64,7 +64,7 @@ const OrganisationUnitList = props => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {organisationUnits.map(ou => (
+          {organisationUnits.slice(0,100).map(ou => (
             <TableRow>
               <TableCell>
                 {ou.ancestors && ou.ancestors[1] && ou.ancestors[1].name}

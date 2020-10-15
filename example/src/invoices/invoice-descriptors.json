@@ -71,5 +71,16 @@
     "periodStep": "1",
     "dataSets": [],
     "dataElementGroups": ["oDkJh5Ddh7d"]
+  },
+  {
+    "code": "demo-contracts",
+    "name": "Contracts under orgunit",
+    "facilityLabel": "demo-chcs",
+    "orientation": "landscape",
+    "dataSets": ["rzXJB6e2AXP"],
+    "dataElementGroups": [],
+    "organisationUnitGroups": [],
+    "frequency": "quarterly",
+    "periodFormat": "quarter"
   }
 ]

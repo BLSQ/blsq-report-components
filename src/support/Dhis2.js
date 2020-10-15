@@ -1,5 +1,6 @@
 import { init, getInstance, getManifest } from "d2/lib/d2";
 import DatePeriods from "./DatePeriods";
+import PeriodsResolver from "../components/invoices/support/PeriodsResolver";
 
 const ORGUNIT_FIELDS =
   "[id,name,ancestors[id,name],organisationUnitGroups[id,name,code]]";
@@ -23,6 +24,9 @@ class Dhis2 {
     this.version = "";
     this.forceHttps = options.forceHttps;
     this.categoryComboId = options.categoryComboId;
+    this.periodResolver = options.periodResolver
+      ? options.periodResolver
+      : new PeriodsResolver();
     if (options.disableInitialize) {
       return;
     }
@@ -38,12 +42,12 @@ class Dhis2 {
     let headers =
       process.env.NODE_ENV === "development"
         ? {
-            Authorization: "Basic " + btoa(this.user + ":" + this.password)
+            Authorization: "Basic " + btoa(this.user + ":" + this.password),
           }
         : null;
     const mydhis2 = this;
     this.d2 = getManifest("./manifest.webapp")
-      .then(manifest => {
+      .then((manifest) => {
         let baseUrl =
           process.env.NODE_ENV === "production"
             ? manifest.getBaseUrl()
@@ -60,39 +64,41 @@ class Dhis2 {
         this.baseUrl = baseUrl;
         return baseUrl + "/api";
       })
-      .catch(e => {
+      .catch((e) => {
         return this.url;
       })
-      .then(baseUrl =>
-        init({ baseUrl, headers }).then(d2 => {
+      .then((baseUrl) =>
+        init({ baseUrl, headers }).then((d2) => {
           this.user = d2.currentUser;
           this.userId = d2.currentUser.id;
-        })
+        }),
       );
     return this;
   }
 
   appVersion() {
-    return getManifest("./manifest.webapp").then(manifest => {
+    return getManifest("./manifest.webapp").then((manifest) => {
       return manifest.version;
     });
   }
   currentUser() {
-    return getInstance().then(d2 => d2.currentUser);
+    return getInstance().then((d2) => d2.currentUser);
   }
 
   systemInfoRaw() {
-    return getInstance().then(d2 => d2.system.systemInfo);
+    return getInstance().then((d2) => d2.system.systemInfo);
   }
-
+  api() {
+    return getInstance().then((d2) => d2.Api.getApi());
+  }
   currentUserRaw() {
-    return getInstance().then(d2 =>
+    return getInstance().then((d2) =>
       d2.Api.getApi().get(
         "/me?fields=:all,organisationUnits" +
           ORGUNIT_FIELDS +
           ",dataViewOrganisationUnits" +
-          ORGUNIT_FIELDS
-      )
+          ORGUNIT_FIELDS,
+      ),
     );
   }
 
@@ -111,27 +117,27 @@ class Dhis2 {
       value.pe +
       "&value=" +
       value.value;
-    return getInstance().then(d2 => d2.Api.getApi().post(url));
+    return getInstance().then((d2) => d2.Api.getApi().post(url));
   }
 
   getDefaultCategoryCombo() {
     var categoryUrl =
       "categoryCombos?filter=name:eq:default&fields=id,name,categoryOptionCombos[id,name]";
-    return getInstance().then(d2 => d2.Api.getApi().get(categoryUrl));
+    return getInstance().then((d2) => d2.Api.getApi().get(categoryUrl));
   }
   getCategoryComboById() {
     var categoryUrl =
       "categoryCombos/" +
       this.categoryComboId +
       ".json?fields=id,name,categoryOptionCombos[id,name,*]";
-    return getInstance().then(d2 => d2.Api.getApi().get(categoryUrl));
+    return getInstance().then((d2) => d2.Api.getApi().get(categoryUrl));
   }
   getDataSet(dataSetId) {
     var dataSetUrl =
       "/dataSets/" +
       dataSetId +
       "?fields=:all,organisationUnits[id,path,name,ancestors[id,name],organisationUnitGroups[id,name]],dataSetElements[categoryCombo[id,name,categoryOptionCombos[id,name]],dataElement[id,name,code,shortName,valueType]]";
-    return getInstance().then(d2 => d2.Api.getApi().get(dataSetUrl));
+    return getInstance().then((d2) => d2.Api.getApi().get(dataSetUrl));
   }
 
   getDataElementGroup(dataElementGroupId) {
@@ -139,21 +145,21 @@ class Dhis2 {
       "/dataElementGroups/" +
       dataElementGroupId +
       "?fields=:all,dataElements[id,name,shortName]";
-    return getInstance().then(d2 => d2.Api.getApi().get(dataElementGroupUrl));
+    return getInstance().then((d2) => d2.Api.getApi().get(dataElementGroupUrl));
   }
 
   allowedSeeOrgunits(user, dataSet) {
-    const userOrgUnitIds = user.dataViewOrganisationUnits.map(ou => ou.id);
-    const allowedOrgunitIds = dataSet.organisationUnits.filter(ou =>
-      userOrgUnitIds.some(id => ou.path.includes(id))
+    const userOrgUnitIds = user.dataViewOrganisationUnits.map((ou) => ou.id);
+    const allowedOrgunitIds = dataSet.organisationUnits.filter((ou) =>
+      userOrgUnitIds.some((id) => ou.path.includes(id)),
     );
     return allowedOrgunitIds;
   }
 
   allowedEditOrgunitIds(user, dataSet) {
-    const userOrgUnitIds = user.organisationUnits.map(ou => ou.id);
-    const allowedOrgunitIds = dataSet.organisationUnits.filter(ou =>
-      userOrgUnitIds.some(id => ou.path.includes(id))
+    const userOrgUnitIds = user.organisationUnits.map((ou) => ou.id);
+    const allowedOrgunitIds = dataSet.organisationUnits.filter((ou) =>
+      userOrgUnitIds.some((id) => ou.path.includes(id)),
     );
     return allowedOrgunitIds;
   }
@@ -163,7 +169,7 @@ class Dhis2 {
       "/organisationUnits?filter=level:in:[" +
       levels.join(",") +
       "]&fields=id,name,path,level,ancestors[id,name]&paging=false";
-    return getInstance().then(d2 => d2.Api.getApi().get(url));
+    return getInstance().then((d2) => d2.Api.getApi().get(url));
   }
 
   getValues(user, dataSet, periods) {
@@ -172,18 +178,18 @@ class Dhis2 {
     if (allowedOrgunitIds.length === 0) {
       throw new Error(
         "sorry you are not allowed to see values from at least one of the following organisation units : " +
-          dataSet.organisationUnits.map(ou => ou.name).join(" , ")
+          dataSet.organisationUnits.map((ou) => ou.name).join(" , "),
       );
     }
     const allowedOrgunitQuery = allowedOrgunitIds
-      .map(ou => "&orgUnit=" + ou.id)
+      .map((ou) => "&orgUnit=" + ou.id)
       .join("");
     var dataSetUrl =
       "/dataValueSets?dataSet=" +
       dataSet.id +
-      periods.map(pe => "&period=" + pe).join("") +
+      periods.map((pe) => "&period=" + pe).join("") +
       allowedOrgunitQuery;
-    return getInstance().then(d2 => d2.Api.getApi().get(dataSetUrl));
+    return getInstance().then((d2) => d2.Api.getApi().get(dataSetUrl));
   }
 
   getFileDataValue(value, url) {
@@ -202,11 +208,11 @@ class Dhis2 {
     var dataValueSetsUrl =
       "/dataValueSets?dataElementGroup=" +
       dataElementGroupId +
-      periods.map(pe => "&period=" + pe).join("") +
+      periods.map((pe) => "&period=" + pe).join("") +
       "&orgUnit=" +
       orgUnitId +
       "&children=true";
-    return getInstance().then(d2 => d2.Api.getApi().get(dataValueSetsUrl));
+    return getInstance().then((d2) => d2.Api.getApi().get(dataValueSetsUrl));
   }
 
   getOrgunit(orgunitid) {
@@ -214,7 +220,7 @@ class Dhis2 {
       "organisationUnits/" +
       orgunitid +
       "?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]";
-    return getInstance().then(d2 => d2.Api.getApi().get(getOuUrl));
+    return getInstance().then((d2) => d2.Api.getApi().get(getOuUrl));
   }
 
   getOrgunitByUser(orgunitid, userId) {
@@ -224,7 +230,7 @@ class Dhis2 {
       "?fields=[*],ancestors[id,name],organisationUnitGroups[id,name]&filter=user.id:eq:" +
       userId +
       "";
-    return getInstance().then(d2 => d2.Api.getApi().get(getOuUrl));
+    return getInstance().then((d2) => d2.Api.getApi().get(getOuUrl));
   }
 
   getOrgunitsForContract(orgUnitId, contractGroupSetId) {
@@ -233,11 +239,11 @@ class Dhis2 {
       contractGroupSetId +
       "?fields=[*],organisationUnitGroups[:all,organisationUnits[id,name,ancestors[id,name],organisationUnitGroups[id,name,code]]&pageSize=1500";
     return getInstance()
-      .then(d2 => d2.Api.getApi().get(getOuUrl))
-      .then(response => {
+      .then((d2) => d2.Api.getApi().get(getOuUrl))
+      .then((response) => {
         const contractGroup = response.organisationUnitGroups.find(
-          orgUnitgroup =>
-            orgUnitgroup.organisationUnits.some(ou => ou.id === orgUnitId)
+          (orgUnitgroup) =>
+            orgUnitgroup.organisationUnits.some((ou) => ou.id === orgUnitId),
         );
         return contractGroup.organisationUnits;
       });
@@ -253,7 +259,7 @@ class Dhis2 {
       ancestorId +
       "&filter=organisationUnitGroups.id:eq:" +
       contractGroupId;
-    return getInstance().then(d2 => d2.Api.getApi().get(Url));
+    return getInstance().then((d2) => d2.Api.getApi().get(Url));
   }
 
   getOrgunitsForGroup(ancestorId, groupId) {
@@ -264,13 +270,14 @@ class Dhis2 {
       groupId +
       "&filter=ancestors.id:eq:" +
       ancestorId;
-    return getInstance().then(d2 => d2.Api.getApi().get(url));
+    return getInstance().then((d2) => d2.Api.getApi().get(url));
   }
 
-  searchOrgunits(name, orgunits, contractGroup, parentid) {
+  searchOrgunits(name, orgunits, contractGroup, parentid, pageSize = 50) {
     var searchOuUrl =
       "organisationUnits?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]" +
-      "&pageSize=50";
+      "&pageSize=" +
+      pageSize;
 
     if (name && name != "") {
       searchOuUrl += "&filter=name:ilike:" + name;
@@ -282,12 +289,14 @@ class Dhis2 {
       searchOuUrl += "&filter=path:like:" + orgunits[0].id;
     } else if (orgunits && orgunits.length > 0) {
       searchOuUrl +=
-        "&filter=ancestors.id:in:[" + orgunits.map(ou => ou.id).join(",") + "]";
+        "&filter=ancestors.id:in:[" +
+        orgunits.map((ou) => ou.id).join(",") +
+        "]";
     }
     if (parentid) {
       searchOuUrl += "&filter=path:like:" + parentid;
     }
-    return getInstance().then(d2 => d2.Api.getApi().get(searchOuUrl));
+    return getInstance().then((d2) => d2.Api.getApi().get(searchOuUrl));
   }
 
   getAllDataElements(userIds) {
@@ -296,7 +305,7 @@ class Dhis2 {
       userIds.join(",") +
       "]";
 
-    return getInstance().then(d2 => d2.Api.getApi().get(dataElementsUrl));
+    return getInstance().then((d2) => d2.Api.getApi().get(dataElementsUrl));
   }
 
   getDataElementNames(dataElementGroup) {
@@ -305,7 +314,7 @@ class Dhis2 {
       dataElementGroup +
       ".json?fields=dataElements[id,name]";
 
-    return getInstance().then(d2 => d2.Api.getApi().get(dataElementsUrl));
+    return getInstance().then((d2) => d2.Api.getApi().get(dataElementsUrl));
   }
 
   getDataElementNamesByGroups(dataElementGroupIds) {
@@ -314,7 +323,7 @@ class Dhis2 {
       dataElementGroupIds.join(",") +
       "]&fields=*,categoryCombo[id,name,categoryOptionCombos[id,name]]";
 
-    return getInstance().then(d2 => d2.Api.getApi().get(dataElementsUrl));
+    return getInstance().then((d2) => d2.Api.getApi().get(dataElementsUrl));
   }
 
   getDataElementNamesByDataSets(dataSetIds) {
@@ -323,48 +332,22 @@ class Dhis2 {
       dataSetIds.join(",") +
       "]&fields=*,categoryCombo[id,name,categoryOptionCombos[id,name]]";
 
-    return getInstance().then(d2 => d2.Api.getApi().get(dataElementsUrl));
+    return getInstance().then((d2) => d2.Api.getApi().get(dataElementsUrl));
   }
 
   buildInvoiceRequest(orgUnits, period, invoiceType, orgUnitId) {
-    const year = period.slice(0, 4);
-    const quarter = DatePeriods.split(period, "quarterly")[0].slice(5, 6);
-
-    let quarterPeriods = DatePeriods.split(period, "quarterly");
-    let monthlyPeriods = DatePeriods.split(period, "monthly");
-    let yearlyPeriods = DatePeriods.split(period, "yearly");
-    let yearlyJulyPeriods = DatePeriods.split(period, "financialJuly");
-
-    if (invoiceType.previousPeriods) {
-      quarterPeriods = quarterPeriods.concat(
-        DatePeriods.previousPeriods(
-          DatePeriods.split(period, "quarterly")[0],
-          invoiceType.previousPeriods
-        )
-      );
-      monthlyPeriods = monthlyPeriods.concat(
-        DatePeriods.previousPeriods(DatePeriods.split(period, "monthly")[0], 3)
-      );
-      yearlyPeriods = yearlyPeriods.concat(
-        DatePeriods.previousPeriods(
-          DatePeriods.split(period, "yearly")[0],
-          invoiceType.previousPeriods
-        )
-      );
-    }
+    const resolvedPeriods = this.periodResolver.resolvePeriods(
+      orgUnits,
+      period,
+      invoiceType,
+      orgUnitId,
+    );
 
     return {
-      orgUnit: orgUnits.filter(orgUnit => orgUnit.id === orgUnitId)[0],
+      orgUnit: orgUnits.filter((orgUnit) => orgUnit.id === orgUnitId)[0],
       orgUnits: orgUnits,
-      period: period,
-      quarterPeriod: period,
-      quarterPeriods: quarterPeriods,
-      monthlyPeriods: monthlyPeriods,
-      yearlyPeriods: yearlyPeriods,
-      yearlyJulyPeriods: yearlyJulyPeriods,
-      year: year,
-      quarter: quarter,
-      invoiceType: invoiceType
+      invoiceType: invoiceType,
+      ...resolvedPeriods,
     };
   }
 
@@ -374,7 +357,7 @@ class Dhis2 {
       "&paging=false" +
       "&filter=path:ilike:" +
       under;
-    return getInstance().then(d2 => d2.Api.getApi().get(url));
+    return getInstance().then((d2) => d2.Api.getApi().get(url));
   }
 
   getInvoiceValues(request) {
@@ -384,36 +367,36 @@ class Dhis2 {
     }
 
     const degQuery = request.invoiceType.dataElementGroups
-      .map(deg => "dataElementGroup=" + deg)
+      .map((deg) => "dataElementGroup=" + deg)
       .join("&");
     const dsQuery = request.invoiceType.dataSets
-      .map(ds => "dataSet=" + ds)
+      .map((ds) => "dataSet=" + ds)
       .join("&");
     const periods = [request.year]
       .concat(request.monthlyPeriods)
       .concat(request.quarterPeriods)
       .concat(request.yearlyPeriods)
       .concat(request.yearlyJulyPeriods);
-    const periodsQuery = periods.map(p => "&period=" + p).join("");
+    const periodsQuery = periods.map((p) => "&period=" + p).join("");
 
     const dataValuesUrl =
       "dataValueSets?" + degQuery + "&" + dsQuery + periodsQuery;
 
     return getInstance()
-      .then(d2 => {
+      .then((d2) => {
         const queries = [];
-        orgUnits.eachSlice(200, orgUnitsSlice => {
+        orgUnits.eachSlice(200, (orgUnitsSlice) => {
           const orgUnitsQuery = orgUnitsSlice
-            .map(orgUnit => "orgUnit=" + orgUnit.id)
+            .map((orgUnit) => "orgUnit=" + orgUnit.id)
             .join("&");
           queries.push(dataValuesUrl + "&" + orgUnitsQuery);
         });
 
-        return Promise.all(queries.map(query => d2.Api.getApi().get(query)));
+        return Promise.all(queries.map((query) => d2.Api.getApi().get(query)));
       })
-      .then(results => {
+      .then((results) => {
         let dataValues = [];
-        results.forEach(result => {
+        results.forEach((result) => {
           if (result.dataValues) {
             dataValues = dataValues.concat(result.dataValues);
           }
@@ -427,7 +410,9 @@ class Dhis2 {
       "/organisationUnits/" +
       id +
       ".json?fields=id,name,organisationUnitGroups[id,name],level,path,ancestors[id,name]";
-    return getInstance().then(d2 => d2.Api.getApi().get(organisationUnitsUrl));
+    return getInstance().then((d2) =>
+      d2.Api.getApi().get(organisationUnitsUrl),
+    );
   }
 
   organisationUnits(extraFields, extra) {
@@ -438,33 +423,35 @@ class Dhis2 {
       fields = defaultFields + "," + extraFields;
     }
     const organisationUnitsUrl = "/organisationUnits.json?" + fields + extra;
-    return getInstance().then(d2 =>
-      d2.Api.getApi().get(organisationUnitsUrl + extra + "&paging=false")
+    return getInstance().then((d2) =>
+      d2.Api.getApi().get(organisationUnitsUrl + extra + "&paging=false"),
     );
   }
 
   organisationUnitGroupSets() {
     const organisationUnitsUrl =
       "/organisationUnitGroupSets.json?fields=id,name,organisationUnitGroups[id,name]&paging=false";
-    return getInstance().then(d2 => d2.Api.getApi().get(organisationUnitsUrl));
+    return getInstance().then((d2) =>
+      d2.Api.getApi().get(organisationUnitsUrl),
+    );
   }
 
   removeFromGroup(orgUnitId, group) {
-    return getInstance().then(d2 =>
+    return getInstance().then((d2) =>
       d2.Api.getApi().delete(
-        "organisationUnitGroups/" + group + "/organisationUnits/" + orgUnitId
-      )
+        "organisationUnitGroups/" + group + "/organisationUnits/" + orgUnitId,
+      ),
     );
   }
 
   addToGroup(orgUnitId, targetGroup) {
-    return getInstance().then(d2 =>
+    return getInstance().then((d2) =>
       d2.Api.getApi().post(
         "organisationUnitGroups/" +
           targetGroup +
           "/organisationUnits/" +
-          orgUnitId
-      )
+          orgUnitId,
+      ),
     );
   }
   /**

@@ -144,18 +144,18 @@ const OrgUnitValues = props => {
 const styles = theme => ({
   textField: {
     width: 100,
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1)
   },
   textLargeField: {
     width: 170,
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1)
   },
   root: {
     ...theme.mixins.gutters(),
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 10
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(10)
   }
 });
 

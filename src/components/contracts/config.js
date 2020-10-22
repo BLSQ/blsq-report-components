@@ -7,7 +7,7 @@ import ContractsDialog from "./ContractsDialog";
 import { defaultOptions } from "../../support/table";
 import OrgUnitIcon from "../shared/icons/OrgUnitIcon";
 import ContractStatus from "./ContractStatus";
-import { getOrgUnitAncestors, getOptionFromField, getContractByOrgUnit } from "./utils";
+import { getOrgUnitAncestors, getOptionFromField, getContractByOrgUnit } from "./utils/index";
 
 export const contractsTableColumns = (
   t,

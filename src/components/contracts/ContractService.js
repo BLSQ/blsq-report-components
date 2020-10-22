@@ -1,5 +1,5 @@
 import Contract from "./Contract";
-import { getOrgUnitCoverage, checkSubContractCoverage, checkNonVisibleOverlap, getOverlaps } from "./utils";
+import { getOrgUnitCoverage, checkSubContractCoverage, checkNonVisibleOverlap, getOverlaps } from "./utils/index";
 
 class ContractService {
   constructor(api, program, allEventsSqlViewId) {

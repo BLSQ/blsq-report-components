@@ -1,6 +1,6 @@
 import moment from "moment";
-import { getOptionFromField, getNonStandartContractFields } from "./utils";
-import { getContractDates } from "./periodsUtils";
+import { getOptionFromField, getNonStandartContractFields } from "./utils/index";
+import { getContractDates } from "./utils/periodsUtils";
 
 /**
  * A Filters list

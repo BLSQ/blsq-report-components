@@ -11,7 +11,7 @@ import PluginRegistry from "../core/PluginRegistry";
 import ContractsResume from "./ContractsResume";
 import { setIsLoading } from "../redux/actions/load";
 import ContractsDialog from "./ContractsDialog";
-import { getContractTableProps, detailInitialState, getMainOrgUnit, defaultContract } from "./utils";
+import { getContractTableProps, detailInitialState, getMainOrgUnit, defaultContract } from "./utils/index";
 import {
   filterItems,
   encodeFiltersQueryParams,
@@ -20,7 +20,7 @@ import {
   getFilterValueById,
   checkFilters,
 } from "./utils/filtersUtils";
-import { isToday } from "./periodsUtils";
+import { isToday } from "./utils/periodsUtils";
 import tablesStyles from "../styles/tables";
 import icons from "../styles/icons";
 import containersStyles from "../styles/containers";

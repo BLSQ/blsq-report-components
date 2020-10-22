@@ -4,7 +4,7 @@ import { withNamespaces } from "react-i18next";
 
 import { FormControl, TextField, makeStyles } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
-import { getOptionFromField } from "./utils";
+import { getOptionFromField } from "./utils/index";
 
 const styles = (theme) => ({
   formControl: {

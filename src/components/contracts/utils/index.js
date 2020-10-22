@@ -1,6 +1,6 @@
 import moment from "moment";
 import qs from "qs";
-import { contractsTableColumns, orgUnitContractTableOptions } from "./config";
+import { contractsTableColumns, orgUnitContractTableOptions } from "../config";
 
 export const getOverlaps = (contractId, contractsOverlaps, contractsById) => {
   if (!contractsOverlaps[contractId]) {

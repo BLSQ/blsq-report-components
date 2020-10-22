@@ -12,7 +12,7 @@ import ContractFilters from "./ContractFilters";
 import ContractsResume from "./ContractsResume";
 
 import { contractsTableColumns, contractsTableOptions } from "./config";
-import { encodeTableQueryParams, decodeTableQueryParams } from "./utils";
+import { encodeTableQueryParams, decodeTableQueryParams } from "./utils/index";
 
 import Table from "../shared/Table";
 

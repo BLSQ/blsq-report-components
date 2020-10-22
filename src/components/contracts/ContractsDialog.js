@@ -25,7 +25,7 @@ import { errorSnackBar, succesfullSnackBar } from "../shared/snackBars/snackBar"
 import { setIsLoading } from "../redux/actions/load";
 
 import ContractFieldSelect from "./ContractFieldSelect";
-import { getNonStandartContractFields, getContractByOrgUnit } from "./utils";
+import { getNonStandartContractFields, getContractByOrgUnit } from "./utils/index";
 
 import {
   getStartDateFromPeriod,
@@ -33,7 +33,7 @@ import {
   getQuarterFromDate,
   getStartMonthFromQuarter,
   getEndMonthFromQuarter,
-} from "./periodsUtils";
+} from "./utils/periodsUtils";
 import { enqueueSnackbar } from "../redux/actions/snackBars";
 
 import LoadingSpinner from "../shared/LoadingSpinner";

@@ -1,4 +1,4 @@
-import DatePeriods from "../../support/DatePeriods";
+import DatePeriods from "../../../support/DatePeriods";
 import moment from "moment";
 
 export const getStartMonthFromQuarter = (startPeriod) => {

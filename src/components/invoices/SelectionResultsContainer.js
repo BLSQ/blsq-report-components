@@ -63,6 +63,7 @@ class SelectionResultsContainer extends Component {
                     <Tooltip
                       title={
                         <div>
+                          {orgUnit.id} -
                           {orgUnit.organisationUnitGroups
                             .map((g) => g.name)
                             .join(", ")}

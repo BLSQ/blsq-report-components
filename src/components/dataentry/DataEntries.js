@@ -1,7 +1,8 @@
 import React from "react";
 import DatePeriods from "../../support/DatePeriods";
 import { Grid, Typography } from "@material-ui/core";
-import Dhis2Input from "./Dhis2Input"
+import Dhis2Input from "./Dhis2Input";
+import Dhis2Formula from "./Dhis2Formula";
 
 const allDataEntries = [
   {
@@ -42,7 +43,7 @@ const dataEntryForms = {
             <Typography>Verified</Typography>
           </Grid>
           <Grid item xs={1}>
-            <Typography>Incentive</Typography>
+            <Typography>Diff %</Typography>
           </Grid>
           <Grid item xs={1}>
             <Typography>Amount</Typography>
@@ -54,16 +55,16 @@ const dataEntryForms = {
               <Typography>quantity {index}</Typography>
             </Grid>
             <Grid item xs={1}>
-              <Dhis2Input dataElement={"lXbpVIzzwef.HllvX50cXC0"}></Dhis2Input>
+              <Dhis2Input dataElement="lXbpVIzzwef.HllvX50cXC0" />
             </Grid>
             <Grid item xs={1}>
-              <Dhis2Input dataElement={"VBIYcOJSmpU"}></Dhis2Input>
+              <Dhis2Input dataElement="VBIYcOJSmpU" />
             </Grid>
             <Grid item xs={1}>
-              <Dhis2Input dataElement={"de2"}></Dhis2Input>
+              <Dhis2Formula formula="ROUND( ABS(SAFE_DIV( #{lXbpVIzzwef.HllvX50cXC0} - #{VBIYcOJSmpU.HllvX50cXC0},#{lXbpVIzzwef.HllvX50cXC0} + #{VBIYcOJSmpU.HllvX50cXC0}) * 100),2)" />
             </Grid>
             <Grid item xs={1}>
-              <Dhis2Input dataElement={"de3"}></Dhis2Input>
+              <Dhis2Formula formula="IF( ABS(SAFE_DIV( #{lXbpVIzzwef.HllvX50cXC0} - #{VBIYcOJSmpU.HllvX50cXC0},#{lXbpVIzzwef.HllvX50cXC0} + #{VBIYcOJSmpU.HllvX50cXC0}) ) > 0.1 , 0 , #{VBIYcOJSmpU.HllvX50cXC0})" />
             </Grid>
           </Grid>
         ))}

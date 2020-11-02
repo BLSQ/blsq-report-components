@@ -3,15 +3,13 @@ import DatePeriods from "../../support/DatePeriods";
 import PluginRegistry from "../core/PluginRegistry";
 import _ from "lodash";
 import { Link } from "react-router-dom";
-import { Button } from "@material-ui/core";
+import { Button, Paper } from "@material-ui/core";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 
 import FormDataContext from "./FormDataContext";
 
-// TODO use plugin
-import dataEntryRegistry from "./DataEntries";
-
 const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
+  const dataEntryRegistry = PluginRegistry.extension("dataentry.dataEntries");
   const [orgUnit, setOrgUnit] = useState(undefined);
   const [dataEntries, setDataEntries] = useState(undefined);
   const [formData, setFormData] = useState(undefined);
@@ -19,6 +17,7 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
   useEffect(() => {
     const loadData = async () => {
       const contractService = PluginRegistry.extension("contracts.service");
+
       const period = match.params.period;
       const contracts = await contractService.fetchContracts(match.params.orgUnitId);
       const activeContract = contracts.mainContracts.contracts.filter((c) => c.matchPeriod(period))[0];
@@ -127,7 +126,6 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
               };
               setFormData(updatedFormaData);
             } catch (error) {
-
               const updatedFormaData = {
                 ...this,
                 valids: { ...this.valids, [key]: false },
@@ -146,11 +144,11 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
     loadData();
   }, []);
   let DataEntryForm = React.Fragment;
-  if (match.params.dataEntryCode) {
+  if (dataEntryRegistry && match.params.dataEntryCode) {
     DataEntryForm = dataEntryRegistry.getDataEntryForm(match.params.dataEntryCode);
   }
   return (
-    <div>
+    <Paper style={{ minHeight: "90vh", paddingLeft: "50px", paddingTop: "20px" }}>
       {error && (
         <div>
           <Link to={error.link}>{error.message}</Link>
@@ -192,10 +190,12 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
         </tbody>
       </table>
       <br></br>
-      <FormDataContext.Provider value={formData}>
-        <DataEntryForm></DataEntryForm>
-      </FormDataContext.Provider>
-    </div>
+      <div style={{ paddingLeft: "40px" }}>
+        <FormDataContext.Provider value={formData}>
+          <DataEntryForm></DataEntryForm>
+        </FormDataContext.Provider>
+      </div>
+    </Paper>
   );
 };
 

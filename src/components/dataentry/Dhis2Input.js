@@ -26,6 +26,8 @@ const Dhis2Input = ({ dataElement }) => {
   if (formDataContext == undefined) {
     return <></>;
   }
+  const isComplete = formDataContext.isDataSetComplete();
+
   const onChange = (e) => {
     setRawValue(e.target.value);
     setDebouncedState(e.target.value);
@@ -46,6 +48,7 @@ const Dhis2Input = ({ dataElement }) => {
         <TextField
           error={formDataContext.isInvalid(dataElement)}
           type="text"
+          disabled={isComplete}
           value={rawValue}
           onChange={onChange}
           inputProps={{

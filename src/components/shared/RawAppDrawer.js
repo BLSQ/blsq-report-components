@@ -12,7 +12,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Dashboard from "@material-ui/icons/Dashboard";
 
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import ExtensionsComponent from "../core/ExtensionsComponent";
 import { setIsOpenDrawer } from "../redux/actions/drawer";
 
@@ -85,4 +85,4 @@ RawAppDrawer.propTypes = {
   drawerLinks: PropTypes.any,
 };
 
-export default withNamespaces()(RawAppDrawer);
+export default withTranslation()(RawAppDrawer);

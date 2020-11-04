@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Typography, Breadcrumbs, Paper, Divider, Box } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 
@@ -154,5 +154,5 @@ const MapDispatchToProps = (dispatch) => ({
 });
 
 export default withRouter(
-  withNamespaces()(withStyles(styles)(connect(MapStateToProps, MapDispatchToProps)(ContractsPage))),
+  withTranslation()(withStyles(styles)(connect(MapStateToProps, MapDispatchToProps)(ContractsPage))),
 );

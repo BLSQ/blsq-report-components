@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 
 import {
   FormControl,
@@ -209,4 +209,4 @@ Filter.propTypes = {
   onSearch: PropTypes.func.isRequired,
 };
 
-export default withNamespaces()(Filter);
+export default withTranslation()(Filter);

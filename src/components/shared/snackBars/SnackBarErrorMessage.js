@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Tooltip, makeStyles } from "@material-ui/core";
 
 import PropTypes from "prop-types";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 
 import { closeFixedSnackbar } from "../../redux/actions/snackBars";
 
@@ -67,4 +67,4 @@ SnackBarErrorMessage.propTypes = {
   dispatch: PropTypes.func.isRequired,
 };
 
-export default withNamespaces()(SnackBarErrorMessage);
+export default withTranslation()(SnackBarErrorMessage);

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import {
   Button,
   Dialog,
@@ -234,4 +234,4 @@ ContractsDialog.propTypes = {
   displayMainOrgUnit: PropTypes.bool,
 };
 
-export default withNamespaces()(ContractsDialog);
+export default withTranslation()(ContractsDialog);

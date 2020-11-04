@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Card, CardContent, Typography, makeStyles, Grid, Divider } from "@material-ui/core";
 import moment from "moment";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 
 import {
   getOverlaps,
@@ -103,4 +103,4 @@ ContractCard.propTypes = {
   contracts: PropTypes.array.isRequired,
 };
 
-export default withNamespaces()(ContractCard);
+export default withTranslation()(ContractCard);

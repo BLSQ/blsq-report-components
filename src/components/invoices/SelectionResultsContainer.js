@@ -9,7 +9,7 @@ import PropTypes from "prop-types";
 import InvoiceLinks from "./InvoiceLinks";
 import Tooltip from "@material-ui/core/Tooltip";
 import { withStyles } from "@material-ui/core/styles";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import { Typography } from "@material-ui/core";
 
 const styles = (theme) => ({});
@@ -95,4 +95,4 @@ SelectionResultsContainer.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(withNamespaces()(SelectionResultsContainer));
+export default withStyles(styles)(withTranslation()(SelectionResultsContainer));

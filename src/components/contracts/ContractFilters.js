@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import moment from "moment";
 
 import { Box, Grid, Button, makeStyles } from "@material-ui/core";
@@ -131,4 +131,4 @@ ContractFilters.propTypes = {
   t: PropTypes.func.isRequired,
 };
 
-export default withRouter(withNamespaces()(ContractFilters));
+export default withRouter(withTranslation()(ContractFilters));

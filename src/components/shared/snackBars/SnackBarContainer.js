@@ -7,7 +7,7 @@ import { withSnackbar } from "notistack";
 import { removeSnackbar } from "../../redux/actions/snackBars";
 import SnackBarButton from "./SnackBarButton";
 import SnackBarErrorMessage from "./SnackBarErrorMessage";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 
 let displayed = [];
 const saveDisplayedSnackBar = (snackBar) => {
@@ -99,5 +99,5 @@ const MapStateToProps = (state) => ({
 });
 
 export default connect(MapStateToProps)(
-  withSnackbar(withNamespaces()(SnackBarContainer)),
+  withSnackbar(withTranslation()(SnackBarContainer)),
 );

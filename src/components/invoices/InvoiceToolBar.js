@@ -6,7 +6,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import ArrowForward from "@material-ui/icons/ArrowForward";
 import ArrowBack from "@material-ui/icons/ArrowBack";
 import DatePeriods from "../../support/DatePeriods";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import Typography from "@material-ui/core/Typography";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -276,4 +276,4 @@ class InvoiceToolBar extends Component {
   }
 }
 
-export default withStyles(styles)(withNamespaces()(InvoiceToolBar));
+export default withStyles(styles)(withTranslation()(InvoiceToolBar));

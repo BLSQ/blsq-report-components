@@ -3,7 +3,7 @@ import FileIcon from "@material-ui/icons/InsertDriveFile";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 
 const drawerLink = (props) => (
   <ListItem button component="a" href={"./index.html#" + props.defaultPathName}>
@@ -14,4 +14,4 @@ const drawerLink = (props) => (
   </ListItem>
 );
 
-export default withNamespaces()(drawerLink);
+export default withTranslation()(drawerLink);

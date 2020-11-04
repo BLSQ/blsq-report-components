@@ -1,5 +1,5 @@
 import React from "react";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 
 import PropTypes from "prop-types";
 import { Button } from "@material-ui/core";
@@ -19,4 +19,4 @@ SnackBarButton.propTypes = {
   t: PropTypes.object.isRequired,
 };
 
-export default withNamespaces()(SnackBarButton);
+export default withTranslation()(SnackBarButton);

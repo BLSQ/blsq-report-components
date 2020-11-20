@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 
 import { FormControl, TextField, makeStyles } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
@@ -62,4 +62,4 @@ ContractFieldSelect.propTypes = {
   handleChange: PropTypes.func.isRequired,
 };
 
-export default withNamespaces()(ContractFieldSelect);
+export default withTranslation()(ContractFieldSelect);

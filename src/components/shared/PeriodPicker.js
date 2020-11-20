@@ -8,7 +8,7 @@ import {
   makeStyles,
 } from "@material-ui/core";
 
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import moment from "moment";
 
 import DatePeriods from "../../support/DatePeriods";
@@ -124,4 +124,4 @@ PeriodPicker.propTypes = {
   renderPeriod: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
 };
 
-export default withNamespaces()(PeriodPicker);
+export default withTranslation()(PeriodPicker);

@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import moment from "moment";
 import { makeStyles } from "@material-ui/core";
 import { getOptionFromField } from "./utils";
@@ -46,4 +46,4 @@ ContractShort.propTypes = {
   contractFields: PropTypes.array,
 };
 
-export default withNamespaces()(ContractShort);
+export default withTranslation()(ContractShort);

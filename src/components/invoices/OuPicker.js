@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 
 const styles = theme => ({
   formControl: {
@@ -40,4 +40,4 @@ OuPicker.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(withNamespaces()(OuPicker));
+export default withStyles(styles)(withTranslation()(OuPicker));

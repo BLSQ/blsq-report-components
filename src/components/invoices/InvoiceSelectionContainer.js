@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import Paper from "@material-ui/core/Paper";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Typography from "@material-ui/core/Typography";
@@ -226,4 +226,4 @@ InvoiceSelectionContainer.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(withNamespaces()(InvoiceSelectionContainer));
+export default withStyles(styles)(withTranslation()(InvoiceSelectionContainer));

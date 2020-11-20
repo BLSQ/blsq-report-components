@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 
 const styles = {
   rowStyle: {
@@ -49,4 +49,4 @@ ErrorsTable.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(withNamespaces()(ErrorsTable));
+export default withStyles(styles)(withTranslation()(ErrorsTable));

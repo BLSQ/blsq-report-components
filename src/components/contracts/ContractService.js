@@ -92,7 +92,11 @@ class ContractService {
     events = rawEvents.listGrid.rows.map((row) => {
       let dataVals = [];
       try {
-        dataVals = JSON.parse(row[indexes.data_values].value);
+        if (typeof row[indexes.data_values] === "string" || row[indexes.data_values] instanceof String) {
+          dataVals = JSON.parse(row[indexes.data_values]);
+        } else {
+          dataVals = JSON.parse(row[indexes.data_values].value);
+        }
       } catch (err) {
         throw new Error("failed to parse : " + row[indexes.data_values].value + " " + err.message);
       }

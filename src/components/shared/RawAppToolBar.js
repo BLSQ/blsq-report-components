@@ -16,7 +16,7 @@ import { withStyles } from "@material-ui/core/styles";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import MenuIcon from "@material-ui/icons/Menu";
 
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import ExtensionsComponent from "../core/ExtensionsComponent";
 
 import { setIsOpenDrawer } from "../redux/actions/drawer";
@@ -164,7 +164,7 @@ const MapDispatchToProps = (dispatch) => ({
   dispatch,
 });
 
-export default withNamespaces()(
+export default withTranslation()(
   withStyles(styles)(
     connect(MapStateToProps, MapDispatchToProps)(RawAppToolBar),
   ),

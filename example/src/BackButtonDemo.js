@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
 import PropTypes from "prop-types";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 
 class BackButtonDemo extends Component {
   static contextTypes = {
@@ -21,4 +21,4 @@ class BackButtonDemo extends Component {
   }
 }
 
-export default withNamespaces()(BackButtonDemo);
+export default withTranslation()(BackButtonDemo);

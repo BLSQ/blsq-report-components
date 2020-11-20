@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import debounce from "lodash/debounce";
 import {
   makeStyles,
@@ -145,4 +145,4 @@ OuSearch.propTypes = {
   label: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
 };
 
-export default withNamespaces()(OuSearch);
+export default withTranslation()(OuSearch);

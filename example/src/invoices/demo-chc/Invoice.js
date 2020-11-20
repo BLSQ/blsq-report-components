@@ -4,7 +4,7 @@ import { Cell } from "@blsq/blsq-report-components";
 import DoneIcon from "@material-ui/icons/Done";
 import CloseIcon from "@material-ui/icons/Close";
 import InvoiceSignatures from "./InvoiceSignatures";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import { DatePeriods } from "@blsq/blsq-report-components";
 
 const styles = {
@@ -223,4 +223,4 @@ class Invoice extends Component {
   }
 }
 
-export default withStyles(styles)(withNamespaces()(Invoice));
+export default withStyles(styles)(withTranslation()(Invoice));

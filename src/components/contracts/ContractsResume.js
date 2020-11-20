@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 
 import tablesStyles from "../styles/tables";
 
@@ -42,4 +42,4 @@ ContractResume.propTypes = {
   t: PropTypes.func.isRequired,
 };
 
-export default withNamespaces()(ContractResume);
+export default withTranslation()(ContractResume);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import Typography from "@material-ui/core/Typography";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import { Breadcrumbs, Grid, makeStyles, Divider, Box, Button } from "@material-ui/core";
 import Add from "@material-ui/icons/Add";
 import { Link, withRouter } from "react-router-dom";
@@ -236,4 +236,4 @@ ContractPage.propTypes = {
   history: PropTypes.object.isRequired,
 };
 
-export default withRouter(withNamespaces()(ContractPage));
+export default withRouter(withTranslation()(ContractPage));

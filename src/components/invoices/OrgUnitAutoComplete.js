@@ -8,7 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 
 const full_name = (suggestion) => {
   const ancestorsWithoutCountry = suggestion.ancestors
@@ -225,5 +225,5 @@ IntegrationReactSelect.propTypes = {
 };
 
 export default withStyles(styles, { withTheme: true })(
-  withNamespaces()(IntegrationReactSelect),
+  withTranslation()(IntegrationReactSelect),
 );

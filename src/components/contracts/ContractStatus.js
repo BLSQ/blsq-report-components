@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import { Popover, Box, IconButton, Tooltip } from "@material-ui/core";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import classNames from "classnames";
 
 import icons from "../styles/icons";
@@ -105,4 +105,4 @@ ContractStatus.propTypes = {
   t: PropTypes.func.isRequired,
 };
 
-export default withNamespaces()(ContractStatus);
+export default withTranslation()(ContractStatus);

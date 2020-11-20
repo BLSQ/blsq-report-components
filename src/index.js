@@ -22,9 +22,13 @@ import InvoicePlugin from "./components/invoices/InvoicePlugin";
 import IncentivePlugin from "./components/incentives/IncentivePlugin";
 import BrowseDataPlugin from "./components/browsedata/BrowseDataPlugin";
 import PyramidPlugin from "./components/pyramid/PyramidPlugin";
+import DataEntryPlugin from "./components/dataentry/DataEntryPlugin";
 
 import { indexBy } from "./support/Arrays";
 import configureI18N from "./support/configureI18N";
+import Dhis2Formula from "./components/dataentry/Dhis2Formula";
+import Dhis2Input from "./components/dataentry/Dhis2Input";
+
 export {
   AppDrawer,
   InvoiceSelectionContainer,
@@ -49,4 +53,7 @@ export {
   IncentivePlugin,
   BrowseDataPlugin,
   PyramidPlugin,
+  DataEntryPlugin,
+  Dhis2Formula,
+  Dhis2Input,
 };

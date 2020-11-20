@@ -127,7 +127,7 @@ class InvoiceToolBar extends Component {
       ? this.props.calculateState.running +
         " / " +
         this.props.calculateState.total
-      : "Calculate";
+      : this.props.t("re_calculate");
     const recalculateButton = this.props.onRecalculate && (
       <Button
         onClick={this.handleClickOpen}

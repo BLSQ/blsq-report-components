@@ -1,37 +1,26 @@
-import Dhis2 from "../../../support/Dhis2";
 import Values from "./Values";
+import GroupBasedOrgUnitsResolver from "./GroupBasedOrgUnitsResolver";
+import PluginRegistry from "../../core/PluginRegistry";
 
 class InvoiceService {
   async fetchInvoiceData(dhis2, orgUnitId, period, invoiceType, mapper) {
-    let mainOrgUnit,
-      orgUnits = [],
-      categoryCombos = [],
-      categoryCombo = "";
+    const extensions = PluginRegistry.extensions("invoices.orgUnitsResolver");
+    const resolver =
+      extensions.length > 0
+        ? extensions[extensions.length - 1]
+        : new GroupBasedOrgUnitsResolver();
 
-    if (invoiceType.isPartner) {
-      categoryCombo = orgUnitId;
-      const country = await dhis2.getTopLevels([1]);
-      orgUnitId = country.organisationUnits[0].id;
-    }
-
-    if (invoiceType.contractGroupSet) {
-      orgUnits = await dhis2.getOrgunitsForContract(
-        orgUnitId,
-        invoiceType.contractGroupSet
-      );
-      mainOrgUnit = await dhis2.getOrgunit(orgUnitId);
-    } else if (invoiceType.organisationUnitGroup) {
-      orgUnits = await dhis2.getOrgunitsForGroup(
-        orgUnitId,
-        invoiceType.organisationUnitGroup
-      );
-      orgUnits = orgUnits.organisationUnits;
-      mainOrgUnit = await dhis2.getOrgunit(orgUnitId);
-    } else {
-      mainOrgUnit = await dhis2.getOrgunit(orgUnitId);
-      orgUnits = [mainOrgUnit];
-    }
-
+        const {
+      mainOrgUnit,
+      orgUnits,
+      categoryCombo
+    } = await resolver.resolveOrgunits(
+      dhis2,
+      orgUnitId,
+      period,
+      invoiceType,
+      mapper
+    );
     const request = dhis2.buildInvoiceRequest(
       invoiceType.includeMainOrgUnit
         ? orgUnits.concat([mainOrgUnit])

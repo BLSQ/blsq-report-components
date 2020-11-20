@@ -8,55 +8,55 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
-import { withNamespaces } from "react-i18next";
+import { withTranslation } from "react-i18next";
 
-const full_name = suggestion => {
+const full_name = (suggestion) => {
   const ancestorsWithoutCountry = suggestion.ancestors
     .slice(1)
-    .map(ou => ou.name);
+    .map((ou) => ou.name);
   ancestorsWithoutCountry.push(suggestion.name);
   return ancestorsWithoutCountry.join(" > ");
 };
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     flexGrow: 1,
-    height: 40
+    height: 40,
   },
   input: {
     display: "flex",
     width: "560px",
-    padding: 0
+    padding: 0,
   },
   valueContainer: {
     display: "flex",
     flexWrap: "wrap",
     flex: 1,
     alignItems: "center",
-    overflow: "hidden"
+    overflow: "hidden",
   },
   noOptionsMessage: {
-    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`
+    padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
   },
   singleValue: {
-    fontSize: 16
+    fontSize: 16,
   },
   placeholder: {
     position: "absolute",
     left: 2,
-    fontSize: 16
+    fontSize: 16,
   },
   paper: {
     position: "absolute",
     maxWidth: "630px",
     zIndex: 1,
-    marginTop: theme.spacing.unit,
+    marginTop: theme.spacing(1),
     left: 0,
-    right: 0
+    right: 0,
   },
   divider: {
-    height: theme.spacing.unit * 2
-  }
+    height: theme.spacing(2),
+  },
 });
 
 function NoOptionsMessage(props) {
@@ -84,8 +84,8 @@ function Control(props) {
           className: props.selectProps.classes.input,
           inputRef: props.innerRef,
           children: props.children,
-          ...props.innerProps
-        }
+          ...props.innerProps,
+        },
       }}
       {...props.selectProps.textFieldProps}
     />
@@ -99,7 +99,7 @@ function Option(props) {
       selected={props.isFocused}
       component="div"
       style={{
-        fontWeight: props.isSelected ? 500 : 400
+        fontWeight: props.isSelected ? 500 : 400,
       }}
       {...props.innerProps}
     >
@@ -158,11 +158,11 @@ const components = {
   Option,
   Placeholder,
   SingleValue,
-  ValueContainer
+  ValueContainer,
 };
 
 class IntegrationReactSelect extends React.Component {
-  handleChange = name => value => {
+  handleChange = (name) => (value) => {
     this.props.onChange(value ? value.orgUnit.id : undefined);
   };
 
@@ -175,28 +175,26 @@ class IntegrationReactSelect extends React.Component {
     }
 
     const options =
-      organisationUnits !== undefined
-        ? organisationUnits.organisationUnits.map(ou => ({
+      organisationUnits && organisationUnits.organisationUnits
+        ? organisationUnits.organisationUnits.map((ou) => ({
             value: ou.id,
             label: full_name(ou),
-            orgUnit: ou
+            orgUnit: ou,
           }))
         : [];
     const selectStyles = {
-      input: base => ({
+      input: (base) => ({
         ...base,
         color: theme.palette.text.primary,
         "& input": {
-          font: "inherit"
-        }
-      })
+          font: "inherit",
+        },
+      }),
     };
 
     const selected = this.props.selected
-      ? options.find(ou => ou.value === this.props.selected)
+      ? options.find((ou) => ou.value === this.props.selected)
       : undefined;
-
-
 
     return (
       <div className={classes.root}>
@@ -206,8 +204,8 @@ class IntegrationReactSelect extends React.Component {
           textFieldProps={{
             label: this.props.t("limit_org_unit_under"),
             InputLabelProps: {
-              shrink: true
-            }
+              shrink: true,
+            },
           }}
           options={options}
           components={components}
@@ -223,7 +221,9 @@ class IntegrationReactSelect extends React.Component {
 
 IntegrationReactSelect.propTypes = {
   classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired
+  theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(withNamespaces()(IntegrationReactSelect));
+export default withStyles(styles, { withTheme: true })(
+  withTranslation()(IntegrationReactSelect),
+);

@@ -13,7 +13,6 @@ const incentiveRoute = props => {
           periodFormat={props.periodFormat}
           currentUser={props.currentUser}
           onPeriodChange={props.onPeriodChange}
-          incentivesDescriptors={props.incentivesDescriptors}
           dhis2={props.dhis2}
           {...props.config.global}
           {...props}

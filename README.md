@@ -33,19 +33,26 @@ Your best chance is to look at the code and running the example app: https://git
 git clone git@github.com:BLSQ/blsq-report-components.git
 cd blsq-report-components
 npm install
-./install_peer.sh
 npm test
 ```
 
 ```
+npm link
 npm start
 ```
 
 ```
 cd example
 npm start
+npm link @blsq/blsq-report-components
+npm link ../node_modules/react
 ```
 
+you might need to upgrade jest snapshots (assertion based on latest recorded data)
+
+```
+npm test -- --updateSnapshot
+```
 
 ## License
 

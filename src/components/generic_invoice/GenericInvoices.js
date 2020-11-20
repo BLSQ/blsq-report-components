@@ -59,12 +59,14 @@ class GenericInvoices {
     let applicableInvoices = [];
 
     this.invoiceDescriptors.forEach(invoiceDescriptor => {
-      const matching = orgUnit.organisationUnitGroups.filter(oug =>
-        invoiceDescriptor.orgUnitGroupIds.includes(oug.id)
-      );
+      if (orgUnit.organisationUnitGroups) {
+        const matching = orgUnit.organisationUnitGroups.filter(oug =>
+          invoiceDescriptor.orgUnitGroupIds.includes(oug.id)
+        );
 
-      if (matching.length > 0) {
-        applicableInvoices.push(invoiceDescriptor.code);
+        if (matching.length > 0) {
+          applicableInvoices.push(invoiceDescriptor.code);
+        }
       }
     });
     return applicableInvoices;

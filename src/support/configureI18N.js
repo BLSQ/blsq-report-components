@@ -1,8 +1,8 @@
 import i18n from "i18next";
-import { reactI18nextModule } from "react-i18next";
+import { initReactI18next } from "react-i18next";
 
-import translationEN from "../locales/en/translations.js";
-import translationFR from "../locales/fr/translations.js";
+import translationEN from "../locales/en.json";
+import translationFR from "../locales/fr.json";
 
 const configureI18N = lang => {
   const translation = lang === "fr" ? translationFR : translationEN;
@@ -10,12 +10,16 @@ const configureI18N = lang => {
     en: { translation: { ...translation, ...translationEN } },
     fr: { translation: { ...translation, ...translationFR } }
   };
-  i18n.use(reactI18nextModule).init({
+  i18n.use(initReactI18next).init({
     resources: resources,
     lng: lang,
     interpolation: {
-      escapeValue: false // react already safes from xss
-    }
+      escapeValue: false, // react already safes from xss
+      formatSeparator: ',',
+    },
+    react: {
+        wait: true,
+    },
   });
 
   return i18n;

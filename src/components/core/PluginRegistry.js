@@ -10,7 +10,10 @@ class PluginRegistry {
   static extensions(extensionKey) {
     if (extensionCache[extensionKey] == undefined) {
       const extensions = [];
-      this.allPlugins().forEach(plugin => {
+      this.allPlugins().forEach((plugin) => {
+        if (plugin.extensions === undefined) {
+          throw new Error("plugin doens't have extensions" + plugin);
+        }
         const currentExtensions = plugin.extensions[extensionKey] || [];
         if (currentExtensions) {
           extensions.push(...currentExtensions);
@@ -21,8 +24,12 @@ class PluginRegistry {
     return extensionCache[extensionKey];
   }
 
+  static extension(extensionKey) {
+    return this.extensions(extensionKey)[0]
+  }
+
   static allPlugins() {
-    return Object.keys(plugins).map(pluginKey => plugins[pluginKey]);
+    return Object.keys(plugins).map((pluginKey) => plugins[pluginKey]);
   }
 
   static resetExtenstionCache() {

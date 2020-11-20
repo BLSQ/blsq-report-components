@@ -1,25 +1,35 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import { withNamespaces } from "react-i18next";
+import Box from "@material-ui/core/Box";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Typography from "@material-ui/core/Typography";
-import Dialog from "@material-ui/core/Dialog";
-import Button from "@material-ui/core/Button";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import List from "@material-ui/core/List";
-import Divider from "@material-ui/core/Divider";
-import { Link } from "react-router-dom";
-import DatePeriods from "../../support/DatePeriods";
+import PropTypes from "prop-types";
 import InvoiceLinks from "./InvoiceLinks";
+import Tooltip from "@material-ui/core/Tooltip";
+import { withStyles } from "@material-ui/core/styles";
+import { withTranslation } from "react-i18next";
+import { Typography } from "@material-ui/core";
 
-const styles = theme => ({});
+const styles = (theme) => ({});
+
+const contractsToTooltip = (orgUnit, period) => {
+  if (orgUnit.contracts === undefined) {
+    return "";
+  }
+  return orgUnit.contracts.map((c, index) => (
+    <div key={index}>
+      {c.codes.join(",") +
+        " : " +
+        c.startPeriod +
+        " " +
+        c.endPeriod +
+        " " +
+        (c.matchPeriod(period) ? "**" : "")}
+    </div>
+  ));
+};
 
 class SelectionResultsContainer extends Component {
   render() {
@@ -29,9 +39,8 @@ class SelectionResultsContainer extends Component {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell>{this.props.levels.slice(1).join(" > ")}</TableCell>
               <TableCell>{this.props.t("name")}</TableCell>
-              <TableCell>{this.props.levels[1]}</TableCell>
-              <TableCell>{this.props.levels[2]}</TableCell>
               <TableCell>{this.props.t("invoice")}</TableCell>
             </TableRow>
           </TableHead>
@@ -39,20 +48,32 @@ class SelectionResultsContainer extends Component {
             {this.props.orgUnits &&
               this.props.orgUnits.map((orgUnit, index) => (
                 <TableRow key={orgUnit.id + index}>
-                  <TableCell
-                    component="th"
-                    scope="row"
-                    title={orgUnit.organisationUnitGroups
-                      .map(g => g.name)
-                      .join(", ")}
-                  >
-                    {orgUnit.name}
+
+                  <TableCell >
+                    <Box >
+                      <Typography>
+                        {orgUnit.ancestors
+                          .slice(1)
+                          .map((a) => a.name)
+                          .join(" > ")}
+                      </Typography>
+                    </Box>
                   </TableCell>
-                  <TableCell>
-                    {orgUnit.ancestors[1] && orgUnit.ancestors[1].name}
-                  </TableCell>
-                  <TableCell>
-                    {orgUnit.ancestors[2] && orgUnit.ancestors[2].name}
+                  <TableCell component="th" scope="row">
+                    <Tooltip
+                      title={
+                        <div>
+                          {orgUnit.id} -
+                          {orgUnit.organisationUnitGroups
+                            .map((g) => g.name)
+                            .join(", ")}
+                          <br></br>
+                          {contractsToTooltip(orgUnit, this.props.period)}
+                        </div>
+                      }
+                    >
+                      <Box fontWeight="fontWeightBold">{orgUnit.name}</Box>
+                    </Tooltip>
                   </TableCell>
                   <TableCell>
                     <InvoiceLinks
@@ -71,7 +92,7 @@ class SelectionResultsContainer extends Component {
 }
 
 SelectionResultsContainer.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(withNamespaces()(SelectionResultsContainer));
+export default withStyles(styles)(withTranslation()(SelectionResultsContainer));

@@ -55,6 +55,7 @@
     "i18next": "^19.0.0",
     "jest": "^24.9.0",
     "mui-datatables": "^3.2.0",
+    "papaparse": "5.3.0",
     "prettier": "^2.0.5",
     "prop-types": "^15.5.4",
     "react": "^16.13.1",

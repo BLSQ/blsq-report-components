@@ -18,6 +18,10 @@ class ContractService {
     this.allEventsSqlViewId = allEventsSqlViewId;
   }
 
+  contractFields() {
+    return this.toContractFields(this.program);
+  }
+
   toContract(event) {
     const contract = { id: event.event };
     event.dataValues.forEach((dv) => {
@@ -253,12 +257,21 @@ class ContractService {
     return event;
   };
 
+  newContract(fieldValues) {
+    return new Contract(fieldValues);
+  }
   async createContract(orgUnitIds, contract) {
     const events = orgUnitIds.map((orgUnitId) => this.getEvent(contract.fieldValues, orgUnitId));
     const res = await this.api.post("events", { events });
     return res;
   }
 
+
+  async createContracts(contracts) {
+    const events = contracts.map((contract) => this.getEvent(contract.fieldValues, contract.orgUnit.id));
+    const res = await this.api.post("events", { events });
+    return res;
+  }
   async updateContract(contract) {
     const event = this.getEvent(contract.fieldValues, contract.fieldValues.orgUnit.id);
     const res = await this.api.update(`events/${contract.id}`, {

@@ -33,7 +33,7 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
         return undefined;
       }
       activeContract.orgUnit.activeContracts = [activeContract];
-      debugger;
+
       setOrgUnit(activeContract.orgUnit);
       const expectedDataEntries = dataEntryRegistry.getExpectedDataEntries(activeContract, period);
       setDataEntries(expectedDataEntries);

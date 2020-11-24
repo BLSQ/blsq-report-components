@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -8,7 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
 import Step3 from "./Step3";
-
+import { Link } from "react-router-dom";
 import PluginRegistry from "../../core/PluginRegistry";
 
 import _ from "lodash";
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
     padding: theme.spacing(4),
     minHeight: "70vh",
-  }
+  },
 }));
 
 const steps = [
@@ -114,10 +114,6 @@ function HorizontalLabelPositionBelowStepper({ dhis2 }) {
     }
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
-  };
-
   const StepContent = getStepContent(activeStep);
 
   return (
@@ -130,31 +126,32 @@ function HorizontalLabelPositionBelowStepper({ dhis2 }) {
         ))}
       </Stepper>
       <div>
-        {activeStep === steps.length ? (
+        <Paper className={classes.rootStepContainer}>
+          <StepContent
+            setContractsToImport={setContractsToImport}
+            contractsToImport={contractsToImport}
+            setValidatedContracts={setValidatedContracts}
+            validatedContracts={validatedContracts}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+            dhis2={dhis2}
+            progress={progress}
+          />
           <div>
-            <Typography className={classes.instructions}>All steps completed</Typography>
-            <Button onClick={handleReset}>Reset</Button>
+            <br />
+            <Button variant="contained" color="primary" onClick={handleNext} disabled={isLoading || completed}>
+              {activeStep === steps.length - 1 ? "Confirm" : "Next"}
+            </Button>
+
+            {completed && (
+              <div>
+                <Link to="/contracts/">
+                  <Button>Check the imported contracts</Button>
+                </Link>
+              </div>
+            )}
           </div>
-        ) : (
-          <Paper className={classes.rootStepContainer}>
-            <StepContent
-              setContractsToImport={setContractsToImport}
-              contractsToImport={contractsToImport}
-              setValidatedContracts={setValidatedContracts}
-              validatedContracts={validatedContracts}
-              isLoading={isLoading}
-              setIsLoading={setIsLoading}
-              dhis2={dhis2}
-              progress={progress}
-            />
-            <div>
-              <br />
-              <Button variant="contained" color="primary" onClick={handleNext} disabled={isLoading || completed}>
-                {activeStep === steps.length - 1 ? "Confirm" : "Next"}
-              </Button>
-            </div>
-          </Paper>
-        )}
+        </Paper>
       </div>
     </div>
   );

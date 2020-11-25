@@ -8,6 +8,7 @@ import { defaultOptions } from "../../support/table";
 import OrgUnitIcon from "../shared/icons/OrgUnitIcon";
 import ContractStatus from "./ContractStatus";
 import { getOrgUnitAncestors, getOptionFromField, getContractByOrgUnit } from "./utils/index";
+import DeleteContractDialog from "./DeleteContractDialog";
 
 export const contractsTableColumns = (
   t,
@@ -165,6 +166,8 @@ export const contractsTableColumns = (
               displayOrgUnit={displayOrgUnit}
               displayMainOrgUnit={displayMainOrgUnit}
             />
+            {isDetail && <DeleteContractDialog contract={contract} onSavedSuccessfull={fetchContracts} />}
+
             {!isDetail && (
               <Tooltip placement="bottom" title={t("contracts.seeOrgUnit")} arrow>
                 <Link

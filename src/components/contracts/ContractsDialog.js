@@ -69,12 +69,15 @@ const ContractsDialog = ({
 
   const contractService = PluginRegistry.extension("contracts.service");
   const [currentContract, setCurrentContract] = React.useState(contract);
+  const [validationErrors, setValidationErrors] = React.useState([]);
   const isLoading = useSelector((state) => state.load.isLoading);
   const classes = useStyles();
   const dispatch = useDispatch();
 
   useEffect(() => {
+    const errors = contractService.validateContract(contract);
     setCurrentContract(contract);
+    setValidationErrors(errors);
   }, [contract]);
   const handleClickOpen = () => {
     setOpen(true);
@@ -83,7 +86,7 @@ const ContractsDialog = ({
     setOpen(false);
   };
   const handleChange = (key, value, subKey) => {
-    setCurrentContract({
+    const updatedContract = {
       ...currentContract,
       [key]: !subKey
         ? value
@@ -91,7 +94,11 @@ const ContractsDialog = ({
             ...currentContract[key],
             [subKey]: value,
           },
-    });
+    };
+    const errors = contractService.validateContract(updatedContract);
+
+    setCurrentContract(updatedContract);
+    setValidationErrors(errors);
   };
   const handleSave = () => {
     dispatch(setIsLoading(true));
@@ -146,6 +153,9 @@ const ContractsDialog = ({
           <IconButton className={classes.closeButton} onClick={handleClose}>
             <CloseIcon />
           </IconButton>
+          {validationErrors.length > 0 && (
+            <span style={{ color: "red" }}>{validationErrors.map((err) => err.message).join(" ")}</span>
+          )}
         </DialogTitle>
         <DialogContent dividers>
           <Grid container spacing={2}>

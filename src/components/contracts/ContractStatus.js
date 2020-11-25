@@ -13,7 +13,7 @@ import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import CancelIcon from "@material-ui/icons/Cancel";
 import InfoIcon from "@material-ui/icons/Info";
 
-const getOverlaps = (contracts) => contracts.map((c) => <div key={c.id}>{`${c.orgUnit.name}, id: ${c.id}`}</div>);
+const getOverlaps = (contracts) => contracts.map((c) => <div key={c.id}>{`${c.orgUnit.name}, id: ${c.id}, ${c.startPeriod} - ${c.endPeriod}`}</div>);
 
 const styles = (theme) => ({
   ...tablesStyles(theme),
@@ -43,7 +43,7 @@ const ContractStatus = ({ contract, t }) => {
   };
   const openPopOver = Boolean(anchorEl);
   const id = openPopOver ? "contract-status" : undefined;
-  const { coverageIssue, nonVisibleOverlaps, visibleOverlaps } = contract.statusDetail;
+  const { coverageIssue, nonVisibleOverlaps, visibleOverlaps , validationErrors } = contract.statusDetail;
   return contract.status ? (
     <CheckCircleIcon className={classNames(classes.success, classes.tableIcon)} />
   ) : (
@@ -64,6 +64,7 @@ const ContractStatus = ({ contract, t }) => {
         }}
       >
         <Box p={2}>
+          {validationErrors.length > 0 && <Box>{validationErrors.map((f) => f.message).join(" ")}</Box>}
           {coverageIssue && <Box>{t("contracts.status.coverageIssue")}</Box>}
           {visibleOverlaps && visibleOverlaps.length > 0 && (
             <Box>

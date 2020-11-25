@@ -24,10 +24,13 @@
             "visibleOverlaps": "Ce contrat se chevauche avec {{count}} contrat(s)"
         },
         "subContracts": "Sous-contrat(s)",
-        "title": "Contrats"
+        "title": "Contrats",
+        "deleteTitle": "Suppression du contrat",
+        "deleteWarning": "La suppression du contrat n'a aucune influence sur les données qui étaient liées à ce contrat. Si il y a des sous-contrats liés à ce contrat, supprimez ou mettez à jour ceux-ci d'abord."
     },
     "create": "Créer",
     "edit": "Editer",
+    "delete": "Supprimer",
     "end_period": "Fin",
     "filter": "Filtrer",
     "generated_at": "Généré le",
@@ -107,5 +110,8 @@
             "title": "Colonnes visibles",
             "titleAria": "Montrer/cacher des colonnes"
         }
+    },
+    "validations": {
+        "isrequired": "{{field}} est obligatoire"
     }
 }

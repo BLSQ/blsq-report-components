@@ -27,10 +27,13 @@
         "subContractCoveragesWarningSingle": "Sub contract {{rowIndex}} is more large than the main contract coverage",
         "subContractNotVisibleOverlap": "Sub contract {{rowIndex}} overlaps with {{count}} contract(s) not visible on this page",
         "subContracts": "Sub contract(s)",
-        "title": "Contracts"
+        "title": "Contracts",
+        "deleteTitle": "Delete contract",
+        "deleteWarning": "This will only delete the contract, data generated based on these infos will remain. If subcontracted orgunits reference this contract, delete/update them first."
     },
     "create": "Create",
     "edit": "Edit",
+    "delete": "Delete",
     "end_period": "End",
     "filter": "Filter",
     "generated_at": "Generated on",
@@ -110,5 +113,8 @@
             "title": "Show Columns",
             "titleAria": "Show/Hide Table Columns"
         }
+    },
+    "validations": {
+        "isrequired": "{{field}} is required"
     }
 }

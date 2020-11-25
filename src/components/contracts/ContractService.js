@@ -1,4 +1,6 @@
 import Contract from "./Contract";
+import PluginRegistry from "../core/PluginRegistry";
+import DefaultValidator from "./validations/DefaultValidator";
 import { getOrgUnitCoverage, checkSubContractCoverage, checkNonVisibleOverlap, getOverlaps } from "./utils/index";
 
 class ContractService {
@@ -45,7 +47,9 @@ class ContractService {
 
   toContractFields = (program) => {
     const dataElements = program.programStages.flatMap((ps) =>
-      ps.programStageDataElements.map((psde) => psde.dataElement),
+      ps.programStageDataElements.map((psde) => {
+        return { ...psde.dataElement, compulsory: psde.compulsory };
+      }),
     );
     return dataElements.map((de) => {
       return {
@@ -138,10 +142,37 @@ class ContractService {
     return contracts;
   }
 
+  validateContract(contract) {
+    const i18n = PluginRegistry.extension("core.i18n");
+    const t = (key, options) => i18n.translator.translate(key, options);
+    const validators = this.getValidators();
+    const contractFields = this.toContractFields(this.program);
+    return this._validate(validators, contract, { contractFields, t });
+  }
+
+  getValidators() {
+    if (this.validators == undefined) {
+      this.validators = PluginRegistry.extensions("contracts.validator");
+    }
+    return this.validators;
+  }
+
+  _validate(validators, contract, context) {
+    const errors = validators.flatMap((validator) => {
+      return validator(contract, context);
+    });
+    return errors.filter((err) => err);
+  }
+
   computeContracts = (contracts, orgUnitId) => {
+    const i18n = PluginRegistry.extension("core.i18n");
+    const t = (key, options) => i18n.translator.translate(key, options);
+
+    const validators = this.getValidators();
     let subContracts = [];
     let mainContracts = [];
     const allContractsOverlaps = this.toOverlappings(contracts);
+    const contractFields = this.toContractFields(this.program);
     contracts.sort((a, b) => (a.endPeriod < b.endPeriod ? 1 : -1));
     if (orgUnitId) {
       subContracts = contracts.filter(
@@ -164,19 +195,26 @@ class ContractService {
           allContractsOverlaps,
         );
         const visibleOverlaps = getOverlaps(c.id, subContractsOverlaps, subContractsById);
-        c.status = !coverageIssue && !nonVisibleOverlaps && visibleOverlaps.length === 0;
+
+        const validationErrors = this._validate(validators, c, { contractFields, t });
+        c.status =
+          !coverageIssue && !nonVisibleOverlaps && visibleOverlaps.length === 0 && validationErrors.length === 0;
+
         c.statusDetail = {
           coverageIssue,
           nonVisibleOverlaps,
           visibleOverlaps,
+          validationErrors,
         };
         c.rowIndex = i + 1;
       });
       mainContracts.forEach((c, i) => {
         const visibleOverlaps = getOverlaps(c.id, mainContractsOverlaps, mainContractsById);
-        c.status = visibleOverlaps.length === 0;
+        const validationErrors = this._validate(validators, c, { contractFields, t });
+        c.status = visibleOverlaps.length === 0 && validationErrors.length == 0;
         c.statusDetail = {
           visibleOverlaps,
+          validationErrors,
         };
         c.rowIndex = i + 1;
       });
@@ -193,16 +231,18 @@ class ContractService {
           contractsById: mainContractsById,
           contractsOverlaps: mainContractsOverlaps,
         },
-        contractFields: this.toContractFields(this.program),
+        contractFields: contractFields,
       };
     }
     const contractsOverlaps = this.toOverlappings(contracts);
     const contractsById = this.toContractsById(contracts);
     contracts.forEach((c) => {
+      const validationErrors = this._validate(validators, c, { contractFields, t });
       const visibleOverlaps = getOverlaps(c.id, contractsOverlaps, contractsById);
-      c.status = visibleOverlaps.length === 0;
+      c.status = visibleOverlaps.length === 0 && validationErrors.length === 0;
       c.statusDetail = {
         visibleOverlaps,
+        validationErrors,
       };
     });
 
@@ -210,17 +250,13 @@ class ContractService {
       contracts,
       contractsById,
       contractsOverlaps,
-      contractFields: this.toContractFields(this.program),
+      contractFields: contractFields,
     };
   };
 
   async fetchContracts(orgUnitId) {
     let contracts = await this.findAll();
     return this.computeContracts(contracts, orgUnitId);
-  }
-
-  async deleteContract(contractId) {
-    await this.api.delete(`events/${contractId}`);
   }
 
   getEvent = (contractInfo, orgUnitId) => {
@@ -260,12 +296,17 @@ class ContractService {
   newContract(fieldValues) {
     return new Contract(fieldValues);
   }
+
+  async deleteContract(contract) {
+    const res = await this.api.delete("events/" + contract.id);
+    return res;
+  }
+
   async createContract(orgUnitIds, contract) {
     const events = orgUnitIds.map((orgUnitId) => this.getEvent(contract.fieldValues, orgUnitId));
     const res = await this.api.post("events", { events });
     return res;
   }
-
 
   async createContracts(contracts) {
     const events = contracts.map((contract) => this.getEvent(contract.fieldValues, contract.orgUnit.id));

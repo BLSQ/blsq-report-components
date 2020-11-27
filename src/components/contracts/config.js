@@ -25,6 +25,22 @@ export const contractsTableColumns = (
 ) => {
   const columns = [
     {
+      name: "id",
+      label: t("id"),
+      options: {
+        filter: false,
+        display: false,
+        sort: true,
+        setCellHeaderProps: () => ({
+          className: classes.headerCell,
+        }),
+        customBodyRenderLite: (dataIndex) => {
+          const { id } = filteredContracts[dataIndex];
+          return id;
+        },
+      },
+    },
+    {
       name: "status",
       label: t("status"),
       options: {
@@ -58,6 +74,23 @@ export const contractsTableColumns = (
         },
       },
     },
+    {
+      name: "orgUnit.id",
+      label: t("orgUnit_id"),
+      options: {
+        filter: false,
+        display: false,
+        sort: true,
+        setCellHeaderProps: () => ({
+          className: classes.headerCell,
+        }),
+        customBodyRenderLite: (dataIndex) => {
+          const { orgUnit } = filteredContracts[dataIndex];
+          return orgUnit.id;
+        },
+      },
+    },
+
     {
       name: "fieldValues.contract_start_date",
       label: t("start_period"),
@@ -113,6 +146,24 @@ export const contractsTableColumns = (
               <span>{mainContract.orgUnit.name}</span>
             </Tooltip>
           );
+        },
+      },
+    },
+    {
+      name: "fieldValues.contract_main_orgunit_id",
+      label: t("contracts.contract_main_orgunit_id"),
+      options: {
+        filter: false,
+        display: false,
+        sort: true,
+        setCellProps: () => ({
+          align: "center",
+        }),
+        setCellHeaderProps: () => ({
+          className: classNames(classes.cellCentered, classes.headerCell),
+        }),
+        customBodyRender: (contractMainOrgunitId) => {
+          return contractMainOrgunitId;
         },
       },
     },
@@ -223,6 +274,7 @@ export const contractsTableOptions = (t, contracts, onTableChange, tableParams) 
     },
     selectableRowsHideCheckboxes: false,
     selectableRows: "none",
+    downloadOptions: { filename: "contracts.csv", separator: "," },
     rowsPerPageOptions: [10, 25, 50, 100],
     onChangeRowsPerPage: (numberOfRows) => {
       onTableChange("page", 0);

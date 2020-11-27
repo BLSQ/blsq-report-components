@@ -1,4 +1,8 @@
 
+# @blsq/blsq-report-components@1.0.17
+
+- [contracts ] Add some hidden columns in contracts, show some statistics for each fields
+
 # @blsq/blsq-report-components@1.0.16
 
 - [contracts] allow to delete contracts

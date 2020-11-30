@@ -1,7 +1,11 @@
 
+# @blsq/blsq-report-components@1.0.18
+
+- [contracts] Add chart of contracted orgunits per month
+
 # @blsq/blsq-report-components@1.0.17
 
-- [contracts ] Add some hidden columns in contracts, show some statistics for each fields
+- [contracts] Add some hidden columns in contracts, show some statistics for each fields
 
 # @blsq/blsq-report-components@1.0.16
 

@@ -17,7 +17,7 @@ class InvoiceContainer extends Component {
     this.loadLockState = this.loadLockState.bind(this);
     this.loadData = this.loadData.bind(this);
     this.fetchInvoicingJobs = this.fetchInvoicingJobs.bind(this);
-    this.orbf2 = PluginRegistry.extension("invoices.hesabu")
+    this.orbf2 = PluginRegistry.extension("invoices.hesabu");
   }
 
   componentWillUnmount() {
@@ -40,10 +40,7 @@ class InvoiceContainer extends Component {
   }
 
   async fetchInvoicingJobs() {
-    if (
-      this.state.invoice === undefined ||
-      this.state.invoice.calculations.length === 0
-    ) {
+    if (this.state.invoice === undefined || this.state.invoice.calculations.length === 0) {
       this.nextReq(5000);
       return;
     }
@@ -52,14 +49,10 @@ class InvoiceContainer extends Component {
 
     let invoicingJobs;
     try {
-      invoicingJobs = await this.orbf2.invoicingJobs(
-        this.state.invoice.calculations,
-        this.props.currentUser.id
-      );
+      invoicingJobs = await this.orbf2.invoicingJobs(this.state.invoice.calculations, this.props.currentUser.id);
     } catch (error) {
       this.setState({
-        warning:
-          "Sorry was not able to contact ORBF2 backend: " + error.message,
+        warning: "Sorry was not able to contact ORBF2 backend: " + error.message,
       });
       throw error;
     }
@@ -72,8 +65,7 @@ class InvoiceContainer extends Component {
       return invoicingJob.attributes.lastError;
     });
 
-    const wasRunning =
-      this.state.calculateState && this.state.calculateState.running > 0;
+    const wasRunning = this.state.calculateState && this.state.calculateState.running > 0;
 
     this.setState({
       invoicingJobs: invoicingJobs.data,
@@ -117,29 +109,19 @@ class InvoiceContainer extends Component {
         orgUnitId,
         period,
         invoiceType,
-        this.props.invoices.mapper(invoiceTypeCode)
+        this.props.invoices.mapper(invoiceTypeCode),
       );
       invoice.currentUser = this.props.currentUser;
 
-      const calculations = this.props.invoices.getOrbfCalculations(
-        invoice,
-        this.props.currentUser
-      );
+      const calculations = this.props.invoices.getOrbfCalculations(invoice, this.props.currentUser);
       invoice.calculations = calculations;
       this.setState({
         invoice: invoice,
       });
-      document.title =
-        invoiceTypeCode +
-        "-" +
-        period +
-        "-" +
-        (invoice.orgUnit ? invoice.orgUnit.name : "");
+      document.title = invoiceTypeCode + "-" + period + "-" + (invoice.orgUnit ? invoice.orgUnit.name : "");
     } catch (error) {
       this.setState({
-        error:
-          "Sorry something went wrong, try refreshing or contact the support : " +
-          error.message,
+        error: "Sorry something went wrong, try refreshing or contact the support : " + error.message,
       });
       throw error;
     }
@@ -149,10 +131,7 @@ class InvoiceContainer extends Component {
     const api = await this.props.dhis2.api();
 
     const approvals = this.props.invoices.getDataApprovals
-      ? this.props.invoices.getDataApprovals(
-          this.state.invoice,
-          this.props.currentUser
-        )
+      ? this.props.invoices.getDataApprovals(this.state.invoice, this.props.currentUser)
       : [];
     const currentApprovals = [];
     for (let approval of approvals) {
@@ -177,14 +156,12 @@ class InvoiceContainer extends Component {
       }
     }
 
-    console.log(
-      "orgunits to approve " + new Set(approvals.map((a) => a.orgUnit)).size
-    );
+    console.log("orgunits to approve " + new Set(approvals.map((a) => a.orgUnit)).size);
     console.log("approval stats", stats);
     console.log(
       currentApprovals.length +
         " approvals  : mayApprove " +
-        currentApprovals.filter((a) => a.mayApprove == true).length
+        currentApprovals.filter((a) => a.mayApprove == true).length,
     );
     this.state.invoice.approvals = approvals;
     this.state.invoice.currentApprovals = currentApprovals;
@@ -207,9 +184,7 @@ class InvoiceContainer extends Component {
       invoice.orgUnits.forEach((ou) => (orgUnitsById[ou.id] = ou));
 
       const approvableOrgUnitIds = new Set(
-        invoice.currentApprovals
-          .filter((approval) => approval.mayApprove)
-          .map((approval) => approval.orgUnit)
+        invoice.currentApprovals.filter((approval) => approval.mayApprove).map((approval) => approval.orgUnit),
       );
 
       const allowedCalculations = calculations.filter((calculation) => {
@@ -221,7 +196,7 @@ class InvoiceContainer extends Component {
           allowedCalculations.length +
           " out of " +
           calculations.length +
-          " due to already approved data"
+          " due to already approved data",
       );
       allowedCalculations.forEach((calculation) => {
         this.orbf2.calculate(calculation);
@@ -244,36 +219,19 @@ class InvoiceContainer extends Component {
 
     for (let approval of approvals) {
       if (mode === "UNLOCK") {
-        await api.delete(
-          "dataApprovals?pe=" +
-            approval.period +
-            "&ou=" +
-            approval.orgUnit +
-            "&wf=" +
-            approval.wf.id
-        );
+        await api.delete("dataApprovals?pe=" + approval.period + "&ou=" + approval.orgUnit + "&wf=" + approval.wf.id);
       } else if (mode === "LOCK") {
-        await api.post(
-          "dataApprovals?pe=" +
-            approval.period +
-            "&ou=" +
-            approval.orgUnit +
-            "&wf=" +
-            approval.wf.id
-        );
+        await api.post("dataApprovals?pe=" + approval.period + "&ou=" + approval.orgUnit + "&wf=" + approval.wf.id);
       }
     }
     await this.loadLockState();
   }
 
   toolBarButtons = () => {
-    const calculable = this.props.invoices.isCalculable(
-      this.state.invoice,
-      this.props.currentUser
-    );
+    const calculable = this.props.invoices.isCalculable(this.state.invoice, this.props.currentUser);
     return (
       <InvoiceToolBar
-        linkPrefix={"invoices"}
+        linkPrefix={"reports"}
         period={this.props.period}
         orgUnitId={this.props.orgUnitId}
         invoiceCode={this.props.invoiceCode}
@@ -293,31 +251,20 @@ class InvoiceContainer extends Component {
     if (this.state.error !== undefined) {
       return <Warning message={this.state.error} />;
     }
-    if (
-      this.state.invoice === undefined ||
-      this.props.currentUser === undefined
-    ) {
+    if (this.state.invoice === undefined || this.props.currentUser === undefined) {
       return (
         <div>
           <Loader />
         </div>
       );
     }
-    const SelectedInvoice = this.props.invoices.component(
-      this.state.invoice.invoiceType.code
-    );
+    const SelectedInvoice = this.props.invoices.component(this.state.invoice.invoiceType.code);
 
     return (
       <div className="invoicePage">
-        <PageOrientation
-          orientation={this.state.invoice.invoiceType.orientation}
-        />
+        <PageOrientation orientation={this.state.invoice.invoiceType.orientation} />
         {this.toolBarButtons()}
-        <SelectedInvoice
-          invoice={this.state.invoice}
-          orgUnitId={this.props.orgUnitId}
-          period={this.props.period}
-        />
+        <SelectedInvoice invoice={this.state.invoice} orgUnitId={this.props.orgUnitId} period={this.props.period} />
         {this.toolBarButtons()}
       </div>
     );

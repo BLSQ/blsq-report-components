@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { TextField, Tooltip } from "@material-ui/core";
+import { TextField, Tooltip, ClickAwayListener } from "@material-ui/core";
 import FormDataContext from "./FormDataContext";
 
 const parseDependencies = (expression) => {
@@ -34,15 +34,16 @@ const abs = (a) => {
 const iff = (a, b, c) => {
   return a ? b : c;
 };
-const roundFunction = (a,position)=> {
-    return a.toFixed(position)
-}
+const roundFunction = (a, position) => {
+  return a.toFixed(position);
+};
 
 const Dhis2Formula = ({ formula }) => {
   const formDataContext = useContext(FormDataContext);
   const [rawValue, setRawValue] = useState("");
   const [expression, setExpression] = useState("");
   const [error, setError] = useState(undefined);
+  const [open, setOpen] = useState(false);
   useEffect(() => {
     if (formDataContext && formula) {
       const dependencies = parseDependencies(formula);
@@ -65,7 +66,7 @@ const Dhis2Formula = ({ formula }) => {
 
         setRawValue("" + evaluatedExpression);
       } catch (error) {
-        console.log(error, dependencies, expression, formula)
+        console.log(error, dependencies, expression, formula);
         setError(error.message + " " + dependencies + " " + expression);
       }
     }
@@ -74,32 +75,49 @@ const Dhis2Formula = ({ formula }) => {
   if (formDataContext == undefined) {
     return <></>;
   }
+  const handleOpenToolTip = () => {
+    setOpen(true);
+  };
+  const handleCloseToolTip = () => {
+    setOpen(false);
+  };
 
   return (
     <div>
-      <Tooltip
-        title={
-          <div>
-
-              {formula} <br/><br/>
-              {expression} <br/><br/>
+      <ClickAwayListener onClickAway={handleCloseToolTip}>
+        <Tooltip
+          title={
+            <div>
+              {formula} <br />
+              <br />
+              {expression} <br />
+              <br />
               {rawValue}
-          </div>
-        }
-      >
-        <TextField
-          type="text"
-          value={rawValue || ""}
-          inputProps={{
-            style: {
-              textAlign: "right",
-              backgroundColor: "lightgrey",
-            },
-          }}
-          error={error}
-          helperText={error ? expression + " : " + error : undefined}
-        />
-      </Tooltip>
+            </div>
+          }
+          disableFocusListener
+          disableHoverListener
+          disableTouchListener
+          arrow
+          open={open}
+          onClose={handleCloseToolTip}
+        >
+          <TextField
+            type="text"
+            value={rawValue || ""}
+            inputProps={{
+              style: {
+                textAlign: "right",
+                backgroundColor: "lightgrey",
+              },
+            }}
+            error={error}
+            helperText={error ? expression + " : " + error : undefined}
+            onDoubleClick={handleOpenToolTip}
+            onClick={handleCloseToolTip}
+          />
+        </Tooltip>
+      </ClickAwayListener>
     </div>
   );
 };

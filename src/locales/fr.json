@@ -115,12 +115,5 @@
   },
   "validations": {
     "isrequired": "{{field}} est obligatoire"
-  },
-  "data_entry": "Saisie des données",
-  "indicator": "Indicateur",
-  "claimed_quantity": "Declaré",
-  "verified_quantity": "Verifié",
-  "validated_quantity": "Validé",
-  "tariff": "Tarif",
-  "diff": "Ecart"
+  }
 }

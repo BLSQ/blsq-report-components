@@ -3,7 +3,7 @@
   "clear": "Clear",
   "codes": "Codes",
   "contracts": {
-    "activeToday": "Actove today",
+    "activeToday": "Active today",
     "activeAt": "Active at",
     "contract_main_orgunit": "Main org unit",
     "createTitle": "Create a contract",
@@ -118,12 +118,5 @@
   },
   "validations": {
     "isrequired": "{{field}} is required"
-  },
-  "data_entry": "Data Entry",
-  "indicator": "Indicator",
-  "claimed_quantity": "Claimed",
-  "verified_quantity": "Verified",
-  "validated_quantity": "Validated",
-  "tariff": "Tarrif",
-  "diff": "Difference"
+  }
 }

@@ -13,7 +13,7 @@ const Dhis2Input = ({ dataElement }) => {
 
   useEffect(() => {
     const value = formDataContext && formDataContext.getValue && formDataContext.getValue(dataElement);
-    const dataValue = value !== undefined ? value : { dataElement: dataElement };
+    const dataValue = value !== undefined ? value : { dataElement: dataElement, value:"" };
     setDataValue(dataValue);
     const defaultRawValue = dataValue !== undefined ? dataValue.value : "";
     setRawValue(defaultRawValue);

@@ -13,11 +13,13 @@ export const getEndMonthFromQuarter = (endPeriod) => {
 
 export const getStartDateFromPeriod = (startPeriod) => {
   const startPeriodMonths = DatePeriods.split(startPeriod, "monthly");
-  return moment(startPeriodMonths[0], "YYYYMM");
+  return moment(startPeriodMonths[0], "YYYYMM").format("YYYY-MM-DD");
 };
 export const getEndDateFromPeriod = (endPeriod) => {
   const endPeriodMonths = DatePeriods.split(endPeriod, "monthly");
-  return moment(endPeriodMonths[endPeriodMonths.length - 1], "YYYYMM").endOf("month");
+  return moment(endPeriodMonths[endPeriodMonths.length - 1], "YYYYMM")
+    .endOf("month")
+    .format("YYYY-MM-DD");
 };
 
 export const getQuarterFromDate = (date) => {

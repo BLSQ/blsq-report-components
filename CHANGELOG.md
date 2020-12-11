@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.20
+
+- [contracts] Sending only the year month and day part on start end end contract dates
+
 # @blsq/blsq-report-components@1.0.19
 
 - [reports] Fix link to previous or next period

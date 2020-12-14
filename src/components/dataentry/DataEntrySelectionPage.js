@@ -5,7 +5,6 @@ import _ from "lodash";
 import { Link } from "react-router-dom";
 import { Button, Paper, Typography, Chip, Grid } from "@material-ui/core";
 import AssignmentIcon from "@material-ui/icons/Assignment";
-import CompleteDataSetButton from "./CompleteDataSetButton";
 import FormDataContext from "./FormDataContext";
 import InvoiceLinks from "../invoices/InvoiceLinks";
 import { useTranslation } from "react-i18next";
@@ -66,7 +65,6 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
           period: period,
         });
         const rawValues = dv.dataValues || [];
-
         const defaultCoc = (
           await api.get("categoryOptionCombos", {
             filter: "name:eq:default",
@@ -82,7 +80,7 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
           values: rawValues,
           indexedValues: indexedValues,
           orgUnit: activeContract.orgUnit,
-          dataSetComplete: !!completeDataSetRegistration,
+          dataSetComplete: completeDataSetRegistration.completed,
           completeDataSetRegistration: completeDataSetRegistration,
           dataSet: dataSet,
           dataElementsById: dataElementsById,
@@ -275,9 +273,7 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
       <div>
         {formData && (
           <FormDataContext.Provider value={formData}>
-            <DataEntryForm period={period} dataEntryCode={match.params.dataEntryCode} />
-            <br />
-            <CompleteDataSetButton />
+            <DataEntryForm period={period} dataEntryCode={match.params.dataEntryCode} formData={formData} />
             <br />
           </FormDataContext.Provider>
         )}

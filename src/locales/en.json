@@ -32,6 +32,12 @@
     "deleteWarning": "This will only delete the contract, data generated based on these infos will remain. If subcontracted orgunits reference this contract, delete/update them first.",
     "contract_main_orgunit_id": "Main org unit id"
   },
+  "dataEntry":{
+    "contractFrom": "Contract from",
+    "contractTo": "to",
+    "dataEntries": "Data entry",
+    "invoices": "Invoices"
+  },
   "create": "Create",
   "edit": "Edit",
   "delete": "Delete",

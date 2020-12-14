@@ -135,16 +135,21 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
             };
             try {
               await dhis2.setDataValue(newValue);
-
+              const newIndexedValues = this.indexedValues[key]
+                ? {
+                    ...this.indexedValues,
+                    [key]: [{ ...this.indexedValues[key][0], value: value }],
+                  }
+                : {
+                    ...this.indexedValues,
+                    [key]: [{ dataElement: newValue.de, value: value }],
+                  };
               const updatedFormaData = {
                 ...this,
                 valids: { ...this.valids, [key]: true },
                 errors: { ...this.valids, [key]: undefined },
                 updating: { ...this.updating, [key]: false },
-                indexedValues: {
-                  ...this.indexedValues,
-                  [key]: [{ ...this.indexedValues[key][0], value: value }],
-                },
+                indexedValues: newIndexedValues,
               };
               setFormData(updatedFormaData);
             } catch (error) {
@@ -185,7 +190,12 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
     loadData();
   }, []);
   let DataEntryForm = React.Fragment;
-  if (dataEntryRegistry && match.params.dataEntryCode) {
+  if (
+    dataEntryRegistry &&
+    match.params.dataEntryCode &&
+    dataEntries &&
+    dataEntries.some((dataEntry) => dataEntry.dataEntryType.code === match.params.dataEntryCode)
+  ) {
     DataEntryForm = dataEntryRegistry.getDataEntryForm(match.params.dataEntryCode);
   }
   return (
@@ -209,8 +219,8 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
 
       {orgUnit && orgUnit.activeContracts && (
         <div>
-          Contract from <code>{orgUnit.activeContracts[0].startPeriod}</code> to{" "}
-          <code>{orgUnit.activeContracts[0].endPeriod}</code>{" "}
+          {t("dataEntry.contractFrom")} <code>{orgUnit.activeContracts[0].startPeriod}</code>{" "}
+          {t("dataEntry.contractTo")} <code>{orgUnit.activeContracts[0].endPeriod}</code>{" "}
           {orgUnit.activeContracts[0].codes.map((c) => (
             <Chip label={c} />
           ))}
@@ -219,7 +229,7 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
 
       <Grid container>
         <Grid item xs={3}>
-          <h2>Data entry</h2>
+          <h2>{t("dataEntry.dataEntries")}</h2>
           <table>
             <tbody>
               {dataEntries &&
@@ -250,7 +260,7 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
           </table>
         </Grid>
         <Grid item>
-          <h2>Facturation</h2>
+          <h2>{t("dataEntry.invoices")}</h2>
           {orgUnit && (
             <InvoiceLinks
               t={t}
@@ -265,7 +275,7 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
       <div>
         {formData && (
           <FormDataContext.Provider value={formData}>
-            <DataEntryForm period={period} />
+            <DataEntryForm period={period} dataEntryCode={match.params.dataEntryCode} />
             <br />
             <CompleteDataSetButton />
             <br />

@@ -11,6 +11,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import { withStyles } from "@material-ui/core/styles";
 import { withTranslation } from "react-i18next";
 import { Typography } from "@material-ui/core";
+import ExtensionsComponent from "../core/ExtensionsComponent";
 
 const styles = (theme) => ({});
 
@@ -81,6 +82,7 @@ class SelectionResultsContainer extends Component {
                       hideCurrentInvoice={false}
                       {...this.props}
                     />
+                    <ExtensionsComponent extensionKey="invoices.selectionLinks" orgUnit={orgUnit} {...this.props} />
                   </TableCell>
                 </TableRow>
               ))}

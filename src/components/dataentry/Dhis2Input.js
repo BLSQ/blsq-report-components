@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { TextField, Tooltip } from "@material-ui/core";
+import { TextField, Tooltip, ClickAwayListener } from "@material-ui/core";
 import FormDataContext from "./FormDataContext";
 import useDebounce from "./useDebounce";
 
@@ -9,9 +9,11 @@ const Dhis2Input = ({ dataElement }) => {
   const [dataValue, setDataValue] = useState("");
 
   const [debouncedState, setDebouncedState] = useDebounce(undefined);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const dataValue = formDataContext && formDataContext.getValue ? formDataContext.getValue(dataElement) : undefined;
+    const value = formDataContext && formDataContext.getValue && formDataContext.getValue(dataElement);
+    const dataValue = value !== undefined ? value : { dataElement: dataElement, value:"" };
     setDataValue(dataValue);
     const defaultRawValue = dataValue !== undefined ? dataValue.value : "";
     setRawValue(defaultRawValue);
@@ -33,33 +35,50 @@ const Dhis2Input = ({ dataElement }) => {
     setDebouncedState(e.target.value);
   };
 
+  const handleOpenToolTip = () => {
+    setOpen(true);
+  };
+  const handleCloseToolTip = () => {
+    setOpen(false);
+  };
+
   return (
     <div>
-      <Tooltip
-        disableFocusListener
-        disableTouchListener
-        arrow
-        title={
-          <div>
-            <pre>{JSON.stringify(dataValue, undefined, 2) + " " + dataElement}</pre>
-          </div>
-        }
-      >
-        <TextField
-          error={formDataContext.isInvalid(dataElement)}
-          type="text"
-          disabled={isComplete}
-          value={rawValue}
-          onChange={onChange}
-          inputProps={{
-            style: {
-              textAlign: "right",
-              backgroundColor: formDataContext && formDataContext.isModified(dataElement) ? "#badbad" : "",
-            },
+      <ClickAwayListener onClickAway={handleCloseToolTip}>
+        <Tooltip
+          PopperProps={{
+            disablePortal: true,
           }}
-          helperText={formDataContext && formDataContext.error(dataElement)}
-        />
-      </Tooltip>
+          disableFocusListener
+          disableHoverListener
+          disableTouchListener
+          arrow
+          open={open}
+          onClose={handleCloseToolTip}
+          title={
+            <div>
+              <pre>{JSON.stringify(dataValue, undefined, 2)}</pre>
+            </div>
+          }
+        >
+          <TextField
+            error={formDataContext.isInvalid(dataElement)}
+            type="text"
+            disabled={isComplete}
+            value={rawValue}
+            onChange={onChange}
+            onDoubleClick={handleOpenToolTip}
+            onClick={handleCloseToolTip}
+            inputProps={{
+              style: {
+                textAlign: "right",
+                backgroundColor: formDataContext && formDataContext.isModified(dataElement) ? "#badbad" : "",
+              },
+            }}
+            helperText={formDataContext && formDataContext.error(dataElement)}
+          />
+        </Tooltip>
+      </ClickAwayListener>
     </div>
   );
 };

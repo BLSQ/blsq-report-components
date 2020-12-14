@@ -196,7 +196,7 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
         </div>
       )}
       <h1>
-        <AssignmentIcon></AssignmentIcon> {orgUnit && orgUnit.name}
+        <AssignmentIcon /> {orgUnit && orgUnit.name}
       </h1>
 
       <pre>
@@ -212,7 +212,7 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
           Contract from <code>{orgUnit.activeContracts[0].startPeriod}</code> to{" "}
           <code>{orgUnit.activeContracts[0].endPeriod}</code>{" "}
           {orgUnit.activeContracts[0].codes.map((c) => (
-            <Chip label={c}></Chip>
+            <Chip label={c} />
           ))}
         </div>
       )}
@@ -261,14 +261,14 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
           )}
         </Grid>
       </Grid>
-      <br></br>
+      <br />
       <div>
         {formData && (
           <FormDataContext.Provider value={formData}>
-            <DataEntryForm />
-            <br></br>
+            <DataEntryForm period={period} />
+            <br />
             <CompleteDataSetButton />
-            <br></br>
+            <br />
           </FormDataContext.Provider>
         )}
       </div>

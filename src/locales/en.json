@@ -1,122 +1,122 @@
 {
-    "app_name": "ORBF2 - Invoices & Reports",
-    "clear": "Clear",
-    "codes": "Codes",
-    "contracts": {
-        "activeToday": "Actove today",
-        "activeAt": "Active at",
-        "contract_main_orgunit": "Main org unit",
-        "createTitle": "Create a contract",
-        "editTitle": "Edit contract",
-        "mainContracts": "Main contract(s)",
-        "onlyOverlaps": "Only with overlaps",
-        "onlySubContracts": "Only sub contracts",
-        "overlappingWith": "Overlaps with",
-        "overlaps": ", {{overlap}} overlapping globaly",
-        "result": "1 contract",
-        "results": "{{total}} contracts",
-        "resultsFiltered": "{{filtered}} results filtered out {{total}} contracts",
-        "searchInfos": "Filter on name or contract codes",
-        "seeOrgUnit": "Voir l'unité d'organisation",
-        "status": {
-            "coverageIssue": "This contract ismore large than the main contract coverage",
-            "nonVisibleOverlaps": "This contract overlaps with {{count}} contract(s) not visible on this page",
-            "visibleOverlaps": "This contract overlaps with {{count}} contract(s)"
-        },
-        "subContractCoveragesWarningPlural": "Sub contracts {{rowIndexes}} are more large than the main contract coverage",
-        "subContractCoveragesWarningSingle": "Sub contract {{rowIndex}} is more large than the main contract coverage",
-        "subContractNotVisibleOverlap": "Sub contract {{rowIndex}} overlaps with {{count}} contract(s) not visible on this page",
-        "subContracts": "Sub contract(s)",
-        "title": "Contracts",
-        "deleteTitle": "Delete contract",
-        "deleteWarning": "This will only delete the contract, data generated based on these infos will remain. If subcontracted orgunits reference this contract, delete/update them first.",
-        "contract_main_orgunit_id":"Main org unit id"
+  "app_name": "ORBF2 - Invoices & Reports",
+  "clear": "Clear",
+  "codes": "Codes",
+  "contracts": {
+    "activeToday": "Active today",
+    "activeAt": "Active at",
+    "contract_main_orgunit": "Main org unit",
+    "createTitle": "Create a contract",
+    "editTitle": "Edit contract",
+    "mainContracts": "Main contract(s)",
+    "onlyOverlaps": "Only with overlaps",
+    "onlySubContracts": "Only sub contracts",
+    "overlappingWith": "Overlaps with",
+    "overlaps": ", {{overlap}} overlapping globaly",
+    "result": "1 contract",
+    "results": "{{total}} contracts",
+    "resultsFiltered": "{{filtered}} results filtered out {{total}} contracts",
+    "searchInfos": "Filter on name or contract codes",
+    "seeOrgUnit": "Voir l'unité d'organisation",
+    "status": {
+      "coverageIssue": "This contract ismore large than the main contract coverage",
+      "nonVisibleOverlaps": "This contract overlaps with {{count}} contract(s) not visible on this page",
+      "visibleOverlaps": "This contract overlaps with {{count}} contract(s)"
     },
-    "create": "Create",
-    "edit": "Edit",
-    "delete": "Delete",
-    "end_period": "End",
-    "filter": "Filter",
-    "generated_at": "Generated on",
-    "group": "Group",
-    "groups": "Groups",
-    "invoice": "Invoice",
-    "invoicing": {
-        "job": {
-            "error": "Message",
-            "erroredAt": "When",
-            "errors": "Error for the last calculate",
-            "orgUnit": "Org unit",
-            "period": "Period"
-        }
-    },
-    "limit_org_unit_under": "Limit to the child organisation unit",
-    "missing_invoice_types": "Missing invoice...",
-    "name": "Name",
-    "noResult": "No result",
-    "orgUnit": "Organisation Unit",
-    "orgUnit_name": "Organisation Unit name",
-    "orgUnit_id" : "Organisation Unit id",
-    "period": "Period",
-    "print": "Print",
-    "re_calculate": "Calculate",
-    "report_and_invoices": "Report & Invoices",
-    "save": "Save",
-    "search": "Search",
-    "search_org_unit": "Search or select parent organisation unit",
-    "searchHelp": "Min {{minChar}} characters, max {{maxResult}} results",
-    "show_avalaible_invoices": "Select invoice",
-    "snackBar": {
-        "copyError": "Copy error",
-        "error": {
-            "save": "An error occurred while saving"
-        },
-        "success": {
-            "save": "Saved successfully"
-        }
-    },
-    "start_period": "Start",
-    "status": "Status",
-    "table": {
-        "actions": {
-            "edit": "Edit",
-            "see": "See",
-            "title": "Action(s)"
-        },
-        "body": {
-            "columnHeaderTooltip": "Sort for {{label}}",
-            "noMatch": "Sorry, no matching records found",
-            "toolTip": "Sort"
-        },
-        "filter": {
-            "all": "All",
-            "reset": "RESET",
-            "title": "FILTERS"
-        },
-        "pagination": {
-            "displayRows": "of",
-            "next": "Next Page",
-            "previous": "Previous Page",
-            "rowsPerPage": "Rows per page:"
-        },
-        "selectedRows": {
-            "delete": "Delete",
-            "deleteAria": "Delete Selected Rows",
-            "text": "row(s) selected"
-        },
-        "toolbar": {
-            "downloadCsv": "Download CSV",
-            "filterTable": "Filter Table",
-            "print": "Print",
-            "search": "Search",
-            "viewColumns": "View Columns"
-        },
-        "viewColumns": {
-            "title": "Show Columns",
-            "titleAria": "Show/Hide Table Columns"
-        }
-    },
-    "validations": {
-        "isrequired": "{{field}} is required"
+    "subContractCoveragesWarningPlural": "Sub contracts {{rowIndexes}} are more large than the main contract coverage",
+    "subContractCoveragesWarningSingle": "Sub contract {{rowIndex}} is more large than the main contract coverage",
+    "subContractNotVisibleOverlap": "Sub contract {{rowIndex}} overlaps with {{count}} contract(s) not visible on this page",
+    "subContracts": "Sub contract(s)",
+    "title": "Contracts",
+    "deleteTitle": "Delete contract",
+    "deleteWarning": "This will only delete the contract, data generated based on these infos will remain. If subcontracted orgunits reference this contract, delete/update them first.",
+    "contract_main_orgunit_id": "Main org unit id"
+  },
+  "create": "Create",
+  "edit": "Edit",
+  "delete": "Delete",
+  "end_period": "End",
+  "filter": "Filter",
+  "generated_at": "Generated on",
+  "group": "Group",
+  "groups": "Groups",
+  "invoice": "Invoice",
+  "invoicing": {
+    "job": {
+      "error": "Message",
+      "erroredAt": "When",
+      "errors": "Error for the last calculate",
+      "orgUnit": "Org unit",
+      "period": "Period"
     }
+  },
+  "limit_org_unit_under": "Limit to the child organisation unit",
+  "missing_invoice_types": "Missing invoice...",
+  "name": "Name",
+  "noResult": "No result",
+  "orgUnit": "Organisation Unit",
+  "orgUnit_name": "Organisation Unit name",
+  "orgUnit_id": "Organisation Unit id",
+  "period": "Period",
+  "print": "Print",
+  "re_calculate": "Calculate",
+  "report_and_invoices": "Report & Invoices",
+  "save": "Save",
+  "search": "Search",
+  "search_org_unit": "Search or select parent organisation unit",
+  "searchHelp": "Min {{minChar}} characters, max {{maxResult}} results",
+  "show_avalaible_invoices": "Select invoice",
+  "snackBar": {
+    "copyError": "Copy error",
+    "error": {
+      "save": "An error occurred while saving"
+    },
+    "success": {
+      "save": "Saved successfully"
+    }
+  },
+  "start_period": "Start",
+  "status": "Status",
+  "table": {
+    "actions": {
+      "edit": "Edit",
+      "see": "See",
+      "title": "Action(s)"
+    },
+    "body": {
+      "columnHeaderTooltip": "Sort for {{label}}",
+      "noMatch": "Sorry, no matching records found",
+      "toolTip": "Sort"
+    },
+    "filter": {
+      "all": "All",
+      "reset": "RESET",
+      "title": "FILTERS"
+    },
+    "pagination": {
+      "displayRows": "of",
+      "next": "Next Page",
+      "previous": "Previous Page",
+      "rowsPerPage": "Rows per page:"
+    },
+    "selectedRows": {
+      "delete": "Delete",
+      "deleteAria": "Delete Selected Rows",
+      "text": "row(s) selected"
+    },
+    "toolbar": {
+      "downloadCsv": "Download CSV",
+      "filterTable": "Filter Table",
+      "print": "Print",
+      "search": "Search",
+      "viewColumns": "View Columns"
+    },
+    "viewColumns": {
+      "title": "Show Columns",
+      "titleAria": "Show/Hide Table Columns"
+    }
+  },
+  "validations": {
+    "isrequired": "{{field}} is required"
+  }
 }

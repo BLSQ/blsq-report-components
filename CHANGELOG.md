@@ -1,3 +1,10 @@
+# @blsq/blsq-report-components@1.0.21
+- [invoices] Offer an extenstion point to show items in the orgunit selection page
+- [dataentry] Fix error when no data was previously filled,
+- [dataentry] Prevent showing a dataentry form that is not in the allowed one
+- [dataentry] Minimal translation
+- [dataentry] Show tooltip on double click instead on focus or hover
+
 # @blsq/blsq-report-components@1.0.20
 
 - [contracts] Sending only the year month and day part on start end end contract dates

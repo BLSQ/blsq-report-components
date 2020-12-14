@@ -190,7 +190,12 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
     loadData();
   }, []);
   let DataEntryForm = React.Fragment;
-  if (dataEntryRegistry && match.params.dataEntryCode) {
+  if (
+    dataEntryRegistry &&
+    match.params.dataEntryCode &&
+    dataEntries &&
+    dataEntries.some((dataEntry) => dataEntry.dataEntryType.code === match.params.dataEntryCode)
+  ) {
     DataEntryForm = dataEntryRegistry.getDataEntryForm(match.params.dataEntryCode);
   }
   return (
@@ -214,8 +219,8 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
 
       {orgUnit && orgUnit.activeContracts && (
         <div>
-          {t("dataEntry.contractFrom")} <code>{orgUnit.activeContracts[0].startPeriod}</code> {t("dataEntry.contractTo")}{" "}
-          <code>{orgUnit.activeContracts[0].endPeriod}</code>{" "}
+          {t("dataEntry.contractFrom")} <code>{orgUnit.activeContracts[0].startPeriod}</code>{" "}
+          {t("dataEntry.contractTo")} <code>{orgUnit.activeContracts[0].endPeriod}</code>{" "}
           {orgUnit.activeContracts[0].codes.map((c) => (
             <Chip label={c} />
           ))}
@@ -270,7 +275,7 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
       <div>
         {formData && (
           <FormDataContext.Provider value={formData}>
-            <DataEntryForm period={period} dataEntryCode={match.params.dataEntryCode}/>
+            <DataEntryForm period={period} dataEntryCode={match.params.dataEntryCode} />
             <br />
             <CompleteDataSetButton />
             <br />

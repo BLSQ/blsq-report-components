@@ -58,7 +58,6 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
         completeDataSetRegistration = dsc.completeDataSetRegistrations
           ? dsc.completeDataSetRegistrations[0]
           : undefined;
-
         const dv = await api.get("/dataValueSets", {
           dataSet: dataEntry.dataSetId,
           orgUnit: activeContract.orgUnit.id,
@@ -80,7 +79,7 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
           values: rawValues,
           indexedValues: indexedValues,
           orgUnit: activeContract.orgUnit,
-          dataSetComplete: completeDataSetRegistration.completed,
+          dataSetComplete: completeDataSetRegistration && completeDataSetRegistration.completed,
           completeDataSetRegistration: completeDataSetRegistration,
           dataSet: dataSet,
           dataElementsById: dataElementsById,
@@ -196,6 +195,7 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
   ) {
     DataEntryForm = dataEntryRegistry.getDataEntryForm(match.params.dataEntryCode);
   }
+
   return (
     <Paper style={{ minHeight: "90vh", paddingLeft: "50px", paddingTop: "20px" }}>
       {error && (
@@ -231,29 +231,34 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
           <table>
             <tbody>
               {dataEntries &&
-                dataEntries.map((dataEntry) => (
-                  <tr>
-                    <td>
-                      {" "}
-                      <Typography variant="overline" gutterBottom>
-                        {dataEntry.dataEntryType.name}
-                      </Typography>
-                    </td>
-                    <td>
-                      <Button
-                        key={dataEntry.dataEntryType.code + "-" + dataEntry.period + "-" + orgUnit.id}
-                        variant="text"
-                        color="primary"
-                        size="small"
-                        component={Link}
-                        to={"/dataEntry/" + orgUnit.id + "/" + dataEntry.period + "/" + dataEntry.dataEntryType.code}
-                        title={dataEntry.period}
-                      >
-                        {DatePeriods.displayName(dataEntry.period, periodFormat[DatePeriods.detect(dataEntry.period)])}
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
+                dataEntries
+                  .filter((dataEntry) => dataEntry.dataEntryType.code === match.params.dataEntryCode)
+                  .map((dataEntry) => (
+                    <tr>
+                      <td>
+                        {" "}
+                        <Typography variant="overline" gutterBottom>
+                          {dataEntry.dataEntryType.name}
+                        </Typography>
+                      </td>
+                      <td>
+                        <Button
+                          key={dataEntry.dataEntryType.code + "-" + dataEntry.period + "-" + orgUnit.id}
+                          variant="text"
+                          color="primary"
+                          size="small"
+                          component={Link}
+                          to={"/dataEntry/" + orgUnit.id + "/" + dataEntry.period + "/" + dataEntry.dataEntryType.code}
+                          title={dataEntry.period}
+                        >
+                          {DatePeriods.displayName(
+                            dataEntry.period,
+                            periodFormat[DatePeriods.detect(dataEntry.period)],
+                          )}
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
             </tbody>
           </table>
         </Grid>

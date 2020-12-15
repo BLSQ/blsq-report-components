@@ -232,7 +232,6 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
             <tbody>
               {dataEntries &&
                 dataEntries
-                  .filter((dataEntry) => dataEntry.dataEntryType.code === match.params.dataEntryCode)
                   .map((dataEntry) => (
                     <tr>
                       <td>

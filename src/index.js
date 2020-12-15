@@ -28,6 +28,7 @@ import { indexBy } from "./support/Arrays";
 import configureI18N from "./support/configureI18N";
 import Dhis2Formula from "./components/dataentry/Dhis2Formula";
 import Dhis2Input from "./components/dataentry/Dhis2Input";
+import CompleteDataSetButton from "./components/dataentry/CompleteDataSetButton";
 
 export {
   AppDrawer,
@@ -56,4 +57,5 @@ export {
   DataEntryPlugin,
   Dhis2Formula,
   Dhis2Input,
+  CompleteDataSetButton,
 };

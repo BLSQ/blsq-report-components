@@ -2,6 +2,7 @@ import _ from "lodash";
 
 const SAFE_DIV = (a, b) => {
   if (b !== 0) {
+    debugger;
     return a / b;
   }
   return 0;
@@ -73,9 +74,8 @@ export const generateCalculator = (hesabuPackage, orgunitid, period, activityFor
       codes.push("    if (calculator.indexedValues()) {")
       codes.push("         const deCoc = \""+activity[state]+"\".split('.');")
       codes.push(`         const k = [\"${orgunitid}\", \"${period}\", deCoc[0], deCoc[1] || calculator.defaultCoc()].join("-");`)
-      codes.push(`         debugger`)
       codes.push("         const v = calculator.indexedValues()[k]")
-      codes.push("         if(v) { return v[0].value }")
+      codes.push("         if(v) { return parseFloat(v[0].value) }")
       codes.push("    }")
       codes.push(`   return calculator.field_${field_name} == undefined ? 0 : this.field_${field_name}`);
       codes.push("},");

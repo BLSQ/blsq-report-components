@@ -159,6 +159,7 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
                     ...this.indexedValues,
                     [key]: [{ dataElement: newValue.de, value: value }],
                   };
+              calculator.setIndexedValues(newIndexedValues);
               const updatedFormaData = {
                 ...this,
                 valids: { ...this.valids, [key]: true },

@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.23
+
+- [dataentry] Replace Dhis2Formula with HesabuFormula
+
 # @blsq/blsq-report-components@1.0.22
 
 - [dataentry] Hesabu calculation in data entry

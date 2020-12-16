@@ -74,6 +74,15 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
           [v.orgUnit, v.period, v.dataElement, v.categoryOptionCombo].join("-"),
         );
 
+        let calculator;
+        if (dataEntryRegistry.getCalculator) {
+          calculator = dataEntryRegistry.getCalculator(activeContract.orgUnit, period, match.params.dataEntryCode);
+          if (calculator) {
+            calculator.setIndexedValues(indexedValues);
+            calculator.setDefaultCoc(defaultCoc)
+          }
+        }
+
         const newFormData = {
           period,
           values: rawValues,
@@ -83,6 +92,7 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
           completeDataSetRegistration: completeDataSetRegistration,
           dataSet: dataSet,
           dataElementsById: dataElementsById,
+          calculator: calculator,
           valids: {},
           errors: {},
           updating: {},
@@ -114,6 +124,15 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
             const ourValues = this.indexedValues[key];
             return ourValues ? ourValues[0] : undefined;
           },
+          getCalculatedValue(hesabuPackage, formulaCode, period, orgUnit, activity) {
+            let orgUnitId = orgUnit ? orgUnit.id : activeContract.orgUnit.id;
+            const calculatorFunction = activity
+              ? `${hesabuPackage.code}_${activity.code}_${formulaCode}_${orgUnitId}_${period}`
+              : `${hesabuPackage.code}_${formulaCode}_${orgUnitId}_${period}`;
+            if (this.calculator[calculatorFunction]) {
+              return this.calculator[calculatorFunction]();
+            }
+          },
           async updateValue(de, value) {
             const deCoc = de.split(".");
             const key = this.getKey(de);
@@ -141,6 +160,7 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
                     ...this.indexedValues,
                     [key]: [{ dataElement: newValue.de, value: value }],
                   };
+              calculator.setIndexedValues(newIndexedValues);
               const updatedFormaData = {
                 ...this,
                 valids: { ...this.valids, [key]: true },
@@ -231,33 +251,29 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
           <table>
             <tbody>
               {dataEntries &&
-                dataEntries
-                  .map((dataEntry) => (
-                    <tr>
-                      <td>
-                        {" "}
-                        <Typography variant="overline" gutterBottom>
-                          {dataEntry.dataEntryType.name}
-                        </Typography>
-                      </td>
-                      <td>
-                        <Button
-                          key={dataEntry.dataEntryType.code + "-" + dataEntry.period + "-" + orgUnit.id}
-                          variant="text"
-                          color="primary"
-                          size="small"
-                          component={Link}
-                          to={"/dataEntry/" + orgUnit.id + "/" + dataEntry.period + "/" + dataEntry.dataEntryType.code}
-                          title={dataEntry.period}
-                        >
-                          {DatePeriods.displayName(
-                            dataEntry.period,
-                            periodFormat[DatePeriods.detect(dataEntry.period)],
-                          )}
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
+                dataEntries.map((dataEntry) => (
+                  <tr>
+                    <td>
+                      {" "}
+                      <Typography variant="overline" gutterBottom>
+                        {dataEntry.dataEntryType.name}
+                      </Typography>
+                    </td>
+                    <td>
+                      <Button
+                        key={dataEntry.dataEntryType.code + "-" + dataEntry.period + "-" + orgUnit.id}
+                        variant="text"
+                        color="primary"
+                        size="small"
+                        component={Link}
+                        to={"/dataEntry/" + orgUnit.id + "/" + dataEntry.period + "/" + dataEntry.dataEntryType.code}
+                        title={dataEntry.period}
+                      >
+                        {DatePeriods.displayName(dataEntry.period, periodFormat[DatePeriods.detect(dataEntry.period)])}
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </Grid>

@@ -25,7 +25,7 @@ const ContractsPeriodStats = ({ filteredContracts }) => {
     });
   });
 
-  debugger;
+
   return (
     <div>
       <BarChart

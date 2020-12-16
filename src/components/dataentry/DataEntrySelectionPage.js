@@ -77,9 +77,10 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
         let calculator;
         if (dataEntryRegistry.getCalculator) {
           calculator = dataEntryRegistry.getCalculator(activeContract.orgUnit, period, match.params.dataEntryCode);
-          calculator.setIndexedValues(indexedValues);
-          calculator.setDefaultCoc(defaultCoc)
-
+          if (calculator) {
+            calculator.setIndexedValues(indexedValues);
+            calculator.setDefaultCoc(defaultCoc)
+          }
         }
 
         const newFormData = {

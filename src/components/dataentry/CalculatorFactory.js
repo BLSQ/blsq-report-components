@@ -2,7 +2,6 @@ import _ from "lodash";
 
 const SAFE_DIV = (a, b) => {
   if (b !== 0) {
-    debugger;
     return a / b;
   }
   return 0;

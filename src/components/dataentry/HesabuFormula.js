@@ -13,7 +13,6 @@ const HesabuFormula = ({ hesabuPackage, formulaCode, period, orgUnit, activity }
       setExpression(expression);
       try {
         const val = formDataContext.getCalculatedValue(hesabuPackage, formulaCode, period, orgUnit, activity);
-        debugger;
         setRawValue(""+val);
       } catch (error) {
         setError(error.message + " " + +" " + expression);

@@ -1,4 +1,9 @@
+# @blsq/blsq-report-components@1.0.22
+
+- [dataentry] Hesabu calculation in data entry
+
 # @blsq/blsq-report-components@1.0.21
+
 - [invoices] Offer an extenstion point to show items in the orgunit selection page
 - [dataentry] Fix error when no data was previously filled,
 - [dataentry] Prevent showing a dataentry form that is not in the allowed one

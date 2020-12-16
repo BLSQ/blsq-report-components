@@ -88,7 +88,7 @@ export const generateCalculator = (hesabuPackage, orgunitid, period, activityFor
       let expandedformula = "" + formula.expression;
       codes.push("/* " + formula.expression + "*/");
       codes.push(`${hesabuPackage.code}_${activity.code}_${formula.code}_${orgunitid}_${period}: () => {`);
-      const substitutions = { IF: "IFF" };
+      const substitutions = { IF: "IFF", "sum":"SUM" };
       for (let substit of stateOrFormulaCodes) {
         substitutions[substit] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`;
       }
@@ -104,7 +104,7 @@ export const generateCalculator = (hesabuPackage, orgunitid, period, activityFor
   }
 
   for (let formulaCode of Object.keys(hesabuPackage.formulas).filter((k) => packageFormulaCodes.includes(k))) {
-    const substitutions = { IF: "IFF" };
+    const substitutions = { IF: "IFF", "sum":"SUM" };
     for (let substit of stateOrFormulaCodes) {
       substitutions["%{" + substit + "_values}"] = hesabuPackage.activities
         .map((activity) => `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`)
@@ -135,12 +135,13 @@ export const generateCalculator = (hesabuPackage, orgunitid, period, activityFor
   const fullCode = codes.join("\n");
   console.log(fullCode);
 
-  const calculator = new Function("SCORE_TABLE", "ABS", "ROUND", "IFF", "SAFE_DIV", "SUM", fullCode)(
+  const calculator = new Function("SCORE_TABLE", "ABS", "ROUND", "IFF", "SAFE_DIV", "SUM", "sum", fullCode)(
     SCORE_TABLE,
     ABS,
     ROUND,
     IFF,
     SAFE_DIV,
+    SUM,
     SUM,
   );
   return calculator;

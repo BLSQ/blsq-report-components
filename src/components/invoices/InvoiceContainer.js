@@ -183,21 +183,24 @@ class InvoiceContainer extends Component {
       const orgUnitsById = {};
       invoice.orgUnits.forEach((ou) => (orgUnitsById[ou.id] = ou));
 
-      const approvableOrgUnitIds = new Set(
-        invoice.currentApprovals.filter((approval) => approval.mayApprove).map((approval) => approval.orgUnit),
-      );
+      let allowedCalculations = calculations
+      if (this.props.invoices.getDataApprovals) {
+          const approvableOrgUnitIds = new Set(
+            invoice.currentApprovals.filter((approval) => approval.mayApprove).map((approval) => approval.orgUnit),
+          );
 
-      const allowedCalculations = calculations.filter((calculation) => {
-        const orgUnit = orgUnitsById[calculation.orgUnitId];
-        return orgUnit.ancestors.some((ou) => approvableOrgUnitIds.has(ou.id));
-      });
-      console.log(
-        "will schedule " +
-          allowedCalculations.length +
-          " out of " +
-          calculations.length +
-          " due to already approved data",
-      );
+          allowedCalculations = calculations.filter((calculation) => {
+            const orgUnit = orgUnitsById[calculation.orgUnitId];
+            return orgUnit.ancestors.some((ou) => approvableOrgUnitIds.has(ou.id));
+          });
+          console.log(
+            "will schedule " +
+              allowedCalculations.length +
+              " out of " +
+              calculations.length +
+              " due to already approved data",
+          );
+      }
       allowedCalculations.forEach((calculation) => {
         this.orbf2.calculate(calculation);
       });

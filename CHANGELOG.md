@@ -1,3 +1,8 @@
+# @blsq/blsq-report-components@1.0.24
+
+- [invoices] Calculate button
+- [doc] Remove example app and link to blsq-report-app, document a bit existing extension points.
+
 # @blsq/blsq-report-components@1.0.23
 
 - [dataentry] Replace Dhis2Formula with HesabuFormula

@@ -1,3 +1,10 @@
+# @blsq/blsq-report-components@1.0.25
+
+- [incentives] Allow to copy data values from another periods
+- [dataentry] Navigate to first data entry when entry code not in url
+- [dataentry] Add link to contract page
+- [dataentry] Highlight current data entry
+
 # @blsq/blsq-report-components@1.0.24
 
 - [invoices] Calculate button

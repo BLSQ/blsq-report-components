@@ -3,13 +3,14 @@ import DatePeriods from "../../support/DatePeriods";
 import PluginRegistry from "../core/PluginRegistry";
 import _ from "lodash";
 import { Link } from "react-router-dom";
-import { Button, Paper, Typography, Chip, Grid } from "@material-ui/core";
+import { Button, Paper, Typography, Chip, Grid, IconButton } from "@material-ui/core";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import FormDataContext from "./FormDataContext";
 import InvoiceLinks from "../invoices/InvoiceLinks";
 import { useTranslation } from "react-i18next";
-
-const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
+import { withRouter } from "react-router";
+import InfoIcon from "@material-ui/icons/Info";
+const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
   const { t, i18n } = useTranslation();
   const dataEntryRegistry = PluginRegistry.extension("dataentry.dataEntries");
   const [orgUnit, setOrgUnit] = useState(undefined);
@@ -36,6 +37,18 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
       setOrgUnit(activeContract.orgUnit);
       const expectedDataEntries = dataEntryRegistry.getExpectedDataEntries(activeContract, period);
       setDataEntries(expectedDataEntries);
+
+      if (match.params.dataEntryCode == undefined && expectedDataEntries.length > 0) {
+        const defaultDataEntry = expectedDataEntries[0];
+        history.push(
+          "/dataEntry/" +
+            activeContract.orgUnit.id +
+            "/" +
+            defaultDataEntry.period +
+            "/" +
+            defaultDataEntry.dataEntryType.code,
+        );
+      }
 
       const api = await dhis2.api();
       if (match.params.dataEntryCode) {
@@ -79,7 +92,7 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
           calculator = dataEntryRegistry.getCalculator(activeContract.orgUnit, period, match.params.dataEntryCode);
           if (calculator) {
             calculator.setIndexedValues(indexedValues);
-            calculator.setDefaultCoc(defaultCoc)
+            calculator.setDefaultCoc(defaultCoc);
           }
         }
 
@@ -239,8 +252,9 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
         <div>
           {t("dataEntry.contractFrom")} <code>{orgUnit.activeContracts[0].startPeriod}</code>{" "}
           {t("dataEntry.contractTo")} <code>{orgUnit.activeContracts[0].endPeriod}</code>{" "}
+          <Link to={"/contracts/" + orgUnit.id}><IconButton><InfoIcon color="action"/></IconButton></Link>{" "}
           {orgUnit.activeContracts[0].codes.map((c) => (
-            <Chip label={c} />
+            <Chip label={c} style={{ margin: "5px" }} />
           ))}
         </div>
       )}
@@ -251,29 +265,38 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
           <table>
             <tbody>
               {dataEntries &&
-                dataEntries.map((dataEntry) => (
-                  <tr>
-                    <td>
-                      {" "}
-                      <Typography variant="overline" gutterBottom>
-                        {dataEntry.dataEntryType.name}
-                      </Typography>
-                    </td>
-                    <td>
-                      <Button
-                        key={dataEntry.dataEntryType.code + "-" + dataEntry.period + "-" + orgUnit.id}
-                        variant="text"
-                        color="primary"
-                        size="small"
-                        component={Link}
-                        to={"/dataEntry/" + orgUnit.id + "/" + dataEntry.period + "/" + dataEntry.dataEntryType.code}
-                        title={dataEntry.period}
-                      >
-                        {DatePeriods.displayName(dataEntry.period, periodFormat[DatePeriods.detect(dataEntry.period)])}
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
+                dataEntries.map((dataEntry) => {
+                  const isCurrent =
+                    dataEntry.dataEntryType.code == match.params.dataEntryCode &&
+                    dataEntry.period == match.params.period;
+                  return (
+                    <tr>
+                      <td>
+                        {" "}
+                        <Typography variant="overline" gutterBottom>
+                          {dataEntry.dataEntryType.name}
+                        </Typography>
+                      </td>
+                      <td>
+                        <Button
+                          key={dataEntry.dataEntryType.code + "-" + dataEntry.period + "-" + orgUnit.id}
+                          variant="text"
+                          color="primary"
+                          size="small"
+                          component={Link}
+                          style={isCurrent ? { backgroundColor: "lightyellow" } : {}}
+                          to={"/dataEntry/" + orgUnit.id + "/" + dataEntry.period + "/" + dataEntry.dataEntryType.code}
+                          title={dataEntry.period}
+                        >
+                          {DatePeriods.displayName(
+                            dataEntry.period,
+                            periodFormat[DatePeriods.detect(dataEntry.period)],
+                          )}
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </Grid>
@@ -289,7 +312,6 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
           )}
         </Grid>
       </Grid>
-      <br />
       <div>
         {formData && (
           <FormDataContext.Provider value={formData}>
@@ -302,4 +324,4 @@ const DataEntrySelectionPage = ({ match, periodFormat, dhis2 }) => {
   );
 };
 
-export default DataEntrySelectionPage;
+export default withRouter(DataEntrySelectionPage);

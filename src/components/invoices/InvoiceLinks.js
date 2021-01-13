@@ -114,8 +114,8 @@ class InvoiceLinks extends Component {
     )
   };
 
-  buildInvoiceTypes = invoices => {
-    let codes = invoices.getInvoiceTypeCodes(this.props.orgUnit)
+  buildInvoiceTypes = (invoices, period) => {
+    let codes = invoices.getInvoiceTypeCodes(this.props.orgUnit, period)
     if (this.props.hideCurrentInvoice === true) {
       codes.splice(codes.indexOf(this.props.invoiceCode), 1)
     }
@@ -124,11 +124,11 @@ class InvoiceLinks extends Component {
       return null
     }
 
-    return invoices.getInvoiceTypes(codes)
+    return invoices.getInvoiceTypes(codes, period)
   };
 
   buildInvoiceLinks() {
-    const invoiceTypes = this.buildInvoiceTypes(this.props.invoices)
+    const invoiceTypes = this.buildInvoiceTypes(this.props.invoices, this.props.period)
     const quarterPeriod = DatePeriods.split(this.props.period, 'quarterly')[0]
 
     var invoiceLinks = invoiceTypes.map(invoiceType =>

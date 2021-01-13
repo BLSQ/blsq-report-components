@@ -160,7 +160,8 @@ class InvoiceToolBar extends Component {
       "/" +
       invoiceCode;
     const invoicesCodes = this.props.invoices.getInvoiceTypeCodes(
-      this.props.invoice.orgUnit
+      this.props.invoice.orgUnit,
+      period
     );
     const indexedOrgUnits = {};
     if (this.props.invoice.orgUnits) {

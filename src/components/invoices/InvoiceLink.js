@@ -9,7 +9,7 @@ function InvoiceLink(orgUnit, invoices, period) {
     return null;
   }
 
-  const invoiceTypes = invoices.getInvoiceTypes(codes);
+  const invoiceTypes = invoices.getInvoiceTypes(codes, period);
 
   const quarterPeriod = DatePeriods.split(period, "quarterly")[0];
 

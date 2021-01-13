@@ -101,7 +101,7 @@ class InvoiceContainer extends Component {
 
       const orgUnitId = this.props.orgUnitId;
       const invoiceTypeCode = this.props.invoiceCode;
-      const invoiceType = this.props.invoices.getInvoiceType(invoiceTypeCode);
+      const invoiceType = this.props.invoices.getInvoiceType(invoiceTypeCode, period);
       const dhis2 = this.props.dhis2;
 
       const invoice = await new InvoiceService().fetchInvoiceData(
@@ -109,7 +109,7 @@ class InvoiceContainer extends Component {
         orgUnitId,
         period,
         invoiceType,
-        this.props.invoices.mapper(invoiceTypeCode),
+        this.props.invoices.mapper(invoiceTypeCode, period),
       );
       invoice.currentUser = this.props.currentUser;
 
@@ -261,7 +261,7 @@ class InvoiceContainer extends Component {
         </div>
       );
     }
-    const SelectedInvoice = this.props.invoices.component(this.state.invoice.invoiceType.code);
+    const SelectedInvoice = this.props.invoices.component(this.state.invoice.invoiceType.code, this.props.period);
 
     return (
       <div className="invoicePage">

@@ -70,8 +70,8 @@ const RawAppDrawer = (props) => {
         </ListItem>
 
         <Divider />
-        <DrawerLinks period={period} />
-        <ExtensionsComponent extensionKey="core.drawerLinks" {...props} />
+        <DrawerLinks period={period} {...props}/>
+        <ExtensionsComponent extensionKey="core.drawerLinks" {...props} period={period}/>
       </List>
     </Drawer>
   );

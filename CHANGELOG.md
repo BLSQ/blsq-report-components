@@ -1,3 +1,8 @@
+
+# @blsq/blsq-report-components@1.0.26
+- [incentives] Fix period not passed in the drawer links
+- [invoices] Pass a period in Invoices functions to allow versionning of invoices.
+
 # @blsq/blsq-report-components@1.0.25
 
 - [incentives] Allow to copy data values from another periods

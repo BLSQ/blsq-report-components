@@ -76,7 +76,17 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
           orgUnit: activeContract.orgUnit.id,
           period: period,
         });
-        const rawValues = dv.dataValues || [];
+        let rawValues = dv.dataValues || [];
+        if (dataEntryRegistry.fetchExtraData) {
+           const extraValues = await dataEntryRegistry.fetchExtraData(api, activeContract.orgUnit, period, dataEntry)
+           rawValues = rawValues.concat(extraValues)
+
+           const extraDataElements = await dataEntryRegistry.fetchExtraMetaData(api, activeContract.orgUnit, period, dataEntry)
+
+           for (let extraDe of extraDataElements) {
+            dataElementsById[extraDe.id] = extraDe
+           }
+        }
         const defaultCoc = (
           await api.get("categoryOptionCombos", {
             filter: "name:eq:default",
@@ -87,7 +97,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
           [v.orgUnit, v.period, v.dataElement, v.categoryOptionCombo].join("-"),
         );
 
-        let calculator;
+        let calculator = undefined;
         if (dataEntryRegistry.getCalculator) {
           calculator = dataEntryRegistry.getCalculator(activeContract.orgUnit, period, match.params.dataEntryCode);
           if (calculator) {
@@ -142,7 +152,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
             const calculatorFunction = activity
               ? `${hesabuPackage.code}_${activity.code}_${formulaCode}_${orgUnitId}_${period}`
               : `${hesabuPackage.code}_${formulaCode}_${orgUnitId}_${period}`;
-            if (this.calculator[calculatorFunction]) {
+            if (this.calculator && this.calculator[calculatorFunction]) {
               return this.calculator[calculatorFunction]();
             }
           },

@@ -1,4 +1,5 @@
 import _ from "lodash";
+import PapaParse from "papaparse";
 
 const SAFE_DIV = (a, b) => {
   if (b !== 0) {
@@ -43,7 +44,7 @@ const SUM = (...args) => {
   return a;
 };
 
-export const generateCalculator = (hesabuPackage, orgunitid, period, activityFormulaCodes, packageFormulaCodes) => {
+export const generateCalculator = (hesabuPackage, orgunitid, period, activityFormulaCodes, packageFormulaCodes, orgUnit) => {
   let codes = ["calculator = { "];
 
 
@@ -71,7 +72,7 @@ export const generateCalculator = (hesabuPackage, orgunitid, period, activityFor
       // getter
       codes.push(`${field_name}: function(){`);
       codes.push("    if (calculator.indexedValues()) {")
-      codes.push("         const deCoc = \""+activity[state]+"\".split('.');")
+      codes.push("         const deCoc = \"" + activity[state] + "\".split('.');")
       codes.push(`         const k = [\"${orgunitid}\", \"${period}\", deCoc[0], deCoc[1] || calculator.defaultCoc()].join("-");`)
       codes.push("         const v = calculator.indexedValues()[k]")
       codes.push("         if(v) { return parseFloat(v[0].value) }")
@@ -88,11 +89,18 @@ export const generateCalculator = (hesabuPackage, orgunitid, period, activityFor
       let expandedformula = "" + formula.expression;
       codes.push("/* " + formula.expression + "*/");
       codes.push(`${hesabuPackage.code}_${activity.code}_${formula.code}_${orgunitid}_${period}: () => {`);
-      const substitutions = { IF: "IFF", "sum":"SUM" };
+      const substitutions = { IF: "IFF", "sum": "SUM" };
       for (let substit of stateOrFormulaCodes) {
         substitutions[substit] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`;
       }
-
+      if (hesabuPackage.activity_decision_tables) {
+        debugger;
+        for (let rawDecisionTable of hesabuPackage.activity_decision_tables) {
+          for (let substit of rawDecisionTable.out_headers) {
+            substitutions[substit] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`;
+          }
+        }
+      }
       const tokens = formula.expression.split(/([\w]+)|\"[\w\s]+\"/g);
 
       expandedformula = tokens.map((token) => substitutions[token] || token).join("");
@@ -101,10 +109,55 @@ export const generateCalculator = (hesabuPackage, orgunitid, period, activityFor
 
       codes.push("},");
     }
+
+    if (hesabuPackage.activity_decision_tables) {
+      for (let rawDecisionTable of hesabuPackage.activity_decision_tables) {
+        const decisionTable = PapaParse.parse(rawDecisionTable.content, { header: true });
+        let selectedRows = decisionTable.data
+
+        if (rawDecisionTable.in_headers.includes("activity_code")) {
+          selectedRows = selectedRows.filter(row => row["in:activity_code"] == activity.code)
+        }
+
+        const remainingInHeaders = rawDecisionTable.in_headers.filter(h => h !== "activity_code").map(h => h.slice("groupset_code_".length))
+        const contract = orgUnit.activeContracts[0]
+        for (let field of remainingInHeaders) {
+          const currentValue = contract.fieldValues[field]
+          selectedRows = selectedRows.filter(row => row["in:groupset_code_" + field] == currentValue)
+        }
+
+        const row = selectedRows[0]
+        if (row == undefined) {
+          for (let out_header of rawDecisionTable.out_headers) {
+            codes.push("/* decision table" + JSON.stringify(row) + "*/");
+            codes.push(`${hesabuPackage.code}_${activity.code}_${out_header}_${orgunitid}_${period}: () => {`);
+            codes.push("  return 0;");
+            codes.push("},");
+          }
+
+        } else {
+          for (let out_header of rawDecisionTable.out_headers) {
+            codes.push("/* decision table" + JSON.stringify(row) + "*/");
+            codes.push(`${hesabuPackage.code}_${activity.code}_${out_header}_${orgunitid}_${period}: () => {`);
+            codes.push("  return " + row["out:" + out_header]);
+            codes.push("},");
+          }
+        }
+
+
+
+        console.log(selectedRows)
+        //TODO support * and pick the more specific value
+
+        debugger;
+
+      }
+    }
   }
 
+
   for (let formulaCode of Object.keys(hesabuPackage.formulas).filter((k) => packageFormulaCodes.includes(k))) {
-    const substitutions = { IF: "IFF", "sum":"SUM" };
+    const substitutions = { IF: "IFF", "sum": "SUM" };
     for (let substit of stateOrFormulaCodes) {
       substitutions["%{" + substit + "_values}"] = hesabuPackage.activities
         .map((activity) => `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`)
@@ -144,5 +197,6 @@ export const generateCalculator = (hesabuPackage, orgunitid, period, activityFor
     SUM,
     SUM,
   );
-  return calculator;
+  return calculator
+
 };

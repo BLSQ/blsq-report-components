@@ -85,6 +85,22 @@ export const generateCalculator = (hesabuPackage, orgunitid, period, activityFor
       codes.push(`   calculator.field_${field_name} = val`);
       codes.push("},");
     }
+
+    for (let state of states) {
+      const field_name = `${hesabuPackage.code}_${activity.code}_${state}_${orgunitid}_${period}`;
+      const function_name = `${hesabuPackage.code}_${activity.code}_${state}_is_null_${orgunitid}_${period}`;
+      // is_null
+      codes.push(`${function_name}: function(){`);
+      codes.push("    if (calculator.indexedValues()) {")
+      codes.push("         const deCoc = \"" + activity[state] + "\".split('.');")
+      codes.push(`         const k = [\"${orgunitid}\", \"${period}\", deCoc[0], deCoc[1] || calculator.defaultCoc()].join("-");`)
+      codes.push("         const v = calculator.indexedValues()[k]")
+      codes.push("         if(v && v[0] && v[0].value) { return 0 } else return 1")
+      codes.push("    }")
+      codes.push(`   return (calculator.field_${field_name} === undefined  || calculator.field_${field_name} === null || calculator.field_${field_name} === "") ? 1 : 0`);
+      codes.push("},");
+
+    }    
     for (let formula of activityFormulas) {
       let expandedformula = "" + formula.expression;
       codes.push("/* " + formula.expression + "*/");
@@ -92,15 +108,16 @@ export const generateCalculator = (hesabuPackage, orgunitid, period, activityFor
       const substitutions = { IF: "IFF", "sum": "SUM" };
       for (let substit of stateOrFormulaCodes) {
         substitutions[substit] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`;
+        substitutions[substit+"_is_null"] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_is_null_${orgunitid}_${period}()`;
       }
       if (hesabuPackage.activity_decision_tables) {
-        debugger;
         for (let rawDecisionTable of hesabuPackage.activity_decision_tables) {
           for (let substit of rawDecisionTable.out_headers) {
             substitutions[substit] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`;
           }
         }
       }
+      
       const tokens = formula.expression.split(/([\w]+)|\"[\w\s]+\"/g);
 
       expandedformula = tokens.map((token) => substitutions[token] || token).join("");
@@ -143,14 +160,6 @@ export const generateCalculator = (hesabuPackage, orgunitid, period, activityFor
             codes.push("},");
           }
         }
-
-
-
-        console.log(selectedRows)
-        //TODO support * and pick the more specific value
-
-        debugger;
-
       }
     }
   }

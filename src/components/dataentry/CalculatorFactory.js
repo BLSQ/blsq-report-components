@@ -175,14 +175,24 @@ export const generateCalculator = (hesabuPackage, orgunitid, period, activityFor
         .map((activity) => `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`)
         .join(" , ");
     }
-    const tokens = hesabuPackage.formulas[formulaCode].expression
+   
+    let expression = hesabuPackage.formulas[formulaCode].expression + "";
+
+    const tokens = expression.split(/([\w]+)|\"[\w\s]+\"/g);
+    for(let otherFormulaCode of Object.keys(hesabuPackage.formulas)) {
+      substitutions[otherFormulaCode] = `calculator.${hesabuPackage.code}_${otherFormulaCode}_${orgunitid}_${period}()`
+    }    
+    expression = tokens.map((token) => substitutions[token] || token).join("");
+
+    const valuesTokens = hesabuPackage.formulas[formulaCode].expression
       .split(/(\%\{\w+\})/g)
       .filter((t) => t.startsWith("%{"));
-    let expression = hesabuPackage.formulas[formulaCode].expression + "";
-    for (let token of tokens) {
+
+    for (let token of valuesTokens) {
       expression = expression.replace(token, substitutions[token]);
     }
-     /* console.log(
+
+    /* console.log(
       hesabuPackage.formulas[formulaCode].expression,
       " ==> \n",
       expression,

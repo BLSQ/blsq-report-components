@@ -62,7 +62,7 @@ export const generateCalculator = (hesabuPackage, orgunitid, period, activityFor
     activityFormulaCodes.includes(f.code),
   );
 
-  const stateOrFormulaCodes = Object.keys(hesabuPackage.activities[0]).filter((k) => k !== "name" && k !== "code");
+  const stateOrFormulaCodes = Array.from(new Set(Object.keys(hesabuPackage.activities[0]).filter((k) => k !== "name" && k !== "code").concat(allFormulaCodes)));
 
   const states = stateOrFormulaCodes.filter((k) => !allFormulaCodes.includes(k));
 
@@ -179,7 +179,7 @@ export const generateCalculator = (hesabuPackage, orgunitid, period, activityFor
     for (let token of tokens) {
       expression = expression.replace(token, substitutions[token]);
     }
-    /*  console.log(
+     /* console.log(
       hesabuPackage.formulas[formulaCode].expression,
       " ==> \n",
       expression,

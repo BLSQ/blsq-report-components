@@ -11,7 +11,7 @@ const HesabuFormula = ({ hesabuPackage, formulaCode, period, orgUnit, activity, 
   useEffect(() => {
     if (formDataContext && formulaCode) {
       setExpression(expression);
-      try {
+      try {  
         const val = formDataContext.getCalculatedValue(hesabuPackage, formulaCode, period, orgUnit, activity);
 
         setRawValue(formatter ? formatter(val) : "" + val);

@@ -12,7 +12,11 @@ const IFF = (a, b, c) => {
   return a ? b : c;
 };
 const ROUND = (a, position) => {
-  return a.toFixed(position);
+  if (a== undefined) {
+    return 0
+  }
+  const fixed = a.toFixed(position)
+  return parseFloat(fixed);
 };
 
 const SCORE_TABLE = (...args) => {
@@ -163,7 +167,6 @@ export const generateCalculator = (hesabuPackage, orgunitid, period, activityFor
       }
     }
   }
-
 
   for (let formulaCode of Object.keys(hesabuPackage.formulas).filter((k) => packageFormulaCodes.includes(k))) {
     const substitutions = { IF: "IFF", "sum": "SUM" };

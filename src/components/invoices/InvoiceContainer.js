@@ -47,9 +47,32 @@ class InvoiceContainer extends Component {
 
     await this.loadLockState();
 
+    // Calculations ususally have this signature:
+    // {
+    //   orgUnitId: "some_org_unit",
+    //   period: "2020Q4",
+    //   currentUserId: "a-user-id"
+    // }
+    //
+    // But they can also have a `then` key which contains an array of
+    // calculations that are dependent on that one.
+    //
+    // What this does, is take those nested ones and flatten it into
+    // one array of invoices that need to be calculated.
+    const calculations = this.state.invoice.calculations;
+    const all = calculations.flatMap(({currentUserId, orgUnitId, period, then}) => {
+      const parent =  [{currentUserId: currentUserId, orgUnitId: orgUnitId, period: period}]
+      if (then) {
+        return parent.concat(then);
+      } else {
+        return parent;
+      }
+    })
+
     let invoicingJobs;
     try {
-      invoicingJobs = await this.orbf2.invoicingJobs(this.state.invoice.calculations, this.props.currentUser.id);
+      // Get the status of all possible invoicing jobs
+      invoicingJobs = await this.orbf2.invoicingJobs(all, this.props.currentUser.id);
     } catch (error) {
       this.setState({
         warning: "Sorry was not able to contact ORBF2 backend: " + error.message,
@@ -57,9 +80,34 @@ class InvoiceContainer extends Component {
       throw error;
     }
 
-    const runningCount = invoicingJobs.data.filter((invoicingJob) => {
+    let runningCount = invoicingJobs.data.filter((invoicingJob) => {
       return invoicingJob.attributes.isAlive;
     });
+
+    // See if any of the child jobs, need to be enqueued
+    invoicingJobs.data.forEach((invoicingJob) => {
+      const calculation = calculations.find(({currentUserId, orgUnitId, period}) => {
+        return invoicingJob.attributes.orgUnit == orgUnitId &&
+          invoicingJob.attributes.dhis2Period == period;
+      })
+      if (calculation && invoicingJob.attributes.status == "processed") {
+        (calculation.then || []).forEach(dependentCalculation => {
+          const job = invoicingJobs.data.find((childJob) => {
+            return childJob.attributes.orgUnit == dependentCalculation.orgUnitId &&
+              childJob.attributes.dhis2Period == dependentCalculation.period;
+          })
+          if (job) {
+            // "Child already existed, nothing to do here"
+          } else {
+            // `Will queue new one: ${dependentCalculation.orgUnitId} ${dependentCalculation.period}`);
+            // Update runningCount because this is a new job, not already in `invoicingJobs`
+            runningCount = runningCount + 1;
+            this.orbf2.calculate(dependentCalculation);
+          }
+        });
+      }
+    });
+
 
     const errors = invoicingJobs.data.filter((invoicingJob) => {
       return invoicingJob.attributes.lastError;
@@ -71,7 +119,7 @@ class InvoiceContainer extends Component {
       invoicingJobs: invoicingJobs.data,
       calculateState: {
         running: runningCount.length,
-        total: this.state.invoice.calculations.length,
+        total: all.length,
         errors: errors,
       },
     });
@@ -182,7 +230,6 @@ class InvoiceContainer extends Component {
       const calculations = invoice.calculations;
       const orgUnitsById = {};
       invoice.orgUnits.forEach((ou) => (orgUnitsById[ou.id] = ou));
-
       let allowedCalculations = calculations
       if (this.props.invoices.getDataApprovals) {
           const approvableOrgUnitIds = new Set(
@@ -201,6 +248,7 @@ class InvoiceContainer extends Component {
               " due to already approved data",
           );
       }
+      debugger
       allowedCalculations.forEach((calculation) => {
         this.orbf2.calculate(calculation);
       });

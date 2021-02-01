@@ -248,7 +248,6 @@ class InvoiceContainer extends Component {
               " due to already approved data",
           );
       }
-      debugger
       allowedCalculations.forEach((calculation) => {
         this.orbf2.calculate(calculation);
       });

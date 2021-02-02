@@ -1,6 +1,6 @@
 
 # @blsq/blsq-report-components@1.0.27-29
-- [dataentry] various fixes
+- [dataentry] various fixes, add minimal support for decision tables
 - [dataentry] Calculator allow cross reference between package formulas
 
 # @blsq/blsq-report-components@1.0.26

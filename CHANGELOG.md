@@ -1,3 +1,6 @@
+# @blsq/blsq-report-components@1.0.30
+- [dataentry] restore backward compatibility with older dhis2 for Complete/uncomplete dataset
+- [dataentry] allow to trigger an hesabu invoice when dataset is clicked completed
 
 # @blsq/blsq-report-components@1.0.27-29
 - [dataentry] various fixes, add minimal support for decision tables

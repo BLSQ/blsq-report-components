@@ -2,12 +2,12 @@ import React, { useEffect, useState, useContext } from "react";
 import { Button } from "@material-ui/core";
 import FormDataContext from "./FormDataContext";
 
-const CompleteDataSetButton = () => {
+const CompleteDataSetButton = ({calculations}) => {
   const formDataContext = useContext(FormDataContext);
 
   const isComplete = formDataContext.isDataSetComplete();
   const onClick = () => {
-    formDataContext.toggleComplete();
+    formDataContext.toggleComplete(calculations);
   };
   return (
     <Button

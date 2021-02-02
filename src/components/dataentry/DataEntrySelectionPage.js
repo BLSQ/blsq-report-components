@@ -10,6 +10,19 @@ import InvoiceLinks from "../invoices/InvoiceLinks";
 import { useTranslation } from "react-i18next";
 import { withRouter } from "react-router";
 import InfoIcon from "@material-ui/icons/Info";
+
+
+function isDataSetComplete(completeDataSetRegistration) {
+  if (completeDataSetRegistration == undefined) {
+    return false
+  }
+  if ('completed' in completeDataSetRegistration) {
+    return completeDataSetRegistration.completed
+  }
+  return true
+}
+
+
 const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
   const { t, i18n } = useTranslation();
   const dataEntryRegistry = PluginRegistry.extension("dataentry.dataEntries");
@@ -42,11 +55,11 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
         const defaultDataEntry = expectedDataEntries[0];
         history.push(
           "/dataEntry/" +
-            activeContract.orgUnit.id +
-            "/" +
-            defaultDataEntry.period +
-            "/" +
-            defaultDataEntry.dataEntryType.code,
+          activeContract.orgUnit.id +
+          "/" +
+          defaultDataEntry.period +
+          "/" +
+          defaultDataEntry.dataEntryType.code,
         );
       }
 
@@ -78,14 +91,14 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
         });
         let rawValues = dv.dataValues || [];
         if (dataEntryRegistry.fetchExtraData) {
-           const extraValues = await dataEntryRegistry.fetchExtraData(api, activeContract.orgUnit, period, dataEntry)
-           rawValues = rawValues.concat(extraValues)
+          const extraValues = await dataEntryRegistry.fetchExtraData(api, activeContract.orgUnit, period, dataEntry)
+          rawValues = rawValues.concat(extraValues)
 
-           const extraDataElements = await dataEntryRegistry.fetchExtraMetaData(api, activeContract.orgUnit, period, dataEntry)
+          const extraDataElements = await dataEntryRegistry.fetchExtraMetaData(api, activeContract.orgUnit, period, dataEntry)
 
-           for (let extraDe of extraDataElements) {
+          for (let extraDe of extraDataElements) {
             dataElementsById[extraDe.id] = extraDe
-           }
+          }
         }
         const defaultCoc = (
           await api.get("categoryOptionCombos", {
@@ -111,7 +124,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
           values: rawValues,
           indexedValues: indexedValues,
           orgUnit: activeContract.orgUnit,
-          dataSetComplete: completeDataSetRegistration && completeDataSetRegistration.completed,
+          dataSetComplete: isDataSetComplete(completeDataSetRegistration),
           completeDataSetRegistration: completeDataSetRegistration,
           dataSet: dataSet,
           dataElementsById: dataElementsById,
@@ -176,13 +189,13 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
               await dhis2.setDataValue(newValue);
               const newIndexedValues = this.indexedValues[key]
                 ? {
-                    ...this.indexedValues,
-                    [key]: [{ ...this.indexedValues[key][0], value: value }],
-                  }
+                  ...this.indexedValues,
+                  [key]: [{ ...this.indexedValues[key][0], value: value }],
+                }
                 : {
-                    ...this.indexedValues,
-                    [key]: [{ dataElement: newValue.de, value: value }],
-                  };
+                  ...this.indexedValues,
+                  [key]: [{ dataElement: newValue.de, value: value }],
+                };
               calculator.setIndexedValues(newIndexedValues);
               const updatedFormaData = {
                 ...this,
@@ -203,17 +216,41 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
               setFormData(updatedFormaData);
             }
           },
-          async toggleComplete() {
-            await api.post("completeDataSetRegistrations", {
-              completeDataSetRegistrations: [
-                {
-                  dataSet: this.dataSet.id,
-                  period: this.period,
-                  organisationUnit: activeContract.orgUnit.id,
-                  completed: !this.dataSetComplete,
-                },
-              ],
-            });
+          async toggleComplete(calculations) {
+            if (completeDataSetRegistration && 'completed' in completeDataSetRegistration) {
+              // newer dhis2 version just toggle "completed" or create one
+              await api.post("completeDataSetRegistrations", {
+                completeDataSetRegistrations: [
+                  {
+                    dataSet: this.dataSet.id,
+                    period: this.period,
+                    organisationUnit: activeContract.orgUnit.id,
+                    completed: !this.dataSetComplete,
+                  },
+                ],
+              });
+            } else if (completeDataSetRegistration && this.dataSetComplete) {
+              // older dhis2 delete the existing completion record
+              await api.delete("completeDataSetRegistrations?ds=" + this.dataSet.id + "&pe=" + this.period + "&ou=" + activeContract.orgUnit.id + "&multiOu=false")
+            } else {
+              // older dis2 delete the existing completion record
+
+              await api.post("completeDataSetRegistrations", {
+                completeDataSetRegistrations: [
+                  {
+                    dataSet: this.dataSet.id,
+                    period: this.period,
+                    organisationUnit: activeContract.orgUnit.id,
+                    completed: !this.dataSetComplete,
+                  },
+                ],
+              });
+            }
+
+            if (calculations && !this.dataSetComplete) {
+              const orbf2 = PluginRegistry.extension("invoices.hesabu");
+              calculations.forEach(calculation => orbf2.calculate(calculation))
+            }
 
             const updatedFormaData = {
               ...this,
@@ -264,7 +301,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
         <div>
           {t("dataEntry.contractFrom")} <code>{orgUnit.activeContracts[0].startPeriod}</code>{" "}
           {t("dataEntry.contractTo")} <code>{orgUnit.activeContracts[0].endPeriod}</code>{" "}
-          <Link to={"/contracts/" + orgUnit.id}><IconButton><InfoIcon color="action"/></IconButton></Link>{" "}
+          <Link to={"/contracts/" + orgUnit.id}><IconButton><InfoIcon color="action" /></IconButton></Link>{" "}
           {orgUnit.activeContracts[0].codes.map((c) => (
             <Chip label={c} style={{ margin: "5px" }} />
           ))}
@@ -327,7 +364,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
       <div>
         {formData && (
           <FormDataContext.Provider value={formData}>
-            <DataEntryForm period={period} dataEntryCode={match.params.dataEntryCode} formData={formData} dataEntryType={dataEntryType}/>
+            <DataEntryForm period={period} dataEntryCode={match.params.dataEntryCode} formData={formData} dataEntryType={dataEntryType} />
             <br />
           </FormDataContext.Provider>
         )}

@@ -102,6 +102,10 @@ const ContractsDialog = ({
   };
   const handleSave = () => {
     dispatch(setIsLoading(true));
+
+    if(currentContract.fieldValues.contract_main_orgunit){
+      currentContract.fieldValues.contract_main_orgunit = currentContract.fieldValues.contract_main_orgunit.id;
+    }
     const saveContract =
       currentContract.id !== 0
         ? contractService.updateContract(currentContract)

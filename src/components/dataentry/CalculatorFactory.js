@@ -109,7 +109,7 @@ export const generateCalculator = (hesabuPackage, orgunitid, period, activityFor
       let expandedformula = "" + formula.expression;
       codes.push("/* " + formula.expression + "*/");
       codes.push(`${hesabuPackage.code}_${activity.code}_${formula.code}_${orgunitid}_${period}: () => {`);
-      const substitutions = { IF: "IFF", "sum": "SUM" };
+      const substitutions = { IF: "IFF", "sum": "SUM"," =":"==","=": "==" };
       for (let substit of stateOrFormulaCodes) {
         substitutions[substit] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`;
         substitutions[substit+"_is_null"] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_is_null_${orgunitid}_${period}()`;
@@ -123,7 +123,7 @@ export const generateCalculator = (hesabuPackage, orgunitid, period, activityFor
       }
       
       const tokens = formula.expression.split(/([\w]+)|\"[\w\s]+\"/g);
-
+   
       expandedformula = tokens.map((token) => substitutions[token] || token).join("");
 
       codes.push("  return " + expandedformula);
@@ -191,7 +191,6 @@ export const generateCalculator = (hesabuPackage, orgunitid, period, activityFor
     for (let token of valuesTokens) {
       expression = expression.replace(token, substitutions[token]);
     }
-
     /* console.log(
       hesabuPackage.formulas[formulaCode].expression,
       " ==> \n",
@@ -219,6 +218,7 @@ export const generateCalculator = (hesabuPackage, orgunitid, period, activityFor
     SUM,
     SUM,
   );
+
   return calculator
 
 };

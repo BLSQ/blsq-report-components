@@ -1,3 +1,8 @@
+# @blsq/blsq-report-components@1.0.31
+
+- [dataentry] support equality check and turn them into == (the fix is a bit weak but does it for my case)
+- [dataentry] support "blank" (when removing a value from the screen, was generating a NaN, instead of 0 in hesabu)
+
 # @blsq/blsq-report-components@1.0.30
 - [dataentry] restore backward compatibility with older dhis2 for Complete/uncomplete dataset
 - [dataentry] allow to trigger an hesabu invoice when dataset is clicked completed

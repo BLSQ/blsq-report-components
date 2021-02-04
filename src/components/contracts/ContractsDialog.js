@@ -68,6 +68,8 @@ const ContractsDialog = ({
   const [open, setOpen] = React.useState(false);
 
   const contractService = PluginRegistry.extension("contracts.service");
+  contract = contractService.defaultPeriod(contract);
+
   const [currentContract, setCurrentContract] = React.useState(contract);
   const [validationErrors, setValidationErrors] = React.useState([]);
   const isLoading = useSelector((state) => state.load.isLoading);
@@ -103,7 +105,7 @@ const ContractsDialog = ({
   const handleSave = () => {
     dispatch(setIsLoading(true));
 
-    if(currentContract.fieldValues.contract_main_orgunit){
+    if (currentContract.fieldValues.contract_main_orgunit) {
       currentContract.fieldValues.contract_main_orgunit = currentContract.fieldValues.contract_main_orgunit.id;
     }
     const saveContract =

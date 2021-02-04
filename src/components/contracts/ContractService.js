@@ -2,6 +2,7 @@ import Contract from "./Contract";
 import PluginRegistry from "../core/PluginRegistry";
 import DefaultValidator from "./validations/DefaultValidator";
 import { getOrgUnitCoverage, checkSubContractCoverage, checkNonVisibleOverlap, getOverlaps } from "./utils/index";
+import { getStartDateFromPeriod, getEndDateFromPeriod, getQuarterFromDate } from "./utils/periodsUtils";
 
 class ContractService {
   constructor(api, program, allEventsSqlViewId) {
@@ -292,6 +293,20 @@ class ContractService {
     };
     return event;
   };
+
+  defaultPeriod(contract) {
+    const startDate = getStartDateFromPeriod(getQuarterFromDate(contract.fieldValues.contract_start_date));
+    const endDate = getEndDateFromPeriod(getQuarterFromDate(contract.fieldValues.contract_end_date));
+    contract.fieldValues.contract_start_date = startDate;
+    contract.fieldValues.contract_end_date = endDate;
+
+    const startPeriod = startDate.split("-");
+    const endPeriod = endDate.split("-");
+    contract.startPeriod = `${startPeriod[0]}${startPeriod[1]}`;
+    contract.endPeriod = `${endPeriod[0]}${endPeriod[1]}`;
+
+    return contract;
+  }
 
   newContract(fieldValues) {
     return new Contract(fieldValues);

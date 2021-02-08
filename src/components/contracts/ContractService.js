@@ -299,13 +299,14 @@ class ContractService {
     const endDate = getEndDateFromPeriod(getQuarterFromDate(contract.fieldValues.contract_end_date));
     contract.fieldValues.contract_start_date = startDate;
     contract.fieldValues.contract_end_date = endDate;
+    const tempContract = { ...contract };
 
     const startPeriod = startDate.split("-");
     const endPeriod = endDate.split("-");
-    contract.startPeriod = `${startPeriod[0]}${startPeriod[1]}`;
-    contract.endPeriod = `${endPeriod[0]}${endPeriod[1]}`;
+    tempContract.startPeriod = `${startPeriod[0]}${startPeriod[1]}`;
+    tempContract.endPeriod = `${endPeriod[0]}${endPeriod[1]}`;
 
-    return contract;
+    return tempContract;
   }
 
   newContract(fieldValues) {

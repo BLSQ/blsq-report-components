@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.32
+
+- [dataentry] Add link to orgunit selection in hierarchy breadcrumb
+
 # @blsq/blsq-report-components@1.0.31
 
 - [dataentry] support equality check and turn them into == (the fix is a bit weak but does it for my case)

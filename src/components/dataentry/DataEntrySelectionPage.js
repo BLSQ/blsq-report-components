@@ -289,13 +289,18 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
         <AssignmentIcon /> {orgUnit && orgUnit.name}
       </h1>
 
-      <pre>
-        {orgUnit &&
-          orgUnit.ancestors
-            .slice(1, orgUnit.ancestors.length - 1)
-            .map((a) => a.name)
-            .join(" > ")}
-      </pre>
+      <div style={{    fontFamily: "monospace"}}>
+      {orgUnit &&
+        orgUnit.ancestors.slice(1, orgUnit.ancestors.length - 1).map((ancestor, index) => {
+          return (
+            <span key={"ancestor" + index}>
+               <Link to={"/select/?q=&period="+period+"&parent="+ ancestor.id}>{ancestor.name}</Link>
+               {index < orgUnit.ancestors.length - 3 && "  >  "}
+            </span>
+          )
+        })
+      }
+      </div>
 
       {orgUnit && orgUnit.activeContracts && (
         <div>

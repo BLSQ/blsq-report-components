@@ -3,6 +3,7 @@ import { Autocomplete, createFilterOptions } from "@material-ui/lab";
 import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import DatePeriods from "../../support/DatePeriods";
+import PropTypes from "prop-types";
 
 const styles = (theme) => ({
     formControl: {
@@ -51,7 +52,7 @@ const PeriodPicker = ({ currentPeriod, mode, fieldName, min, max, onPeriodChange
     })
     const handleChange = (newperiod) => {
         setPeriod(newperiod)
-        onPeriodChange(newperiod.monthPeriod)
+        onPeriodChange(newperiod ? newperiod.monthPeriod : undefined)
     }
 
     const filterOptions = createFilterOptions({
@@ -95,7 +96,7 @@ const PeriodPicker = ({ currentPeriod, mode, fieldName, min, max, onPeriodChange
 
 PeriodPicker.propTypes = {
     currentPeriod: PropTypes.string,
-    mode: PropTypes.string.oneOf(['beginning', 'end']),
+    mode: PropTypes.oneOf(['beginning', 'end']),
     fieldName: PropTypes.func.isRequired,
     min: PropTypes.string,
     max: PropTypes.string,

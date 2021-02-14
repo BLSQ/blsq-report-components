@@ -110,6 +110,21 @@ const defaultFilters = [
     urlEncode: (value) => (value ? "true" : "false"),
     urlDecode: (value) => value === "true",
   },
+  {
+    id: "under_orgunit",
+    key: "contracts.underOrgunit",
+    type: "ouSearch",
+    column: 2,
+    value: "",
+    onFilter: (orgUnitId, contracts, contractsOverlaps) => {
+      if (orgUnitId == undefined || orgUnitId == "") {
+        return contracts;
+      }
+      return contracts.filter((c) => c.orgUnit.path.includes(orgUnitId));
+    },
+    urlEncode: (value) => (value ? value : undefined),
+    urlDecode: (value) =>  value,
+  },
 ];
 
 const filterConfig = (contractFields) => {

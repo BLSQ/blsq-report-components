@@ -9,6 +9,7 @@ import {
   FormControl,
   TextField,
   ClickAwayListener,
+  Typography,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import InfoIcon from "@material-ui/icons/Info";
@@ -35,14 +36,34 @@ const styles = (theme) => ({
 });
 const useStyles = makeStyles((theme) => styles(theme));
 
-const OuSearch = ({ t, orgUnit, onChange, label }) => {
+const OuSearch = ({ t, orgUnit, onChange, label, defaultValue }) => {
   const classes = useStyles();
   const currentUser = useSelector((state) => state.currentUser.profile);
   const dhis2 = useSelector((state) => state.dhis2.support);
+
+  const [selectedOrgUnit, setSelectedOrgUnit] = React.useState(orgUnit)
   const [searchValue, setSearchValue] = React.useState("");
   const [options, setOptions] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [searchTriggered, setSearchTriggered] = React.useState(false);
+
+  React.useEffect(() => {
+    const loadOrgUnitById = async () => {
+   
+      if (defaultValue != "" && defaultValue != undefined && orgUnit == undefined) {
+        const api = await dhis2.api()
+        const org = await api.get("organisationUnits/"+defaultValue, { fields: "[*],ancestors[id,name],organisationUnitGroups[id,name,code]" })
+        if (org) {
+          setSelectedOrgUnit(org)
+          onChange(org)
+        }
+      } else {
+        setSelectedOrgUnit(orgUnit)
+      }
+
+    }
+    loadOrgUnitById();
+  }, [defaultValue])
 
   const [debouncedSearchOu] = React.useState(() =>
     debounce((search) => {
@@ -58,6 +79,7 @@ const OuSearch = ({ t, orgUnit, onChange, label }) => {
       null,
       maxResult,
     );
+
     setIsLoading(false);
     if (
       orgUnit &&
@@ -92,10 +114,11 @@ const OuSearch = ({ t, orgUnit, onChange, label }) => {
           noOptionsText={t("noResult")}
           multiple={false}
           options={options === [] && Boolean(orgUnit) ? [orgUnit] : options}
-          value={orgUnit}
+          value={selectedOrgUnit}
+          defaultValue={defaultValue}
           open={searchTriggered}
           loading={isLoading}
-          getOptionSelected={(option, value) => value.id === option.id}
+          getOptionSelected={(option, value) => value && value.id === option.id}
           className={classes.autoComplete}
           filterSelectedOptions
           popupIcon={null}
@@ -107,22 +130,31 @@ const OuSearch = ({ t, orgUnit, onChange, label }) => {
             handleInputChange(newInputValue)
           }
           onChange={(event, newValue) => handleSelect(newValue)}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              autoFocus
-              label={label || t("orgUnit")}
-              onKeyUp={(event) => {
-                if (event.key === "Escape") {
-                  setSearchTriggered(false);
-                }
-              }}
-              InputLabelProps={{
-                shrink: Boolean(searchValue && searchValue !== ""),
-              }}
-              placeholder=""
-            />
-          )}
+          renderOption={(option) => (
+            <div>
+              <span display="block">{option.name} <code style={{ color: "lightgrey" }}>{option.id}</code></span>
+              <pre style={{ fontSize: "8px" }}>{option.ancestors.slice(1).map(o => o.name).join(' > ')}</pre>
+              <hr></hr>
+            </div>)
+          }
+          renderInput={(params) => {
+            return (
+              <TextField
+                {...params}
+                autoFocus
+                label={label || t("orgUnit")}
+                onKeyUp={(event) => {
+                  if (event.key === "Escape") {
+                    setSearchTriggered(false);
+                  }
+                }}
+                InputLabelProps={{
+                  shrink: Boolean(searchValue && searchValue !== ""),
+                }}
+                placeholder=""
+              />
+            )
+          }}
         />
         <span className={classes.tooltip}>
           <Tooltip arrow title={t("searchHelp", { minChar, maxResult })}>

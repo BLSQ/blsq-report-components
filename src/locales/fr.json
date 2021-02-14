@@ -53,7 +53,7 @@
       "period": "Période"
     }
   },
-  "limit_org_unit_under": "Limiter à l'unité d'organisation enfant",
+  "limit_org_unit_under": "Limiter aux unités d'organisation enfant de ...",
   "missing_invoice_types": "Facture introuvable...",
   "name": "Nom",
   "noResult": "Aucun résultat",

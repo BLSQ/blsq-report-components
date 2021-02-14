@@ -197,6 +197,7 @@ const Filter = ({ filter, setFilterValue, onSearch, t }) => {
       return (
         <OuSearch
           defaultValue={filter.value}
+          label={t("limit_org_unit_under")}
           onChange={
             (orgunit) => {
               setFilterValue(filter.id, orgunit ? orgunit.id : undefined)

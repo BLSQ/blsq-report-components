@@ -278,6 +278,11 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
     dataEntryType = dataEntryRegistry.getDataEntry(match.params.dataEntryCode);
   }
 
+  let quarterPeriod = ""
+  if (period) {
+    quarterPeriod = DatePeriods.split(period, "quarterly")[0]
+  }
+
   return (
     <Paper style={{ minHeight: "90vh", paddingLeft: "50px", paddingTop: "20px" }}>
       {error && (
@@ -294,7 +299,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
         orgUnit.ancestors.slice(1, orgUnit.ancestors.length - 1).map((ancestor, index) => {
           return (
             <span key={"ancestor" + index}>
-               <Link to={"/select/?q=&period="+period+"&parent="+ ancestor.id}>{ancestor.name}</Link>
+               <Link to={"/select/?q=&period="+quarterPeriod+"&parent="+ ancestor.id}>{ancestor.name}</Link>
                {index < orgUnit.ancestors.length - 3 && "  >  "}
             </span>
           )

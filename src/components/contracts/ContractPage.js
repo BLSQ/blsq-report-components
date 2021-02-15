@@ -187,7 +187,8 @@ const ContractPage = ({ match, location, t, history }) => {
           </ContractsDialog>
         </Box>
       </Box>
-      {subContracts.contracts.length > 0 && (
+      {/* show the sub contract create button if orgunit has at least one contract */ }
+      {mainContracts.contracts.length > 0 && (
         <>
           <Divider />
           <Box mb={4} mt={2}>

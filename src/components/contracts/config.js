@@ -140,7 +140,11 @@ export const contractsTableColumns = (
         customBodyRender: (contractMainOrgunitId) => {
           if (!contractMainOrgunitId) return "";
           const mainContract = getContractByOrgUnit(contracts, contractMainOrgunitId);
-          if (!mainContract) return "";
+         
+          if (!mainContract) {
+            // if you the orgunit hasn't a contract at least display the uid
+            return contractMainOrgunitId;
+          }
           return (
             <Tooltip arrow title={getOrgUnitAncestors(mainContract.orgUnit)}>
               <span>{mainContract.orgUnit.name}</span>
@@ -222,11 +226,10 @@ export const contractsTableColumns = (
             {!isDetail && (
               <Tooltip placement="bottom" title={t("contracts.seeOrgUnit")} arrow>
                 <Link
-                  to={`/contracts/${
-                    contract.fieldValues.contract_main_orgunit
+                  to={`/contracts/${contract.fieldValues.contract_main_orgunit
                       ? contract.fieldValues.contract_main_orgunit
                       : contract.orgUnit.id
-                  }${location.search}`}
+                    }${location.search}`}
                   className={classes.marginLeft}
                 >
                   <IconButton size="small">

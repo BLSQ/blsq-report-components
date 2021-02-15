@@ -277,6 +277,9 @@ class ContractService {
                 .join(","),
           );
         }
+        if (dataElement.code =="contract_main_orgunit") {
+          debugger;
+        }
         dataValues.push({
           dataElement: dataElement.id,
           value: contractInfo[fieldKey],

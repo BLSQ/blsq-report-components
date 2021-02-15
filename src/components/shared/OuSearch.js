@@ -40,7 +40,6 @@ const OuSearch = ({ t, orgUnit, onChange, label, defaultValue }) => {
   const classes = useStyles();
   const currentUser = useSelector((state) => state.currentUser.profile);
   const dhis2 = useSelector((state) => state.dhis2.support);
-
   const [selectedOrgUnit, setSelectedOrgUnit] = React.useState(orgUnit)
   const [searchValue, setSearchValue] = React.useState("");
   const [options, setOptions] = React.useState([]);
@@ -49,16 +48,18 @@ const OuSearch = ({ t, orgUnit, onChange, label, defaultValue }) => {
 
   React.useEffect(() => {
     const loadOrgUnitById = async () => {
-   
+
       if (defaultValue != "" && defaultValue != undefined && orgUnit == undefined) {
         const api = await dhis2.api()
-        const org = await api.get("organisationUnits/"+defaultValue, { fields: "[*],ancestors[id,name],organisationUnitGroups[id,name,code]" })
+        const org = await api.get("organisationUnits/" + defaultValue, { fields: "[*],ancestors[id,name],organisationUnitGroups[id,name,code]" })
         if (org) {
           setSelectedOrgUnit(org)
+          setSearchValue(org.name);
           onChange(org)
         }
       } else {
         setSelectedOrgUnit(orgUnit)
+        setSearchValue("")
       }
 
     }
@@ -103,6 +104,8 @@ const OuSearch = ({ t, orgUnit, onChange, label, defaultValue }) => {
   };
 
   const handleSelect = (newOrgUnit) => {
+    setSelectedOrgUnit(newOrgUnit)
+    setSearchValue(newOrgUnit ? newOrgUnit.name : "")
     setSearchTriggered(false);
     onChange(newOrgUnit);
   };
@@ -149,7 +152,7 @@ const OuSearch = ({ t, orgUnit, onChange, label, defaultValue }) => {
                   }
                 }}
                 InputLabelProps={{
-                  shrink: Boolean(searchValue && searchValue !== ""),
+                  shrink: true,
                 }}
                 placeholder=""
               />

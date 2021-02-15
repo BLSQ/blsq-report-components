@@ -211,7 +211,7 @@ const ContractPage = ({ match, location, t, history }) => {
             <Box mt={4} pr={4} justifyContent="flex-end" display="flex">
               <ContractsDialog
                 contract={defaultContract({
-                  contract_main_orgunit: mainOrgUnit ? mainOrgUnit.id : undefined,
+                  contract_main_orgunit: mainOrgUnit ? mainOrgUnit : undefined,
                 })}
                 contracts={allContracts}
                 contractFields={contractFields}

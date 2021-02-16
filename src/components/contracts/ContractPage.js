@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import Typography from "@material-ui/core/Typography";
 import { withTranslation } from "react-i18next";
 import { Breadcrumbs, Grid, makeStyles, Divider, Box, Button } from "@material-ui/core";
+import LocationOnIcon from '@material-ui/icons/LocationOn';
 import Add from "@material-ui/icons/Add";
 import { Link, withRouter } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -34,6 +35,9 @@ const styles = (theme) => ({
   ...tablesStyles(theme),
   ...containersStyles(theme),
   ...icons(theme),
+  wrapIcon: {
+    fontFamily: "monospace"
+  }
 });
 const useStyles = makeStyles((theme) => styles(theme));
 
@@ -152,6 +156,16 @@ const ContractPage = ({ match, location, t, history }) => {
           </Breadcrumbs>
         </Grid>
       </Grid>
+      <Box mb={3}>
+        <br></br>
+        <Grid container direction="row" alignItems="center">
+          <LocationOnIcon color="secondary"></LocationOnIcon>
+          &nbsp;
+          <Typography className={classes.wrapIcon} color="secondary">
+            {orgUnit && orgUnit.ancestors.slice(1).map(a => a.name).join(" > ")}
+          </Typography>
+        </Grid>
+      </Box>
       <Box mb={3}>
         <Grid container item xs={12} spacing={4}>
           <Grid container item xs={12} md={3}>

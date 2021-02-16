@@ -1,3 +1,12 @@
+
+# @blsq/blsq-report-components@1.0.33
+
+- [contracts] Edit/create contracts a better [period picker](https://github.com/BLSQ/blsq-report-components/pull/92)
+- [contracts] Filter contracts on a [parent orgunit](https://github.com/BLSQ/blsq-report-components/pull/93)
+- [contracts] Detail page show orgunit hierachy and allow to create sub-contract if at least one contract
+- [contracts] Fixes when creating/editing where main contract orgunit was ignored and so creating a standalone contract
+- [contracts] Fixes when creating/editing where default periods where not well handled, forcing you to change the value
+
 # @blsq/blsq-report-components@1.0.32
 
 - [dataentry] Add link to orgunit selection in hierarchy breadcrumb

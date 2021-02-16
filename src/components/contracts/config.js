@@ -229,7 +229,7 @@ export const contractsTableColumns = (
                   to={`/contracts/${contract.fieldValues.contract_main_orgunit
                       ? contract.fieldValues.contract_main_orgunit
                       : contract.orgUnit.id
-                    }${location.search}`}
+                    }`}
                   className={classes.marginLeft}
                 >
                   <IconButton size="small">

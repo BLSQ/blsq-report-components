@@ -56,7 +56,7 @@
       "period": "Period"
     }
   },
-  "limit_org_unit_under": "Limit to the child organisation unit",
+  "limit_org_unit_under": "Limit to the children organisation units of ...",
   "missing_invoice_types": "Missing invoice...",
   "name": "Name",
   "noResult": "No result",

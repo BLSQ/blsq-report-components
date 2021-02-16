@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import Typography from "@material-ui/core/Typography";
 import { withTranslation } from "react-i18next";
 import { Breadcrumbs, Grid, makeStyles, Divider, Box, Button } from "@material-ui/core";
+import LocationOnIcon from '@material-ui/icons/LocationOn';
 import Add from "@material-ui/icons/Add";
 import { Link, withRouter } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -34,6 +35,9 @@ const styles = (theme) => ({
   ...tablesStyles(theme),
   ...containersStyles(theme),
   ...icons(theme),
+  wrapIcon: {
+    fontFamily: "monospace"
+  }
 });
 const useStyles = makeStyles((theme) => styles(theme));
 
@@ -41,6 +45,8 @@ const ContractPage = ({ match, location, t, history }) => {
   const classes = useStyles();
   const isLoading = useSelector((state) => state.load.isLoading);
   const dispatch = useDispatch();
+  const dhis2 = useSelector((state) => state.dhis2.support);
+  const [orgUnit, setOrgUnit] = useState(undefined);
   const [filters, setFilters] = useState([activeToday, ...filtersConfig([])]);
   const [contractsDatas, setContractsDatas] = useState(detailInitialState);
   const contractService = PluginRegistry.extension("contracts.service");
@@ -56,6 +62,11 @@ const ContractPage = ({ match, location, t, history }) => {
       });
     }
   };
+
+  const fetchOrgUnit = () => {
+    dhis2.api().then(api => api.get("organisationUnits/" + match.params.orgUnitId, { fields: "[*],ancestors[id,name],organisationUnitGroups[id,name,code]" }))
+      .then(org => setOrgUnit(org))
+  }
   const { allContracts, subContracts, mainContracts, contractFields } = contractsDatas;
   const mainContractProps = getContractTableProps(
     t,
@@ -85,6 +96,7 @@ const ContractPage = ({ match, location, t, history }) => {
   const mainOrgUnit = getMainOrgUnit(allContracts, match.params.orgUnitId);
 
   useEffect(() => {
+    fetchOrgUnit()
     fetchContracts();
   }, []);
 
@@ -140,10 +152,20 @@ const ContractPage = ({ match, location, t, history }) => {
               {t("contracts.title")}
             </Link>
 
-            <Typography color="textPrimary">{mainOrgUnit ? mainOrgUnit.name : "..."}</Typography>
+            <Typography color="textPrimary">{orgUnit ? orgUnit.name : "..."}</Typography>
           </Breadcrumbs>
         </Grid>
       </Grid>
+      <Box mb={3}>
+        <br></br>
+        <Grid container direction="row" alignItems="center">
+          <LocationOnIcon color="secondary"></LocationOnIcon>
+          &nbsp;
+          <Typography className={classes.wrapIcon} color="secondary">
+            {orgUnit && orgUnit.ancestors.slice(1).map(a => a.name).join(" > ")}
+          </Typography>
+        </Grid>
+      </Box>
       <Box mb={3}>
         <Grid container item xs={12} spacing={4}>
           <Grid container item xs={12} md={3}>
@@ -174,7 +196,7 @@ const ContractPage = ({ match, location, t, history }) => {
 
         <Box mt={4} pr={4} justifyContent="flex-end" display="flex">
           <ContractsDialog
-            contract={defaultContract({ orgUnit: mainOrgUnit })}
+            contract={defaultContract({ orgUnit: orgUnit })}
             contracts={allContracts}
             contractFields={contractFields}
             onSavedSuccessfull={fetchContracts}
@@ -187,7 +209,8 @@ const ContractPage = ({ match, location, t, history }) => {
           </ContractsDialog>
         </Box>
       </Box>
-      {subContracts.contracts.length > 0 && (
+      {/* show the sub contract create button if orgunit has at least one contract */}
+      {mainContracts.contracts.length > 0 && (
         <>
           <Divider />
           <Box mb={4} mt={2}>
@@ -210,7 +233,7 @@ const ContractPage = ({ match, location, t, history }) => {
             <Box mt={4} pr={4} justifyContent="flex-end" display="flex">
               <ContractsDialog
                 contract={defaultContract({
-                  contract_main_orgunit: mainOrgUnit ? mainOrgUnit.id : undefined,
+                  contract_main_orgunit: mainOrgUnit ? mainOrgUnit : undefined,
                 })}
                 contracts={allContracts}
                 contractFields={contractFields}

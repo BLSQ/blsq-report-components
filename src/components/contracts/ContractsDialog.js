@@ -28,7 +28,7 @@ import { getNonStandartContractFields, getContractByOrgUnit } from "./utils/inde
 
 import {
   getStartDateFromPeriod,
-  getEndDateFromPeriod,  
+  getEndDateFromPeriod,
 } from "./utils/periodsUtils";
 import { enqueueSnackbar } from "../redux/actions/snackBars";
 
@@ -87,19 +87,14 @@ const ContractsDialog = ({
       [key]: !subKey
         ? value
         : {
-            ...currentContract[key],
-            [subKey]: value,
-          },
+          ...currentContract[key],
+          [subKey]: value,
+        },
     };
     const errors = contractService.validateContract(updatedContract);
 
     setCurrentContract({
-      ...updatedContract,
-      fieldValues: {
-        ...updatedContract.fieldValues,
-        contract_main_orgunit:
-          updatedContract.fieldValues.contract_main_orgunit && updatedContract.fieldValues.contract_main_orgunit.id,
-      },
+      ...updatedContract
     });
     setValidationErrors(errors);
   };
@@ -162,6 +157,9 @@ const ContractsDialog = ({
           )}
         </DialogTitle>
         <DialogContent dividers>
+          {false && (<pre>
+            {JSON.stringify(currentContract, undefined, 4)}
+          </pre>)}
           <Grid container spacing={2}>
             {(displayOrgUnit || displayMainOrgUnit) && (
               <Grid container item xs={12}>
@@ -193,7 +191,7 @@ const ContractsDialog = ({
               />
             </Grid>
             <Grid container item xs={6}>
-            <PeriodPicker
+              <PeriodPicker
                 contract={currentContract}
                 currentPeriod={currentContract.endPeriod}
                 min={currentContract.startPeriod}

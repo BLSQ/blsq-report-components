@@ -270,16 +270,20 @@ class ContractService {
         if (dataElement === undefined) {
           throw new Error(
             "no mapping for field " +
-              fieldKey +
-              " vs " +
-              Object.values(this.mappings)
-                .map((m) => m.code)
-                .join(","),
+            fieldKey +
+            " vs " +
+            Object.values(this.mappings)
+              .map((m) => m.code)
+              .join(","),
           );
+        }
+        let value = contractInfo[fieldKey]
+        if (dataElement.code == "contract_main_orgunit" && value && value.id) {
+          value = value.id
         }
         dataValues.push({
           dataElement: dataElement.id,
-          value: contractInfo[fieldKey],
+          value: value,
         });
       }
     });

@@ -20,6 +20,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import InfoIcon from "@material-ui/icons/Info";
 import Clear from "@material-ui/icons/Clear";
 import { KeyboardDatePicker } from "@material-ui/pickers";
+import OuSearch from "./OuSearch";
 
 const styles = (theme) => ({
   formControl: {
@@ -50,7 +51,6 @@ const useStyles = makeStyles((theme) => styles(theme));
 const Filter = ({ filter, setFilterValue, onSearch, t }) => {
   const classes = useStyles();
   const [selectInputValue, setSelectInputValue] = React.useState("");
-
   const handleKeyPressed = (e) => {
     if (e.key === "Enter") {
       onSearch();
@@ -192,6 +192,19 @@ const Filter = ({ filter, setFilterValue, onSearch, t }) => {
           label={t(filter.key)}
         />
       );
+    }
+    case "ouSearch": {
+      return (
+        <OuSearch
+          defaultValue={filter.value}
+          label={t("limit_org_unit_under")}
+          onChange={
+            (orgunit) => {
+              setFilterValue(filter.id, orgunit ? orgunit.id : undefined)
+            }
+          }
+        />
+      )
     }
 
     default:

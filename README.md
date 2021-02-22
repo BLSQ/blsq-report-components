@@ -7,7 +7,7 @@
 ## Install
 
 ```bash
-npm install --save blsq-report-components
+yarn add "@blsq/blsq-report-components"
 ```
 
 or if you are more extreme, living on the edge, use the github repo and yarn
@@ -109,26 +109,26 @@ if its a component you can drop that in your jsx all the "core.drawerLinks" will
 ```
 git clone git@github.com:BLSQ/blsq-report-components.git
 cd blsq-report-components
-npm install
-npm test
+yarn install
+yarn test
 ```
 
 ```
-npm link
-npm start
+yarn link
+yarn start
 ```
 
 ```
 cd example
-npm start
-npm link @blsq/blsq-report-components
-npm link ../node_modules/react
+yarn start
+yarn link @blsq/blsq-report-components
+yarn link ../node_modules/react
 ```
 
 you might need to upgrade jest snapshots (assertion based on latest recorded data)
 
 ```
-npm test -- --updateSnapshot
+yarn test -- --updateSnapshot
 ```
 
 ## License

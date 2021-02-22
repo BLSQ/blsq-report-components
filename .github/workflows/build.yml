@@ -16,7 +16,7 @@ jobs:
       - run: ./cc-test-reporter before-build
         env:
             CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-      - run: npm test:coverage
+      - run: npm test --coverage
       - run: ./cc-test-reporter after-build --exit-code $?
         env:
             CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}

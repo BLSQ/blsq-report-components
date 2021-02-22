@@ -1,7 +1,7 @@
 import _ from "lodash"
 import { generateCalculator } from "./CalculatorFactory"
 
-describe("Cell", () => {
+describe("CalculatorFactory", () => {
 
     const packages = {
         "quantite_pma": {

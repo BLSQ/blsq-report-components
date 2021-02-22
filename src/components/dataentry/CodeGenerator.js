@@ -4,6 +4,10 @@ export const tokenize = (expression) => expression.split(/([\w]+)|\"[\w\s]+\"/g)
 
 export const valuesDependencies = (expression) => expression.split(/(\%\{\w+\})/g).filter((t) => t.startsWith("%{"));
 
+export const defaultSubstitutions = () => {
+    return { IF: "IFF", "sum": "SUM", " =": "==", "=": "==" };
+}
+
 export const generateGetterSetterForState = (hesabuPackage, activity, state, orgunitid, period) => {
     const codes = []
     const field_name = `${hesabuPackage.code}_${activity.code}_${state}_${orgunitid}_${period}`;
@@ -48,7 +52,7 @@ export const generateActivityFormula = (hesabuPackage, activity, formula, orguni
     let expandedformula = "" + formula.expression;
     codes.push("/* " + formula.expression + "*/");
     codes.push(`${hesabuPackage.code}_${activity.code}_${formula.code}_${orgunitid}_${period}: () => {`);
-    const substitutions = { IF: "IFF", "sum": "SUM", " =": "==", "=": "==" };
+    const substitutions = defaultSubstitutions()
     for (let substit of stateOrFormulaCodes) {
         substitutions[substit] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`;
         substitutions[substit + "_is_null"] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_is_null_${orgunitid}_${period}()`;
@@ -74,7 +78,7 @@ export const generateActivityFormula = (hesabuPackage, activity, formula, orguni
 
 export const generatePackageFormula = (hesabuPackage, formulaCode, orgunitid, period, stateOrFormulaCodes) => {
     const codes = []
-    const substitutions = { IF: "IFF", "sum": "SUM" };
+    const substitutions = defaultSubstitutions()
     for (let substit of stateOrFormulaCodes) {
         substitutions["%{" + substit + "_values}"] = hesabuPackage.activities
             .map((activity) => `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`)

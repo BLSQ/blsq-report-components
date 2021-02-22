@@ -1,4 +1,9 @@
 
+# @blsq/blsq-report-components@1.0.34
+- [dataentry] add some functions (AVG, MIN, MAX,...) to the hesabu engine
+- [dataentry] add tests and refactor a bit the code base to make it more maintainable
+- [general] switch to yarn to be more consistent with other projects
+
 # @blsq/blsq-report-components@1.0.33
 
 - [contracts] Edit/create contracts a better [period picker](https://github.com/BLSQ/blsq-report-components/pull/92)

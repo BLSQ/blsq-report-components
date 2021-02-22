@@ -10,13 +10,13 @@ jobs:
         uses: actions/setup-node@v1
         with:
             node-version: 12.x
-      - run: yarn install
+      - run: npm install
       - run: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > "./cc-test-reporter"
       - run: chmod +x "./cc-test-reporter"
       - run: ./cc-test-reporter before-build
         env:
             CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-      - run: yarn test:coverage
+      - run: npm test:coverage
       - run: ./cc-test-reporter after-build --exit-code $?
         env:
             CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}

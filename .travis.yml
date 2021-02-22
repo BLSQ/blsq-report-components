@@ -1,7 +1,0 @@
-language: node_js
-node_js:
-  - 12
-script: npm test -- --coverage
-install:
-  - npm install -g npm@latest
-  - npm ci

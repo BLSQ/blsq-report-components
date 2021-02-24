@@ -8,7 +8,6 @@ const values = Object.values(functions)
 export const generateCalculator = (hesabuPackage, orgunitid, period, activityFormulaCodes, packageFormulaCodes, orgUnit) => {
 
   const fullCode = generateCode(hesabuPackage, orgunitid, period, activityFormulaCodes, packageFormulaCodes, orgUnit)
-  //console.log(fullCode);
 
   const calculator = new Function(...keys, fullCode)(
     ...values

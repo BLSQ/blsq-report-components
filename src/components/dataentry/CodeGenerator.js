@@ -48,10 +48,7 @@ export const generateIsNullForState = (hesabuPackage, activity, state, orgunitid
 }
 
 export const generateActivityFormula = (hesabuPackage, activity, formula, orgunitid, period, stateOrFormulaCodes) => {
-    const codes = []
     let expandedformula = "" + formula.expression;
-    codes.push("/* " + formula.expression + "*/");
-    codes.push(`${hesabuPackage.code}_${activity.code}_${formula.code}_${orgunitid}_${period}: () => {`);
     const substitutions = defaultSubstitutions()
     for (let substit of stateOrFormulaCodes) {
         substitutions[substit] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`;
@@ -68,16 +65,20 @@ export const generateActivityFormula = (hesabuPackage, activity, formula, orguni
     const tokens = tokenize(formula.expression);
 
     expandedformula = tokens.map((token) => substitutions[token] || token).join("");
+    if (expandedformula.includes("%{")) {
+        throw new Error(`Unsupported feature for ${formula.code} : ${expandedformula}, probably need to ignore the formula`)
+    }
 
+    const codes = []
+    codes.push("/* " + formula.expression + "*/");
+    codes.push(`${hesabuPackage.code}_${activity.code}_${formula.code}_${orgunitid}_${period}: () => {`);
     codes.push("  return " + expandedformula);
-
     codes.push("},");
     return codes.join("\n")
 }
 
 
 export const generatePackageFormula = (hesabuPackage, formulaCode, orgunitid, period, stateOrFormulaCodes) => {
-    const codes = []
     const substitutions = defaultSubstitutions()
     for (let substit of stateOrFormulaCodes) {
         substitutions["%{" + substit + "_values}"] = hesabuPackage.activities
@@ -101,6 +102,7 @@ export const generatePackageFormula = (hesabuPackage, formulaCode, orgunitid, pe
         expression = expression.replace(token, substitutions[token]);
     }
 
+    const codes = []
     codes.push(`${hesabuPackage.code}_${formulaCode}_${orgunitid}_${period}: function(){`);
     codes.push("   return " + expression);
     codes.push("},");
@@ -108,7 +110,6 @@ export const generatePackageFormula = (hesabuPackage, formulaCode, orgunitid, pe
 }
 
 export const generateDecisionTable = (hesabuPackage, activity, rawDecisionTable, orgUnit, period) => {
-    const codes = []
     const orgunitid = orgUnit.id
     const decisionTable = PapaParse.parse(rawDecisionTable.content, { header: true });
     let selectedRows = decisionTable.data
@@ -129,7 +130,8 @@ export const generateDecisionTable = (hesabuPackage, activity, rawDecisionTable,
     if (selectedRows.length == 0) {
         console.log("warn NO line matches : ", JSON.stringify(selectedRows))
     }
-
+    
+    const codes = []
     const row = selectedRows[0]
     if (row == undefined) {
         for (let out_header of rawDecisionTable.out_headers) {

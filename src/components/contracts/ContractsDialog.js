@@ -16,7 +16,7 @@ import {
 import CloseIcon from "@material-ui/icons/Close";
 import Edit from "@material-ui/icons/Edit";
 import { useDispatch, useSelector } from "react-redux";
-import PeriodPicker from "./PeriodPicker"
+import PeriodPicker from "./PeriodPicker";
 import PluginRegistry from "../core/PluginRegistry";
 
 import OuSearch from "../shared/OuSearch";
@@ -26,10 +26,7 @@ import { setIsLoading } from "../redux/actions/load";
 import ContractFieldSelect from "./ContractFieldSelect";
 import { getNonStandartContractFields, getContractByOrgUnit } from "./utils/index";
 
-import {
-  getStartDateFromPeriod,
-  getEndDateFromPeriod,
-} from "./utils/periodsUtils";
+import { getStartDateFromPeriod, getEndDateFromPeriod } from "./utils/periodsUtils";
 import { enqueueSnackbar } from "../redux/actions/snackBars";
 
 import LoadingSpinner from "../shared/LoadingSpinner";
@@ -87,14 +84,14 @@ const ContractsDialog = ({
       [key]: !subKey
         ? value
         : {
-          ...currentContract[key],
-          [subKey]: value,
-        },
+            ...currentContract[key],
+            [subKey]: value,
+          },
     };
     const errors = contractService.validateContract(updatedContract);
 
     setCurrentContract({
-      ...updatedContract
+      ...updatedContract,
     });
     setValidationErrors(errors);
   };
@@ -153,13 +150,18 @@ const ContractsDialog = ({
             <CloseIcon />
           </IconButton>
           {validationErrors.length > 0 && (
-            <span style={{ color: "red" }}>{validationErrors.map((err) => err.message).join(" ")}</span>
+            <span style={{ color: "red" }}>
+              {validationErrors.map((err) => (
+                <span>
+                  {err.message}
+                  <br></br>
+                </span>
+              ))}
+            </span>
           )}
         </DialogTitle>
         <DialogContent dividers>
-          {false && (<pre>
-            {JSON.stringify(currentContract, undefined, 4)}
-          </pre>)}
+          {false && <pre>{JSON.stringify(currentContract, undefined, 4)}</pre>}
           <Grid container spacing={2}>
             {(displayOrgUnit || displayMainOrgUnit) && (
               <Grid container item xs={12}>

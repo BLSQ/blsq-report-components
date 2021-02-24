@@ -13,7 +13,8 @@ const Step2 = ({ contractsToImport, dhis2, setValidatedContracts, setIsLoading }
     const loadData = async () => {
       setIsLoading(true);
       const api = await dhis2.api();
-      const organisationUnits = (await api.get("organisationUnits", { paging: false })).organisationUnits;
+      const organisationUnits = (await api.get("organisationUnits", { paging: false, fields: "id,name,path" }))
+        .organisationUnits;
       const organisationUnitsById = _.keyBy(organisationUnits, (ou) => ou.id);
 
       const currentContracts = await contractService.findAll();
@@ -22,18 +23,21 @@ const Step2 = ({ contractsToImport, dhis2, setValidatedContracts, setIsLoading }
         contractRaw.contract_start_date = contractRaw.contract_start_date || "2009-01-01";
         contractRaw.contract_end_date = contractRaw.contract_end_date || "2040-12-31";
 
+        let orgUnit = organisationUnitsById[contractRaw["orgUnit-id"]] || {
+          id: contractRaw["orgUnit-id"],
+          name: contractRaw["orgUnit-name"],
+        };
+
         const fieldValues = {
           id: "csv_" + (index + 1),
           contract_start_date: contractRaw.contract_start_date,
           contract_end_date: contractRaw.contract_end_date,
-          orgUnit: {
-            id: contractRaw["orgUnit-id"],
-            name: contractRaw["orgUnit-name"],
-          },
+          orgUnit: orgUnit,
           ...contractRaw,
         };
 
         const contract = contractService.newContract(fieldValues);
+        contractRaw["orgUnit-path"] = orgUnit && orgUnit.path ? orgUnit.path.split("/").filter(id => id).slice(1).map(id => organisationUnitsById[id]).map(ou => ou ? ou.name : "?").join(" > ") : undefined
 
         contractRaw.warnings = [];
         // validate orgunit
@@ -80,6 +84,13 @@ const Step2 = ({ contractsToImport, dhis2, setValidatedContracts, setIsLoading }
               overlappingContract.codes.join(" "),
           );
         }
+
+        const errors = contractService.validateContract(contract);
+        if (errors.length > 0) {
+          for (let error of errors) {
+            contractRaw.warnings.push(error.message)
+          }
+        }
       });
 
       const validIndexes = [];
@@ -112,14 +123,16 @@ const Step2 = ({ contractsToImport, dhis2, setValidatedContracts, setIsLoading }
     });
 
   return (
-    <div>
+    <div style={{maxWidth:"95%"}}>
       <h2>Step 2 : Validations</h2>
       <MuiThemeProvider theme={getMuiTheme()}>
         <MUIDataTable
           title={""}
           data={contracts}
-          columns={["orgUnit-id", "orgUnit-name"].concat(contractFields.map((f) => f.code)).concat(["warnings"])}
+          columns={["orgUnit-id", "orgUnit-name"].concat(contractFields.map((f) => f.code)).concat(["warnings", "orgUnit-path"])}
           options={{
+            fixedHeader: true,
+            responsive: 'scrollMaxHeight',
             onRowSelectionChange: onRowSelectionChange,
             rowsSelected: rowsSelected,
             rowsPerPage: 5,

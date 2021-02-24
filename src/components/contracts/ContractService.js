@@ -1,6 +1,5 @@
 import Contract from "./Contract";
 import PluginRegistry from "../core/PluginRegistry";
-import DefaultValidator from "./validations/DefaultValidator";
 import { getOrgUnitCoverage, checkSubContractCoverage, checkNonVisibleOverlap, getOverlaps } from "./utils/index";
 import { getStartDateFromPeriod, getEndDateFromPeriod, getQuarterFromDate } from "./utils/periodsUtils";
 

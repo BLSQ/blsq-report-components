@@ -309,4 +309,20 @@ describe("CalculatorFactory", () => {
 
         expect(calculator.qualite_pma_nord_kivu_qual02_score_pma_pdss_zaerz654_2020Q1()).toEqual(87.5)
     });
+
+    it("detect unsupported feature in activity formulas", () => {
+        const period = "2020Q1"
+        const qualityPackage = packages.qualite_pma
+        const excludedFormulas= []
+        expect( () => {
+        const calculator = generateCalculator(
+            qualityPackage,
+            orgUnit.id,
+            period,
+            Object.keys(qualityPackage.activity_formulas).filter(f => !excludedFormulas.includes(f)),
+            Object.keys(qualityPackage.formulas).filter(f => !excludedFormulas.includes(f)),
+            orgUnit)
+
+        }).toThrow ("Unsupported feature for total_subsides_trimestre_passe_pma : SUM(%{subsides_trimestriels_last_1_quarters_exclusive_window_values}), probably need to ignore the formula")
+    })
 })

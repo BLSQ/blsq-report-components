@@ -36,8 +36,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
       const contractService = PluginRegistry.extension("contracts.service");
 
       const contracts = await contractService.fetchContracts(match.params.orgUnitId);
-
-      const activeContract = contracts.mainContracts.contracts.filter((c) => c.matchPeriod(period))[0];
+      const activeContract = contracts.allContracts.filter((c) => c.orgUnit.id == match.params.orgUnitId && c.matchPeriod(period))[0];
       if (activeContract == undefined) {
         setError({
           message: match.params.orgUnitId + " has no contract for that period : " + period,

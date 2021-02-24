@@ -1,4 +1,11 @@
 
+# @blsq/blsq-report-components@1.0.35
+- [dataentry] more helpfull message when some formula use unsupported feature like time %{...windows_values}
+- [dataentry] the data entry selection page was saying the orgunit doesn't have an contract when subcontracted
+- [contracts] import of contracts now calls also the specific/contributed validator by the plugin system.
+- [contracts] import of contracts wizard display the matched pyramid hierarchy of the orgunit
+
+
 # @blsq/blsq-report-components@1.0.34
 - [dataentry] add some functions (AVG, MIN, MAX,...) to the hesabu engine
 - [dataentry] add tests and refactor a bit the code base to make it more maintainable

@@ -1,3 +1,6 @@
+# @blsq/blsq-report-components@1.0.36
+- [contracts] make import wizard more robust when error while processing a page
+- [contracts] don't crash contract statististics when endPeriod is missing
 
 # @blsq/blsq-report-components@1.0.35
 - [dataentry] more helpfull message when some formula use unsupported feature like time %{...windows_values}

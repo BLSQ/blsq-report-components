@@ -60,6 +60,7 @@ function HorizontalLabelPositionBelowStepper({ dhis2 }) {
   const [validatedContracts, setValidatedContracts] = React.useState(undefined);
   // show progress while the import is running
   const [progress, setProgress] = React.useState(undefined);
+  const [lastError, setLastError] = React.useState(undefined);
   // prevent double import avoid confirm again
   const [completed, setCompleted] = React.useState(false);
   const steps = getSteps();
@@ -90,16 +91,25 @@ function HorizontalLabelPositionBelowStepper({ dhis2 }) {
 
     let index = 1;
 
-    try {
-      for (let slice of slices) {
+    for (let slice of slices) {
+      try {
         setProgress("Processing page " + index + " of " + slices.length);
 
         const response = await contractService.createContracts(slice);
         console.log(response);
         index = index + 1;
+      } catch (error) {
+        setLastError(
+          "Error while processing page " +
+            index +
+            " of " +
+            slices.length +
+            " " +
+            error.message +
+            " \n " +
+            JSON.stringify(error),
+        );
       }
-    } catch (error) {
-      setProgress("Error while processing page " + index + " of " + slices.length + " " + error.message);
     }
     setProgress("Import done");
     setCompleted(true);
@@ -138,6 +148,11 @@ function HorizontalLabelPositionBelowStepper({ dhis2 }) {
             progress={progress}
           />
           <div>
+            {lastError && (
+              <div>
+                Error : <span style={{ color: "red" }}>{lastError}</span>
+              </div>
+            )}
             <br />
             <Button variant="contained" color="primary" onClick={handleNext} disabled={isLoading || completed}>
               {activeStep === steps.length - 1 ? "Confirm" : "Next"}

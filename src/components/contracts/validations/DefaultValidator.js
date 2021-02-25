@@ -5,14 +5,15 @@ const DefaultValidator = (contract, context) => {
   const missingFields = context.contractFields.filter(
     (field) => field.compulsory && isEmpty(contract.fieldValues[field.code]),
   );
-
-  return missingFields.map((field) => {
+  const errors = missingFields.map((field) => {
     return {
       field: field.code,
       errorCode: "required",
       message: context.t("validations.isrequired", { interpolation: true, field: field.name }),
     };
   });
+
+  return errors;
 };
 
 export default DefaultValidator;

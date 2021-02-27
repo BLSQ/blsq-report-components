@@ -70,7 +70,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
           fields:
             "id,name,periodType,access,dataSetElements[dataElement[id,name,valueType,optionSet[options[code,name]],categoryCombo[id,name,categoryOptionCombos[id,name]]]]",
         });
-        debugger;
+   
         const dataElementsById = _.keyBy(
           dataSet.dataSetElements.map((dse) => dse.dataElement),
           (de) => de.id,

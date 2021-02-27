@@ -36,7 +36,8 @@
     "contractFrom": "Contract from",
     "contractTo": "to",
     "dataEntries": "Data entry",
-    "invoices": "Invoices"
+    "invoices": "Invoices",
+    "dataSetNotWritable": "You don't have write access to '{{dataSetName}}'"
   },
   "create": "Create",
   "edit": "Edit",

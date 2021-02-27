@@ -10,18 +10,17 @@ import InvoiceLinks from "../invoices/InvoiceLinks";
 import { useTranslation } from "react-i18next";
 import { withRouter } from "react-router";
 import InfoIcon from "@material-ui/icons/Info";
-
+import { Alert } from "@material-ui/lab";
 
 function isDataSetComplete(completeDataSetRegistration) {
   if (completeDataSetRegistration == undefined) {
-    return false
+    return false;
   }
-  if ('completed' in completeDataSetRegistration) {
-    return completeDataSetRegistration.completed
+  if ("completed" in completeDataSetRegistration) {
+    return completeDataSetRegistration.completed;
   }
-  return true
+  return true;
 }
-
 
 const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
   const { t, i18n } = useTranslation();
@@ -36,7 +35,9 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
       const contractService = PluginRegistry.extension("contracts.service");
 
       const contracts = await contractService.fetchContracts(match.params.orgUnitId);
-      const activeContract = contracts.allContracts.filter((c) => c.orgUnit.id == match.params.orgUnitId && c.matchPeriod(period))[0];
+      const activeContract = contracts.allContracts.filter(
+        (c) => c.orgUnit.id == match.params.orgUnitId && c.matchPeriod(period),
+      )[0];
       if (activeContract == undefined) {
         setError({
           message: match.params.orgUnitId + " has no contract for that period : " + period,
@@ -54,11 +55,11 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
         const defaultDataEntry = expectedDataEntries[0];
         history.push(
           "/dataEntry/" +
-          activeContract.orgUnit.id +
-          "/" +
-          defaultDataEntry.period +
-          "/" +
-          defaultDataEntry.dataEntryType.code,
+            activeContract.orgUnit.id +
+            "/" +
+            defaultDataEntry.period +
+            "/" +
+            defaultDataEntry.dataEntryType.code,
         );
       }
 
@@ -67,8 +68,9 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
         const dataEntry = dataEntryRegistry.getDataEntry(match.params.dataEntryCode);
         const dataSet = await api.get("/dataSets/" + dataEntry.dataSetId, {
           fields:
-            "id,name,periodType,dataSetElements[dataElement[id,name,valueType,optionSet[options[code,name]],categoryCombo[id,name,categoryOptionCombos[id,name]]]]",
+            "id,name,periodType,access,dataSetElements[dataElement[id,name,valueType,optionSet[options[code,name]],categoryCombo[id,name,categoryOptionCombos[id,name]]]]",
         });
+        debugger;
         const dataElementsById = _.keyBy(
           dataSet.dataSetElements.map((dse) => dse.dataElement),
           (de) => de.id,
@@ -90,13 +92,18 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
         });
         let rawValues = dv.dataValues || [];
         if (dataEntryRegistry.fetchExtraData) {
-          const extraValues = await dataEntryRegistry.fetchExtraData(api, activeContract.orgUnit, period, dataEntry)
-          rawValues = rawValues.concat(extraValues)
+          const extraValues = await dataEntryRegistry.fetchExtraData(api, activeContract.orgUnit, period, dataEntry);
+          rawValues = rawValues.concat(extraValues);
 
-          const extraDataElements = await dataEntryRegistry.fetchExtraMetaData(api, activeContract.orgUnit, period, dataEntry)
+          const extraDataElements = await dataEntryRegistry.fetchExtraMetaData(
+            api,
+            activeContract.orgUnit,
+            period,
+            dataEntry,
+          );
 
           for (let extraDe of extraDataElements) {
-            dataElementsById[extraDe.id] = extraDe
+            dataElementsById[extraDe.id] = extraDe;
           }
         }
         const defaultCoc = (
@@ -134,6 +141,9 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
 
           isDataSetComplete() {
             return this.dataSetComplete;
+          },
+          isDataWritable() {
+            return this.dataSet.access.data.write;
           },
           error(de) {
             return this.errors[this.getKey(de)];
@@ -188,13 +198,13 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
               await dhis2.setDataValue(newValue);
               const newIndexedValues = this.indexedValues[key]
                 ? {
-                  ...this.indexedValues,
-                  [key]: [{ ...this.indexedValues[key][0], value: value }],
-                }
+                    ...this.indexedValues,
+                    [key]: [{ ...this.indexedValues[key][0], value: value }],
+                  }
                 : {
-                  ...this.indexedValues,
-                  [key]: [{ dataElement: newValue.de, value: value }],
-                };
+                    ...this.indexedValues,
+                    [key]: [{ dataElement: newValue.de, value: value }],
+                  };
               calculator.setIndexedValues(newIndexedValues);
               const updatedFormaData = {
                 ...this,
@@ -216,7 +226,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
             }
           },
           async toggleComplete(calculations) {
-            if (completeDataSetRegistration && 'completed' in completeDataSetRegistration) {
+            if (completeDataSetRegistration && "completed" in completeDataSetRegistration) {
               // newer dhis2 version just toggle "completed" or create one
               await api.post("completeDataSetRegistrations", {
                 completeDataSetRegistrations: [
@@ -230,7 +240,15 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
               });
             } else if (completeDataSetRegistration && this.dataSetComplete) {
               // older dhis2 delete the existing completion record
-              await api.delete("completeDataSetRegistrations?ds=" + this.dataSet.id + "&pe=" + this.period + "&ou=" + activeContract.orgUnit.id + "&multiOu=false")
+              await api.delete(
+                "completeDataSetRegistrations?ds=" +
+                  this.dataSet.id +
+                  "&pe=" +
+                  this.period +
+                  "&ou=" +
+                  activeContract.orgUnit.id +
+                  "&multiOu=false",
+              );
             } else {
               // older dis2 delete the existing completion record
 
@@ -248,7 +266,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
 
             if (calculations && !this.dataSetComplete) {
               const orbf2 = PluginRegistry.extension("invoices.hesabu");
-              calculations.forEach(calculation => orbf2.calculate(calculation))
+              calculations.forEach((calculation) => orbf2.calculate(calculation));
             }
 
             const updatedFormaData = {
@@ -266,7 +284,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
     loadData();
   }, []);
   let DataEntryForm = React.Fragment;
-  let dataEntryType = undefined
+  let dataEntryType = undefined;
   if (
     dataEntryRegistry &&
     match.params.dataEntryCode &&
@@ -277,9 +295,9 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
     dataEntryType = dataEntryRegistry.getDataEntry(match.params.dataEntryCode);
   }
 
-  let quarterPeriod = ""
+  let quarterPeriod = "";
   if (period) {
-    quarterPeriod = DatePeriods.split(period, "quarterly")[0]
+    quarterPeriod = DatePeriods.split(period, "quarterly")[0];
   }
 
   return (
@@ -293,26 +311,29 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
         <AssignmentIcon /> {orgUnit && orgUnit.name}
       </h1>
 
-      <div style={{    fontFamily: "monospace"}}>
-      {orgUnit &&
-        orgUnit.ancestors.slice(1, orgUnit.ancestors.length - 1).map((ancestor, index) => {
-          return (
-            <span key={"ancestor" + index}>
-               <Link to={"/select/?q=&period="+quarterPeriod+"&parent="+ ancestor.id}>{ancestor.name}</Link>
-               {index < orgUnit.ancestors.length - 3 && "  >  "}
-            </span>
-          )
-        })
-      }
+      <div style={{ fontFamily: "monospace" }}>
+        {orgUnit &&
+          orgUnit.ancestors.slice(1, orgUnit.ancestors.length - 1).map((ancestor, index) => {
+            return (
+              <span key={"ancestor" + index}>
+                <Link to={"/select/?q=&period=" + quarterPeriod + "&parent=" + ancestor.id}>{ancestor.name}</Link>
+                {index < orgUnit.ancestors.length - 3 && "  >  "}
+              </span>
+            );
+          })}
       </div>
 
       {orgUnit && orgUnit.activeContracts && (
         <div>
           {t("dataEntry.contractFrom")} <code>{orgUnit.activeContracts[0].startPeriod}</code>{" "}
           {t("dataEntry.contractTo")} <code>{orgUnit.activeContracts[0].endPeriod}</code>{" "}
-          <Link to={"/contracts/" + orgUnit.id}><IconButton><InfoIcon color="action" /></IconButton></Link>{" "}
-          {orgUnit.activeContracts[0].codes.map((c) => (
-            <Chip label={c} style={{ margin: "5px" }} />
+          <Link to={"/contracts/" + orgUnit.id}>
+            <IconButton>
+              <InfoIcon color="action" />
+            </IconButton>
+          </Link>{" "}
+          {orgUnit.activeContracts[0].codes.map((c, index) => (
+            <Chip key={c + "_" + index} label={c} style={{ margin: "5px" }} />
           ))}
         </div>
       )}
@@ -373,7 +394,17 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
       <div>
         {formData && (
           <FormDataContext.Provider value={formData}>
-            <DataEntryForm period={period} dataEntryCode={match.params.dataEntryCode} formData={formData} dataEntryType={dataEntryType} />
+            {!formData.isDataWritable() && (
+              <Alert severity="info" style={{ maxWidth: "1024px" }}>
+                {t("dataEntry.dataSetNotWritable", { interpolation: true, dataSetName: formData.dataSet.name })}
+              </Alert>
+            )}
+            <DataEntryForm
+              period={period}
+              dataEntryCode={match.params.dataEntryCode}
+              formData={formData}
+              dataEntryType={dataEntryType}
+            />
             <br />
           </FormDataContext.Provider>
         )}

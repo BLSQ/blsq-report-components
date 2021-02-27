@@ -12,6 +12,7 @@ const CompleteDataSetButton = ({calculations}) => {
   return (
     <Button
       variant="contained"
+      disabled={!formDataContext.isDataWritable()}
       color="primary"
       onClick={onClick}
       title={JSON.stringify(formDataContext.completeDataSetRegistration, undefined, 2)}

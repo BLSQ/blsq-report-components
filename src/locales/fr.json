@@ -33,7 +33,8 @@
     "contractFrom": "Contract de",
     "contractTo": "à",
     "dataEntries": "Saisie de données",
-    "invoices": "Factures"
+    "invoices": "Factures",
+    "dataSetNotWritable": "Vous n'avez pas le droit de saisie sur '{{dataSetName}}'"
   },
   "create": "Créer",
   "edit": "Editer",

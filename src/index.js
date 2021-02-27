@@ -31,6 +31,8 @@ import Dhis2Input from "./components/dataentry/Dhis2Input";
 import CompleteDataSetButton from "./components/dataentry/CompleteDataSetButton";
 import { generateCalculator } from "./components/dataentry/CalculatorFactory";
 import HesabuFormula from "./components/dataentry/HesabuFormula";
+import EditIasoFormButton from "./components/dataentry/EditIasoFormButton";
+
 export {
   AppDrawer,
   InvoiceSelectionContainer,
@@ -61,4 +63,5 @@ export {
   CompleteDataSetButton,
   generateCalculator,
   HesabuFormula,
+  EditIasoFormButton
 };

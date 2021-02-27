@@ -1,3 +1,8 @@
+# @blsq/blsq-report-components@1.0.37
+
+- [dataentry] Handle dataset data write access
+- [dataentry] Add a default implementation for edit in iaso form button
+
 # @blsq/blsq-report-components@1.0.36
 - [contracts] make import wizard more robust when error while processing a page
 - [contracts] don't crash contract statististics when endPeriod is missing

@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.38
+
+- [contracts] Allow to filter contracts on their contract end date and mass update these contracts
+
 # @blsq/blsq-report-components@1.0.37
 
 - [dataentry] Handle dataset data write access

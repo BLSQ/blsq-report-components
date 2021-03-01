@@ -20,6 +20,28 @@ import { getContractDates } from "./utils/periodsUtils";
  * @property {function} urlDecode - Optionnal - function used decode filter from url
  */
 
+export const endAtFilter = {
+  id: "contract_end_date_eq",
+  key: "contracts.endsAt",
+  type: "date",
+  column: 3,
+  value: null,
+  /* value is a string like "12/31/2020"*/
+  onFilter: (value, contracts) => {
+    if (!value) {
+      return contracts;
+    }
+    const filterPeriodCompents = value.split("/");
+    const filterPeriod = filterPeriodCompents[2] + filterPeriodCompents[0];
+
+    const filteredContracts = contracts.filter((c) => {
+      return c.endPeriod == filterPeriod;
+    });
+    return filteredContracts;
+  },
+  urlDecode: (value) => (!value || value === "" ? null : value),
+};
+
 export const activeAtFilter = {
   id: "active_at",
   key: "contracts.activeAt",
@@ -123,7 +145,10 @@ const defaultFilters = [
       return contracts.filter((c) => c.orgUnit.path.includes(orgUnitId));
     },
     urlEncode: (value) => (value ? value : undefined),
-    urlDecode: (value) =>  value,
+    urlDecode: (value) => value,
+  },
+  {
+    ...endAtFilter,
   },
 ];
 

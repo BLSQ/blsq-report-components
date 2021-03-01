@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import MassContractUpdate from "./MassContractUpdate";
 import PropTypes from "prop-types";
 import { Typography, Breadcrumbs, Paper, Divider, Box } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
@@ -40,7 +41,18 @@ class ContractsPage extends Component {
       contractsOverlaps: {},
       contractService: PluginRegistry.extension("contracts.service"),
       contractFields: [],
+      mode: "list",
     };
+    this.handleModeChange = this.handleModeChange.bind(this);
+  }
+
+  handleModeChange() {
+    const newState = {
+      ...this.state,
+      mode: this.state.mode == "list" ? "mass_update" : "list",
+    };
+
+    this.setState(newState);
   }
 
   setContracts(data) {
@@ -77,7 +89,7 @@ class ContractsPage extends Component {
 
   render() {
     const { t, classes, location, isLoading } = this.props;
-    const { contracts, contractsOverlaps, filteredContracts, contractFields } = this.state;
+    const { contracts, contractsOverlaps, filteredContracts, contractFields, mode } = this.state;
     const overlapsTotal = Object.keys(contractsOverlaps).filter((ouId) =>
       filteredContracts.find((fc) => fc.id === ouId),
     ).length;
@@ -98,35 +110,40 @@ class ContractsPage extends Component {
             changeTable={(key, value) => this.onTableChange(key, value)}
             contractsOverlaps={contractsOverlaps}
             setFilteredContracts={(newFilteredContracts) => this.setState({ filteredContracts: newFilteredContracts })}
+            onModeChange={this.handleModeChange}
           />
           <Divider />
-          <Table
-            isLoading={isLoading}
-            title={
-              <ContractsResume
-                filteredContracts={filteredContracts}
-                contracts={contracts}
-                overlapsTotal={overlapsTotal}
-              />
-            }
-            data={filteredContracts}
-            columns={contractsTableColumns(
-              t,
-              classes,
-              filteredContracts,
-              contractFields,
-              location,
-              () => this.fetchContracts(),
-              false,
-              contracts,
-            )}
-            options={contractsTableOptions(
-              t,
-              filteredContracts,
-              (key, value) => this.onTableChange(key, value),
-              decodeTableQueryParams(location),
-            )}
-          />
+          {mode == "list" && (
+            <Table
+              isLoading={isLoading}
+              title={
+                <ContractsResume
+                  filteredContracts={filteredContracts}
+                  contracts={contracts}
+                  overlapsTotal={overlapsTotal}
+                />
+              }
+              data={filteredContracts}
+              columns={contractsTableColumns(
+                t,
+                classes,
+                filteredContracts,
+                contractFields,
+                location,
+                () => this.fetchContracts(),
+                false,
+                contracts,
+              )}
+              options={contractsTableOptions(
+                t,
+                filteredContracts,
+                (key, value) => this.onTableChange(key, value),
+                decodeTableQueryParams(location),
+              )}
+            />
+          )}
+
+          {mode == "mass_update" && <MassContractUpdate filteredContracts={filteredContracts} onUpdate={() => this.fetchContracts()}/>}
         </Paper>
       </>
     );
@@ -140,6 +157,7 @@ ContractsPage.propTypes = {
   history: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
+  mode: PropTypes.oneOf("list", "mass_update"),
 };
 
 const MapStateToProps = (state) => ({

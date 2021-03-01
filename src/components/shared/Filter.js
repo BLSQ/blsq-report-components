@@ -208,7 +208,7 @@ const Filter = ({ filter, setFilterValue, onSearch, t }) => {
     }
 
     default:
-      return "";
+      return "unsupported "+filter.type;
   }
 };
 Filter.defaultProps = {

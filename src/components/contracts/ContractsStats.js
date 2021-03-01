@@ -54,7 +54,7 @@ const ContractsStats = ({ filteredContracts }) => {
                   {statsPerField[field.code].map((stat) => (
                     <tr key={statsPerField[field.code] + "-" + (stat.option ? stat.option.name : "null")}>
                       <td className={classes.td} width="50%">
-                        {stat.option ? stat.option.name : "null"}
+                        {stat.option ? stat.option.name : <span className={classes.noData}>not specified</span>}
                       </td>
                       <td align="right" width="25%">
                         <Typography className={stat.count == 0 ? classes.noData : classes.td}>{stat.count}</Typography>

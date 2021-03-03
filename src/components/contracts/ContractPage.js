@@ -39,6 +39,7 @@ const styles = (theme) => ({
   ...icons(theme),
   wrapIcon: {
     fontFamily: "monospace",
+    color: "#266696"
   },
 });
 const useStyles = makeStyles((theme) => styles(theme));
@@ -76,6 +77,7 @@ const ContractPage = ({ match, location, t, history }) => {
       .then((org) => setOrgUnit(org));
   };
   const { allContracts, subContracts, mainContracts, contractFields } = contractsDatas;
+  const subcontractField = contractFields.find(f=> f.code =="contract_main_orgunit")
   const mainContractProps = getContractTableProps(
     t,
     classes,
@@ -171,10 +173,12 @@ const ContractPage = ({ match, location, t, history }) => {
           &nbsp;
           <Typography className={classes.wrapIcon} color="secondary">
             {orgUnit &&
-              orgUnit.ancestors
-                .slice(1)
-                .map((a) => a.name)
-                .join(" > ")}
+              orgUnit.ancestors.slice(1).map((a, index) => (
+                <span>
+                  <a href={"./index.html#/contracts?under_orgunit=" + a.id}>{a.name}</a>
+                  {(index + 1 < orgUnit.ancestors.length - 1 ) && " > "}
+                </span>
+              ))}
           </Typography>
           {orgUnit && (
             <Button
@@ -230,7 +234,7 @@ const ContractPage = ({ match, location, t, history }) => {
         </Box>
       </Box>
       {/* show the sub contract create button if orgunit has at least one contract */}
-      {mainContracts.contracts.length > 0 && (
+      {subcontractField && mainContracts.contracts.length > 0 && (
         <>
           <Divider />
           <Box mb={4} mt={2}>

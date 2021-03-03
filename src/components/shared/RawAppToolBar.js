@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import classNames from "classnames";
 import { Switch } from "react-router-dom";
 import { connect } from "react-redux";
-
+import Dhis2Icon from './icons/Dhis2Icon'
 import {
   Typography,
   IconButton,
@@ -91,12 +91,9 @@ class RawAppToolBar extends React.Component {
           >
             <MenuIcon />
           </IconButton>
-          <Button aria-label="Menu" href="/" className={classes.appBarItem}>
-            <img
-              src="https://www.dhis2.org/sites/all/themes/dhis/logo.png"
-              className={classes.imageStyle}
-              alt="dhis2"
-            />
+          <Button aria-label="Menu" href="/" className={classes.appBarItem}  variant="h6"
+            color="inherit" >
+            <Dhis2Icon/> &nbsp;&nbsp;Dhis2
           </Button>
           <Typography
             variant="h6"

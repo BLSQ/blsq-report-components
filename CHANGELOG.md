@@ -1,3 +1,10 @@
+# @blsq/blsq-report-components@1.0.39
+
+- [general] Fix broken dhis2 logo
+- [contracts] Add navigation to data entry, and in filter orgunits under breadcrumb
+- [contracts] Hide subcontracts when not applicable
+- [contracts] Add navigation to data entry 
+
 # @blsq/blsq-report-components@1.0.38
 
 - [contracts] Allow to filter contracts on their contract end date and mass update these contracts

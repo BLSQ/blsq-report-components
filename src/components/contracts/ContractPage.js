@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import AssignmentIcon from "@material-ui/icons/Assignment";
+import DatePeriods from "../../support/DatePeriods";
 import PropTypes from "prop-types";
 import Typography from "@material-ui/core/Typography";
 import { withTranslation } from "react-i18next";
 import { Breadcrumbs, Grid, makeStyles, Divider, Box, Button } from "@material-ui/core";
-import LocationOnIcon from '@material-ui/icons/LocationOn';
+import LocationOnIcon from "@material-ui/icons/LocationOn";
 import Add from "@material-ui/icons/Add";
 import { Link, withRouter } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,8 +38,8 @@ const styles = (theme) => ({
   ...containersStyles(theme),
   ...icons(theme),
   wrapIcon: {
-    fontFamily: "monospace"
-  }
+    fontFamily: "monospace",
+  },
 });
 const useStyles = makeStyles((theme) => styles(theme));
 
@@ -64,9 +66,15 @@ const ContractPage = ({ match, location, t, history }) => {
   };
 
   const fetchOrgUnit = () => {
-    dhis2.api().then(api => api.get("organisationUnits/" + match.params.orgUnitId, { fields: "[*],ancestors[id,name],organisationUnitGroups[id,name,code]" }))
-      .then(org => setOrgUnit(org))
-  }
+    dhis2
+      .api()
+      .then((api) =>
+        api.get("organisationUnits/" + match.params.orgUnitId, {
+          fields: "[*],ancestors[id,name],organisationUnitGroups[id,name,code]",
+        }),
+      )
+      .then((org) => setOrgUnit(org));
+  };
   const { allContracts, subContracts, mainContracts, contractFields } = contractsDatas;
   const mainContractProps = getContractTableProps(
     t,
@@ -96,7 +104,7 @@ const ContractPage = ({ match, location, t, history }) => {
   const mainOrgUnit = getMainOrgUnit(allContracts, match.params.orgUnitId);
 
   useEffect(() => {
-    fetchOrgUnit()
+    fetchOrgUnit();
     fetchContracts();
   }, []);
 
@@ -162,8 +170,20 @@ const ContractPage = ({ match, location, t, history }) => {
           <LocationOnIcon color="secondary"></LocationOnIcon>
           &nbsp;
           <Typography className={classes.wrapIcon} color="secondary">
-            {orgUnit && orgUnit.ancestors.slice(1).map(a => a.name).join(" > ")}
+            {orgUnit &&
+              orgUnit.ancestors
+                .slice(1)
+                .map((a) => a.name)
+                .join(" > ")}
           </Typography>
+          {orgUnit && (
+            <Button
+              color="primary"
+              startIcon={<AssignmentIcon />}
+              title={t("dataEntry.dataEntries")}
+              href={"./index.html#/dataEntry/" + orgUnit.id + "/" + DatePeriods.currentQuarter()}
+            ></Button>
+          )}
         </Grid>
       </Box>
       <Box mb={3}>

@@ -35,9 +35,10 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
       const contractService = PluginRegistry.extension("contracts.service");
 
       const contracts = await contractService.fetchContracts(match.params.orgUnitId);
-      const activeContract = contracts.allContracts.filter(
+      const activeContracts = contracts.allContracts.filter(
         (c) => c.orgUnit.id == match.params.orgUnitId && c.matchPeriod(period),
-      )[0];
+      );
+      const activeContract = activeContracts[0]
       if (activeContract == undefined) {
         setError({
           message: match.params.orgUnitId + " has no contract for that period : " + period,
@@ -45,6 +46,15 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
         });
         return undefined;
       }
+
+      if (activeContracts.length > 1) {
+        setError({
+          message: match.params.orgUnitId + " has multiple contracts for that period : " + period,
+          link: "/contracts/" + match.params.orgUnitId,
+        });
+        return undefined;
+      }
+
       activeContract.orgUnit.activeContracts = [activeContract];
 
       setOrgUnit(activeContract.orgUnit);

@@ -1,6 +1,11 @@
+# @blsq/blsq-report-components@1.0.40
+
+- [invoice] Lock/Unlock button if user can't approve.
+
 # @blsq/blsq-report-components@1.0.39
 
 - [general] Fix broken dhis2 logo
+- [dataentry] Don't show data entries when multiple contracts for same period
 - [contracts] Add navigation to data entry, and in filter orgunits under breadcrumb
 - [contracts] Hide subcontracts when not applicable
 - [contracts] Add navigation to data entry 

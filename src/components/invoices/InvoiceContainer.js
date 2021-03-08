@@ -166,12 +166,14 @@ class InvoiceContainer extends Component {
     this.state.invoice.approvals = approvals;
     this.state.invoice.currentApprovals = currentApprovals;
     this.state.invoice.approvalStats = stats;
+    const canApproveUnapprove = currentApprovals.some(a => a.mayApprove || a.mayUnapprove)
 
     this.setState({
       lockState: {
         approvals: approvals,
         currentApprovals: currentApprovals,
         stats: stats,
+        canApproveUnapprove: canApproveUnapprove
       },
     });
   }
@@ -191,7 +193,7 @@ class InvoiceContainer extends Component {
 
           allowedCalculations = calculations.filter((calculation) => {
             const orgUnit = orgUnitsById[calculation.orgUnitId];
-            return orgUnit.ancestors.some((ou) => approvableOrgUnitIds.has(ou.id));
+            return orgUnit && orgUnit.ancestors.some((ou) => approvableOrgUnitIds.has(ou.id));
           });
           console.log(
             "will schedule " +
@@ -200,6 +202,9 @@ class InvoiceContainer extends Component {
               calculations.length +
               " due to already approved data",
           );
+      }
+      if (allowedCalculations.length == 0) {
+        alert("Sorry won't schedule recalculations due to the data approval workflow configured")
       }
       allowedCalculations.forEach((calculation) => {
         this.orbf2.calculate(calculation);

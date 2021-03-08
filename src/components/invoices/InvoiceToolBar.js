@@ -28,6 +28,8 @@ const styles = {
 const asTooltip = (stats) => {
   return (
     <div>
+      <span>This rely on dataApproval workflows, generally lock/unlock data at parent orgunits level (region, province, district)</span>
+      <br></br>
       {Object.keys(stats).map((k, index) => (
         <span key={index}>
           <>
@@ -211,7 +213,7 @@ class InvoiceToolBar extends Component {
               <Tooltip title={asTooltip(this.props.lockState.stats)}>
                 <Button
                   onClick={() => this.props.onToggleLock("LOCK")}
-                  disabled={this.props.lockState.running}
+                  disabled={this.props.lockState.running || !this.props.lockState.canApproveUnapprove}
                 >
                   Lock
                   {this.props.lockState.running && (
@@ -224,7 +226,7 @@ class InvoiceToolBar extends Component {
               <Tooltip title={asTooltip(this.props.lockState.stats)}>
                 <Button
                   onClick={() => this.props.onToggleLock("UNLOCK")}
-                  disabled={this.props.lockState.running}
+                  disabled={this.props.lockState.running || !this.props.lockState.canApproveUnapprove}
                 >
                   Unlock
                   {this.props.lockState.running && (

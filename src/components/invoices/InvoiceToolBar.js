@@ -28,7 +28,13 @@ const styles = {
 const asTooltip = (stats) => {
   return (
     <div>
-      <span>This rely on dataApproval workflows, generally lock/unlock data at parent orgunits level (region, province, district)</span>
+      <span>This rely on dataApproval workflows, generally lock/unlock data at parent orgunits level (region, province, district) and so <br></br><b>will lock/unlock all orgunits within that parent orgunit</b>.</span>
+      <br></br>
+      <br></br>
+      <span>If the button is disabled, you probably don't have sufficient access rights (on the pyramid or not access write to the data approval)</span>
+      <br></br>
+      <br></br>
+      <span>Some statistics : </span>
       <br></br>
       {Object.keys(stats).map((k, index) => (
         <span key={index}>
@@ -211,6 +217,7 @@ class InvoiceToolBar extends Component {
           <React.Fragment>
             {this.props.lockState.stats.UNAPPROVED_READY && (
               <Tooltip title={asTooltip(this.props.lockState.stats)}>
+                <span>
                 <Button
                   onClick={() => this.props.onToggleLock("LOCK")}
                   disabled={this.props.lockState.running || !this.props.lockState.canApproveUnapprove}
@@ -220,10 +227,12 @@ class InvoiceToolBar extends Component {
                     <CircularProgress size={15} />
                   )}
                 </Button>
+                </span>
               </Tooltip>
             )}
             {this.props.lockState.stats.APPROVED_HERE && (
               <Tooltip title={asTooltip(this.props.lockState.stats)}>
+                <span>
                 <Button
                   onClick={() => this.props.onToggleLock("UNLOCK")}
                   disabled={this.props.lockState.running || !this.props.lockState.canApproveUnapprove}
@@ -233,6 +242,7 @@ class InvoiceToolBar extends Component {
                     <CircularProgress size={15} />
                   )}
                 </Button>
+                </span>
               </Tooltip>
             )}
           </React.Fragment>

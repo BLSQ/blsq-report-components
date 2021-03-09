@@ -1,6 +1,11 @@
+# @blsq/blsq-report-components@1.0.41
+
+- [contracts] Fix mass update of contracts.
+- [contracts] Display stats per levels.
+
 # @blsq/blsq-report-components@1.0.40
 
-- [invoice] Lock/Unlock button if user can't approve.
+- [invoice] Disable Lock/Unlock button if user can't approve/unapprove.
 
 # @blsq/blsq-report-components@1.0.39
 

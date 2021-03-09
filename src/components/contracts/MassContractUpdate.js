@@ -40,7 +40,7 @@ const MassContractUpdate = ({ filteredContracts, onUpdate }) => {
     onUpdate();
   };
 
-  const handleChange = () => {
+  const handleChange = (key, value, subKey) => {
     const updatedContract = {
       ...currentContract,
       [key]: !subKey

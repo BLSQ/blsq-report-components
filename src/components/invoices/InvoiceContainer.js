@@ -188,7 +188,7 @@ class InvoiceContainer extends Component {
       let allowedCalculations = calculations
       if (this.props.invoices.getDataApprovals) {
           const approvableOrgUnitIds = new Set(
-            invoice.currentApprovals.filter((approval) => approval.mayApprove).map((approval) => approval.orgUnit),
+            invoice.currentApprovals.filter((approval) => approval.state == "UNAPPROVED_READY" || approval.state == "UNAPPROVABLE").map((approval) => approval.orgUnit),
           );
 
           allowedCalculations = calculations.filter((calculation) => {

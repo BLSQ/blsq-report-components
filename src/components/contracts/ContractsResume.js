@@ -18,7 +18,6 @@ const ContractResume = ({ contracts, filteredContracts, overlapsTotal, t }) => {
   const classes = useStyles();
   const [showStats, setShowStats] = React.useState(false);
   const warningsTotal = filteredContracts.filter((c) => c.statusDetail && c.statusDetail.warnings != "").length;
-  debugger;
   if (contracts.length === 0) return "";
   return (
     <>

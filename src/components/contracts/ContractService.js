@@ -205,6 +205,7 @@ class ContractService {
           nonVisibleOverlaps,
           visibleOverlaps,
           validationErrors,
+          warnings: validationErrors.map((err) => err.message).join("\n"),
         };
         c.rowIndex = i + 1;
       });
@@ -215,6 +216,7 @@ class ContractService {
         c.statusDetail = {
           visibleOverlaps,
           validationErrors,
+          warnings: validationErrors.map((err) => err.message).join("\n"),
         };
         c.rowIndex = i + 1;
       });
@@ -237,12 +239,13 @@ class ContractService {
     const contractsOverlaps = this.toOverlappings(contracts);
     const contractsById = this.toContractsById(contracts);
     contracts.forEach((c) => {
-      const validationErrors = this._validate(validators, c, { contractFields, t });
+      const validationErrors = this._validate(validators, c, { contractFields, t, contracts });
       const visibleOverlaps = getOverlaps(c.id, contractsOverlaps, contractsById);
       c.status = visibleOverlaps.length === 0 && validationErrors.length === 0;
       c.statusDetail = {
         visibleOverlaps,
         validationErrors,
+        warnings: validationErrors.map((err) => err.message).join("\n"),
       };
     });
 
@@ -269,16 +272,16 @@ class ContractService {
         if (dataElement === undefined) {
           throw new Error(
             "no mapping for field " +
-            fieldKey +
-            " vs " +
-            Object.values(this.mappings)
-              .map((m) => m.code)
-              .join(","),
+              fieldKey +
+              " vs " +
+              Object.values(this.mappings)
+                .map((m) => m.code)
+                .join(","),
           );
         }
-        let value = contractInfo[fieldKey]
+        let value = contractInfo[fieldKey];
         if (dataElement.code == "contract_main_orgunit" && value && value.id) {
-          value = value.id
+          value = value.id;
         }
         dataValues.push({
           dataElement: dataElement.id,

@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.43
+
+- [invoices] Confirm or Cancel Lock/Unlock data
+
 # @blsq/blsq-report-components@1.0.42
 
 - [invoices] Calculate button was checking mayApprove instead of the approval state
@@ -17,7 +21,7 @@
 - [dataentry] Don't show data entries when multiple contracts for same period
 - [contracts] Add navigation to data entry, and in filter orgunits under breadcrumb
 - [contracts] Hide subcontracts when not applicable
-- [contracts] Add navigation to data entry 
+- [contracts] Add navigation to data entry
 
 # @blsq/blsq-report-components@1.0.38
 
@@ -29,17 +33,19 @@
 - [dataentry] Add a default implementation for edit in iaso form button
 
 # @blsq/blsq-report-components@1.0.36
+
 - [contracts] make import wizard more robust when error while processing a page
 - [contracts] don't crash contract statististics when endPeriod is missing
 
 # @blsq/blsq-report-components@1.0.35
+
 - [dataentry] more helpfull message when some formula use unsupported feature like time %{...windows_values}
 - [dataentry] the data entry selection page was saying the orgunit doesn't have an contract when subcontracted
 - [contracts] import of contracts now calls also the specific/contributed validator by the plugin system.
 - [contracts] import of contracts wizard display the matched pyramid hierarchy of the orgunit
 
-
 # @blsq/blsq-report-components@1.0.34
+
 - [dataentry] add some functions (AVG, MIN, MAX,...) to the hesabu engine
 - [dataentry] add tests and refactor a bit the code base to make it more maintainable
 - [general] switch to yarn to be more consistent with other projects
@@ -62,14 +68,17 @@
 - [dataentry] support "blank" (when removing a value from the screen, was generating a NaN, instead of 0 in hesabu)
 
 # @blsq/blsq-report-components@1.0.30
+
 - [dataentry] restore backward compatibility with older dhis2 for Complete/uncomplete dataset
 - [dataentry] allow to trigger an hesabu invoice when dataset is clicked completed
 
 # @blsq/blsq-report-components@1.0.27-29
+
 - [dataentry] various fixes, add minimal support for decision tables
 - [dataentry] Calculator allow cross reference between package formulas
 
 # @blsq/blsq-report-components@1.0.26
+
 - [incentives] Fix period not passed in the drawer links
 - [invoices] Pass a period in Invoices functions to allow versioning of invoices.
 

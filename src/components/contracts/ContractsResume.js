@@ -8,7 +8,6 @@ import { IconButton } from "@material-ui/core";
 import InfoIcon from "@material-ui/icons/Info";
 import ContractsStats from "./ContractsStats";
 
-
 const styles = (theme) => ({
   ...tablesStyles(theme),
 });
@@ -18,6 +17,7 @@ const useStyles = makeStyles((theme) => styles(theme));
 const ContractResume = ({ contracts, filteredContracts, overlapsTotal, t }) => {
   const classes = useStyles();
   const [showStats, setShowStats] = React.useState(false);
+  const warningsTotal = filteredContracts.filter((c) => c.statusDetail && c.statusDetail.warnings != "").length;
   if (contracts.length === 0) return "";
   return (
     <>
@@ -31,6 +31,7 @@ const ContractResume = ({ contracts, filteredContracts, overlapsTotal, t }) => {
             filtered: filteredContracts.length,
             total: contracts.length,
           })}
+        {warningsTotal > 0 && ", "+t("contracts.invalids", { warnings: warningsTotal })}
         {overlapsTotal > 0 && t("contracts.overlaps", { overlap: overlapsTotal })}.
       </span>
       <IconButton

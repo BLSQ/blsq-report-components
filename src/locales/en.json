@@ -13,6 +13,7 @@
     "onlySubContracts": "Only sub contracts",
     "overlappingWith": "Overlaps with",
     "overlaps": ", {{overlap}} overlapping globaly",
+    "invalids": " {{warnings}} invalids",
     "result": "1 contract",
     "results": "{{total}} contracts",
     "resultsFiltered": "{{filtered}} results filtered out {{total}} contracts",
@@ -31,7 +32,8 @@
     "deleteTitle": "Delete contract",
     "deleteWarning": "This will only delete the contract, data generated based on these infos will remain. If subcontracted orgunits reference this contract, delete/update them first.",
     "contract_main_orgunit_id": "Main org unit id",
-    "massUpdate": "Mass Update"
+    "massUpdate": "Mass Update",
+    "warnings": "Warnings"
   },
   "dataEntry":{
     "contractFrom": "Contract from",

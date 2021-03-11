@@ -1,6 +1,11 @@
-# @blsq/blsq-report-components@1.0.43
+# @blsq/blsq-report-components@1.0.44
 
 - [invoices] Confirm or Cancel Lock/Unlock data
+
+# @blsq/blsq-report-components@1.0.43
+
+- [contracts] Allow to download validation errors in [csv](https://github.com/BLSQ/blsq-report-components/pull/108)
+- [contracts] Allow specific validators to access all the contracts for cross validations.
 
 # @blsq/blsq-report-components@1.0.42
 

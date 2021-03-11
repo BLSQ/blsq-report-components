@@ -2,9 +2,11 @@ class Values {
   constructor(values, names) {
     this.values = values;
     this.names = names;
+    this.usedCodes = new Set()
   }
 
   amount(code, selectedPeriod) {
+    this.usedCodes.add(code)
     if (this.values.dataValues === undefined) {
       return this.noValueAmount(code, selectedPeriod);
     }
@@ -17,6 +19,7 @@ class Values {
   }
 
   amountByOrgUnit(code, orgUnit, selectedPeriod) {
+    this.usedCodes.add(code)
     if (this.values.dataValues === undefined) {
       return this.noValueAmount(code, selectedPeriod);
     }
@@ -106,7 +109,13 @@ class Values {
     }
   }
 
+  usedDataElementsRatio() {
+    const deCount = Object.keys(this.names).length
+    return deCount > 0 ? (100 * (this.usedCodes.size / deCount)) : 0
+  }
+
   textByOrgUnit(code, orgUnit, selectedPeriod) {
+    this.usedCodes.add(code)
     if (this.values.dataValues === undefined) {
       return this.noValueAmount(code, selectedPeriod);
     }
@@ -117,7 +126,6 @@ class Values {
     if (amounts.length > 0) {
       value = amounts[0].value;
     }
-
     return this.asAmount(code, selectedPeriod, value);
   }
 

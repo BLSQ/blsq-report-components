@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.42
+
+- [invoices] Calculate button was checking mayApprove instead of the approval state
+
 # @blsq/blsq-report-components@1.0.41
 
 - [contracts] Fix mass update of contracts.

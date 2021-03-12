@@ -13,6 +13,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import { List, ListItem, ListItemText } from "@material-ui/core";
 import InvoiceLinks from "./InvoiceLinks";
 import Tooltip from "@material-ui/core/Tooltip";
 import ReportProblemIcon from "@material-ui/icons/ReportProblem";
@@ -32,6 +33,12 @@ const asTooltip = (stats) => {
         This rely on dataApproval workflows, generally lock/unlock data at parent orgunits level (region, province,
         district) and so <br />
         <b>will lock/unlock all orgunits within that parent orgunit</b>.
+      </span>
+      <br />
+      <br />
+      <span>
+        The button is displayed also on individual invoices and we wanted to show that the Lock/Unlock has a broader
+        effect than the current invoice
       </span>
       <br />
       <br />
@@ -84,6 +91,7 @@ class InvoiceToolBar extends Component {
   }
 
   handleLock = () => {
+    console.info("OUs ...:", this.props.invoice.orgUnits);
     this.setState({ locked: true });
   };
   handleUnLock = () => {
@@ -150,7 +158,12 @@ class InvoiceToolBar extends Component {
         : 0;
     const nextStep = DatePeriods.nextPeriods(period, periodStepNumber);
     const previousStep = DatePeriods.previousPeriods(period, periodPreviousNumber);
-    const actionState = this.checkState();
+    const actionState =
+      this.checkState() === "LOCK"
+        ? this.props.t("lock")
+        : this.checkState() === "UNLOCK"
+        ? this.props.t("unlock")
+        : "";
     const running = this.props.calculateState && this.props.calculateState.running > 0;
     const message = running
       ? this.props.calculateState.running + " / " + this.props.calculateState.total
@@ -270,9 +283,23 @@ class InvoiceToolBar extends Component {
           <DialogTitle id="alert-dialog-title">{actionState}</DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-              This will {actionState} Data for the Zone {this.props.invoice.orgUnit && this.props.invoice.orgUnit.name}{" "}
-              do you confirm ?
+              This will {this.checkState()} Data within {this.props.invoice.orgUnit && this.props.invoice.orgUnit.name}{" "}
+              <b>do you confirm ? </b>
             </DialogContentText>
+            <DialogTitle id="simple-dialog-title">
+              Below is the list for{" "}
+              {DatePeriods.displayName(
+                this.props.invoice.period,
+                this.props.periodFormat[DatePeriods.detect(this.props.invoice.period)],
+              )}
+            </DialogTitle>
+            <List>
+              {this.props.invoice.orgUnits.map((orgUnit) => (
+                <ListItem>
+                  <ListItemText primary={orgUnit.name} />
+                </ListItem>
+              ))}
+            </List>
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleUnLock} color="primary">

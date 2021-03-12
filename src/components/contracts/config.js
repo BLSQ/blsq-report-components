@@ -55,6 +55,20 @@ export const contractsTableColumns = (
         customBodyRenderLite: (dataIndex) => <ContractStatus contract={filteredContracts[dataIndex]} />,
       },
     },
+
+    {
+      name: "statusDetail.warnings",
+      label: t("contracts.warnings"),
+      options: {
+        filter: false,
+        display: false,
+        sort: true,
+        setCellHeaderProps: () => ({
+          className: classNames(classes.cellCentered, classes.headerCell),
+        }),
+        customBodyRenderLite: (dataIndex) => <div>{filteredContracts[dataIndex].statusDetail.validationErrors.map(err => err.message).join("\n") }</div>,
+      },
+    },    
     {
       name: "orgUnit.name",
       label: t("orgUnit_name"),

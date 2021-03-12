@@ -196,7 +196,7 @@ class ContractService {
         );
         const visibleOverlaps = getOverlaps(c.id, subContractsOverlaps, subContractsById);
 
-        const validationErrors = this._validate(validators, c, { contractFields, t });
+        const validationErrors = this._validate(validators, c, { contractFields, t, contracts });
         c.status =
           !coverageIssue && !nonVisibleOverlaps && visibleOverlaps.length === 0 && validationErrors.length === 0;
 
@@ -211,7 +211,7 @@ class ContractService {
       });
       mainContracts.forEach((c, i) => {
         const visibleOverlaps = getOverlaps(c.id, mainContractsOverlaps, mainContractsById);
-        const validationErrors = this._validate(validators, c, { contractFields, t });
+        const validationErrors = this._validate(validators, c, { contractFields, t, contracts });
         c.status = visibleOverlaps.length === 0 && validationErrors.length == 0;
         c.statusDetail = {
           visibleOverlaps,

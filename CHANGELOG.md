@@ -1,3 +1,8 @@
+# @blsq/blsq-report-components@1.0.44
+
+- [contracts] Fix validation on orgunit's contract page, the cross contract validation errors were not shown
+- [contracts] Allow to filter on warnings text with the [search box](https://github.com/BLSQ/blsq-report-components/pull/110)
+
 # @blsq/blsq-report-components@1.0.43
 - [contracts] Allow to download validation errors in [csv](https://github.com/BLSQ/blsq-report-components/pull/108)
 - [contracts] Allow specific validators to access all the contracts for cross validations.

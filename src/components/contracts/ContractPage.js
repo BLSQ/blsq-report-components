@@ -60,7 +60,6 @@ const ContractPage = ({ match, location, t, history }) => {
         setContractsDatas({
           ...contractsDatas,
         });
-
         dispatch(setIsLoading(false));
       });
     }

@@ -90,14 +90,20 @@ const defaultFilters = [
     type: "search",
     column: 1,
     value: "",
-    onFilter: (value, contracts) =>
-      contracts.filter(
+    onFilter: (value, contracts) => {
+      if (value && value.startsWith("warnings:")) {
+        const filterValue = value.slice("warnings:".length);
+        return contracts.filter((c) => c.statusDetail && c.statusDetail.warnings.includes(filterValue));
+      }
+
+      return contracts.filter(
         (c) =>
           c.codes.includes(value) ||
           c.orgUnit.name.toLowerCase().includes(value.toLowerCase()) ||
           c.startPeriod.includes(value) ||
           c.endPeriod.includes(value),
-      ),
+      );
+    },
   },
   {
     ...activeAtFilter,

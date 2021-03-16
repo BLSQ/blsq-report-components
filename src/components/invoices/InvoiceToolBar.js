@@ -61,6 +61,76 @@ const asTooltip = (stats) => {
   );
 };
 
+const LockingConfirmDialog = ({ label, stats, disabled, onConfirm, running, invoice, periodFormat }) => {
+  const [confirming, setConfirming] = React.useState(false);
+  const [error, setError] = React.useState(undefined);
+  const confirm = () => {
+    try {
+      onConfirm();
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+  const [orgUnits, setOrgUnits] = React.useState();
+  React.useEffect(() => {
+    const orgUnitIds = Array.from(new Set(invoice.currentApprovals.map((approvals) => approvals.orgUnit)));
+    const loadOrgUnits = async () => {
+      //TODO look in invoice.orgUnits and call dhis2 if not found ?
+      const ous = orgUnitIds.map((id) => {
+        return { name: id };
+      });
+      setOrgUnits(ous);
+    };
+    loadOrgUnits();
+  }, [invoice]);
+
+  return (
+    <React.Fragment>
+      <Tooltip title={asTooltip(stats)}>
+        <span>
+          <Button onClick={() => setConfirming(true)} disabled={disabled}>
+            {label}
+            {running && <CircularProgress size={15} />}
+          </Button>
+        </span>
+      </Tooltip>
+      {confirming && (
+        <Dialog
+          open={confirming}
+          onClose={() => setConfirming(false)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{label}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              This will {label} Data within <b>do you confirm ? </b>
+            </DialogContentText>
+            <DialogTitle id="simple-dialog-title">
+              Below is the list for{" "}
+              {DatePeriods.displayName(invoice.period, periodFormat[DatePeriods.detect(invoice.period)])}
+            </DialogTitle>
+            <List>{orgUnits && orgUnits.map((c) => c.name).join(", ")}</List>
+            {error}
+          </DialogContent>
+          <DialogActions>
+            {orgUnits && (
+              <React.Fragment>
+                <Button disabled={running} onClick={() => setConfirming(false)} color="primary">
+                  Cancel
+                </Button>
+                <Button disabled={running} onClick={confirm} color="primary" autoFocus>
+                  Confirm
+                </Button>
+              </React.Fragment>
+            )}
+          </DialogActions>
+        </Dialog>
+      )}
+    </React.Fragment>
+  );
+};
+
 const tooltipStyles = {
   tooltip: {
     maxWidth: "600px",
@@ -232,17 +302,30 @@ class InvoiceToolBar extends Component {
           )}
         {this.props.lockState && this.props.lockState.stats && (
           <React.Fragment>
-            <Tooltip title={asTooltip(this.props.lockState.stats)}>
-              <span>
-                <Button
-                  onClick={this.handleLock}
-                  disabled={this.props.lockState.running || !this.props.lockState.canApproveUnapprove}
-                >
-                  {actionState}
-                  {this.props.lockState.running && <CircularProgress size={15} />}
-                </Button>
-              </span>
-            </Tooltip>
+            {this.props.lockState.stats.UNAPPROVED_READY && (
+              <LockingConfirmDialog
+                key={"lock"}
+                label="Lock"
+                stats={this.props.lockState.stats}
+                onConfirm={() => this.props.onToggleLock("LOCK")}
+                disabled={this.props.lockState.running || !this.props.lockState.canApproveUnapprove}
+                running={this.props.lockState.running}
+                invoice={this.props.invoice}
+                periodFormat={this.props.periodFormat}
+              />
+            )}
+            {this.props.lockState.stats.APPROVED_HERE && (
+              <LockingConfirmDialog
+                key={"unlock"}
+                label="Unlock"
+                stats={this.props.lockState.stats}
+                onConfirm={() => this.props.onToggleLock("UNLOCK")}
+                disabled={this.props.lockState.running || !this.props.lockState.canApproveUnapprove}
+                running={this.props.lockState.running}
+                invoice={this.props.invoice}
+                periodFormat={this.props.periodFormat}
+              />
+            )}
           </React.Fragment>
         )}
         <ExtensionsComponent extensionKey="invoices.actions" invoice={this.props.invoice} />
@@ -270,42 +353,6 @@ class InvoiceToolBar extends Component {
               Cancel
             </Button>
             <Button onClick={this.handleConfirm} color="primary" autoFocus>
-              Confirm
-            </Button>
-          </DialogActions>
-        </Dialog>
-        <Dialog
-          open={this.state.locked}
-          onClose={this.handleUnLock}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">{actionState}</DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              This will {this.checkState()} Data within {this.props.invoice.orgUnit && this.props.invoice.orgUnit.name}{" "}
-              <b>do you confirm ? </b>
-            </DialogContentText>
-            <DialogTitle id="simple-dialog-title">
-              Below is the list for{" "}
-              {DatePeriods.displayName(
-                this.props.invoice.period,
-                this.props.periodFormat[DatePeriods.detect(this.props.invoice.period)],
-              )}
-            </DialogTitle>
-            <List>
-              {this.props.invoice.orgUnits.map((orgUnit) => (
-                <ListItem>
-                  <ListItemText primary={orgUnit.name} />
-                </ListItem>
-              ))}
-            </List>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleUnLock} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={this.confirmApproval} color="primary" autoFocus>
               Confirm
             </Button>
           </DialogActions>

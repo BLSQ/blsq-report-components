@@ -61,7 +61,7 @@ const asTooltip = (stats) => {
   );
 };
 
-const LockingConfirmDialog = ({ label, stats, disabled, onConfirm, running, invoice, periodFormat }) => {
+const LockingConfirmDialog = ({ label, stats, disabled, onConfirm, running, invoice, periodFormat, dhis2 }) => {
   const [confirming, setConfirming] = React.useState(false);
   const [error, setError] = React.useState(undefined);
   const confirm = () => {
@@ -72,12 +72,18 @@ const LockingConfirmDialog = ({ label, stats, disabled, onConfirm, running, invo
     }
   };
   const [orgUnits, setOrgUnits] = React.useState();
+
   React.useEffect(() => {
     const orgUnitIds = Array.from(new Set(invoice.currentApprovals.map((approvals) => approvals.orgUnit)));
     const loadOrgUnits = async () => {
-      //TODO look in invoice.orgUnits and call dhis2 if not found ?
-      const ous = orgUnitIds.map((id) => {
-        return { name: id };
+      // TODO look in invoice.orgUnits and call dhis2 if not found ?
+      const api = await dhis2.api();
+      const orgUnitWithName = await api.get("organisationUnits", {
+        fields: "id,name",
+        filter: "id:in:[" + orgUnitIds.map((id) => id).join(",") + "]",
+      });
+      const ous = orgUnitWithName.organisationUnits.map((ou) => {
+        return { id: ou.id, name: ou.name };
       });
       setOrgUnits(ous);
     };
@@ -161,7 +167,6 @@ class InvoiceToolBar extends Component {
   }
 
   handleLock = () => {
-    console.info("OUs ...:", this.props.invoice.orgUnits);
     this.setState({ locked: true });
   };
   handleUnLock = () => {
@@ -205,7 +210,7 @@ class InvoiceToolBar extends Component {
   }
 
   render() {
-    const { classes, period, orgUnitId, invoiceCode, linkPrefix } = this.props;
+    const { classes, period, orgUnitId, invoiceCode, linkPrefix, dhis2 } = this.props;
 
     const nextPeriod = DatePeriods.next(period);
     const previousPeriod = DatePeriods.previous(period);
@@ -312,6 +317,7 @@ class InvoiceToolBar extends Component {
                 running={this.props.lockState.running}
                 invoice={this.props.invoice}
                 periodFormat={this.props.periodFormat}
+                dhis2={dhis2}
               />
             )}
             {this.props.lockState.stats.APPROVED_HERE && (
@@ -324,6 +330,7 @@ class InvoiceToolBar extends Component {
                 running={this.props.lockState.running}
                 invoice={this.props.invoice}
                 periodFormat={this.props.periodFormat}
+                dhis2={dhis2}
               />
             )}
           </React.Fragment>

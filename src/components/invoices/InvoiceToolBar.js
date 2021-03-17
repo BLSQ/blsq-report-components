@@ -110,7 +110,7 @@ const LockingConfirmDialog = ({ label, stats, disabled, onConfirm, running, invo
           <DialogTitle id="alert-dialog-title">{label}</DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-              This will {label} Data within <b>do you confirm ? </b>
+              This will {label} Data <b>do you confirm ? </b>
             </DialogContentText>
             <DialogTitle id="simple-dialog-title">
               Below is the list for{" "}

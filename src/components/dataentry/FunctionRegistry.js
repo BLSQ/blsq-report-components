@@ -99,7 +99,6 @@ const STRLEN = (str) => {
 }
 
 const CONCATENATE = (...args) => {
-    const index = args[args.length - 1]
     return args.join("")
 }
 

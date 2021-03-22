@@ -1,3 +1,6 @@
+# @blsq/blsq-report-components@1.0.46
+
+- [dataentry] Add an url to easily [synchronize](https://github.com/BLSQ/blsq-report-components/pull/111) orgunits and data elements based on hesabu/contracts configurations, checks data approval workflows.
 
 # @blsq/blsq-report-components@1.0.45
 

@@ -33,7 +33,7 @@
     "massUpdate": "Update en masse",
     "warnings": "Warnings"
   },
-  "dataEntry":{
+  "dataEntry": {
     "contractFrom": "Contract de",
     "contractTo": "à",
     "dataEntries": "Saisie de données",
@@ -68,6 +68,9 @@
   "period": "Période",
   "print": "Imprimer",
   "re_calculate": "Recalculer",
+  "lock": "Verrouiller",
+  "unlock": "Déverrouiller",
+  "lock_unlock": "Verrouiller/Déverrouiller",
   "report_and_invoices": "Rapports",
   "save": "Sauver",
   "search": "Recherche",

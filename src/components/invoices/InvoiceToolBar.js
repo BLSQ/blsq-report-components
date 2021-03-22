@@ -74,21 +74,19 @@ const LockingConfirmDialog = ({ label, stats, disabled, onConfirm, running, invo
   const [orgUnits, setOrgUnits] = React.useState();
 
   React.useEffect(() => {
-    const orgUnitIds = Array.from(new Set(invoice.currentApprovals.map((approvals) => approvals.orgUnit)));
-    const loadOrgUnits = async () => {
-      // TODO look in invoice.orgUnits and call dhis2 if not found ?
-      const api = await dhis2.api();
-      const orgUnitWithName = await api.get("organisationUnits", {
-        fields: "id,name",
-        filter: "id:in:[" + orgUnitIds.map((id) => id).join(",") + "]",
-      });
-      const ous = orgUnitWithName.organisationUnits.map((ou) => {
-        return { id: ou.id, name: ou.name };
-      });
-      setOrgUnits(ous);
-    };
-    loadOrgUnits();
-  }, [invoice]);
+    if (confirming) {
+      const orgUnitIds = Array.from(new Set(invoice.currentApprovals.map((approvals) => approvals.orgUnit)));
+      const loadOrgUnits = async () => {
+        const api = await dhis2.api();
+        const orgUnitWithName = await api.get("organisationUnits", {
+          fields: "id,name",
+          filter: "id:in:[" + orgUnitIds.map((id) => id).join(",") + "]",
+        });
+        setOrgUnits(orgUnitWithName.organisationUnits);
+      };
+      loadOrgUnits();
+    }
+  }, [invoice, confirming]);
 
   return (
     <React.Fragment>

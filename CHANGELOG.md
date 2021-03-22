@@ -10,7 +10,6 @@
 
 - [contracts] Fix validation on orgunit's contract page, the cross contract validation errors were not shown
 - [contracts] Allow to filter on warnings text with the [search box](https://github.com/BLSQ/blsq-report-components/pull/110)
->>>>>>> master
 
 # @blsq/blsq-report-components@1.0.43
 

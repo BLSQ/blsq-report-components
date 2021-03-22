@@ -1,6 +1,16 @@
+
+# @blsq/blsq-report-components@1.0.45
+
+ - [dataentry] Add CONCATENATE function.
+ - [dataentry] Allow to express if dataset is completable (eg any warnings left).
+ - [dataentry] Allow to style HesabuFormula (eg display in red).
+ - [invoices] Make lock/unlock button less error prone by [showing a confirmation dialog](https://github.com/BLSQ/blsq-report-components/pull/109) and description of what will be locked.
+
 # @blsq/blsq-report-components@1.0.44
 
-[invoices] Confirm or Cancel Lock/Unlock data
+- [contracts] Fix validation on orgunit's contract page, the cross contract validation errors were not shown
+- [contracts] Allow to filter on warnings text with the [search box](https://github.com/BLSQ/blsq-report-components/pull/110)
+>>>>>>> master
 
 # @blsq/blsq-report-components@1.0.43
 

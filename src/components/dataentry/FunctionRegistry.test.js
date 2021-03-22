@@ -31,6 +31,20 @@ describe("FunctionRegistry", () => {
         })
     })
 
+
+    describe("CONCATENATE", () => {
+        it("should keep empty string empty", () => {
+            expect(evalCode("CONCATENATE('', '')")).toEqual('')
+        })
+        it("should concatenates", () => {
+            expect(evalCode("CONCATENATE('A', 'B')")).toEqual('AB')
+        })
+
+        it("should keep empty string empty", () => {
+            expect(evalCode("CONCATENATE('A','','B')")).toEqual('AB')
+        })
+    })
+
     describe("RANDBETWEEN", () => {
         const rand = functions["RANDBETWEEN"]
 

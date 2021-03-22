@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { TextField, Tooltip, ClickAwayListener } from "@material-ui/core";
 import FormDataContext from "./FormDataContext";
 
-const HesabuFormula = ({ hesabuPackage, formulaCode, period, orgUnit, activity, bold, formatter }) => {
+const HesabuFormula = ({ hesabuPackage, formulaCode, period, orgUnit, activity, bold, formatter, inputProps }) => {
   const formDataContext = useContext(FormDataContext);
   const [rawValue, setRawValue] = useState("");
   const [expression, setExpression] = useState("");
@@ -11,7 +11,7 @@ const HesabuFormula = ({ hesabuPackage, formulaCode, period, orgUnit, activity, 
   useEffect(() => {
     if (formDataContext && formulaCode) {
       setExpression(expression);
-      try {  
+      try {
         const val = formDataContext.getCalculatedValue(hesabuPackage, formulaCode, period, orgUnit, activity);
 
         setRawValue(formatter ? formatter(val) : "" + val);
@@ -61,12 +61,16 @@ const HesabuFormula = ({ hesabuPackage, formulaCode, period, orgUnit, activity, 
             disabled={true}
             type="text"
             value={rawValue || ""}
-            inputProps={{
-              style: {
-                textAlign: "right",
-                fontWeight: bold ? "bold" : "normal"
-              },
-            }}
+            inputProps={
+              inputProps
+                ? inputProps
+                : {
+                    style: {
+                      textAlign: "right",
+                      fontWeight: bold ? "bold" : "normal",
+                    },
+                  }
+            }
             error={error}
             helperText={error ? expression + " : " + error : undefined}
             onDoubleClick={handleOpenToolTip}

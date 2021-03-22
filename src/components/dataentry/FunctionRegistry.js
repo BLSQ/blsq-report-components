@@ -98,7 +98,9 @@ const STRLEN = (str) => {
     return str.length
 }
 
-
+const CONCATENATE = (...args) => {
+    return args.join("")
+}
 
 // https://github.com/BLSQ/go-hesabu/blob/master/hesabu/registry.go#L26
 // missing stdevp, TRUNC, CAL_DAYS_IN_MONTH, eval_array
@@ -134,5 +136,8 @@ export const functions = {
     "MIN": MIN,
     "min": MIN,
     "MAX": MAX,
-    "max": MAX
+    "max": MAX,
+    "CONCATENATE":CONCATENATE,
+    "concatenate":CONCATENATE,
+
 }

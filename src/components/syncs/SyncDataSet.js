@@ -99,10 +99,7 @@ const SyncDataSet = (props) => {
           .filter((de) => de);
         const dataSetElements = new Set(dataSet.dataSetElements.map((dse) => dse.dataElement.id));
         for (let expectedDE of expectedDataElements) {
-          if (expectedDE && !dataSetElements.has(expectedDE)) {
-            if (dataElements[expectedDE] == undefined) {
-              debugger;
-            }
+          if (expectedDE && !dataSetElements.has(expectedDE)) {       
             missingDataElements.push(expectedDE);
           }
         }

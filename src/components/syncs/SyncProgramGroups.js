@@ -361,7 +361,6 @@ const SyncProgramGroups = (props) => {
       const resp = await api.update("organisationUnitGroups/" + orgUnitGroup.id, orgUnitGroup);
       console.log(resp);
       setProgress("Updated " + orgUnitGroup.name);
-      debugger;
     }
     loadContracts();
   };
@@ -374,7 +373,6 @@ const SyncProgramGroups = (props) => {
   if (filter != "") {
     if (filter.startsWith("ancestor:")) {
       const ancestorName = filter.slice("ancestor:".length)
-      debugger;
       filteredContractInfos = filteredContractInfos.filter((c) => {
         return c.orgUnit.ancestors.some((a) => a.name.includes(ancestorName));
       });

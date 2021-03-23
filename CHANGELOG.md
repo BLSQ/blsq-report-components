@@ -1,4 +1,8 @@
-# @blsq/blsq-report-components@1.0.46
+# @blsq/blsq-report-components@1.0.48
+ 
+- [contracts] Add a screen to sync organisation unit groups with their "active or nearest" contract.  
+
+# @blsq/blsq-report-components@1.0.47
  
 - [dataentry] Small improvements on sync screen (tooltip, deal with "undefined" state mapping)
 

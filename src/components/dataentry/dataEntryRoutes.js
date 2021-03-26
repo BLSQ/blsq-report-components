@@ -1,6 +1,7 @@
 import React from "react";
 import { Route } from "react-router-dom";
 import { syncsRoutes } from "../syncs/routes";
+import { completenessRoutes } from "../completeness/routes";
 
 import DataEntrySelectionPage from "./DataEntrySelectionPage";
 
@@ -39,6 +40,7 @@ const dataEntryRoutes = (props) => {
     />,
 
     ...syncsRoutes(props),
+    ...completenessRoutes(props),
   ];
 };
 

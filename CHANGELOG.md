@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.49
+ 
+- [completeness] a first screen on [completeness](https://github.com/BLSQ/blsq-report-components/pull/113) based on contracts and dataset complete events.
+
 # @blsq/blsq-report-components@1.0.48
  
 - [contracts] Add a screen to sync organisation unit groups with their "active or nearest" contract.  

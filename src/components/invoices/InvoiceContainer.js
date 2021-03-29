@@ -214,12 +214,14 @@ class InvoiceContainer extends Component {
     this.state.invoice.approvals = approvals;
     this.state.invoice.currentApprovals = currentApprovals;
     this.state.invoice.approvalStats = stats;
+    const canApproveUnapprove = currentApprovals.some((a) => a.mayApprove || a.mayUnapprove);
 
     this.setState({
       lockState: {
         approvals: approvals,
         currentApprovals: currentApprovals,
         stats: stats,
+        canApproveUnapprove: canApproveUnapprove,
       },
     });
   }
@@ -230,23 +232,30 @@ class InvoiceContainer extends Component {
       const calculations = invoice.calculations;
       const orgUnitsById = {};
       invoice.orgUnits.forEach((ou) => (orgUnitsById[ou.id] = ou));
-      let allowedCalculations = calculations
-      if (this.props.invoices.getDataApprovals) {
-          const approvableOrgUnitIds = new Set(
-            invoice.currentApprovals.filter((approval) => approval.mayApprove).map((approval) => approval.orgUnit),
-          );
 
-          allowedCalculations = calculations.filter((calculation) => {
-            const orgUnit = orgUnitsById[calculation.orgUnitId];
-            return orgUnit.ancestors.some((ou) => approvableOrgUnitIds.has(ou.id));
-          });
-          console.log(
-            "will schedule " +
-              allowedCalculations.length +
-              " out of " +
-              calculations.length +
-              " due to already approved data",
-          );
+
+      let allowedCalculations = calculations;
+      if (this.props.invoices.getDataApprovals) {
+        const approvableOrgUnitIds = new Set(
+          invoice.currentApprovals
+            .filter((approval) => approval.state == "UNAPPROVED_READY" || approval.state == "UNAPPROVABLE")
+            .map((approval) => approval.orgUnit),
+        );
+
+        allowedCalculations = calculations.filter((calculation) => {
+          const orgUnit = orgUnitsById[calculation.orgUnitId];
+          return orgUnit && orgUnit.ancestors.some((ou) => approvableOrgUnitIds.has(ou.id));
+        });
+        console.log(
+          "will schedule " +
+            allowedCalculations.length +
+            " out of " +
+            calculations.length +
+            " due to already approved data",
+        );
+      }
+      if (allowedCalculations.length == 0) {
+        alert("Sorry won't schedule recalculations due to the data approval workflow configured");
       }
       allowedCalculations.forEach((calculation) => {
         this.orbf2.calculate(calculation);
@@ -293,6 +302,7 @@ class InvoiceContainer extends Component {
         periodFormat={this.props.periodFormat}
         invoices={this.props.invoices}
         invoice={this.state.invoice}
+        dhis2={this.props.dhis2}
       />
     );
   };

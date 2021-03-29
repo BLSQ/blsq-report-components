@@ -4,6 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import PluginRegistry from "../core/PluginRegistry";
 import { Typography } from "@material-ui/core";
 import ContractsPeriodStats from "./ContractsPeriodStats";
+import ContractsAncestorStats from "./ContractsAncestorStats";
 
 const styles = (theme) => ({
   td: {
@@ -42,7 +43,7 @@ const ContractsStats = ({ filteredContracts }) => {
   });
 
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ display: "flex", flexWrap: "wrap" }}>
       {fields
         .filter((field) => statsPerField[field.code])
         .map((field) => {
@@ -54,7 +55,7 @@ const ContractsStats = ({ filteredContracts }) => {
                   {statsPerField[field.code].map((stat) => (
                     <tr key={statsPerField[field.code] + "-" + (stat.option ? stat.option.name : "null")}>
                       <td className={classes.td} width="50%">
-                        {stat.option ? stat.option.name : "null"}
+                        {stat.option ? stat.option.name : <span className={classes.noData}>not specified</span>}
                       </td>
                       <td align="right" width="25%">
                         <Typography className={stat.count == 0 ? classes.noData : classes.td}>{stat.count}</Typography>
@@ -72,6 +73,7 @@ const ContractsStats = ({ filteredContracts }) => {
           );
         })}
       <ContractsPeriodStats filteredContracts={filteredContracts} />
+      <ContractsAncestorStats filteredContracts={filteredContracts} />
     </div>
   );
 };

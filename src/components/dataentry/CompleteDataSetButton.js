@@ -2,16 +2,18 @@ import React, { useEffect, useState, useContext } from "react";
 import { Button } from "@material-ui/core";
 import FormDataContext from "./FormDataContext";
 
-const CompleteDataSetButton = () => {
+const CompleteDataSetButton = ({calculations, completable}) => {
+  const isDataSetCompletable = completable == undefined ? true : completable
   const formDataContext = useContext(FormDataContext);
 
   const isComplete = formDataContext.isDataSetComplete();
   const onClick = () => {
-    formDataContext.toggleComplete();
+    formDataContext.toggleComplete(calculations);
   };
   return (
     <Button
       variant="contained"
+      disabled={!formDataContext.isDataWritable() || (!isComplete &&!isDataSetCompletable)}
       color="primary"
       onClick={onClick}
       title={JSON.stringify(formDataContext.completeDataSetRegistration, undefined, 2)}

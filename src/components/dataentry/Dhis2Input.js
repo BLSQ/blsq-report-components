@@ -29,6 +29,7 @@ const Dhis2Input = ({ dataElement }) => {
     return <></>;
   }
   const isComplete = formDataContext.isDataSetComplete();
+  const isDataWritable = formDataContext.isDataWritable();
 
   const onChange = (e) => {
     setRawValue(e.target.value);
@@ -64,7 +65,7 @@ const Dhis2Input = ({ dataElement }) => {
           <TextField
             error={formDataContext.isInvalid(dataElement)}
             type="text"
-            disabled={isComplete}
+            disabled={isComplete || !isDataWritable}
             value={rawValue}
             onChange={onChange}
             onDoubleClick={handleOpenToolTip}

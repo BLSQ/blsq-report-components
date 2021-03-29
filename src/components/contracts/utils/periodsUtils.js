@@ -12,10 +12,16 @@ export const getEndMonthFromQuarter = (endPeriod) => {
 };
 
 export const getStartDateFromPeriod = (startPeriod) => {
+  if (startPeriod == undefined) {
+    return undefined
+  }
   const startPeriodMonths = DatePeriods.split(startPeriod, "monthly");
   return moment(startPeriodMonths[0], "YYYYMM").format("YYYY-MM-DD");
 };
 export const getEndDateFromPeriod = (endPeriod) => {
+  if (endPeriod == undefined) {
+    return undefined
+  }  
   const endPeriodMonths = DatePeriods.split(endPeriod, "monthly");
   return moment(endPeriodMonths[endPeriodMonths.length - 1], "YYYYMM")
     .endOf("month")

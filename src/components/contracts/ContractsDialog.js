@@ -16,24 +16,17 @@ import {
 import CloseIcon from "@material-ui/icons/Close";
 import Edit from "@material-ui/icons/Edit";
 import { useDispatch, useSelector } from "react-redux";
-
+import PeriodPicker from "./PeriodPicker";
 import PluginRegistry from "../core/PluginRegistry";
 
 import OuSearch from "../shared/OuSearch";
-import PeriodPicker from "../shared/PeriodPicker";
 import { errorSnackBar, succesfullSnackBar } from "../shared/snackBars/snackBar";
 import { setIsLoading } from "../redux/actions/load";
 
 import ContractFieldSelect from "./ContractFieldSelect";
 import { getNonStandartContractFields, getContractByOrgUnit } from "./utils/index";
 
-import {
-  getStartDateFromPeriod,
-  getEndDateFromPeriod,
-  getQuarterFromDate,
-  getStartMonthFromQuarter,
-  getEndMonthFromQuarter,
-} from "./utils/periodsUtils";
+import { getStartDateFromPeriod, getEndDateFromPeriod } from "./utils/periodsUtils";
 import { enqueueSnackbar } from "../redux/actions/snackBars";
 
 import LoadingSpinner from "../shared/LoadingSpinner";
@@ -68,7 +61,7 @@ const ContractsDialog = ({
   const [open, setOpen] = React.useState(false);
 
   const contractService = PluginRegistry.extension("contracts.service");
-  const [currentContract, setCurrentContract] = React.useState(contract);
+  const [currentContract, setCurrentContract] = React.useState(contractService.defaultPeriod(contract));
   const [validationErrors, setValidationErrors] = React.useState([]);
   const isLoading = useSelector((state) => state.load.isLoading);
   const classes = useStyles();
@@ -97,11 +90,14 @@ const ContractsDialog = ({
     };
     const errors = contractService.validateContract(updatedContract);
 
-    setCurrentContract(updatedContract);
+    setCurrentContract({
+      ...updatedContract,
+    });
     setValidationErrors(errors);
   };
   const handleSave = () => {
     dispatch(setIsLoading(true));
+
     const saveContract =
       currentContract.id !== 0
         ? contractService.updateContract(currentContract)
@@ -154,10 +150,18 @@ const ContractsDialog = ({
             <CloseIcon />
           </IconButton>
           {validationErrors.length > 0 && (
-            <span style={{ color: "red" }}>{validationErrors.map((err) => err.message).join(" ")}</span>
+            <span style={{ color: "red" }}>
+              {validationErrors.map((err) => (
+                <span>
+                  {err.message}
+                  <br></br>
+                </span>
+              ))}
+            </span>
           )}
         </DialogTitle>
         <DialogContent dividers>
+          {false && <pre>{JSON.stringify(currentContract, undefined, 4)}</pre>}
           <Grid container spacing={2}>
             {(displayOrgUnit || displayMainOrgUnit) && (
               <Grid container item xs={12}>
@@ -178,11 +182,11 @@ const ContractsDialog = ({
             )}
             <Grid container item xs={6}>
               <PeriodPicker
-                periodDelta={{ before: 20, after: 20 }}
-                period={getQuarterFromDate(currentContract.fieldValues.contract_start_date)}
-                max={getQuarterFromDate(currentContract.fieldValues.contract_end_date)}
-                renderPeriod={(p) => `${getStartMonthFromQuarter(p)} ${p.substring(0, 4)}`}
-                labelKey="start_period"
+                contract={currentContract}
+                currentPeriod={currentContract.startPeriod}
+                max={currentContract.endPeriod}
+                mode="beginning"
+                fieldName={t("start_period")}
                 onPeriodChange={(startPeriod) =>
                   handleChange("fieldValues", getStartDateFromPeriod(startPeriod), "contract_start_date")
                 }
@@ -190,11 +194,11 @@ const ContractsDialog = ({
             </Grid>
             <Grid container item xs={6}>
               <PeriodPicker
-                periodDelta={{ before: 20, after: 20 }}
-                period={getQuarterFromDate(currentContract.fieldValues.contract_end_date)}
-                renderPeriod={(p) => `${getEndMonthFromQuarter(p)} ${p.substring(0, 4)}`}
-                labelKey="end_period"
-                min={getQuarterFromDate(currentContract.fieldValues.contract_start_date)}
+                contract={currentContract}
+                currentPeriod={currentContract.endPeriod}
+                min={currentContract.startPeriod}
+                fieldName={t("end_period")}
+                mode="end"
                 onPeriodChange={(endPeriod) =>
                   handleChange("fieldValues", getEndDateFromPeriod(endPeriod), "contract_end_date")
                 }

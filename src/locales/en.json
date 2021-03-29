@@ -13,6 +13,7 @@
     "onlySubContracts": "Only sub contracts",
     "overlappingWith": "Overlaps with",
     "overlaps": ", {{overlap}} overlapping globaly",
+    "invalids": " {{warnings}} invalids",
     "result": "1 contract",
     "results": "{{total}} contracts",
     "resultsFiltered": "{{filtered}} results filtered out {{total}} contracts",
@@ -30,13 +31,16 @@
     "title": "Contracts",
     "deleteTitle": "Delete contract",
     "deleteWarning": "This will only delete the contract, data generated based on these infos will remain. If subcontracted orgunits reference this contract, delete/update them first.",
-    "contract_main_orgunit_id": "Main org unit id"
+    "contract_main_orgunit_id": "Main org unit id",
+    "massUpdate": "Mass Update",
+    "warnings": "Warnings"
   },
-  "dataEntry":{
+  "dataEntry": {
     "contractFrom": "Contract from",
     "contractTo": "to",
     "dataEntries": "Data entry",
-    "invoices": "Invoices"
+    "invoices": "Invoices",
+    "dataSetNotWritable": "You don't have write access to '{{dataSetName}}'"
   },
   "create": "Create",
   "edit": "Edit",
@@ -56,7 +60,7 @@
       "period": "Period"
     }
   },
-  "limit_org_unit_under": "Limit to the child organisation unit",
+  "limit_org_unit_under": "Limit to the children organisation units of ...",
   "missing_invoice_types": "Missing invoice...",
   "name": "Name",
   "noResult": "No result",
@@ -66,6 +70,9 @@
   "period": "Period",
   "print": "Print",
   "re_calculate": "Calculate",
+  "lock": "Lock",
+  "unlock": "Unlock",
+  "lock_unlock": "Lock/Unlock",
   "report_and_invoices": "Report & Invoices",
   "save": "Save",
   "search": "Search",

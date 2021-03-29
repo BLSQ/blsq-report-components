@@ -32,6 +32,7 @@ const ContractFilters = ({
   location,
   changeTable,
   fetchContracts,
+  onModeChange,
 }) => {
   const [filters, setFilters] = React.useState(filtersConfig(contractFields));
   const [isTouched, setIsTouched] = React.useState(false);
@@ -110,6 +111,10 @@ const ContractFilters = ({
               {t("create")}
             </Button>
           </ContractsDialog>
+          <Button onClick={onModeChange} color="primary" variant="contained" className={classes.createButton}>
+            {t("contracts.massUpdate")}
+          </Button>
+
           <Button onClick={handleSearch} color="primary" variant="contained" disabled={!isTouched || hasError}>
             {t("filter")}
           </Button>
@@ -128,6 +133,7 @@ ContractFilters.propTypes = {
   setFilteredContracts: PropTypes.func.isRequired,
   changeTable: PropTypes.func.isRequired,
   fetchContracts: PropTypes.func.isRequired,
+  onModeChange: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired,
 };
 

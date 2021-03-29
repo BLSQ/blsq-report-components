@@ -20,6 +20,28 @@ import { getContractDates } from "./utils/periodsUtils";
  * @property {function} urlDecode - Optionnal - function used decode filter from url
  */
 
+export const endAtFilter = {
+  id: "contract_end_date_eq",
+  key: "contracts.endsAt",
+  type: "date",
+  column: 3,
+  value: null,
+  /* value is a string like "12/31/2020"*/
+  onFilter: (value, contracts) => {
+    if (!value) {
+      return contracts;
+    }
+    const filterPeriodCompents = value.split("/");
+    const filterPeriod = filterPeriodCompents[2] + filterPeriodCompents[0];
+
+    const filteredContracts = contracts.filter((c) => {
+      return c.endPeriod == filterPeriod;
+    });
+    return filteredContracts;
+  },
+  urlDecode: (value) => (!value || value === "" ? null : value),
+};
+
 export const activeAtFilter = {
   id: "active_at",
   key: "contracts.activeAt",
@@ -68,14 +90,20 @@ const defaultFilters = [
     type: "search",
     column: 1,
     value: "",
-    onFilter: (value, contracts) =>
-      contracts.filter(
+    onFilter: (value, contracts) => {
+      if (value && value.startsWith("warnings:")) {
+        const filterValue = value.slice("warnings:".length);
+        return contracts.filter((c) => c.statusDetail && c.statusDetail.warnings.includes(filterValue));
+      }
+
+      return contracts.filter(
         (c) =>
           c.codes.includes(value) ||
           c.orgUnit.name.toLowerCase().includes(value.toLowerCase()) ||
           c.startPeriod.includes(value) ||
           c.endPeriod.includes(value),
-      ),
+      );
+    },
   },
   {
     ...activeAtFilter,
@@ -109,6 +137,24 @@ const defaultFilters = [
     },
     urlEncode: (value) => (value ? "true" : "false"),
     urlDecode: (value) => value === "true",
+  },
+  {
+    id: "under_orgunit",
+    key: "contracts.underOrgunit",
+    type: "ouSearch",
+    column: 2,
+    value: "",
+    onFilter: (orgUnitId, contracts, contractsOverlaps) => {
+      if (orgUnitId == undefined || orgUnitId == "") {
+        return contracts;
+      }
+      return contracts.filter((c) => c.orgUnit.path.includes(orgUnitId));
+    },
+    urlEncode: (value) => (value ? value : undefined),
+    urlDecode: (value) => value,
+  },
+  {
+    ...endAtFilter,
   },
 ];
 

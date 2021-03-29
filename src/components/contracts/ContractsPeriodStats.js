@@ -9,9 +9,16 @@ function getColor(value) {
 }
 
 const ContractsPeriodStats = ({ filteredContracts }) => {
-  const minYear = Math.max(Math.min(...filteredContracts.map((c) => parseInt(c.startPeriod.slice(0, 4)))),2000);
+  const minYear = Math.max(
+    Math.min(...filteredContracts.filter((c) => c.startPeriod).map((c) => parseInt(c.startPeriod.slice(0, 4)))),
+    2000,
+  );
 
-  const maxYear = Math.min(Math.max(...filteredContracts.map((c) => parseInt(c.endPeriod.slice(0, 4)))), 2050);
+  const maxYear = Math.min(
+    Math.max(...filteredContracts.filter((c) => c.endPeriod).map((c) => parseInt(c.endPeriod.slice(0, 4)))),
+    2050,
+  );
+
   const years = [];
   for (let year = minYear; year <= maxYear; year++) {
     years.push(year);
@@ -24,7 +31,6 @@ const ContractsPeriodStats = ({ filteredContracts }) => {
       data.push({ period: monthPeriod, contracted: contractsForPeriod });
     });
   });
-
 
   return (
     <div>

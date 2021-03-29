@@ -1,7 +1,7 @@
 import Contract from "./Contract";
 import PluginRegistry from "../core/PluginRegistry";
-import DefaultValidator from "./validations/DefaultValidator";
 import { getOrgUnitCoverage, checkSubContractCoverage, checkNonVisibleOverlap, getOverlaps } from "./utils/index";
+import { getStartDateFromPeriod, getEndDateFromPeriod, getQuarterFromDate } from "./utils/periodsUtils";
 
 class ContractService {
   constructor(api, program, allEventsSqlViewId) {
@@ -196,7 +196,7 @@ class ContractService {
         );
         const visibleOverlaps = getOverlaps(c.id, subContractsOverlaps, subContractsById);
 
-        const validationErrors = this._validate(validators, c, { contractFields, t });
+        const validationErrors = this._validate(validators, c, { contractFields, t, contracts });
         c.status =
           !coverageIssue && !nonVisibleOverlaps && visibleOverlaps.length === 0 && validationErrors.length === 0;
 
@@ -205,16 +205,18 @@ class ContractService {
           nonVisibleOverlaps,
           visibleOverlaps,
           validationErrors,
+          warnings: validationErrors.map((err) => err.message).join("\n"),
         };
         c.rowIndex = i + 1;
       });
       mainContracts.forEach((c, i) => {
         const visibleOverlaps = getOverlaps(c.id, mainContractsOverlaps, mainContractsById);
-        const validationErrors = this._validate(validators, c, { contractFields, t });
+        const validationErrors = this._validate(validators, c, { contractFields, t, contracts });
         c.status = visibleOverlaps.length === 0 && validationErrors.length == 0;
         c.statusDetail = {
           visibleOverlaps,
           validationErrors,
+          warnings: validationErrors.map((err) => err.message).join("\n"),
         };
         c.rowIndex = i + 1;
       });
@@ -237,12 +239,13 @@ class ContractService {
     const contractsOverlaps = this.toOverlappings(contracts);
     const contractsById = this.toContractsById(contracts);
     contracts.forEach((c) => {
-      const validationErrors = this._validate(validators, c, { contractFields, t });
+      const validationErrors = this._validate(validators, c, { contractFields, t, contracts });
       const visibleOverlaps = getOverlaps(c.id, contractsOverlaps, contractsById);
       c.status = visibleOverlaps.length === 0 && validationErrors.length === 0;
       c.statusDetail = {
         visibleOverlaps,
         validationErrors,
+        warnings: validationErrors.map((err) => err.message).join("\n"),
       };
     });
 
@@ -276,9 +279,13 @@ class ContractService {
                 .join(","),
           );
         }
+        let value = contractInfo[fieldKey];
+        if (dataElement.code == "contract_main_orgunit" && value && value.id) {
+          value = value.id;
+        }
         dataValues.push({
           dataElement: dataElement.id,
-          value: contractInfo[fieldKey],
+          value: value,
         });
       }
     });
@@ -292,6 +299,21 @@ class ContractService {
     };
     return event;
   };
+
+  defaultPeriod(contract) {
+    const startDate = getStartDateFromPeriod(getQuarterFromDate(contract.fieldValues.contract_start_date));
+    const endDate = getEndDateFromPeriod(getQuarterFromDate(contract.fieldValues.contract_end_date));
+    contract.fieldValues.contract_start_date = startDate;
+    contract.fieldValues.contract_end_date = endDate;
+    const tempContract = { ...contract };
+
+    const startPeriod = startDate.split("-");
+    const endPeriod = endDate.split("-");
+    tempContract.startPeriod = `${startPeriod[0]}${startPeriod[1]}`;
+    tempContract.endPeriod = `${endPeriod[0]}${endPeriod[1]}`;
+
+    return tempContract;
+  }
 
   newContract(fieldValues) {
     return new Contract(fieldValues);

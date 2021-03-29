@@ -6,7 +6,7 @@ class Contract {
   constructor(fieldValues) {
     this.fieldValues = fieldValues;
     this.id = this.fieldValues.id;
-    this.orgUnit = fieldValues.orgUnit;
+    this.orgUnit = fieldValues.orgUnit;    
     this.startPeriod = fieldValues.contract_start_date
       ? fieldValues.contract_start_date.replace("-", "").substring(0, 6)
       : null;

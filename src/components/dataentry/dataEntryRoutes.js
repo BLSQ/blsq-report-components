@@ -1,7 +1,9 @@
 import React from "react";
 import { Route } from "react-router-dom";
+import { syncsRoutes } from "../syncs/routes";
+import { completenessRoutes } from "../completeness/routes";
 
-import DataEntrySelectionPage from "./DataEntrySelectionPage"
+import DataEntrySelectionPage from "./DataEntrySelectionPage";
 
 const dataEntryRoutes = (props) => {
   return [
@@ -10,7 +12,14 @@ const dataEntryRoutes = (props) => {
       path="/dataentry/:orgUnitId/:period/:dataEntryCode"
       exact
       component={(routerProps) => {
-        return <DataEntrySelectionPage currentUser={props.currentUser} dhis2={props.dhis2} {...routerProps} {...props.config.global}/>;
+        return (
+          <DataEntrySelectionPage
+            currentUser={props.currentUser}
+            dhis2={props.dhis2}
+            {...routerProps}
+            {...props.config.global}
+          />
+        );
       }}
     />,
 
@@ -19,9 +28,19 @@ const dataEntryRoutes = (props) => {
       path="/dataentry/:orgUnitId/:period"
       exact
       component={(routerProps) => {
-        return <DataEntrySelectionPage currentUser={props.currentUser} dhis2={props.dhis2} {...routerProps} {...props.config.global} />;
+        return (
+          <DataEntrySelectionPage
+            currentUser={props.currentUser}
+            dhis2={props.dhis2}
+            {...routerProps}
+            {...props.config.global}
+          />
+        );
       }}
     />,
+
+    ...syncsRoutes(props),
+    ...completenessRoutes(props),
   ];
 };
 

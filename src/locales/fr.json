@@ -5,6 +5,7 @@
   "contracts": {
     "activeToday": "Actif aujourd'hui",
     "activeAt": "Actif le",
+    "endsAt": "Terminant le",
     "contract_main_orgunit": "Unité d'organisation principale",
     "createTitle": "Créer un contrat",
     "editTitle": "Editer le contrat",
@@ -13,6 +14,7 @@
     "onlySubContracts": "Seulement les sous contrats",
     "overlappingWith": "Se chevauchant avec",
     "overlaps": ", dont {{overlap}} se chevauchant",
+    "invalids": " {{warnings}} invalides",
     "result": "1 contrat",
     "results": "{{total}} contrats",
     "resultsFiltered": "{{filtered}} contrats filtrés sur {{total}}",
@@ -27,13 +29,16 @@
     "title": "Contrats",
     "deleteTitle": "Suppression du contrat",
     "deleteWarning": "La suppression du contrat n'a aucune influence sur les données qui étaient liées à ce contrat. Si il y a des sous-contrats liés à ce contrat, supprimez ou mettez à jour ceux-ci d'abord.",
-    "contract_main_orgunit_id": "Id de l'unité d'organisation principale"
+    "contract_main_orgunit_id": "Id de l'unité d'organisation principale",
+    "massUpdate": "Update en masse",
+    "warnings": "Warnings"
   },
-  "dataEntry":{
+  "dataEntry": {
     "contractFrom": "Contract de",
     "contractTo": "à",
     "dataEntries": "Saisie de données",
-    "invoices": "Factures"
+    "invoices": "Factures",
+    "dataSetNotWritable": "Vous n'avez pas le droit de saisie sur '{{dataSetName}}'"
   },
   "create": "Créer",
   "edit": "Editer",
@@ -53,7 +58,7 @@
       "period": "Période"
     }
   },
-  "limit_org_unit_under": "Limiter à l'unité d'organisation enfant",
+  "limit_org_unit_under": "Limiter aux unités d'organisation enfant de ...",
   "missing_invoice_types": "Facture introuvable...",
   "name": "Nom",
   "noResult": "Aucun résultat",
@@ -63,6 +68,9 @@
   "period": "Période",
   "print": "Imprimer",
   "re_calculate": "Recalculer",
+  "lock": "Verrouiller",
+  "unlock": "Déverrouiller",
+  "lock_unlock": "Verrouiller/Déverrouiller",
   "report_and_invoices": "Rapports",
   "save": "Sauver",
   "search": "Recherche",

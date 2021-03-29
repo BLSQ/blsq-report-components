@@ -1,6 +1,6 @@
 {
   "name": "@blsq/blsq-report-components",
-  "version": "1.0.26",
+  "version": "1.0.49",
   "description": "blsq-report-components",
   "author": "BLSQ",
   "license": "MIT",
@@ -11,6 +11,13 @@
   "engines": {
     "node": ">=12",
     "npm": ">=6"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}",
+      "!**/node_modules/**",
+      "!**/vendor/**"
+    ]
   },
   "scripts": {
     "test": "cross-env CI=1 react-scripts test --env=jsdom",

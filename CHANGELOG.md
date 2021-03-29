@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.51
+
+- [completeness] Fix crash when nothing is completed.
+
 # @blsq/blsq-report-components@1.0.50
 
 - [invoices] Add support for "consecutive" [invoices](https://github.com/BLSQ/blsq-report-components/pull/87)

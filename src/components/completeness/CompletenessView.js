@@ -313,7 +313,7 @@ const CompletenessView = (props) => {
     }
 
     const completeDataSetRegistrationsByOrgUnitId = _.groupBy(
-      completeDataSetRegistrations,
+      completeDataSetRegistrations.filter( c=> c),
       (cdsr) => cdsr.organisationUnit,
     );
     const results = [];

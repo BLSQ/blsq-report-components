@@ -60,14 +60,14 @@ class InvoiceContainer extends Component {
     // What this does, is take those nested ones and flatten it into
     // one array of invoices that need to be calculated.
     const calculations = this.state.invoice.calculations;
-    const all = calculations.flatMap(({currentUserId, orgUnitId, period, then}) => {
-      const parent =  [{currentUserId: currentUserId, orgUnitId: orgUnitId, period: period}]
+    const all = calculations.flatMap(({ currentUserId, orgUnitId, period, then }) => {
+      const parent = [{ currentUserId: currentUserId, orgUnitId: orgUnitId, period: period }];
       if (then) {
         return parent.concat(then);
       } else {
         return parent;
       }
-    })
+    });
 
     let invoicingJobs;
     try {
@@ -86,18 +86,25 @@ class InvoiceContainer extends Component {
 
     // See if any of the child jobs, need to be enqueued
     invoicingJobs.data.forEach((invoicingJob) => {
-      const calculation = calculations.find(({currentUserId, orgUnitId, period}) => {
-        return invoicingJob.attributes.orgUnit == orgUnitId &&
-          invoicingJob.attributes.dhis2Period == period;
-      })
+      const calculation = calculations.find(({ orgUnitId, period }) => {
+        return invoicingJob.attributes.orgUnit == orgUnitId && invoicingJob.attributes.dhis2Period == period;
+      });
       if (calculation && invoicingJob.attributes.status == "processed") {
-        (calculation.then || []).forEach(dependentCalculation => {
+        (calculation.then || []).forEach((dependentCalculation) => {
           const job = invoicingJobs.data.find((childJob) => {
-            return childJob.attributes.orgUnit == dependentCalculation.orgUnitId &&
-              childJob.attributes.dhis2Period == dependentCalculation.period;
-          })
+            return (
+              childJob.attributes.orgUnit == dependentCalculation.orgUnitId &&
+              childJob.attributes.dhis2Period == dependentCalculation.period
+            );
+          });
           if (job) {
-            // "Child already existed, nothing to do here"
+            if (job.attributes.isAlive == false && invoicingJob.attributes.processedAt >= job.attributes.processedAt) {
+              // was "run before", need to re-run
+              runningCount = runningCount + 1;
+              this.orbf2.calculate(dependentCalculation);
+            } else {
+              // "Child already existed, nothing to do here" ?
+            }
           } else {
             // `Will queue new one: ${dependentCalculation.orgUnitId} ${dependentCalculation.period}`);
             // Update runningCount because this is a new job, not already in `invoicingJobs`
@@ -107,7 +114,6 @@ class InvoiceContainer extends Component {
         });
       }
     });
-
 
     const errors = invoicingJobs.data.filter((invoicingJob) => {
       return invoicingJob.attributes.lastError;
@@ -233,7 +239,6 @@ class InvoiceContainer extends Component {
       const orgUnitsById = {};
       invoice.orgUnits.forEach((ou) => (orgUnitsById[ou.id] = ou));
 
-
       let allowedCalculations = calculations;
       if (this.props.invoices.getDataApprovals) {
         const approvableOrgUnitIds = new Set(
@@ -246,6 +251,7 @@ class InvoiceContainer extends Component {
           const orgUnit = orgUnitsById[calculation.orgUnitId];
           return orgUnit && orgUnit.ancestors.some((ou) => approvableOrgUnitIds.has(ou.id));
         });
+
         console.log(
           "will schedule " +
             allowedCalculations.length +

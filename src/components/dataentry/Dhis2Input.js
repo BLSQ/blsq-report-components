@@ -17,7 +17,7 @@ const Dhis2Input = ({ dataElement }) => {
     setDataValue(dataValue);
     const defaultRawValue = dataValue !== undefined ? dataValue.value : "";
     setRawValue(defaultRawValue);
-  }, []);
+  }, []); // TODO ask christophe technically depends on formDataContext but only for the initial load of data, afterwards the rawValue is the "master" to display
 
   useEffect(() => {
     if (formDataContext && debouncedState !== undefined && formDataContext.updateValue) {

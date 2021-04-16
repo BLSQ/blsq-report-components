@@ -38,7 +38,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
       const activeContracts = contracts.allContracts.filter(
         (c) => c.orgUnit.id == match.params.orgUnitId && c.matchPeriod(period),
       );
-      const activeContract = activeContracts[0]
+      const activeContract = activeContracts[0];
       if (activeContract == undefined) {
         setError({
           message: match.params.orgUnitId + " has no contract for that period : " + period,
@@ -80,7 +80,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
           fields:
             "id,name,periodType,access,dataSetElements[dataElement[id,name,valueType,optionSet[options[code,name]],categoryCombo[id,name,categoryOptionCombos[id,name]]]]",
         });
-   
+
         const dataElementsById = _.keyBy(
           dataSet.dataSetElements.map((dse) => dse.dataElement),
           (de) => de.id,
@@ -170,6 +170,10 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
             const key = this.getKey(de);
             return this.valids[key] == true;
           },
+          isUpdating(de) {
+            const key = this.getKey(de);
+            return this.updating[key] == true;
+          },
           isInvalid(de) {
             const key = this.getKey(de);
             return this.valids[key] == false;
@@ -206,33 +210,24 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
             };
             try {
               await dhis2.setDataValue(newValue);
-              const newIndexedValues = this.indexedValues[key]
-                ? {
-                    ...this.indexedValues,
-                    [key]: [{ ...this.indexedValues[key][0], value: value }],
-                  }
-                : {
-                    ...this.indexedValues,
-                    [key]: [{ dataElement: newValue.de, value: value }],
-                  };
+              let newIndexedValues = this.indexedValues;
+              if (this.indexedValues[key]) {
+                newIndexedValues[key] = [{ ...this.indexedValues[key][0], value: value }];
+              } else {
+                newIndexedValues[key] = [{ dataElement: newValue.de, value: value }];
+              }
               calculator.setIndexedValues(newIndexedValues);
-              const updatedFormaData = {
-                ...this,
-                valids: { ...this.valids, [key]: true },
-                errors: { ...this.valids, [key]: undefined },
-                updating: { ...this.updating, [key]: false },
-                indexedValues: newIndexedValues,
-              };
-              setFormData(updatedFormaData);
+              this.valids[key]= true 
+              this.errors[key] = undefined
+              this.updating[key]= false 
+              
+              setFormData({...this});
             } catch (error) {
-              const updatedFormaData = {
-                ...this,
-                valids: { ...this.valids, [key]: false },
-                errors: { ...this.valids, [key]: error.message },
-                updating: { ...this.updating, [key]: false },
-              };
+              this.valids[key]= false 
+              this.errors[key] = error.message
+              this.updating[key]= false              
 
-              setFormData(updatedFormaData);
+              setFormData({...this});
             }
           },
           async toggleComplete(calculations) {

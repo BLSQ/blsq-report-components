@@ -13,11 +13,11 @@ const Dhis2Input = ({ dataElement }) => {
 
   useEffect(() => {
     const value = formDataContext && formDataContext.getValue && formDataContext.getValue(dataElement);
-    const dataValue = value !== undefined ? value : { dataElement: dataElement, value:"" };
+    const dataValue = value !== undefined ? value : { dataElement: dataElement, value: "" };
     setDataValue(dataValue);
     const defaultRawValue = dataValue !== undefined ? dataValue.value : "";
     setRawValue(defaultRawValue);
-  }, [formDataContext]);
+  }, []); // TODO ask christophe technically depends on formDataContext but only for the initial load of data, afterwards the rawValue is the "master" to display
 
   useEffect(() => {
     if (formDataContext && debouncedState !== undefined && formDataContext.updateValue) {
@@ -73,7 +73,12 @@ const Dhis2Input = ({ dataElement }) => {
             inputProps={{
               style: {
                 textAlign: "right",
-                backgroundColor: formDataContext && formDataContext.isModified(dataElement) ? "#badbad" : "",
+                backgroundColor:
+                  formDataContext && formDataContext.isModified(dataElement)
+                    ? "#badbad"
+                    : formDataContext.isUpdating(dataElement)
+                    ? "orange"
+                    : "",
               },
             }}
             helperText={formDataContext && formDataContext.error(dataElement)}

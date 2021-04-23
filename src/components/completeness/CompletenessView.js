@@ -4,7 +4,6 @@ import _ from "lodash";
 import MUIDataTable from "mui-datatables";
 import React, { useEffect } from "react";
 
-
 function getColor(value) {
   //value from 0 to 100
   var hue = ((value / 100) * 120).toString(10);
@@ -312,8 +311,19 @@ const CompletenessView = (props) => {
       completeDataSetRegistrations = completeDataSetRegistrations.concat(ds.completeDataSetRegistrations);
     }
 
+    completeDataSetRegistrations = completeDataSetRegistrations
+      .filter((c) => c)
+      .filter((c) => {
+        // handle newer dhis2 version that has the completed flag
+        if (c.hasOwnProperty("completed")) {
+          return c.completed;
+        }
+        // else keep all records
+        return true;
+      });
+
     const completeDataSetRegistrationsByOrgUnitId = _.groupBy(
-      completeDataSetRegistrations.filter( c=> c),
+      completeDataSetRegistrations,
       (cdsr) => cdsr.organisationUnit,
     );
     const results = [];

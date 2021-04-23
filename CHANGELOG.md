@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.53
+ 
+ - [completeness] Fix incorrect completeness status on newer dhis2
+
 # @blsq/blsq-report-components@1.0.52
 
  - [dataentry] Fix lag and disappearing values when typing [fast](https://github.com/BLSQ/blsq-report-components/pull/114)

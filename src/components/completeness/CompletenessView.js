@@ -5,7 +5,7 @@ import MUIDataTable from "mui-datatables";
 import React, { useEffect } from "react";
 
 function getColor(value) {
-  //value from 0 to 100
+  // value from 0 to 100
   var hue = ((value / 100) * 120).toString(10);
   return ["hsl(", hue, ",50%,50%)"].join("");
 }
@@ -220,7 +220,7 @@ const zoneStatsColumns = (distinctDataEntries, statsByZone) => {
               const color = getColor(info[ratioKey]);
               return (
                 <span style={{ color: color }}>
-                  <b>{info[ratioKey]}</b> <br></br>
+                  <b>{info[ratioKey]}</b> <br />
                   {info[completedKey] + "/" + info[expectedKey]}
                 </span>
               );
@@ -234,7 +234,9 @@ const zoneStatsColumns = (distinctDataEntries, statsByZone) => {
 
 const buildStatsByZone = (results, distinctDataEntries) => {
   const statsByZone = [];
-  const contractsByZone = _.groupBy(results, (c) => c.contract.orgUnit.ancestors[2].id);
+
+  const filteredZone = _.filter(results, (c) => c.contract.orgUnit.ancestors[2] !== undefined);
+  const contractsByZone = _.groupBy(filteredZone, (c) => c.contract.orgUnit.ancestors[2].id);
   for (let contractsForZone of Object.values(contractsByZone)) {
     const parentZone = contractsForZone[0].contract.orgUnit.ancestors[1];
     const zone = contractsForZone[0].contract.orgUnit.ancestors[2];
@@ -321,17 +323,24 @@ const CompletenessView = (props) => {
         // else keep all records
         return true;
       });
-
     const completeDataSetRegistrationsByOrgUnitId = _.groupBy(
       completeDataSetRegistrations,
       (cdsr) => cdsr.organisationUnit,
     );
     const results = [];
     for (let contract of contracts) {
-      const expectedDataEntries = DataEntries.getExpectedDataEntries(contract, quarterPeriod);
+      let expectedDataEntriesByType = DataEntries.getExpectedDataEntries(contract, quarterPeriod);
+
+      const expectedDataEntries = expectedDataEntriesByType
+        .filter((expectedDataEntry) =>
+          expectedDataEntry.dataEntryType.contracts.includes(contract.fieldValues.type_d_organisation),
+        )
+        .map((expectedDataEntry) => {
+          return expectedDataEntry;
+        });
+
       if (expectedDataEntries.length > 0) {
         const completedDataEntries = completeDataSetRegistrationsByOrgUnitId[contract.orgUnit.id] || [];
-
         if (completedDataEntries.length > 0) {
           for (let expectedDataEntry of expectedDataEntries) {
             expectedDataEntry.completedDataEntry = completedDataEntries.find(
@@ -350,10 +359,9 @@ const CompletenessView = (props) => {
         });
       }
     }
-
     const dataentries = _.groupBy(
       results.flatMap((r) => r.expectedDataEntries),
-      (r) => (r.dataEntryType.category || r.dataEntryType.name) + "-" + r.period,
+      (r) => r.dataEntryType && (r.dataEntryType.category || r.dataEntryType.name) + "-" + r.period,
     );
     const distinctDataEntries = Object.values(dataentries);
     for (let info of results) {
@@ -366,7 +374,6 @@ const CompletenessView = (props) => {
         const ex = info.expectedDataEntries.find((ex) =>
           dataEntryPeriods.some((ex3) => ex.dataEntryType.code == ex3.dataEntryType.code && ex.period == ex3.period),
         );
-
         info[dataEntryPeriods[0].period + "-" + dataEntryPeriods[0].dataEntryType.category] = ex;
 
         info[dataEntryPeriods[0].period + "-" + dataEntryPeriods[0].dataEntryType.category + "-completed"] = ex
@@ -379,7 +386,6 @@ const CompletenessView = (props) => {
       }
     }
     setDistinctDataEntries(distinctDataEntries);
-
     const statsByZone = buildStatsByZone(results, distinctDataEntries);
     setStatsByZone(statsByZone);
     setCompletnessInfos(results);
@@ -409,7 +415,7 @@ const CompletenessView = (props) => {
         Completeness for datasets {quarterPeriod} ({completnessInfos.length})
       </h1>
 
-      <h2></h2>
+      <h2 />
       <MUIDataTable
         title="Statistics by zone"
         data={statsByZone}
@@ -417,7 +423,7 @@ const CompletenessView = (props) => {
         options={statsTableOptions(quarterPeriod, statsByZone, setSelectedZones)}
       />
 
-      <br></br>
+      <br />
 
       <MUIDataTable
         title={zoneNames.length == 0 ? "Situation by orgUnit" : "Situation by orgUnit under " + zoneNames.join(", ")}

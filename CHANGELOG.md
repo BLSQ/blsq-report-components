@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.54
+ 
+ - [invoices] Allow calculations for orgunits not present in the invoice.
+
 # @blsq/blsq-report-components@1.0.53
  
  - [completeness] Fix incorrect completeness status on newer dhis2

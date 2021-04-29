@@ -249,6 +249,9 @@ class InvoiceContainer extends Component {
 
         allowedCalculations = calculations.filter((calculation) => {
           const orgUnit = orgUnitsById[calculation.orgUnitId];
+          if (orgUnit == undefined) {
+            return true // let's trust the code calculations "specific" code, perhaps an orgunit at higher level
+          }
           return orgUnit && orgUnit.ancestors.some((ou) => approvableOrgUnitIds.has(ou.id));
         });
 

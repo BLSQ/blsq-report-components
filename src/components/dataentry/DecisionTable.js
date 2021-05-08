@@ -64,7 +64,7 @@ class DecisionTable {
       matchingRules = _.sortBy(matchingRules, (r) => r.specificScore);
     }
     const matchingRule = matchingRules[matchingRules.length - 1].toOutputs();
-    console.log("DecisionTable", facts, " => ", matchingRules, " ==> ", matchingRule);
+    //console.log("DecisionTable", facts, " => ", matchingRules, " ==> ", matchingRule);
 
     return matchingRule;
   }

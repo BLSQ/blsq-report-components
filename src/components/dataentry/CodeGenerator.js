@@ -205,7 +205,6 @@ export const generateCode = (hesabuPackage, orgunitid, period, activityFormulaCo
       for (let rawDecisionTable of hesabuPackage.activity_decision_tables) {
         const decisionTable = new DecisionTable(rawDecisionTable);
         if (decisionTable.matchPeriod(period)) {
-          console.log("using "+rawDecisionTable.comment)
           codes.push(generateDecisionTable(hesabuPackage, activity, decisionTable, orgUnit, period));
         }
       }

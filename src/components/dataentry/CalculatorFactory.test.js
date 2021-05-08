@@ -93,7 +93,7 @@ describe("CalculatorFactory", () => {
                     "out_headers": [
                         "bareme_unitaire"
                     ],
-                    "content": "\"in:activity_code\",\"in:groupset_code_equite_fbr\",\"out:bareme_unitaire\"\r\n\"*\",\"*\",\"666\"\r"
+                    "content": "\"in:activity_code\",\"in:groupset_code_equite_fbr\",\"out:bareme_unitaire\"\n*,*,\"666\""
                 }                
             ],
             "formulas": {
@@ -285,7 +285,7 @@ describe("CalculatorFactory", () => {
         expect(calculator.quantite_pma_quant03_bareme_unitaire_zaerz654_202004()).toEqual(666)
 
     });
-/*
+
 
     it("it's calculating quality: ROUND SAFE_DIV SUM %{_values} is_null", () => {
         const period = "2020Q1"
@@ -368,5 +368,5 @@ describe("CalculatorFactory", () => {
         }).toThrow ("Unsupported feature for total_subsides_trimestre_passe_pma : SUM(%{subsides_trimestriels_last_1_quarters_exclusive_window_values}), probably need to ignore the formula")
     })
 
-    */
+    
 })

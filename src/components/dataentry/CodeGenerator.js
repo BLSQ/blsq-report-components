@@ -139,7 +139,7 @@ export const generateDecisionTable = (hesabuPackage, activity, decisionTable, or
     facts["groupset_code_" + field] = currentValue;
   }
 
-  if (contract.orgUnit.path) {
+  if (contract.orgUnit && contract.orgUnit.path) {
     contract.orgUnit.path.split("/").map((id, index) => {
       if (id) {
         facts["level_" + index] = id;

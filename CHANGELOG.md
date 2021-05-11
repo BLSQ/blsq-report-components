@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.55
+ 
+ - [dataentry] Full decision support (start/end periods, *, in:level_x)
+
 # @blsq/blsq-report-components@1.0.54
  
  - [invoices] Allow calculations for orgunits not present in the invoice.

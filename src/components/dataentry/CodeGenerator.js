@@ -128,13 +128,24 @@ export const generateDecisionTable = (hesabuPackage, activity, decisionTable, or
     activity_code: activity.code,
   };
 
-  const remainingInHeaders = decisionTable.inHeaders.filter((h) => h !== "activity_code").map((h) => h.slice("groupset_code_".length));
+  const remainingInHeaders = decisionTable.inHeaders
+    .filter((h) => h !== "activity_code")
+    .map((h) => h.slice("groupset_code_".length));
+    
   const contract = orgUnit.activeContracts[0];
 
   for (let field of remainingInHeaders) {
     const currentValue = contract.fieldValues[field];
     facts["groupset_code_" + field] = currentValue;
+  }
 
+  if (contract.orgUnit.path) {
+    contract.orgUnit.path.split("/").map((id, index) => {
+      if (id) {
+        facts["level_" + index] = id;
+      }
+    });
+    facts["level"] = contract.orgUnit.path.split("/").length - 1 // first id is empty string because starst with /...
   }
 
   const matchedRule = decisionTable.matchingRule(facts);

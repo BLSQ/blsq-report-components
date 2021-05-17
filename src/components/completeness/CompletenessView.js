@@ -1,14 +1,9 @@
 import { DatePeriods, PluginRegistry } from "@blsq/blsq-report-components";
-
+import CompletionInfo from "./CompletionInfo";
 import _ from "lodash";
 import MUIDataTable from "mui-datatables";
 import React, { useEffect } from "react";
-
-function getColor(value) {
-  //value from 0 to 100
-  var hue = ((value / 100) * 120).toString(10);
-  return ["hsl(", hue, ",50%,50%)"].join("");
-}
+import { TableCell, TableRow } from "@material-ui/core";
 
 const tableOptions = (quarterPeriod) => {
   return {
@@ -36,6 +31,58 @@ const statsTableOptions = (quarterPeriod, statsByZone, setSelectedZones) => {
     onRowSelectionChange: (_currentRowsSelected, _allRowsSelected, rowsSelected) => {
       const selectedZones = rowsSelected.map((index) => statsByZone[index]);
       setSelectedZones(selectedZones);
+    },
+    customTableBodyFooterRender: function (opts) {
+      const footerClasses = "";
+      return (
+        <TableRow>
+          {opts.selectableRows !== "none" ? (
+            <TableCell className={footerClasses}></TableCell>
+          ) : (
+            <TableCell className={footerClasses}></TableCell>
+          )}
+          {opts.columns
+            .filter((c) => c.display != "false")
+            .map((col, index) => {
+              if (col.name == "orgUnit.name") {
+                return (
+                <TableCell key={index} className={footerClasses} style={{background: "#F0F0F0"}}>
+                  <b>Total : </b>
+                </TableCell>
+                )
+              } else if (col.name.endsWith("-ratio")) {
+                const colNamePrefix = col.name.slice(0, col.name.length - 6);
+                const colCompletedIndex = opts.columns.findIndex((c) => c.name === colNamePrefix + "-completed");
+                const colExpectedIndex = opts.columns.findIndex((c) => c.name === colNamePrefix + "-expected");
+
+                let totalCompleted = opts.data.reduce((accu, item) => {
+                  return accu + item.data[colCompletedIndex];
+                }, 0);
+                let totalExpected = opts.data.reduce((accu, item) => {
+                  return accu + item.data[colExpectedIndex];
+                }, 0);
+
+                let ratio = undefined;
+                if (totalExpected > 0) {
+                  ratio = (100 * (totalCompleted / totalExpected)).toFixed(2);
+                }
+
+                return (
+                  <TableCell key={index} className={footerClasses} style={{background: "#F0F0F0"}}>
+                    <i>
+                      <CompletionInfo completed={totalCompleted} expected={totalExpected} ratio={ratio}></CompletionInfo>
+                    </i>
+                  </TableCell>
+                );
+              } else {
+                return (
+                  <TableCell key={index} className={footerClasses}>
+                  </TableCell>
+                );
+              }
+            })}
+        </TableRow>
+      );
     },
   };
 };
@@ -74,6 +121,7 @@ const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos) => {
       options: {
         filter: true,
         sort: true,
+        display: false,
         customBodyRenderLite: (dataIndex) => {
           const info = filteredCompletnessInfos[dataIndex];
           return <span title={JSON.stringify(info.completedDataEntries)}>{info.completedDataEntries.length}</span>;
@@ -81,11 +129,31 @@ const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos) => {
       },
     },
     {
+      name: "completionRatio",
+      label: "Ratio",
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRenderLite: (dataIndex) => {
+          const info = filteredCompletnessInfos[dataIndex];
+          if (info == undefined) {
+            return "";
+          }
+          const completed = info.expectedDataEntries.filter((e) => e.completedDataEntry).length;
+          const expected = info.expectedDataEntries.length;
+          const ratio = info.completionRatio;
+          return <CompletionInfo completed={completed} expected={expected} ratio={ratio} />;
+        },
+      },
+    },
+
+    {
       name: "expectedDataEntries.length",
       label: "Expected",
       options: {
         filter: true,
         sort: true,
+        display: false,
         customBodyRenderLite: (dataIndex) => {
           const info = filteredCompletnessInfos[dataIndex];
           return (
@@ -107,14 +175,6 @@ const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos) => {
             </span>
           );
         },
-      },
-    },
-    {
-      name: "completionRatio",
-      label: "Completion Ratio",
-      options: {
-        filter: true,
-        sort: true,
       },
     },
 
@@ -168,7 +228,7 @@ const zoneStatsColumns = (distinctDataEntries, statsByZone) => {
   return [
     {
       name: "ancestor.name",
-      label: "Name",
+      label: "Level 2 name",
       options: {
         filter: true,
         sort: true,
@@ -176,7 +236,7 @@ const zoneStatsColumns = (distinctDataEntries, statsByZone) => {
     },
     {
       name: "orgUnit.name",
-      label: "Name",
+      label: "Level 3 Name",
       options: {
         filter: true,
         sort: true,
@@ -217,12 +277,9 @@ const zoneStatsColumns = (distinctDataEntries, statsByZone) => {
               if (info == undefined) {
                 return "";
               }
-              const color = getColor(info[ratioKey]);
+
               return (
-                <span style={{ color: color }}>
-                  <b>{info[ratioKey]}</b> <br></br>
-                  {info[completedKey] + "/" + info[expectedKey]}
-                </span>
+                <CompletionInfo completed={info[completedKey]} expected={info[expectedKey]} ratio={info[ratioKey]} />
               );
             },
           },
@@ -394,7 +451,6 @@ const CompletenessView = (props) => {
 
   if (selectedZones.length > 0) {
     const zoneIds = new Set(selectedZones.map((stat) => stat.orgUnit.id));
-    debugger;
     filteredCompletnessInfos = completnessInfos.filter((info) =>
       info.contract.orgUnit.ancestors.some((ancestor) => zoneIds.has(ancestor.id)),
     );

@@ -4,6 +4,8 @@ import _ from "lodash";
 import MUIDataTable from "mui-datatables";
 import React, { useEffect } from "react";
 import { TableCell, TableRow } from "@material-ui/core";
+import PortalHeader from "../shared/PortalHeader";
+import PeriodPicker from "../shared/PeriodPicker";
 
 const tableOptions = (quarterPeriod) => {
   return {
@@ -331,6 +333,7 @@ const buildStatsByZone = (results, distinctDataEntries) => {
 };
 
 const CompletenessView = (props) => {
+  const history = props.history
   const quarterPeriod = props.match.params.period;
 
   const [completnessInfos, setCompletnessInfos] = React.useState([]);
@@ -461,6 +464,10 @@ const CompletenessView = (props) => {
 
   return (
     <div>
+
+    <PortalHeader>
+        <PeriodPicker period={quarterPeriod} onPeriodChange={(newPeriod) => { history.push("/completeness/"+newPeriod)} }></PeriodPicker>      
+    </PortalHeader>
       <h1>
         Completeness for datasets {quarterPeriod} ({completnessInfos.length})
       </h1>

@@ -6,6 +6,7 @@ import React, { useEffect } from "react";
 import { TableCell, TableRow } from "@material-ui/core";
 import PortalHeader from "../shared/PortalHeader";
 import PeriodPicker from "../shared/PeriodPicker";
+import { Typography } from "@material-ui/core";
 
 const tableOptions = (quarterPeriod) => {
   return {
@@ -48,10 +49,10 @@ const statsTableOptions = (quarterPeriod, statsByZone, setSelectedZones) => {
             .map((col, index) => {
               if (col.name == "orgUnit.name") {
                 return (
-                <TableCell key={index} className={footerClasses} style={{background: "#F0F0F0"}}>
-                  <b>Total : </b>
-                </TableCell>
-                )
+                  <TableCell key={index} className={footerClasses} style={{ background: "#F0F0F0" }}>
+                    <b>Total : </b>
+                  </TableCell>
+                );
               } else if (col.name.endsWith("-ratio")) {
                 const colNamePrefix = col.name.slice(0, col.name.length - 6);
                 const colCompletedIndex = opts.columns.findIndex((c) => c.name === colNamePrefix + "-completed");
@@ -70,17 +71,18 @@ const statsTableOptions = (quarterPeriod, statsByZone, setSelectedZones) => {
                 }
 
                 return (
-                  <TableCell key={index} className={footerClasses} style={{background: "#F0F0F0"}}>
+                  <TableCell key={index} className={footerClasses} style={{ background: "#F0F0F0" }}>
                     <i>
-                      <CompletionInfo completed={totalCompleted} expected={totalExpected} ratio={ratio}></CompletionInfo>
+                      <CompletionInfo
+                        completed={totalCompleted}
+                        expected={totalExpected}
+                        ratio={ratio}
+                      ></CompletionInfo>
                     </i>
                   </TableCell>
                 );
               } else {
-                return (
-                  <TableCell key={index} className={footerClasses}>
-                  </TableCell>
-                );
+                return <TableCell key={index} className={footerClasses}></TableCell>;
               }
             })}
         </TableRow>
@@ -333,7 +335,7 @@ const buildStatsByZone = (results, distinctDataEntries) => {
 };
 
 const CompletenessView = (props) => {
-  const history = props.history
+  const history = props.history;
   const quarterPeriod = props.match.params.period;
 
   const [completnessInfos, setCompletnessInfos] = React.useState([]);
@@ -464,15 +466,30 @@ const CompletenessView = (props) => {
 
   return (
     <div>
-
-    <PortalHeader>
-        <PeriodPicker period={quarterPeriod} onPeriodChange={(newPeriod) => { history.push("/completeness/"+newPeriod)} }></PeriodPicker>      
-    </PortalHeader>
-      <h1>
-        Completeness for datasets {quarterPeriod} ({completnessInfos.length})
-      </h1>
-
-      <h2></h2>
+      <PortalHeader>
+        <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start"  }}>
+          <Typography variant="h6" style={{ marginRight: "20px" }}>
+            Completeness for datasets{" "}
+          </Typography>
+          <div style={{ background: "rgba(255, 255, 255, 0.20)", color: "#fff; important!",  padding:"5px" }}>
+            <PeriodPicker
+              variant="white"
+              disableInputLabel={true}
+              period={quarterPeriod}
+              periodDelta = {{
+                before: 5,
+                after: 5,
+              }}
+              onPeriodChange={(newPeriod) => {
+                setCompletnessInfos([]);
+                setStatsByZone([]);
+                setDistinctDataEntries([]);
+                history.push("/completeness/" + newPeriod);
+              }}
+            ></PeriodPicker>
+          </div>
+        </div>
+      </PortalHeader>
       <MUIDataTable
         title="Statistics by zone"
         data={statsByZone}

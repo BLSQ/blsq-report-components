@@ -1,3 +1,9 @@
+# @blsq/blsq-report-components@1.0.56
+
+- [completeness] Display totals for filtered [zones](https://github.com/BLSQ/blsq-report-components/pull/120).
+- [completeness] Harmonize completeness display per orgunit by reusing same component for zone and totals.
+- [general] Upgrade some vulnerable dependencies.
+
 # @blsq/blsq-report-components@1.0.55
  
  - [dataentry] Full decision support (start/end periods, *, in:level_x)

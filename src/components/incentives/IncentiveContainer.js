@@ -28,6 +28,9 @@ import ListItemText from "@material-ui/core/ListItemText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
+import PortalHeader from "../shared/PortalHeader";
+import PeriodPicker from "../shared/PeriodPicker";
+
 const CustomTableCell = withStyles((theme) => ({
   head: {
     backgroundColor: "#266696",
@@ -356,6 +359,28 @@ class IncentiveContainer extends Component {
     const nonAllowedSee = dsi.dataSet.organisationUnits.filter((ou) => !allowedSeeOrgunitIds.includes(ou.id));
     return (
       <React.Fragment>
+
+<PortalHeader>
+        <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start"  }}>
+          <Typography variant="h6" style={{ marginRight: "20px" }}>
+            Incentives
+          </Typography>
+          <div style={{ background: "rgba(255, 255, 255, 0.20)", color: "#fff; important!",  padding:"5px" }}>
+            <PeriodPicker
+              variant="white"
+              disableInputLabel={true}
+              period={this.props.period}
+              periodDelta = {{
+                before: 5,
+                after: 5,
+              }}
+              onPeriodChange={(newPeriod) => {
+                this.props.history.push("/incentives/" + newPeriod+"/"+this.props.incentiveCode);
+              }}
+            ></PeriodPicker>
+          </div>
+        </div>
+      </PortalHeader>        
         <IncentiveNavigationBar
           period={this.props.period}
           incentiveCode={this.props.incentiveCode}

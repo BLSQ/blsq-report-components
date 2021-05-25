@@ -19,6 +19,7 @@ class IncentivePage extends Component {
         currentUser={this.props.currentUser}
         groups={this.props.groups}
         dhis2={this.props.dhis2}
+        history={this.props.history}
       />
     );
   }

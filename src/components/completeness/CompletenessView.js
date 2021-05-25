@@ -295,7 +295,7 @@ const zoneStatsColumns = (distinctDataEntries, statsByZone) => {
 
 const buildStatsByZone = (results, distinctDataEntries) => {
   const statsByZone = [];
-  const contractsByZone = _.groupBy(results, (c) => c.contract.orgUnit.ancestors[2].id);
+  const contractsByZone = _.groupBy(results, (c) => c.contract.orgUnit.ancestors[2] ? c.contract.orgUnit.ancestors[2].id : undefined);
   for (let contractsForZone of Object.values(contractsByZone)) {
     const parentZone = contractsForZone[0].contract.orgUnit.ancestors[1];
     const zone = contractsForZone[0].contract.orgUnit.ancestors[2];

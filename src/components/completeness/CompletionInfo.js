@@ -8,7 +8,13 @@ function getColor(value) {
 }
 
 const CompletionInfo = ({ ratio, completed, expected }) => {
+
+  if (expected == 0) {
+    return <></>
+  }
+
   const color = getColor(ratio);
+
   return (
     <span style={{ color: color }}>
       <b title="completion ratio = completed / expected">{ratio}</b> %<br></br>

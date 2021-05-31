@@ -10,7 +10,7 @@ export const syncsRoutes = (props) => {
       exact
       path="/sync/datasets/:period"
       render={(routerProps) => {
-        return <SyncDataSet {...props} />;
+        return <SyncDataSet {...props} {...routerProps} />;
       }}
     />,
     <Route
@@ -18,7 +18,7 @@ export const syncsRoutes = (props) => {
       exact
       path="/sync/program-groups/:period"
       render={(routerProps) => {
-        return <SyncProgramGroups {...props} />;
+        return <SyncProgramGroups {...props} {...routerProps} />;
       }}
     />,
   ];

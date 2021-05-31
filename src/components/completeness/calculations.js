@@ -1,46 +1,3 @@
-export const buildStatsByZone = (results, distinctDataEntries) => {
-  const statsByZone = [];
-  const contractsByZone = _.groupBy(results, (c) =>
-    c.contract.orgUnit.ancestors[2] ? c.contract.orgUnit.ancestors[2].id : undefined,
-  );
-  for (let contractsForZone of Object.values(contractsByZone)) {
-    const parentZone = contractsForZone[0].contract.orgUnit.ancestors[1];
-    const zone = contractsForZone[0].contract.orgUnit.ancestors[2];
-    const stats = { orgUnit: zone, ancestor: parentZone };
-
-    for (let info of contractsForZone) {
-      for (let dataEntryPeriods of distinctDataEntries) {
-        const key = dataEntryPeriods[0].period + "-" + dataEntryPeriods[0].dataEntryType.category + "-completed";
-
-        let count = info[key];
-        let currentCount = stats[key];
-
-        if (currentCount !== undefined) {
-          stats[key] = currentCount + count;
-        } else {
-          stats[key] = count;
-        }
-
-        const keyExpected = dataEntryPeriods[0].period + "-" + dataEntryPeriods[0].dataEntryType.category + "-expected";
-        count = info[keyExpected];
-        currentCount = stats[keyExpected];
-
-        if (currentCount !== undefined) {
-          stats[keyExpected] = currentCount + count;
-        } else {
-          stats[keyExpected] = count;
-        }
-
-        const keyRatio = dataEntryPeriods[0].period + "-" + dataEntryPeriods[0].dataEntryType.category + "-ratio";
-        stats[keyRatio] = stats[keyExpected] ? ((stats[key] / stats[keyExpected]) * 100).toFixed(2) : undefined;
-      }
-    }
-
-    statsByZone.push(stats);
-  }
-  return statsByZone;
-};
-
 export const toCompleteness = (contracts, completeDataSetRegistrations, DataEntries, quarterPeriod) => {
   const completeDataSetRegistrationsByOrgUnitId = _.groupBy(
     completeDataSetRegistrations,
@@ -113,4 +70,47 @@ export const toCompleteness = (contracts, completeDataSetRegistrations, DataEntr
     }
   }
   return { distinctDataEntries, results };
+};
+
+export const buildStatsByZone = (results, distinctDataEntries) => {
+  const statsByZone = [];
+  const contractsByZone = _.groupBy(results, (c) =>
+    c.contract.orgUnit.ancestors[2] ? c.contract.orgUnit.ancestors[2].id : undefined,
+  );
+  for (let contractsForZone of Object.values(contractsByZone)) {
+    const parentZone = contractsForZone[0].contract.orgUnit.ancestors[1];
+    const zone = contractsForZone[0].contract.orgUnit.ancestors[2];
+    const stats = { orgUnit: zone, ancestor: parentZone };
+
+    for (let info of contractsForZone) {
+      for (let dataEntryPeriods of distinctDataEntries) {
+        const key = dataEntryPeriods[0].period + "-" + dataEntryPeriods[0].dataEntryType.category + "-completed";
+
+        let count = info[key];
+        let currentCount = stats[key];
+
+        if (currentCount !== undefined) {
+          stats[key] = currentCount + count;
+        } else {
+          stats[key] = count;
+        }
+
+        const keyExpected = dataEntryPeriods[0].period + "-" + dataEntryPeriods[0].dataEntryType.category + "-expected";
+        count = info[keyExpected];
+        currentCount = stats[keyExpected];
+
+        if (currentCount !== undefined) {
+          stats[keyExpected] = currentCount + count;
+        } else {
+          stats[keyExpected] = count;
+        }
+
+        const keyRatio = dataEntryPeriods[0].period + "-" + dataEntryPeriods[0].dataEntryType.category + "-ratio";
+        stats[keyRatio] = stats[keyExpected] ? ((stats[key] / stats[keyExpected]) * 100).toFixed(2) : undefined;
+      }
+    }
+
+    statsByZone.push(stats);
+  }
+  return statsByZone;
 };

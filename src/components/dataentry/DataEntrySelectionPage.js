@@ -29,261 +29,274 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
   const [dataEntries, setDataEntries] = useState(undefined);
   const [formData, setFormData] = useState(undefined);
   const [error, setError] = useState(undefined);
+  const [generalError, setGeneralError] = useState(undefined);
+
   const period = match.params.period;
   useEffect(() => {
     const loadData = async () => {
-      const contractService = PluginRegistry.extension("contracts.service");
+      try {
+        const contractService = PluginRegistry.extension("contracts.service");
 
-      const contracts = await contractService.fetchContracts(match.params.orgUnitId);
-      const activeContracts = contracts.allContracts.filter(
-        (c) => c.orgUnit.id == match.params.orgUnitId && c.matchPeriod(period),
-      );
-      const activeContract = activeContracts[0];
-      if (activeContract == undefined) {
-        setError({
-          message: match.params.orgUnitId + " has no contract for that period : " + period,
-          link: "/contracts/" + match.params.orgUnitId,
-        });
-        return undefined;
-      }
-
-      if (activeContracts.length > 1) {
-        setError({
-          message: match.params.orgUnitId + " has multiple contracts for that period : " + period,
-          link: "/contracts/" + match.params.orgUnitId,
-        });
-        return undefined;
-      }
-
-      activeContract.orgUnit.activeContracts = [activeContract];
-
-      setOrgUnit(activeContract.orgUnit);
-      const expectedDataEntries = dataEntryRegistry.getExpectedDataEntries(activeContract, period);
-      setDataEntries(expectedDataEntries);
-
-      if (match.params.dataEntryCode == undefined && expectedDataEntries.length > 0) {
-        const defaultDataEntry = expectedDataEntries[0];
-        history.push(
-          "/dataEntry/" +
-            activeContract.orgUnit.id +
-            "/" +
-            defaultDataEntry.period +
-            "/" +
-            defaultDataEntry.dataEntryType.code,
+        const contracts = await contractService.fetchContracts(match.params.orgUnitId);
+        const activeContracts = contracts.allContracts.filter(
+          (c) => c.orgUnit.id == match.params.orgUnitId && c.matchPeriod(period),
         );
-      }
+        const activeContract = activeContracts[0];
+        if (activeContract == undefined) {
+          setError({
+            message: match.params.orgUnitId + " has no contract for that period : " + period,
+            link: "/contracts/" + match.params.orgUnitId,
+          });
+          return undefined;
+        }
 
-      const api = await dhis2.api();
-      if (match.params.dataEntryCode) {
-        const dataEntry = dataEntryRegistry.getDataEntry(match.params.dataEntryCode);
-        const dataSet = await api.get("/dataSets/" + dataEntry.dataSetId, {
-          fields:
-            "id,name,periodType,access,dataSetElements[dataElement[id,name,valueType,optionSet[options[code,name]],categoryCombo[id,name,categoryOptionCombos[id,name]]]]",
-        });
+        if (activeContracts.length > 1) {
+          setError({
+            message: match.params.orgUnitId + " has multiple contracts for that period : " + period,
+            link: "/contracts/" + match.params.orgUnitId,
+          });
+          return undefined;
+        }
 
-        const dataElementsById = _.keyBy(
-          dataSet.dataSetElements.map((dse) => dse.dataElement),
-          (de) => de.id,
-        );
+        activeContract.orgUnit.activeContracts = [activeContract];
 
-        let completeDataSetRegistration;
-        const dsc = await api.get("completeDataSetRegistrations", {
-          dataSet: dataEntry.dataSetId,
-          period: period,
-          orgUnit: activeContract.orgUnit.id,
-        });
-        completeDataSetRegistration = dsc.completeDataSetRegistrations
-          ? dsc.completeDataSetRegistrations[0]
-          : undefined;
-        const dv = await api.get("/dataValueSets", {
-          dataSet: dataEntry.dataSetId,
-          orgUnit: activeContract.orgUnit.id,
-          period: period,
-        });
-        let rawValues = dv.dataValues || [];
-        if (dataEntryRegistry.fetchExtraData) {
-          const extraValues = await dataEntryRegistry.fetchExtraData(api, activeContract.orgUnit, period, dataEntry);
-          rawValues = rawValues.concat(extraValues);
+        setOrgUnit(activeContract.orgUnit);
+        const expectedDataEntries = dataEntryRegistry.getExpectedDataEntries(activeContract, period);
+        setDataEntries(expectedDataEntries);
 
-          const extraDataElements = await dataEntryRegistry.fetchExtraMetaData(
-            api,
-            activeContract.orgUnit,
-            period,
-            dataEntry,
+        if (match.params.dataEntryCode == undefined && expectedDataEntries.length > 0) {
+          const defaultDataEntry = expectedDataEntries[0];
+          history.push(
+            "/dataEntry/" +
+              activeContract.orgUnit.id +
+              "/" +
+              defaultDataEntry.period +
+              "/" +
+              defaultDataEntry.dataEntryType.code,
+          );
+        }
+
+        const api = await dhis2.api();
+        if (match.params.dataEntryCode) {
+          const dataEntry = dataEntryRegistry.getDataEntry(match.params.dataEntryCode);
+          const dataSet = dataEntry.dataSetId
+            ? await api.get("/dataSets/" + dataEntry.dataSetId, {
+                fields:
+                  "id,name,periodType,access,dataSetElements[dataElement[id,name,valueType,optionSet[options[code,name]],categoryCombo[id,name,categoryOptionCombos[id,name]]]]",
+              })
+            : { dataSetElements: [] };
+
+          const dataElementsById = _.keyBy(
+            dataSet.dataSetElements.map((dse) => dse.dataElement),
+            (de) => de.id,
           );
 
-          for (let extraDe of extraDataElements) {
-            dataElementsById[extraDe.id] = extraDe;
-          }
-        }
-        const defaultCoc = (
-          await api.get("categoryOptionCombos", {
-            filter: "name:eq:default",
-          })
-        ).categoryOptionCombos[0].id;
+          let completeDataSetRegistration;
+          const dsc = dataEntry.dataSetId
+            ? await api.get("completeDataSetRegistrations", {
+                dataSet: dataEntry.dataSetId,
+                period: period,
+                orgUnit: activeContract.orgUnit.id,
+              })
+            : { completeDataSetRegistrations: [] };
 
-        const indexedValues = _.groupBy(rawValues, (v) =>
-          [v.orgUnit, v.period, v.dataElement, v.categoryOptionCombo].join("-"),
-        );
+          completeDataSetRegistration = dsc.completeDataSetRegistrations
+            ? dsc.completeDataSetRegistrations[0]
+            : undefined;
+          const dv = dataEntry.dataSetId ? await api.get("/dataValueSets", {
+            dataSet: dataEntry.dataSetId,
+            orgUnit: activeContract.orgUnit.id,
+            period: period,
+          }) : {dataValues:[]};
+          let rawValues = dv.dataValues || [];
+          if (dataEntryRegistry.fetchExtraData) {
+            const extraValues = await dataEntryRegistry.fetchExtraData(api, activeContract.orgUnit, period, dataEntry);
+            rawValues = rawValues.concat(extraValues);
 
-        let calculator = undefined;
-        if (dataEntryRegistry.getCalculator) {
-          calculator = dataEntryRegistry.getCalculator(activeContract.orgUnit, period, match.params.dataEntryCode);
-          if (calculator) {
-            calculator.setIndexedValues(indexedValues);
-            calculator.setDefaultCoc(defaultCoc);
-          }
-        }
+            const extraDataElements = await dataEntryRegistry.fetchExtraMetaData(
+              api,
+              activeContract.orgUnit,
+              period,
+              dataEntry,
+            );
 
-        const newFormData = {
-          period,
-          values: rawValues,
-          indexedValues: indexedValues,
-          orgUnit: activeContract.orgUnit,
-          dataSetComplete: isDataSetComplete(completeDataSetRegistration),
-          completeDataSetRegistration: completeDataSetRegistration,
-          dataSet: dataSet,
-          dataElementsById: dataElementsById,
-          calculator: calculator,
-          valids: {},
-          errors: {},
-          updating: {},
-
-          isDataSetComplete() {
-            return this.dataSetComplete;
-          },
-          isDataWritable() {
-            return this.dataSet.access.data.write;
-          },
-          error(de) {
-            return this.errors[this.getKey(de)];
-          },
-          getKey(de) {
-            const deCoc = de.split(".");
-            return [activeContract.orgUnit.id, period, deCoc[0], deCoc[1] || defaultCoc].join("-");
-          },
-          getError(de) {
-            const key = this.getKey(de);
-            return this.errors[key];
-          },
-          isModified(de) {
-            const key = this.getKey(de);
-            return this.valids[key] == true;
-          },
-          isUpdating(de) {
-            const key = this.getKey(de);
-            return this.updating[key] == true;
-          },
-          isInvalid(de) {
-            const key = this.getKey(de);
-            return this.valids[key] == false;
-          },
-          getValue(de) {
-            const key = this.getKey(de);
-            const ourValues = this.indexedValues[key];
-            return ourValues ? ourValues[0] : undefined;
-          },
-          getCalculatedValue(hesabuPackage, formulaCode, period, orgUnit, activity) {
-            let orgUnitId = orgUnit ? orgUnit.id : activeContract.orgUnit.id;
-            const calculatorFunction = activity
-              ? `${hesabuPackage.code}_${activity.code}_${formulaCode}_${orgUnitId}_${period}`
-              : `${hesabuPackage.code}_${formulaCode}_${orgUnitId}_${period}`;
-            if (this.calculator && this.calculator[calculatorFunction]) {
-              return this.calculator[calculatorFunction]();
+            for (let extraDe of extraDataElements) {
+              dataElementsById[extraDe.id] = extraDe;
             }
-          },
-          async updateValue(de, value) {
-            const deCoc = de.split(".");
-            const key = this.getKey(de);
-            if (this.updating[key]) {
-              return;
-            } else {
-              this.updating[key] = true;
+          }
+          const defaultCoc = (
+            await api.get("categoryOptionCombos", {
+              filter: "name:eq:default",
+            })
+          ).categoryOptionCombos[0].id;
+
+          const indexedValues = _.groupBy(rawValues, (v) =>
+            [v.orgUnit, v.period, v.dataElement, v.categoryOptionCombo].join("-"),
+          );
+
+          let calculator = undefined;
+          if (dataEntryRegistry.getCalculator) {
+            calculator = dataEntryRegistry.getCalculator(activeContract.orgUnit, period, match.params.dataEntryCode);
+            if (calculator) {
+              calculator.setIndexedValues(indexedValues);
+              calculator.setDefaultCoc(defaultCoc);
             }
-            const newValue = {
-              de: deCoc[0],
-              co: deCoc[1] || defaultCoc,
-              ds: dataSet.id,
-              ou: activeContract.orgUnit.id,
-              pe: period,
-              value: value,
-            };
-            try {
-              await dhis2.setDataValue(newValue);
-              let newIndexedValues = this.indexedValues;
-              if (this.indexedValues[key]) {
-                newIndexedValues[key] = [{ ...this.indexedValues[key][0], value: value }];
-              } else {
-                newIndexedValues[key] = [{ dataElement: newValue.de, value: value }];
+          }
+
+          const newFormData = {
+            period,
+            values: rawValues,
+            indexedValues: indexedValues,
+            orgUnit: activeContract.orgUnit,
+            dataSetComplete: isDataSetComplete(completeDataSetRegistration),
+            completeDataSetRegistration: completeDataSetRegistration,
+            dataSet: dataSet,
+            dataElementsById: dataElementsById,
+            calculator: calculator,
+            valids: {},
+            errors: {},
+            updating: {},
+
+            isDataSetComplete() {
+              return this.dataSetComplete;
+            },
+            isDataWritable() {
+              return this.dataSet && this.dataSet.access && this.dataSet.access.data.write;
+            },
+            error(de) {
+              return this.errors[this.getKey(de)];
+            },
+            getKey(de) {
+              const deCoc = de.split(".");
+              return [activeContract.orgUnit.id, period, deCoc[0], deCoc[1] || defaultCoc].join("-");
+            },
+            getError(de) {
+              const key = this.getKey(de);
+              return this.errors[key];
+            },
+            isModified(de) {
+              const key = this.getKey(de);
+              return this.valids[key] == true;
+            },
+            isUpdating(de) {
+              const key = this.getKey(de);
+              return this.updating[key] == true;
+            },
+            isInvalid(de) {
+              const key = this.getKey(de);
+              return this.valids[key] == false;
+            },
+            getValue(de) {
+              const key = this.getKey(de);
+              const ourValues = this.indexedValues[key];
+              return ourValues ? ourValues[0] : undefined;
+            },
+            getCalculatedValue(hesabuPackage, formulaCode, period, orgUnit, activity) {
+              let orgUnitId = orgUnit ? orgUnit.id : activeContract.orgUnit.id;
+              const calculatorFunction = activity
+                ? `${hesabuPackage.code}_${activity.code}_${formulaCode}_${orgUnitId}_${period}`
+                : `${hesabuPackage.code}_${formulaCode}_${orgUnitId}_${period}`;
+              if (this.calculator && this.calculator[calculatorFunction]) {
+                return this.calculator[calculatorFunction]();
               }
-              calculator.setIndexedValues(newIndexedValues);
-              this.valids[key]= true 
-              this.errors[key] = undefined
-              this.updating[key]= false 
-              
-              setFormData({...this});
-            } catch (error) {
-              this.valids[key]= false 
-              this.errors[key] = error.message
-              this.updating[key]= false              
+            },
+            async updateValue(de, value) {
+              const deCoc = de.split(".");
+              const key = this.getKey(de);
+              if (this.updating[key]) {
+                return;
+              } else {
+                this.updating[key] = true;
+              }
+              const newValue = {
+                de: deCoc[0],
+                co: deCoc[1] || defaultCoc,
+                ds: dataSet.id,
+                ou: activeContract.orgUnit.id,
+                pe: period,
+                value: value,
+              };
+              try {
+                await dhis2.setDataValue(newValue);
+                let newIndexedValues = this.indexedValues;
+                if (this.indexedValues[key]) {
+                  newIndexedValues[key] = [{ ...this.indexedValues[key][0], value: value }];
+                } else {
+                  newIndexedValues[key] = [{ dataElement: newValue.de, value: value }];
+                }
+                if (calculator) {
+                  calculator.setIndexedValues(newIndexedValues);
+                }
+                this.valids[key] = true;
+                this.errors[key] = undefined;
+                this.updating[key] = false;
 
-              setFormData({...this});
-            }
-          },
-          async toggleComplete(calculations) {
-            if (completeDataSetRegistration && "completed" in completeDataSetRegistration) {
-              // newer dhis2 version just toggle "completed" or create one
-              await api.post("completeDataSetRegistrations", {
-                completeDataSetRegistrations: [
-                  {
-                    dataSet: this.dataSet.id,
-                    period: this.period,
-                    organisationUnit: activeContract.orgUnit.id,
-                    completed: !this.dataSetComplete,
-                  },
-                ],
-              });
-            } else if (completeDataSetRegistration && this.dataSetComplete) {
-              // older dhis2 delete the existing completion record
-              await api.delete(
-                "completeDataSetRegistrations?ds=" +
-                  this.dataSet.id +
-                  "&pe=" +
-                  this.period +
-                  "&ou=" +
-                  activeContract.orgUnit.id +
-                  "&multiOu=false",
-              );
-            } else {
-              // older dis2 delete the existing completion record
+                setFormData({ ...this });
+              } catch (error) {
+                this.valids[key] = false;
+                this.errors[key] = error.message;
+                this.updating[key] = false;
 
-              await api.post("completeDataSetRegistrations", {
-                completeDataSetRegistrations: [
-                  {
-                    dataSet: this.dataSet.id,
-                    period: this.period,
-                    organisationUnit: activeContract.orgUnit.id,
-                    completed: !this.dataSetComplete,
-                  },
-                ],
-              });
-            }
+                setFormData({ ...this });
+              }
+            },
+            async toggleComplete(calculations) {
+              if (completeDataSetRegistration && "completed" in completeDataSetRegistration) {
+                // newer dhis2 version just toggle "completed" or create one
+                await api.post("completeDataSetRegistrations", {
+                  completeDataSetRegistrations: [
+                    {
+                      dataSet: this.dataSet.id,
+                      period: this.period,
+                      organisationUnit: activeContract.orgUnit.id,
+                      completed: !this.dataSetComplete,
+                    },
+                  ],
+                });
+              } else if (completeDataSetRegistration && this.dataSetComplete) {
+                // older dhis2 delete the existing completion record
+                await api.delete(
+                  "completeDataSetRegistrations?ds=" +
+                    this.dataSet.id +
+                    "&pe=" +
+                    this.period +
+                    "&ou=" +
+                    activeContract.orgUnit.id +
+                    "&multiOu=false",
+                );
+              } else {
+                // older dis2 delete the existing completion record
 
-            if (calculations && !this.dataSetComplete) {
-              const orbf2 = PluginRegistry.extension("invoices.hesabu");
-              calculations.forEach((calculation) => orbf2.calculate(calculation));
-            }
+                await api.post("completeDataSetRegistrations", {
+                  completeDataSetRegistrations: [
+                    {
+                      dataSet: this.dataSet.id,
+                      period: this.period,
+                      organisationUnit: activeContract.orgUnit.id,
+                      completed: !this.dataSetComplete,
+                    },
+                  ],
+                });
+              }
 
-            const updatedFormaData = {
-              ...this,
-              dataSetComplete: !this.dataSetComplete,
-            };
+              if (calculations && !this.dataSetComplete) {
+                const orbf2 = PluginRegistry.extension("invoices.hesabu");
+                calculations.forEach((calculation) => orbf2.calculate(calculation));
+              }
 
-            setFormData(updatedFormaData);
-          },
-        };
+              const updatedFormaData = {
+                ...this,
+                dataSetComplete: !this.dataSetComplete,
+              };
 
-        setFormData(newFormData);
+              setFormData(updatedFormaData);
+            },
+          };
+
+          setFormData(newFormData);
+        }
+      } catch (error) {
+        setGeneralError(error);
       }
     };
     loadData();
@@ -307,6 +320,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
 
   return (
     <Paper style={{ minHeight: "90vh", paddingLeft: "50px", paddingTop: "20px" }}>
+      {generalError && <div style={{ color: "red" }}>{generalError.message}</div>}
       {error && (
         <div>
           <Link to={error.link}>{error.message}</Link>
@@ -399,7 +413,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
       <div>
         {formData && (
           <FormDataContext.Provider value={formData}>
-            {!formData.isDataWritable() && (
+            {formData.dataSet.id && !formData.isDataWritable() && (
               <Alert severity="info" style={{ maxWidth: "1024px" }}>
                 {t("dataEntry.dataSetNotWritable", { interpolation: true, dataSetName: formData.dataSet.name })}
               </Alert>

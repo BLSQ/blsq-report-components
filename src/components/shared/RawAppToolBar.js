@@ -3,14 +3,8 @@ import PropTypes from "prop-types";
 import classNames from "classnames";
 import { Switch } from "react-router-dom";
 import { connect } from "react-redux";
-import Dhis2Icon from './icons/Dhis2Icon'
-import {
-  Typography,
-  IconButton,
-  Button,
-  Toolbar,
-  AppBar,
-} from "@material-ui/core";
+import Dhis2Icon from "./icons/Dhis2Icon";
+import { Typography, IconButton, Button, Toolbar, AppBar } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 
 import AccountCircle from "@material-ui/icons/AccountCircle";
@@ -65,10 +59,7 @@ const styles = (theme) => ({
 });
 class RawAppToolBar extends React.Component {
   shouldComponentUpdate(nextProps) {
-    return (
-      this.props.currentUser !== nextProps.currentUser ||
-      this.props.drawerOpen !== nextProps.drawerOpen
-    );
+    return this.props.currentUser !== nextProps.currentUser || this.props.drawerOpen !== nextProps.drawerOpen;
   }
 
   render() {
@@ -91,24 +82,18 @@ class RawAppToolBar extends React.Component {
           >
             <MenuIcon />
           </IconButton>
-          <Button aria-label="Menu" href="/" className={classes.appBarItem}  variant="h6"
-            color="inherit" >
-            <Dhis2Icon/> &nbsp;&nbsp;Dhis2
+          <Button aria-label="Menu" href="/" className={classes.appBarItem} variant="h6" color="inherit">
+            <Dhis2Icon /> &nbsp;&nbsp;Dhis2
           </Button>
-          <Typography
-            variant="h6"
-            color="inherit"
-            className={classNames(classes.flex, classes.appBarItem)}
-          >
+          <Typography variant="h6" color="inherit" className={classNames(classes.flex, classes.appBarItem)}>
             {t("app_name")}
           </Typography>
 
           <Switch>
-            <ExtensionsComponent
-              extensionKey="core.headerRoutes"
-              {...this.props}
-            />
+            <ExtensionsComponent extensionKey="core.headerRoutes" {...this.props} />
           </Switch>
+
+          <div id="portal-header"  color="inherit"  className={classNames(classes.flex, classes.appBarItem)}></div>
 
           <Typography
             variant="inherit"
@@ -118,19 +103,13 @@ class RawAppToolBar extends React.Component {
               "manage " +
                 currentUser.organisationUnits.map((ou) => ou.name).join(", ") +
                 " and view " +
-                currentUser.dataViewOrganisationUnits
-                  .map((ou) => ou.name)
-                  .join(", ")
+                currentUser.dataViewOrganisationUnits.map((ou) => ou.name).join(", ")
             }
           >
             {currentUser && currentUser.name}
           </Typography>
           <div>
-            <IconButton
-              aria-owns="menu-appbar"
-              aria-haspopup="true"
-              color="inherit"
-            >
+            <IconButton aria-owns="menu-appbar" aria-haspopup="true" color="inherit">
               <AccountCircle />
             </IconButton>
           </div>
@@ -161,8 +140,4 @@ const MapDispatchToProps = (dispatch) => ({
   dispatch,
 });
 
-export default withTranslation()(
-  withStyles(styles)(
-    connect(MapStateToProps, MapDispatchToProps)(RawAppToolBar),
-  ),
-);
+export default withTranslation()(withStyles(styles)(connect(MapStateToProps, MapDispatchToProps)(RawAppToolBar)));

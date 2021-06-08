@@ -1,12 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {
-  InputLabel,
-  FormControl,
-  Select,
-  MenuItem,
-  makeStyles,
-} from "@material-ui/core";
+import { InputLabel, FormControl, Select, MenuItem, makeStyles } from "@material-ui/core";
 
 import { withTranslation } from "react-i18next";
 import moment from "moment";
@@ -43,9 +37,7 @@ const buildPeriods = (period, periodDelta, min, max) => {
         const isValidPeriod =
           max === ""
             ? true
-            : moment(nextQuarter, "YYYY[Q]Q")
-                .endOf("quarter")
-                .isBefore(moment(max, "YYYY[Q]Q").endOf("quarter"));
+            : moment(nextQuarter, "YYYY[Q]Q").endOf("quarter").isBefore(moment(max, "YYYY[Q]Q").endOf("quarter"));
         if (isValidPeriod) {
           periods.push(nextQuarter);
         }
@@ -59,36 +51,31 @@ const styles = (theme) => ({
     width: "100%",
     verticalAlign: "bottom",
   },
+
 });
 
+const useStyles2 = makeStyles((theme) => ({
+  select: {
+    color: "white",
+  },
+  icon: { color: "white" },
+  label: { color: "white" },
+}));  
+
+
+
 const useStyles = makeStyles((theme) => styles(theme));
-const PeriodPicker = ({
-  period,
-  periodFormat,
-  t,
-  onPeriodChange,
-  periodDelta,
-  labelKey,
-  min,
-  max,
-  renderPeriod,
-}) => {
+const PeriodPicker = ({ disableInputLabel, variant, period, periodFormat, t, onPeriodChange, periodDelta, labelKey, min, max, renderPeriod }) => {
   const periods = buildPeriods(period, periodDelta, min, max);
-  const classes = useStyles();
+  const classes = variant == "white" ? useStyles2() : useStyles();
   const displayPeriod = (dhis2period) =>
-    renderPeriod === null
-      ? DatePeriods.displayName(dhis2period, periodFormat.quarterly)
-      : renderPeriod(dhis2period);
+    renderPeriod === null ? DatePeriods.displayName(dhis2period, periodFormat.quarterly) : renderPeriod(dhis2period);
   return (
-    <FormControl className={classes.formControl}>
-      <InputLabel>{t(labelKey)}</InputLabel>
-      <Select
-        value={period}
-        onChange={(event) => onPeriodChange(event.target.value)}
-        title={period}
-      >
+    <FormControl color="inherit" className={classes.formControl}>
+      { !disableInputLabel && <InputLabel color="inherit">{t(labelKey)}</InputLabel>}
+      <Select color="inherit" value={period} onChange={(event) => onPeriodChange(event.target.value)} title={period}  classes={classes}>
         {periods.map((dhis2period) => (
-          <MenuItem key={dhis2period} value={dhis2period} title={dhis2period}>
+          <MenuItem key={dhis2period} value={dhis2period} title={dhis2period} color="inherit">
             {displayPeriod(dhis2period)}
           </MenuItem>
         ))}
@@ -98,6 +85,7 @@ const PeriodPicker = ({
 };
 
 PeriodPicker.defaultProps = {
+  disableInputLabel: false,
   currentPeriodFormat: "quarter",
   periodFormat: {
     quarterly: "quarter",
@@ -113,6 +101,7 @@ PeriodPicker.defaultProps = {
 };
 
 PeriodPicker.propTypes = {
+  disableInputLabel :  PropTypes.func.isRequired,
   periodFormat: PropTypes.object,
   period: PropTypes.string.isRequired,
   t: PropTypes.func.isRequired,

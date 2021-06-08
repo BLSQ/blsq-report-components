@@ -1,7 +1,10 @@
 import { DatePeriods, PluginRegistry } from "@blsq/blsq-report-components";
+import { Typography } from "@material-ui/core";
 import { Button, Input, Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/core";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
+import PeriodPicker from "../shared/PeriodPicker";
+import PortalHeader from "../shared/PortalHeader";
 
 const codify = (str) => {
   if (str == undefined) {
@@ -121,8 +124,9 @@ const ContractsTable = ({ contractInfos, fixGroups }) => (
                 }}
               >
                 {Array.from(new Set(contractInfos.contractForPeriod.codes)).join(", ")} <br></br>
-                <a target="_blank" href={"./index.html#/contracts/"+contractInfos.orgUnit.id} >{contractInfos.contractForPeriod.startPeriod} - {contractInfos.contractForPeriod.endPeriod}</a>
-
+                <a target="_blank" href={"./index.html#/contracts/" + contractInfos.orgUnit.id}>
+                  {contractInfos.contractForPeriod.startPeriod} - {contractInfos.contractForPeriod.endPeriod}
+                </a>
               </div>
             )}
           </TableCell>
@@ -296,7 +300,7 @@ const distance = (contract, period) =>
   Math.min(parseInt(contract.startPeriod) - parseInt(period), parseInt(contract.endPeriod) - parseInt(period));
 
 const SyncProgramGroups = (props) => {
-  const period = props.period;
+  const period = props.match.params.period;
   const [progress, setProgress] = useState("");
   const [filter, setFilter] = useState("");
   const [contractInfos, setContractInfos] = useState([]);
@@ -372,7 +376,7 @@ const SyncProgramGroups = (props) => {
   let filteredContractInfos = contractInfos;
   if (filter != "") {
     if (filter.startsWith("ancestor:")) {
-      const ancestorName = filter.slice("ancestor:".length)
+      const ancestorName = filter.slice("ancestor:".length);
       filteredContractInfos = filteredContractInfos.filter((c) => {
         return c.orgUnit.ancestors.some((a) => a.name.includes(ancestorName));
       });
@@ -389,7 +393,27 @@ const SyncProgramGroups = (props) => {
   }
   return (
     <div>
-      <h1>Synchronize groups based on contracts</h1>
+      <PortalHeader>
+        <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start" }}>
+          <Typography variant="h6" style={{ marginRight: "20px" }}>
+            Synchronize groups based on contracts
+          </Typography>
+          <div style={{ background: "rgba(255, 255, 255, 0.20)", color: "#fff; important!", padding: "5px" }}>
+            <PeriodPicker
+              variant="white"
+              disableInputLabel={true}
+              period={period}
+              periodDelta={{
+                before: 5,
+                after: 5,
+              }}
+              onPeriodChange={(newPeriod) => {
+                props.history.push("/sync/program-groups/" + newPeriod);
+              }}
+            ></PeriodPicker>
+          </div>
+        </div>
+      </PortalHeader>
       <ContractsStats groupStats={groupStats} groupSetIndex={groupSetIndex} />
       <ContractsResume contractInfos={filteredContractInfos} progress={progress} />
       <Input

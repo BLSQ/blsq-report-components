@@ -3,7 +3,6 @@ import { TableCell, TableRow } from "@material-ui/core";
 
 import CompletionInfo from "./CompletionInfo";
 
-
 export const tableOptions = (quarterPeriod) => {
   return {
     enableNestedDataAccess: ".",
@@ -11,7 +10,7 @@ export const tableOptions = (quarterPeriod) => {
     rowsPerPage: 50,
     rowsPerPageOptions: [1, 5, 10, 20, 50, 100, 1000],
     downloadOptions: {
-      filename: "orgunit-completeness-" + quarterPeriod,
+      filename: "orgunit-completeness-" + quarterPeriod+".csv",
       separator: ",",
     },
   };
@@ -24,7 +23,7 @@ export const statsTableOptions = (quarterPeriod, statsByZone, setSelectedZones) 
     rowsPerPage: 5,
     rowsPerPageOptions: [1, 5, 10, 20, 50, 100, 1000],
     downloadOptions: {
-      filename: "zone-completeness-" + quarterPeriod,
+      filename: "zone-completeness-" + quarterPeriod+".csv",
       separator: ",",
     },
     onRowSelectionChange: (_currentRowsSelected, _allRowsSelected, rowsSelected) => {
@@ -92,6 +91,42 @@ export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos) =>
     {
       name: "contract.orgUnit.id",
       label: "id",
+      options: {
+        filter: true,
+        sort: true,
+        display: false,
+      },
+    },
+    {
+      name: "orgUnitLevel1.name",
+      label: "Level 1",
+      options: {
+        filter: true,
+        sort: true,
+        display: false,
+      },
+    },
+    {
+      name: "orgUnitLevel2.name",
+      label: "Level 2",
+      options: {
+        filter: true,
+        sort: true,
+        display: false,
+      },
+    },
+    {
+      name: "orgUnitLevel3.name",
+      label: "Level 3",
+      options: {
+        filter: true,
+        sort: true,
+        display: false,
+      },
+    },
+    {
+      name: "orgUnitLevel4.name",
+      label: "Level 4",
       options: {
         filter: true,
         sort: true,
@@ -188,63 +223,92 @@ export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos) =>
       },
     },
 
-    ...distinctDataEntries.map((dataEntryPeriods) => {
+    ...distinctDataEntries.flatMap((dataEntryPeriods) => {
       const c = dataEntryPeriods[0];
-      return {
-        name: c.period + "-" + c.dataEntryType.category + "-completed",
-        label: c.dataEntryType.category + "\n" + c.period,
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRenderLite: (dataIndex) => {
-            const info = filteredCompletnessInfos[dataIndex];
-            if (info == undefined) {
-              return "";
-            }
-            const ex = info[c.period + "-" + c.dataEntryType.category];
-            if (ex == undefined) {
-              return "";
-            }
-            let details = undefined;
-            if (ex && ex.dataEntryType.dataSetIds) {
-              details = (
-                <span>
-                  {ex.completedDataEntries ? ex.completedDataEntries.length : 0}/{ex.dataEntryType.dataSetIds.length}
-                </span>
-              );
-            }
-            return (
-              <div>
-                <a
-                  style={{
-                    textDecoration: "none",
-                    color: ex.completed ? "green" : "orange",
-                  }}
-                  href={
-                    "./index.html#/dataEntry/" +
-                    info.contract.orgUnit.id +
-                    "/" +
-                    ex.period +
-                    "/" +
-                    ex.dataEntryType.code
-                  }
-                  title={ex.period}
-                >
-                  {" "}
-                  {ex.dataEntryType.name}
-                </a>
+      return [
+        {
+          name: c.period + "-" + c.dataEntryType.category + "-completed",
+          label: c.dataEntryType.category + "\n" + c.period,
+          options: {
+            filter: true,
+            sort: true,
+            customBodyRenderLite: (dataIndex) => {
+              const info = filteredCompletnessInfos[dataIndex];
+              if (info == undefined) {
+                return "";
+              }
+              const ex = info[c.period + "-" + c.dataEntryType.category];
+              if (ex == undefined) {
+                return "";
+              }
+              let details = undefined;
+              if (ex && ex.dataEntryType.dataSetIds) {
+                details = (
+                  <span>
+                    {ex.completedDataEntries ? ex.completedDataEntries.length : 0}/{ex.dataEntryType.dataSetIds.length}
+                  </span>
+                );
+              }
+              return (
+                <div>
+                  <a
+                    style={{
+                      textDecoration: "none",
+                      color: ex.completed ? "green" : "orange",
+                    }}
+                    href={
+                      "./index.html#/dataEntry/" +
+                      info.contract.orgUnit.id +
+                      "/" +
+                      ex.period +
+                      "/" +
+                      ex.dataEntryType.code
+                    }
+                    title={ex.period}
+                  >
+                    {" "}
+                    {ex.dataEntryType.name}
+                  </a>
 
-                {details && (
-                  <>
-                    <br></br>
-                    {details}
-                  </>
-                )}
-              </div>
-            );
+                  {details && (
+                    <>
+                      <br></br>
+                      {details}
+                    </>
+                  )}
+                </div>
+              );
+            },
           },
         },
-      };
+        {
+          name: c.period + "-" + c.dataEntryType.category + "-users",
+          label: c.dataEntryType.category +" User "+ "\n" + c.period,
+          options: {
+            filter: true,
+            sort: true,
+            display: false,
+          },
+        },
+        {
+          name: c.period + "-" + c.dataEntryType.category + "-dates",
+          label: c.dataEntryType.category +" Date "+ "\n" + c.period,
+          options: {
+            filter: true,
+            sort: true,
+            display: false,
+          },
+        },
+        {
+          name: c.period + "-" + c.dataEntryType.category + "-link",
+          label: c.dataEntryType.category +" Link "+ "\n" + c.period,
+          options: {
+            filter: true,
+            sort: true,
+            display: false,
+          },
+        },
+      ];
     }),
   ];
 };

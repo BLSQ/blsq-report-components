@@ -76,12 +76,13 @@ const CompletenessView = (props) => {
       quarterPeriod,
       DataEntries,
       currentUser.organisationUnits,
-    );
+    );    
     const { distinctDataEntries, results } = toCompleteness(
       contracts,
       completeDataSetRegistrations,
       DataEntries,
       quarterPeriod,
+      window.location.href.split("#")[0]
     );
     setDistinctDataEntries(distinctDataEntries);
 

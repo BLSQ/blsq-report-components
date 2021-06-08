@@ -1,4 +1,4 @@
-export const toCompleteness = (contracts, completeDataSetRegistrations, DataEntries, quarterPeriod) => {
+export const toCompleteness = (contracts, completeDataSetRegistrations, DataEntries, quarterPeriod, invoiceAppUrl) => {
   const completeDataSetRegistrationsByOrgUnitId = _.groupBy(
     completeDataSetRegistrations,
     (cdsr) => cdsr.organisationUnit,
@@ -30,7 +30,7 @@ export const toCompleteness = (contracts, completeDataSetRegistrations, DataEntr
       }
 
       const completedCount = expectedDataEntries.filter((c) => c.completed).length;
-      results.push({
+      const record = {
         contract,
         expectedDataEntries,
         completedDataEntries,
@@ -38,7 +38,14 @@ export const toCompleteness = (contracts, completeDataSetRegistrations, DataEntr
         expectedCount: expectedDataEntries.length,
         completionRatio:
           expectedDataEntries.length > 0 ? ((completedCount / expectedDataEntries.length) * 100).toFixed(2) : undefined,
-      });
+      };
+
+      if (contract.orgUnit.ancestors) {
+        contract.orgUnit.ancestors.forEach((ancestor, index) => {
+          record["orgUnitLevel" + index] = ancestor;
+        });
+      }
+      results.push(record);
     }
   }
 
@@ -58,15 +65,27 @@ export const toCompleteness = (contracts, completeDataSetRegistrations, DataEntr
         dataEntryPeriods.some((ex3) => ex.dataEntryType.code == ex3.dataEntryType.code && ex.period == ex3.period),
       );
 
-      info[dataEntryPeriods[0].period + "-" + dataEntryPeriods[0].dataEntryType.category] = ex;
+      const prefix = dataEntryPeriods[0].period + "-" + dataEntryPeriods[0].dataEntryType.category;
+      info[prefix] = ex;
 
-      info[dataEntryPeriods[0].period + "-" + dataEntryPeriods[0].dataEntryType.category + "-completed"] = ex
-        ? ex.completed
-          ? 1
-          : 0
-        : 0;
+      info[prefix + "-link"] = ex
+        ? (invoiceAppUrl || "") +
+          "#/dataEntry/" +
+          info.contract.orgUnit.id +
+          "/" +
+          ex.period +
+          "/" +
+          ex.dataEntryType.code
+        : undefined;
 
-      info[dataEntryPeriods[0].period + "-" + dataEntryPeriods[0].dataEntryType.category + "-expected"] = ex ? 1 : 0;
+      if (ex && ex.completed) {
+        info[prefix + "-users"] = ex.completedDataEntries.map((e) => e.storedBy).join("\n");
+        info[prefix + "-dates"] = ex.completedDataEntries.map((e) => e.date).join("\n");
+      }
+
+      info[prefix + "-completed"] = ex ? (ex.completed ? 1 : 0) : 0;
+
+      info[prefix + "-expected"] = ex ? 1 : 0;
     }
   }
   return { distinctDataEntries, results };

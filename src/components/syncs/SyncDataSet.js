@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import PortalHeader from "../shared/PortalHeader";
 import PeriodPicker from "../shared/PeriodPicker";
 
-import { PluginRegistry } from "@blsq/blsq-report-components";
+import PluginRegistry from "../core/PluginRegistry";
+
 import _ from "lodash";
 import {
   Button,
@@ -268,9 +269,9 @@ const SyncDataSet = (props) => {
                     >
                       <Button
                         onClick={() => addMissingDe(dataEntry)}
-                        disabled={contracts && contracts.missingDataElements.length == 0}
+                        disabled={contracts && contracts[0].missingDataElements.length == 0}
                       >
-                        Add {contracts && contracts.missingDataElements.length} DataElements to dataset
+                        Add {contracts && contracts[0].missingDataElements.length} DataElements to dataset
                       </Button>
                     </span>
                   )}

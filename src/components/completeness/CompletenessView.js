@@ -1,4 +1,5 @@
-import { DatePeriods, PluginRegistry } from "@blsq/blsq-report-components";
+import DatePeriods from "../../support/DatePeriods"
+import PluginRegistry from "../core/PluginRegistry"
 import _ from "lodash";
 import MUIDataTable from "mui-datatables";
 import React, { useEffect } from "react";

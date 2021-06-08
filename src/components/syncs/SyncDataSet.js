@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import PortalHeader from "../shared/PortalHeader";
+import PeriodPicker from "../shared/PeriodPicker";
 
 import { PluginRegistry } from "@blsq/blsq-report-components";
 import _ from "lodash";
@@ -55,7 +57,7 @@ const SyncDataSet = (props) => {
   const [dataSetsById, setDataSetsById] = useState(undefined);
   const [contractsByDataEntryCode, setContractsByDataEntryCode] = useState(undefined);
 
-  const period = props.period;
+  const period = props.match.params.period;
 
   const fetchDataSets = async () => {
     setLoading(true);
@@ -65,8 +67,9 @@ const SyncDataSet = (props) => {
       (de) => de.id,
     );
     setDataElementsById(dataElements);
+    const dataSetIds = allDataEntries.flatMap((d) => (d.dataSetId ? [d.dataSetId] : d.dataSetIds));
     const ds = await api.get("dataSets", {
-      filter: ["id:in:[" + allDataEntries.map((d) => d.dataSetId).join(",") + "]"],
+      filter: ["id:in:[" + dataSetIds.join(",") + "]"],
       paging: false,
       fields: ":all,dataSetElements[dataElement[id,name]]organisationUnits[id,name],workflow[:all]",
     });
@@ -84,33 +87,43 @@ const SyncDataSet = (props) => {
           contractFilter.every((code) => activeContract.codes.includes(code)),
         ),
       );
-      const dataSet = dataSetsById[dataEntry.dataSetId];
-      const dataSetOrgunits = new Set(dataSet.organisationUnits.map((ou) => ou.id));
-      const missingOrgunits = dataEntryContracts.map((c) => c.orgUnit).filter((ou) => !dataSetOrgunits.has(ou.id));
+      const dataSets = dataEntry.dataSetId
+        ? [dataSetsById[dataEntry.dataSetId]]
+        : dataEntry.dataSetIds
+        ? dataEntry.dataSetIds.map((id) => dataSetsById[id])
+        : [];
+      const results = [];
+      for (let dataSet of dataSets) {
+        contractsByDataEntryCode[dataEntry.code];
+        const dataSetOrgunits = new Set(dataSet.organisationUnits.map((ou) => ou.id));
+        const missingOrgunits = dataEntryContracts.map((c) => c.orgUnit).filter((ou) => !dataSetOrgunits.has(ou.id));
 
-      let expectedDataElements = [];
-      const missingDataElements = [];
-      if (dataEntry.hesabuInputs) {
-        const project_descriptor = project(period);
-        const payment = project_descriptor.payment_rules[dataEntry.hesabuPayment];
-        const hesabuPackage = payment.packages[dataEntry.hesabuPackage];
-        expectedDataElements = hesabuPackage.activities
-          .flatMap((activity) => dataEntry.hesabuInputs.map((state) => activity[state]))
-          .filter((de) => de);
-        const dataSetElements = new Set(dataSet.dataSetElements.map((dse) => dse.dataElement.id));
-        for (let expectedDE of expectedDataElements) {
-          if (expectedDE && !dataSetElements.has(expectedDE)) {       
-            missingDataElements.push(expectedDE);
+        let expectedDataElements = [];
+        const missingDataElements = [];
+        if (dataEntry.hesabuInputs) {
+          const project_descriptor = project(period);
+          const payment = project_descriptor.payment_rules[dataEntry.hesabuPayment];
+          const hesabuPackage = payment.packages[dataEntry.hesabuPackage];
+          expectedDataElements = hesabuPackage.activities
+            .flatMap((activity) => dataEntry.hesabuInputs.map((state) => activity[state]))
+            .filter((de) => de);
+          const dataSetElements = new Set(dataSet.dataSetElements.map((dse) => dse.dataElement.id));
+          for (let expectedDE of expectedDataElements) {
+            if (expectedDE && !dataSetElements.has(expectedDE)) {
+              missingDataElements.push(expectedDE);
+            }
           }
         }
-      }
 
-      contractsByDataEntryCode[dataEntry.code] = {
-        activeContracts: dataEntryContracts,
-        missingOrgunits: missingOrgunits,
-        expectedDataElements: expectedDataElements,
-        missingDataElements: missingDataElements,
-      };
+        results.push({
+          dataSet: dataSet,
+          activeContracts: dataEntryContracts,
+          missingOrgunits: missingOrgunits,
+          expectedDataElements: expectedDataElements,
+          missingDataElements: missingDataElements,
+        });
+      }
+      contractsByDataEntryCode[dataEntry.code] = results;
     }
     setContractsByDataEntryCode(contractsByDataEntryCode);
     setLoading(false);
@@ -120,16 +133,14 @@ const SyncDataSet = (props) => {
     fetchDataSets();
   }, []);
 
-  const addMissingOu = async (dataEntry) => {
+  const addMissingOu = async (myDataSet, missingOrgunits) => {
     setLoading(true);
-    const missing = contractsByDataEntryCode[dataEntry.code].missingOrgunits;
-
     const api = await dhis2.api();
-    const dataSet = await api.get("dataSets/" + dataEntry.dataSetId, {
+    const dataSet = await api.get("dataSets/" + myDataSet.id, {
       fields: ":all",
     });
     const dataSetOrgunits = new Set(dataSet.organisationUnits.map((ou) => ou.id));
-    for (let missingOu of missing) {
+    for (let missingOu of missingOrgunits) {
       if (!dataSetOrgunits.has(missingOu.id)) {
         dataSet.organisationUnits.push(missingOu);
       }
@@ -168,17 +179,35 @@ const SyncDataSet = (props) => {
 
   return (
     <Paper style={{ minHeight: "85vh" }}>
-      <Typography variant="h4">Synchronisation for period : {period}</Typography>
-      <br></br>
+      <PortalHeader>
+        <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start" }}>
+          <Typography variant="h6" style={{ marginRight: "20px" }}>
+            Dataset Synchronisation for
+          </Typography>
+          <div style={{ background: "rgba(255, 255, 255, 0.20)", color: "#fff; important!", padding: "5px" }}>
+            <PeriodPicker
+              variant="white"
+              disableInputLabel={true}
+              period={period}
+              periodDelta={{
+                before: 5,
+                after: 5,
+              }}
+              onPeriodChange={(newPeriod) => {
+                props.history.push("/sync/datasets/" + newPeriod);
+              }}
+            ></PeriodPicker>
+          </div>
+        </div>
+      </PortalHeader>
       <Table>
         <TableHead>
           <TableRow>
             <th width="10%">Data entry</th>
-            <th width="30%">Dataset</th>
-            <th width="10%">Assigned to</th>
+            <th width="5%">Assigned to</th>
             <th width="10%">Active contracts</th>
             <th width="20%">Actions</th>
-            <th width="20%">Access</th>
+            <th width="40%">Access & approval workflow</th>
           </TableRow>
         </TableHead>
 
@@ -192,33 +221,8 @@ const SyncDataSet = (props) => {
                   {dataEntry.name}
                   <br />
                   <code>
-                    {dataEntry.code} <br></br> {dataSet && dataSet.periodType} VS {dataEntry.frequency}
+                    {dataEntry.code} <br></br> {dataEntry.frequency}
                   </code>
-                </TableCell>
-                <TableCell title={dataEntry.dataSetId}>
-                  {dataSetsById == undefined && dataEntry.dataSetId}
-                  {dataSet && (
-                    <div>
-                      {dataSet.name}&nbsp; ({dataSet.organisationUnits.length}) <br></br>
-                      <code>
-                        <a
-                          href={
-                            dhis2RootUrl +
-                            "/dhis-web-maintenance/index.html#/edit/dataSetSection/dataSet/" +
-                            dataEntry.dataSetId
-                          }
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {dataEntry.dataSetId}
-                        </a>{" "}
-                        {dataSet.workflow && " - " + dataSet.workflow.name}
-                        {dataSet.workflow == undefined && (
-                          <span style={{ color: "red" }}>no data approval configured</span>
-                        )}
-                      </code>
-                    </div>
-                  )}
                 </TableCell>
                 <TableCell>
                   {dataEntry.contracts.map((contract, index) => (
@@ -227,30 +231,37 @@ const SyncDataSet = (props) => {
                     </div>
                   ))}
                 </TableCell>
-                <TableCell className={classes.aligned}>{contracts && contracts.activeContracts.length}</TableCell>
+                <TableCell className={classes.aligned}>
+                  {contracts && contracts[0] && contracts[0].activeContracts && contracts[0].activeContracts.length}
+                </TableCell>
 
                 <TableCell>
-                  {!loading && (
-                    <Button
-                      onClick={() => addMissingOu(dataEntry)}
-                      title={contracts && contracts.missingOrgunits.map((ou) => ou.name).join(" , ")}
-                      disabled={contracts && contracts.missingOrgunits.length == 0}
-                    >
-                      Add {contracts && contracts.missingOrgunits.length} missing OrgUnits to dataset
-                    </Button>
-                  )}
-                  {!loading && dataEntry.hesabuInputs && (
+                  {!loading &&
+                    contracts &&
+                    contracts.map((contract) => (
+                      <Button
+                        style={{ textAlign: "left" }}
+                        onClick={() => addMissingOu(contract.dataSet, contract.missingOrgunits)}
+                        title={contract.missingOrgunits.map((ou) => ou.name).join(" , ")}
+                        disabled={contract.missingOrgunits.length == 0}
+                      >
+                        Add {contract.missingOrgunits.length} missing OrgUnits to dataset <br></br>{" "}
+                        {contract.dataSet.name}
+                      </Button>
+                    ))}
+
+                  {!loading && dataEntry.hesabuInputs && contracts && contracts[0] && (
                     <span
                       title={
                         contracts &&
                         "missing : " +
-                          contracts.missingDataElements
+                          contracts[0].missingDataElements
                             .map((de) => (dataElementsById[de] ? dataElementsById[de].name : de))
                             .join(" , ") +
                           "\n\n based on : \n" +
                           dataEntry.hesabuInputs.join(" , ") +
                           "\n\n is supposed to contain : \n" +
-                          contracts.expectedDataElements
+                          contracts[0].expectedDataElements
                             .map((de) => (dataElementsById[de] ? dataElementsById[de].name : de))
                             .join(" ,  )")
                       }
@@ -269,24 +280,44 @@ const SyncDataSet = (props) => {
                 </TableCell>
                 <TableCell>
                   <div style={{ display: "block" }}>
-                    {dataSet && (
-                      <>
-                        <AccessDisplay
-                          access={dataSet.publicAccess}
-                          displayName={"Public"}
-                          dhis2RootUrl={dhis2RootUrl}
-                        ></AccessDisplay>
-                      </>
-                    )}
-                    {dataSet &&
-                      dataSet.userGroupAccesses.map((uga) => (
-                        <AccessDisplay
-                          key={uga.displayName}
-                          access={uga.access}
-                          displayName={uga.displayName}
-                          dhis2RootUrl={dhis2RootUrl}
-                        ></AccessDisplay>
-                      ))}
+                    {contracts &&
+                      contracts.map((contract) => {
+                        return (
+                          <>
+                            <b style={{ color: "grey" }}>{contract.dataSet.name}</b>{" "}
+                            <a
+                              href={
+                                dhis2RootUrl +
+                                "/dhis-web-maintenance/index.html#/edit/dataSetSection/dataSet/" +
+                                contract.dataSet.id
+                              }
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <code>{contract.dataSet.id}</code>
+                            </a>{" "}
+                            <br></br>
+                            {contract.dataSet.workflow && "Data approval : " + contract.dataSet.workflow.name+" "+contract.dataSet.workflow.periodType}
+                            {contract.dataSet.workflow == undefined && (
+                              <span style={{ color: "red" }}>no data approval configured</span>
+                            )}
+                            <AccessDisplay
+                              access={contract.dataSet.publicAccess}
+                              displayName={"Public"}
+                              dhis2RootUrl={dhis2RootUrl}
+                            />
+                            {contract.dataSet.userGroupAccesses.map((uga) => (
+                              <AccessDisplay
+                                key={uga.displayName}
+                                access={uga.access}
+                                displayName={uga.displayName}
+                                dhis2RootUrl={dhis2RootUrl}
+                              />
+                            ))}
+                            <br></br>
+                          </>
+                        );
+                      })}
                   </div>
                 </TableCell>
               </TableRow>

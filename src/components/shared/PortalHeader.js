@@ -5,7 +5,6 @@ import ReactDOM from "react-dom";
 class PortalHeader extends React.Component {
   constructor() {
     super();
-    debugger;
     this.portalRoot = document.getElementById("portal-header");
 
     // 1: Create a new div that wraps the component
@@ -15,7 +14,6 @@ class PortalHeader extends React.Component {
   // 2: Append the element to the DOM when it mounts
   componentDidMount = () => {
     this.portalRoot = document.getElementById("portal-header");
-    debugger;
     this.portalRoot.appendChild(this.el);
   };
   // 3: Remove the element when it unmounts
@@ -25,7 +23,6 @@ class PortalHeader extends React.Component {
   render() {
     // 4: Render the element's children in a Portal
     const { children } = this.props;
-    debugger;
     return ReactDOM.createPortal(children, this.el);
   }
 }

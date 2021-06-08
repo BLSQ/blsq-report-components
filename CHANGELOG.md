@@ -1,3 +1,9 @@
+# @blsq/blsq-report-components@1.0.57
+
+ - [general] Allow to contribute to a page header via PortalHeader
+ - [completeness] Orgunit situation add columns for user and date of completeness, links, and parent level's names.
+ - [completeness] Allow data entry to give dataSetIds instead of a single dataSetId to support for example quality forms splitted by sections
+
 # @blsq/blsq-report-components@1.0.56
 
 - [completeness] Display totals for filtered [zones](https://github.com/BLSQ/blsq-report-components/pull/120).

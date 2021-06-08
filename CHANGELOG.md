@@ -1,3 +1,8 @@
+
+# @blsq/blsq-report-components@1.0.58
+
+ - [dataentry] Add period picker in header bar
+
 # @blsq/blsq-report-components@1.0.57
 
  - [general] Allow to contribute to a page header via PortalHeader

@@ -1,4 +1,6 @@
-import { DatePeriods, PluginRegistry } from "@blsq/blsq-report-components";
+import PluginRegistry from "../core/PluginRegistry";
+import DatePeriods from "../../support/DatePeriods";
+
 import { Typography } from "@material-ui/core";
 import { Button, Input, Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/core";
 import _ from "lodash";

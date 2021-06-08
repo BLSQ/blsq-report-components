@@ -5,12 +5,15 @@ import _ from "lodash";
 import { Link } from "react-router-dom";
 import { Button, Paper, Typography, Chip, Grid, IconButton } from "@material-ui/core";
 import AssignmentIcon from "@material-ui/icons/Assignment";
+import InfoIcon from "@material-ui/icons/Info";
+import { Alert } from "@material-ui/lab";
+
 import FormDataContext from "./FormDataContext";
 import InvoiceLinks from "../invoices/InvoiceLinks";
 import { useTranslation } from "react-i18next";
 import { withRouter } from "react-router";
-import InfoIcon from "@material-ui/icons/Info";
-import { Alert } from "@material-ui/lab";
+import PeriodPicker from "../shared/PeriodPicker";
+import PortalHeader from "../shared/PortalHeader";
 
 function isDataSetComplete(completeDataSetRegistration) {
   if (completeDataSetRegistration == undefined) {
@@ -103,11 +106,13 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
           completeDataSetRegistration = dsc.completeDataSetRegistrations
             ? dsc.completeDataSetRegistrations[0]
             : undefined;
-          const dv = dataEntry.dataSetId ? await api.get("/dataValueSets", {
-            dataSet: dataEntry.dataSetId,
-            orgUnit: activeContract.orgUnit.id,
-            period: period,
-          }) : {dataValues:[]};
+          const dv = dataEntry.dataSetId
+            ? await api.get("/dataValueSets", {
+                dataSet: dataEntry.dataSetId,
+                orgUnit: activeContract.orgUnit.id,
+                period: period,
+              })
+            : { dataValues: [] };
           let rawValues = dv.dataValues || [];
           if (dataEntryRegistry.fetchExtraData) {
             const extraValues = await dataEntryRegistry.fetchExtraData(api, activeContract.orgUnit, period, dataEntry);
@@ -356,6 +361,28 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
           ))}
         </div>
       )}
+
+      <PortalHeader>
+        <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start" }}>
+          <Typography variant="h6" style={{ marginRight: "20px" }}>
+              {t("dataEntry.dataEntries")}
+          </Typography>
+          <div style={{ background: "rgba(255, 255, 255, 0.20)", color: "#fff; important!", padding: "5px" }}>
+            <PeriodPicker
+              variant="white"
+              disableInputLabel={true}
+              period={quarterPeriod}
+              periodDelta={{
+                before: 5,
+                after: 5,
+              }}
+              onPeriodChange={(newPeriod) => {
+                history.push("/dataEntry/" + match.params.orgUnitId + "/" + newPeriod);
+              }}
+            ></PeriodPicker>
+          </div>
+        </div>
+      </PortalHeader>
 
       <Grid container>
         <Grid item xs={3}>

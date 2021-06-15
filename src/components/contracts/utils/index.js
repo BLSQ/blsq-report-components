@@ -176,3 +176,10 @@ export const defaultContract = (fieldValues) => ({
   fieldValues,
   children: null,
 });
+
+export const previousContract = (previousContract) => {
+  return {
+    ...previousContract,
+    id: 0,
+  };
+};

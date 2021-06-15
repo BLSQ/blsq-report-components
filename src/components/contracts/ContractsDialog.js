@@ -15,6 +15,7 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import Edit from "@material-ui/icons/Edit";
+import AddIcon from "@material-ui/icons/Add";
 import { useDispatch, useSelector } from "react-redux";
 import PeriodPicker from "./PeriodPicker";
 import PluginRegistry from "../core/PluginRegistry";
@@ -59,7 +60,6 @@ const ContractsDialog = ({
   displayMainOrgUnit,
 }) => {
   const [open, setOpen] = React.useState(false);
-
   const contractService = PluginRegistry.extension("contracts.service");
   const [currentContract, setCurrentContract] = React.useState(contractService.defaultPeriod(contract));
   const [validationErrors, setValidationErrors] = React.useState([]);
@@ -72,9 +72,17 @@ const ContractsDialog = ({
     setCurrentContract(contract);
     setValidationErrors(errors);
   }, [contract]);
-  const handleClickOpen = () => {
+
+  const handleClickOpen = (previousContractInfo = null, isNewContract) => {
+    if (isNewContract || previousContractInfo === undefined || previousContractInfo === null) {
+      contract.id = 0;
+    } else {
+      contract.id = contract.fieldValues.id;
+    }
+    setCurrentContract(contract);
     setOpen(true);
   };
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -130,13 +138,29 @@ const ContractsDialog = ({
   return (
     <>
       {!children && (
-        <Tooltip onClick={() => handleClickOpen()} placement="bottom" title={t("edit")} arrow>
-          <span>
-            <IconButton size="small">
-              <Edit />
-            </IconButton>
-          </span>
-        </Tooltip>
+        <React.Fragment>
+          {currentContract.fieldValues.contract_main_orgunit && (
+            <Tooltip
+              onClick={() => handleClickOpen(currentContract, true)}
+              placement="bottom"
+              title={t("create")}
+              arrow
+            >
+              <span>
+                <IconButton size="small">
+                  <AddIcon />
+                </IconButton>
+              </span>
+            </Tooltip>
+          )}
+          <Tooltip onClick={() => handleClickOpen(currentContract, false)} placement="bottom" title={t("edit")} arrow>
+            <span>
+              <IconButton size="small">
+                <Edit />
+              </IconButton>
+            </span>
+          </Tooltip>
+        </React.Fragment>
       )}
       {Boolean(children) && childrenWithProps}
       <Dialog onClose={handleClose} open={open} fullWidth maxWidth="sm">
@@ -154,7 +178,7 @@ const ContractsDialog = ({
               {validationErrors.map((err) => (
                 <span>
                   {err.message}
-                  <br></br>
+                  <br />
                 </span>
               ))}
             </span>

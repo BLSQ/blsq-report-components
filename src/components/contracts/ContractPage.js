@@ -14,7 +14,14 @@ import PluginRegistry from "../core/PluginRegistry";
 import ContractsResume from "./ContractsResume";
 import { setIsLoading } from "../redux/actions/load";
 import ContractsDialog from "./ContractsDialog";
-import { getContractTableProps, detailInitialState, getMainOrgUnit, defaultContract } from "./utils/index";
+import _ from "lodash";
+import {
+  getContractTableProps,
+  detailInitialState,
+  getMainOrgUnit,
+  defaultContract,
+  previousContract,
+} from "./utils/index";
 import {
   filterItems,
   encodeFiltersQueryParams,
@@ -39,7 +46,7 @@ const styles = (theme) => ({
   ...icons(theme),
   wrapIcon: {
     fontFamily: "monospace",
-    color: "#266696"
+    color: "#266696",
   },
 });
 const useStyles = makeStyles((theme) => styles(theme));
@@ -53,6 +60,7 @@ const ContractPage = ({ match, location, t, history }) => {
   const [filters, setFilters] = useState([activeToday, ...filtersConfig([])]);
   const [contractsDatas, setContractsDatas] = useState(detailInitialState);
   const contractService = PluginRegistry.extension("contracts.service");
+  let [previousDefaultMainContract, setPreviousDefaultMainContract] = useState(undefined);
   const fetchContracts = () => {
     if (contractService) {
       dispatch(setIsLoading(true));
@@ -60,11 +68,18 @@ const ContractPage = ({ match, location, t, history }) => {
         setContractsDatas({
           ...contractsDatas,
         });
+        setPreviousDefaultMainContract({ ...loadPreviousContract(contractsDatas.mainContracts.contracts) });
         dispatch(setIsLoading(false));
       });
     }
   };
 
+  const loadPreviousContract = (contracts) => {
+    const sortedContracts = _.orderBy(contracts, ["endPeriod"], ["desc"]);
+    let contract = _.head(sortedContracts);
+    let mainContract = previousContract(contract);
+    return mainContract;
+  };
   const fetchOrgUnit = () => {
     dhis2
       .api()
@@ -76,7 +91,7 @@ const ContractPage = ({ match, location, t, history }) => {
       .then((org) => setOrgUnit(org));
   };
   const { allContracts, subContracts, mainContracts, contractFields } = contractsDatas;
-  const subcontractField = contractFields.find(f=> f.code =="contract_main_orgunit")
+  const subcontractField = contractFields.find((f) => f.code == "contract_main_orgunit");
   const mainContractProps = getContractTableProps(
     t,
     classes,
@@ -152,6 +167,7 @@ const ContractPage = ({ match, location, t, history }) => {
       });
     }
   };
+
   return (
     <>
       <Grid container item xs={12} spacing={4}>
@@ -166,16 +182,16 @@ const ContractPage = ({ match, location, t, history }) => {
         </Grid>
       </Grid>
       <Box mb={3}>
-        <br></br>
+        <br />
         <Grid container direction="row" alignItems="center">
-          <LocationOnIcon color="secondary"></LocationOnIcon>
+          <LocationOnIcon color="secondary" />
           &nbsp;
           <Typography className={classes.wrapIcon} color="secondary">
             {orgUnit &&
               orgUnit.ancestors.slice(1).map((a, index) => (
                 <span>
                   <a href={"./index.html#/contracts?under_orgunit=" + a.id}>{a.name}</a>
-                  {(index + 1 < orgUnit.ancestors.length - 1 ) && " > "}
+                  {index + 1 < orgUnit.ancestors.length - 1 && " > "}
                 </span>
               ))}
           </Typography>
@@ -185,7 +201,7 @@ const ContractPage = ({ match, location, t, history }) => {
               startIcon={<AssignmentIcon />}
               title={t("dataEntry.dataEntries")}
               href={"./index.html#/dataEntry/" + orgUnit.id + "/" + DatePeriods.currentQuarter()}
-            ></Button>
+            />
           )}
         </Grid>
       </Box>
@@ -219,7 +235,7 @@ const ContractPage = ({ match, location, t, history }) => {
 
         <Box mt={4} pr={4} justifyContent="flex-end" display="flex">
           <ContractsDialog
-            contract={defaultContract({ orgUnit: orgUnit })}
+            contract={previousDefaultMainContract || defaultContract({ orgUnit: orgUnit })}
             contracts={allContracts}
             contractFields={contractFields}
             onSavedSuccessfull={fetchContracts}
@@ -256,7 +272,7 @@ const ContractPage = ({ match, location, t, history }) => {
             <Box mt={4} pr={4} justifyContent="flex-end" display="flex">
               <ContractsDialog
                 contract={defaultContract({
-                  contract_main_orgunit: mainOrgUnit ? mainOrgUnit : undefined,
+                  contract_main_orgunit: mainOrgUnit || undefined,
                 })}
                 contracts={allContracts}
                 contractFields={contractFields}

@@ -30,6 +30,8 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
   const dataEntryRegistry = PluginRegistry.extension("dataentry.dataEntries");
   const [orgUnit, setOrgUnit] = useState(undefined);
   const [dataEntries, setDataEntries] = useState(undefined);
+  const [subContractsDataEntries, setSubContractsDataEntries] = useState(undefined);
+  const [mainContractDataEntries, setMainContractDataEntries] = useState(undefined);
   const [formData, setFormData] = useState(undefined);
   const [error, setError] = useState(undefined);
   const [generalError, setGeneralError] = useState(undefined);
@@ -45,6 +47,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
           (c) => c.orgUnit.id == match.params.orgUnitId && c.matchPeriod(period),
         );
         const activeContract = activeContracts[0];
+
         if (activeContract == undefined) {
           setError({
             message: match.params.orgUnitId + " has no contract for that period : " + period,
@@ -66,6 +69,45 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
         setOrgUnit(activeContract.orgUnit);
         const expectedDataEntries = dataEntryRegistry.getExpectedDataEntries(activeContract, period);
         setDataEntries(expectedDataEntries);
+
+        const activeSubContracts = contracts.subContracts.contracts.filter(
+          (c) => c.fieldValues.contract_main_orgunit == match.params.orgUnitId && c.matchPeriod(period),
+        );
+        let expectedSubContractDataEntries = [];
+        for (let activeSubContract of activeSubContracts) {
+          activeSubContract.orgUnit.activeContracts = [activeSubContract];
+          const expectedSubContractDataEntry = dataEntryRegistry.getExpectedDataEntries(activeSubContract, period);
+          expectedSubContractDataEntries.push({
+            orgUnit: {
+              id: activeSubContract.orgUnit.id,
+              name: activeSubContract.orgUnit.name,
+            },
+            dataEntry: expectedSubContractDataEntry,
+          });
+        }
+        setSubContractsDataEntries(expectedSubContractDataEntries);
+
+        const mainContract = await contractService.fetchContracts(activeContract.fieldValues.contract_main_orgunit);
+        const activeMainContracts =
+          (mainContract.allContracts &&
+            mainContract.allContracts.filter(
+              (c) => c.orgUnit.id == activeContract.fieldValues.contract_main_orgunit && c.matchPeriod(period),
+            )) ||
+          [];
+        let activeMainContract = activeMainContracts[0] || [];
+        activeMainContract.orgUnit = { activeContracts: activeMainContract.length > 0 ? [activeMainContract] : [] };
+        const expectedMainContractDataEntries = dataEntryRegistry.getExpectedDataEntries(activeMainContract, period);
+        const expectedMainContractDataEntry =
+          expectedMainContractDataEntries.length > 0
+            ? {
+                orgUnit: {
+                  id: activeMainContract.fieldValues.orgUnit.id,
+                  name: activeMainContract.fieldValues.orgUnit.name,
+                },
+                dataEntry: expectedMainContractDataEntries,
+              }
+            : null;
+        setMainContractDataEntries(expectedMainContractDataEntry);
 
         if (match.params.dataEntryCode == undefined && expectedDataEntries.length > 0) {
           const defaultDataEntry = expectedDataEntries[0];
@@ -139,7 +181,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
             [v.orgUnit, v.period, v.dataElement, v.categoryOptionCombo].join("-"),
           );
 
-          let calculator = undefined;
+          let calculator;
           if (dataEntryRegistry.getCalculator) {
             calculator = dataEntryRegistry.getCalculator(activeContract.orgUnit, period, match.params.dataEntryCode);
             if (calculator) {
@@ -307,7 +349,8 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
     loadData();
   }, []);
   let DataEntryForm = React.Fragment;
-  let dataEntryType = undefined;
+  let dataEntryType;
+
   if (
     dataEntryRegistry &&
     match.params.dataEntryCode &&
@@ -365,7 +408,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
       <PortalHeader>
         <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start" }}>
           <Typography variant="h6" style={{ marginRight: "20px" }}>
-              {t("dataEntry.dataEntries")}
+            {t("dataEntry.dataEntries")}
           </Typography>
           <div style={{ background: "rgba(255, 255, 255, 0.20)", color: "#fff; important!", padding: "5px" }}>
             <PeriodPicker
@@ -379,7 +422,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
               onPeriodChange={(newPeriod) => {
                 history.push("/dataEntry/" + match.params.orgUnitId + "/" + newPeriod);
               }}
-            ></PeriodPicker>
+            />
           </div>
         </div>
       </PortalHeader>
@@ -436,6 +479,120 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
             />
           )}
         </Grid>
+        {mainContractDataEntries && mainContractDataEntries.orgUnit && (
+          <Grid item>
+            <h2>{t("dataEntry.mainContractDataEntries")}</h2>
+            <table>
+              <thead>
+                <tr>
+                  <td>
+                    <Typography>{mainContractDataEntries.orgUnit.name}</Typography>
+                  </td>
+                </tr>
+              </thead>
+              <tbody>
+                {mainContractDataEntries.dataEntry.map((mainContract) => {
+                  return (
+                    <tr>
+                      <td>
+                        {" "}
+                        <Typography variant="overline" gutterBottom>
+                          {mainContract.dataEntryType.name}
+                        </Typography>
+                      </td>
+                      <td>
+                        <Button
+                          key={
+                            mainContract.dataEntryType.code +
+                            "-" +
+                            mainContract.period +
+                            "-" +
+                            mainContractDataEntries.orgUnit.id
+                          }
+                          variant="text"
+                          color="primary"
+                          size="small"
+                          component={Link}
+                          to={
+                            "/dataEntry/" +
+                            mainContractDataEntries.orgUnit.id +
+                            "/" +
+                            mainContract.period +
+                            "/" +
+                            mainContract.dataEntryType.code
+                          }
+                          title={mainContract.period}
+                        >
+                          {DatePeriods.displayName(
+                            mainContract.period,
+                            periodFormat[DatePeriods.detect(mainContract.period)],
+                          )}
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </Grid>
+        )}
+        {subContractsDataEntries && subContractsDataEntries.length > 0 && (
+          <Grid item>
+            <h2>{t("dataEntry.subContractDataEntries")}</h2>
+            {subContractsDataEntries.map((subContract) => {
+              return (
+                <table>
+                  <thead>
+                    <tr>
+                      <td>
+                        <Typography>{subContract.orgUnit.name}</Typography>
+                      </td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {subContract &&
+                      subContract.dataEntry.map((dataEntry) => {
+                        const orgUnitId = subContract.orgUnit.id;
+                        return (
+                          <tr>
+                            <td>
+                              {" "}
+                              <Typography variant="overline" gutterBottom>
+                                {dataEntry.dataEntryType.name}
+                              </Typography>
+                            </td>
+                            <td>
+                              <Button
+                                key={dataEntry.dataEntryType.code + "-" + dataEntry.period + "-" + orgUnitId}
+                                variant="text"
+                                color="primary"
+                                size="small"
+                                component={Link}
+                                to={
+                                  "/dataEntry/" +
+                                  subContract.orgUnit.id +
+                                  "/" +
+                                  dataEntry.period +
+                                  "/" +
+                                  dataEntry.dataEntryType.code
+                                }
+                                title={dataEntry.period}
+                              >
+                                {DatePeriods.displayName(
+                                  dataEntry.period,
+                                  periodFormat[DatePeriods.detect(dataEntry.period)],
+                                )}
+                              </Button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+              );
+            })}
+          </Grid>
+        )}
       </Grid>
       <div>
         {formData && (

@@ -183,3 +183,10 @@ export const previousContract = (previousContract) => {
     id: 0,
   };
 };
+
+export const loadPreviousContract = (contracts) => {
+  const sortedContracts = _.orderBy(contracts, ["endPeriod"], ["desc"]);
+  let contract = _.head(sortedContracts);
+  let defaultContract = previousContract(contract);
+  return defaultContract;
+};

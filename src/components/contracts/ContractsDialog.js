@@ -25,7 +25,7 @@ import { errorSnackBar, succesfullSnackBar } from "../shared/snackBars/snackBar"
 import { setIsLoading } from "../redux/actions/load";
 
 import ContractFieldSelect from "./ContractFieldSelect";
-import { getNonStandartContractFields, getContractByOrgUnit } from "./utils/index";
+import { getNonStandartContractFields, getContractByOrgUnit, previousContract } from "./utils/index";
 
 import { getStartDateFromPeriod, getEndDateFromPeriod } from "./utils/periodsUtils";
 import { enqueueSnackbar } from "../redux/actions/snackBars";
@@ -69,17 +69,19 @@ const ContractsDialog = ({
 
   useEffect(() => {
     const errors = contractService.validateContract(contract);
+
     setCurrentContract(contract);
     setValidationErrors(errors);
   }, [contract]);
 
   const handleClickOpen = (previousContractInfo = null, isNewContract) => {
     if (isNewContract || previousContractInfo === undefined || previousContractInfo === null) {
-      contract.id = 0;
+      setCurrentContract(previousContract(contract));
     } else {
       contract.id = contract.fieldValues.id;
+      setCurrentContract(contract);
     }
-    setCurrentContract(contract);
+
     setOpen(true);
   };
 
@@ -135,6 +137,7 @@ const ContractsDialog = ({
       mainOrgUnit = mainContract.orgUnit;
     }
   }
+
   return (
     <>
       {!children && (

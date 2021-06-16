@@ -20,7 +20,7 @@ import {
   detailInitialState,
   getMainOrgUnit,
   defaultContract,
-  previousContract,
+  loadPreviousContract,
 } from "./utils/index";
 import {
   filterItems,
@@ -61,6 +61,7 @@ const ContractPage = ({ match, location, t, history }) => {
   const [contractsDatas, setContractsDatas] = useState(detailInitialState);
   const contractService = PluginRegistry.extension("contracts.service");
   let [previousDefaultMainContract, setPreviousDefaultMainContract] = useState(undefined);
+
   const fetchContracts = () => {
     if (contractService) {
       dispatch(setIsLoading(true));
@@ -74,12 +75,6 @@ const ContractPage = ({ match, location, t, history }) => {
     }
   };
 
-  const loadPreviousContract = (contracts) => {
-    const sortedContracts = _.orderBy(contracts, ["endPeriod"], ["desc"]);
-    let contract = _.head(sortedContracts);
-    let mainContract = previousContract(contract);
-    return mainContract;
-  };
   const fetchOrgUnit = () => {
     dhis2
       .api()

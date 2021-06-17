@@ -20,7 +20,7 @@ import {
   detailInitialState,
   getMainOrgUnit,
   defaultContract,
-  loadPreviousContract,
+  findLastContract,
 } from "./utils/index";
 import {
   filterItems,
@@ -69,7 +69,7 @@ const ContractPage = ({ match, location, t, history }) => {
         setContractsDatas({
           ...contractsDatas,
         });
-        setPreviousDefaultMainContract({ ...loadPreviousContract(contractsDatas.mainContracts.contracts) });
+        setPreviousDefaultMainContract({ ...findLastContract(contractsDatas.mainContracts.contracts) });
         dispatch(setIsLoading(false));
       });
     }

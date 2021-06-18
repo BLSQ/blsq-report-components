@@ -30,7 +30,7 @@ const LinkedContract = ({ linkedContracts, period }) => {
           linkedContracts.map((contract) => {
             return (
               <MenuItem key={contract.orgUnit.id} value={contract.orgUnit}>
-                {contract.orgUnit.name || "Select"}
+                {contract.orgUnit.name}
               </MenuItem>
             );
           })}
@@ -45,7 +45,7 @@ const LinkedContract = ({ linkedContracts, period }) => {
       to={"/dataEntry/" + selectedContract.id + "/" + period}
       title={period}
     >
-      {DatePeriods.displayName(period, "quarter")}
+    {t("dataEntry.seeLinkedData")}
     </Button>
   }
     </div>

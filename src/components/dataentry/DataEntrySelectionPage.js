@@ -107,8 +107,8 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
                 },
                 dataEntry: expectedMainContractDataEntries,
               }
-            : null;
-        setMainContractDataEntries(expectedMainContractDataEntry);
+            : undefined;
+        setMainContractDataEntries(expectedMainContractDataEntry && [expectedMainContractDataEntry]);
 
         if (match.params.dataEntryCode == undefined && expectedDataEntries.length > 0) {
           const defaultDataEntry = expectedDataEntries[0];
@@ -405,12 +405,15 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
               <Chip key={c + "_" + index} label={c} style={{ margin: "5px" }} />
             ))}
           </div>
-          <div>
+          {((mainContractDataEntries && mainContractDataEntries.length > 0) ||
+        (subContractsDataEntries && subContractsDataEntries.length > 0)) && (
+            <div>
             <LinkedContract
               period={quarterPeriod}
-              linkedContracts={(mainContractDataEntries && [mainContractDataEntries]) || subContractsDataEntries}
+              linkedContracts={mainContractDataEntries || subContractsDataEntries}
             />
-          </div>
+          </div>)
+        }
         </React.Fragment>
       )}
 

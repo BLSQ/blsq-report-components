@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => styles(theme));
 const LinkedContract = ({ linkedContracts, period }) => {
   const { t, i18n } = useTranslation();
   const classes = useStyles();
-  let [selectedContract, setSelectedContract] = useState(linkedContracts && linkedContracts[0]);
+  let [selectedContract, setSelectedContract] = useState(undefined);
   let handleLinkedContractChange = (event) => {
     if (selectedContract === undefined || event.target.value.id !== selectedContract.id) {
       setSelectedContract(event.target.value);

@@ -37,8 +37,7 @@
     "contractFrom": "Contract de",
     "contractTo": "à",
     "dataEntries": "Saisie de données",
-    "mainContractDataEntries": "Saisie de données du contrat primaire",
-    "subContractDataEntries": "Saisie de données du sous-contrat",
+    "otherRelatedContracts": "Autres contrats liés",
     "invoices": "Factures",
     "dataSetNotWritable": "Vous n'avez pas le droit de saisie sur '{{dataSetName}}'"
   },

@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { withRouter } from "react-router";
 import PeriodPicker from "../shared/PeriodPicker";
 import PortalHeader from "../shared/PortalHeader";
+import LinkedContract from "./LinkedContract";
 
 function isDataSetComplete(completeDataSetRegistration) {
   if (completeDataSetRegistration == undefined) {
@@ -391,18 +392,26 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
       </div>
 
       {orgUnit && orgUnit.activeContracts && (
-        <div>
-          {t("dataEntry.contractFrom")} <code>{orgUnit.activeContracts[0].startPeriod}</code>{" "}
-          {t("dataEntry.contractTo")} <code>{orgUnit.activeContracts[0].endPeriod}</code>{" "}
-          <Link to={"/contracts/" + orgUnit.id}>
-            <IconButton>
-              <InfoIcon color="action" />
-            </IconButton>
-          </Link>{" "}
-          {orgUnit.activeContracts[0].codes.map((c, index) => (
-            <Chip key={c + "_" + index} label={c} style={{ margin: "5px" }} />
-          ))}
-        </div>
+        <React.Fragment>
+          <div>
+            {t("dataEntry.contractFrom")} <code>{orgUnit.activeContracts[0].startPeriod}</code>{" "}
+            {t("dataEntry.contractTo")} <code>{orgUnit.activeContracts[0].endPeriod}</code>{" "}
+            <Link to={"/contracts/" + orgUnit.id}>
+              <IconButton>
+                <InfoIcon color="action" />
+              </IconButton>
+            </Link>{" "}
+            {orgUnit.activeContracts[0].codes.map((c, index) => (
+              <Chip key={c + "_" + index} label={c} style={{ margin: "5px" }} />
+            ))}
+          </div>
+          <div>
+            <LinkedContract
+              period={quarterPeriod}
+              linkedContracts={(mainContractDataEntries && [mainContractDataEntries]) || subContractsDataEntries}
+            />
+          </div>
+        </React.Fragment>
       )}
 
       <PortalHeader>
@@ -479,120 +488,6 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
             />
           )}
         </Grid>
-        {mainContractDataEntries && mainContractDataEntries.orgUnit && (
-          <Grid item>
-            <h2>{t("dataEntry.mainContractDataEntries")}</h2>
-            <table>
-              <thead>
-                <tr>
-                  <td>
-                    <Typography>{mainContractDataEntries.orgUnit.name}</Typography>
-                  </td>
-                </tr>
-              </thead>
-              <tbody>
-                {mainContractDataEntries.dataEntry.map((mainContract) => {
-                  return (
-                    <tr>
-                      <td>
-                        {" "}
-                        <Typography variant="overline" gutterBottom>
-                          {mainContract.dataEntryType.name}
-                        </Typography>
-                      </td>
-                      <td>
-                        <Button
-                          key={
-                            mainContract.dataEntryType.code +
-                            "-" +
-                            mainContract.period +
-                            "-" +
-                            mainContractDataEntries.orgUnit.id
-                          }
-                          variant="text"
-                          color="primary"
-                          size="small"
-                          component={Link}
-                          to={
-                            "/dataEntry/" +
-                            mainContractDataEntries.orgUnit.id +
-                            "/" +
-                            mainContract.period +
-                            "/" +
-                            mainContract.dataEntryType.code
-                          }
-                          title={mainContract.period}
-                        >
-                          {DatePeriods.displayName(
-                            mainContract.period,
-                            periodFormat[DatePeriods.detect(mainContract.period)],
-                          )}
-                        </Button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </Grid>
-        )}
-        {subContractsDataEntries && subContractsDataEntries.length > 0 && (
-          <Grid item>
-            <h2>{t("dataEntry.subContractDataEntries")}</h2>
-            {subContractsDataEntries.map((subContract) => {
-              return (
-                <table>
-                  <thead>
-                    <tr>
-                      <td>
-                        <Typography>{subContract.orgUnit.name}</Typography>
-                      </td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {subContract &&
-                      subContract.dataEntry.map((dataEntry) => {
-                        const orgUnitId = subContract.orgUnit.id;
-                        return (
-                          <tr>
-                            <td>
-                              {" "}
-                              <Typography variant="overline" gutterBottom>
-                                {dataEntry.dataEntryType.name}
-                              </Typography>
-                            </td>
-                            <td>
-                              <Button
-                                key={dataEntry.dataEntryType.code + "-" + dataEntry.period + "-" + orgUnitId}
-                                variant="text"
-                                color="primary"
-                                size="small"
-                                component={Link}
-                                to={
-                                  "/dataEntry/" +
-                                  subContract.orgUnit.id +
-                                  "/" +
-                                  dataEntry.period +
-                                  "/" +
-                                  dataEntry.dataEntryType.code
-                                }
-                                title={dataEntry.period}
-                              >
-                                {DatePeriods.displayName(
-                                  dataEntry.period,
-                                  periodFormat[DatePeriods.detect(dataEntry.period)],
-                                )}
-                              </Button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                  </tbody>
-                </table>
-              );
-            })}
-          </Grid>
-        )}
       </Grid>
       <div>
         {formData && (

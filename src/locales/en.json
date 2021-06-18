@@ -39,8 +39,7 @@
     "contractFrom": "Contract from",
     "contractTo": "to",
     "dataEntries": "Data entry",
-    "mainContractDataEntries": "Main contract Data entry",
-    "subContractDataEntries": "Subcontract Data entry",
+    "otherRelatedContracts": "Other related contracts",
     "invoices": "Invoices",
     "dataSetNotWritable": "You don't have write access to '{{dataSetName}}'"
   },

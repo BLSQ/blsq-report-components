@@ -176,3 +176,17 @@ export const defaultContract = (fieldValues) => ({
   fieldValues,
   children: null,
 });
+
+export const cloneContractWithoutId = (contract) => {
+  return {
+    ...contract,
+    id: 0,
+  };
+};
+
+export const findLastContract = (contracts) => {
+  const sortedContracts = _.orderBy(contracts, ["endPeriod"], ["desc"]);
+  let contract = _.head(sortedContracts);
+  let defaultContract = cloneContractWithoutId(contract);
+  return defaultContract;
+};

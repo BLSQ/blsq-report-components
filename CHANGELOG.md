@@ -1,4 +1,10 @@
 
+# @blsq/blsq-report-components@1.0.59
+
+ - [dataentry] Allow [navigation](https://github.com/BLSQ/blsq-report-components/pull/127) between subcontract or main contracts.
+ - [contracts] Allow to create contract with prefilled fields of latest [contract](https://github.com/BLSQ/blsq-report-components/pull/126)
+
+
 # @blsq/blsq-report-components@1.0.58
 
  - [dataentry] Add period picker in header bar

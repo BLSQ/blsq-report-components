@@ -31,8 +31,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
   const dataEntryRegistry = PluginRegistry.extension("dataentry.dataEntries");
   const [orgUnit, setOrgUnit] = useState(undefined);
   const [dataEntries, setDataEntries] = useState(undefined);
-  const [subContractsDataEntries, setSubContractsDataEntries] = useState(undefined);
-  const [mainContractDataEntries, setMainContractDataEntries] = useState(undefined);
+  const [linkedContracts, setLinkedContracts] = useState(undefined);
   const [formData, setFormData] = useState(undefined);
   const [error, setError] = useState(undefined);
   const [generalError, setGeneralError] = useState(undefined);
@@ -67,48 +66,22 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
 
         activeContract.orgUnit.activeContracts = [activeContract];
 
+        const allRelativeActiveContracts = contracts.allContracts.filter((c) => {
+          const belongToOrgunitRelated =
+            c.orgUnit.id == match.params.orgUnitId ||
+            c.orgUnit.id == activeContract.fieldValues.contract_main_orgunit ||
+            c.fieldValues.contract_main_orgunit == match.params.orgUnitId ||
+            (activeContract.fieldValues.contract_main_orgunit &&
+              c.fieldValues.contract_main_orgunit == activeContract.fieldValues.contract_main_orgunit);
+
+          return belongToOrgunitRelated && c.matchPeriod(period);
+        });
+
+        setLinkedContracts(allRelativeActiveContracts);
+
         setOrgUnit(activeContract.orgUnit);
         const expectedDataEntries = dataEntryRegistry.getExpectedDataEntries(activeContract, period);
         setDataEntries(expectedDataEntries);
-
-        const activeSubContracts = contracts.subContracts.contracts.filter(
-          (c) => c.fieldValues.contract_main_orgunit == match.params.orgUnitId && c.matchPeriod(period),
-        );
-        let expectedSubContractDataEntries = [];
-        for (let activeSubContract of activeSubContracts) {
-          activeSubContract.orgUnit.activeContracts = [activeSubContract];
-          const expectedSubContractDataEntry = dataEntryRegistry.getExpectedDataEntries(activeSubContract, period);
-          expectedSubContractDataEntries.push({
-            orgUnit: {
-              id: activeSubContract.orgUnit.id,
-              name: activeSubContract.orgUnit.name,
-            },
-            dataEntry: expectedSubContractDataEntry,
-          });
-        }
-        setSubContractsDataEntries(expectedSubContractDataEntries);
-
-        const mainContract = await contractService.fetchContracts(activeContract.fieldValues.contract_main_orgunit);
-        const activeMainContracts =
-          (mainContract.allContracts &&
-            mainContract.allContracts.filter(
-              (c) => c.orgUnit.id == activeContract.fieldValues.contract_main_orgunit && c.matchPeriod(period),
-            )) ||
-          [];
-        let activeMainContract = activeMainContracts[0] || [];
-        activeMainContract.orgUnit = { activeContracts: activeMainContract.length > 0 ? [activeMainContract] : [] };
-        const expectedMainContractDataEntries = dataEntryRegistry.getExpectedDataEntries(activeMainContract, period);
-        const expectedMainContractDataEntry =
-          expectedMainContractDataEntries.length > 0
-            ? {
-                orgUnit: {
-                  id: activeMainContract.fieldValues.orgUnit.id,
-                  name: activeMainContract.fieldValues.orgUnit.name,
-                },
-                dataEntry: expectedMainContractDataEntries,
-              }
-            : undefined;
-        setMainContractDataEntries(expectedMainContractDataEntry && [expectedMainContractDataEntry]);
 
         if (match.params.dataEntryCode == undefined && expectedDataEntries.length > 0) {
           const defaultDataEntry = expectedDataEntries[0];
@@ -369,7 +342,11 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
 
   return (
     <Paper style={{ minHeight: "90vh", paddingLeft: "50px", paddingTop: "20px" }}>
-      {generalError && <div style={{ color: "red" }}>{generalError.message}</div>}
+      {generalError && (
+        <div style={{ color: "red" }} title={generalError.stack}>
+          {generalError.message}
+        </div>
+      )}
       {error && (
         <div>
           <Link to={error.link}>{error.message}</Link>
@@ -405,15 +382,11 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
               <Chip key={c + "_" + index} label={c} style={{ margin: "5px" }} />
             ))}
           </div>
-          {((mainContractDataEntries && mainContractDataEntries.length > 0) ||
-        (subContractsDataEntries && subContractsDataEntries.length > 0)) && (
+          {linkedContracts && linkedContracts.length > 1 && (
             <div>
-            <LinkedContract
-              period={quarterPeriod}
-              linkedContracts={mainContractDataEntries || subContractsDataEntries}
-            />
-          </div>)
-        }
+              <LinkedContract period={quarterPeriod} orgUnit={orgUnit} linkedContracts={linkedContracts} />
+            </div>
+          )}
         </React.Fragment>
       )}
 

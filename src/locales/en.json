@@ -39,6 +39,8 @@
     "contractFrom": "Contract from",
     "contractTo": "to",
     "dataEntries": "Data entry",
+    "otherRelatedContracts": "Other related contracts",
+    "seeLinkedData": "See data",
     "invoices": "Invoices",
     "dataSetNotWritable": "You don't have write access to '{{dataSetName}}'"
   },

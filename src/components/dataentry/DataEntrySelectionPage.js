@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { withRouter } from "react-router";
 import PeriodPicker from "../shared/PeriodPicker";
 import PortalHeader from "../shared/PortalHeader";
+import LinkedContract from "./LinkedContract";
 
 function isDataSetComplete(completeDataSetRegistration) {
   if (completeDataSetRegistration == undefined) {
@@ -30,6 +31,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
   const dataEntryRegistry = PluginRegistry.extension("dataentry.dataEntries");
   const [orgUnit, setOrgUnit] = useState(undefined);
   const [dataEntries, setDataEntries] = useState(undefined);
+  const [linkedContracts, setLinkedContracts] = useState(undefined);
   const [formData, setFormData] = useState(undefined);
   const [error, setError] = useState(undefined);
   const [generalError, setGeneralError] = useState(undefined);
@@ -45,6 +47,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
           (c) => c.orgUnit.id == match.params.orgUnitId && c.matchPeriod(period),
         );
         const activeContract = activeContracts[0];
+
         if (activeContract == undefined) {
           setError({
             message: match.params.orgUnitId + " has no contract for that period : " + period,
@@ -62,6 +65,19 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
         }
 
         activeContract.orgUnit.activeContracts = [activeContract];
+
+        const allRelativeActiveContracts = contracts.allContracts.filter((c) => {
+          const belongToOrgunitRelated =
+            c.orgUnit.id == match.params.orgUnitId ||
+            c.orgUnit.id == activeContract.fieldValues.contract_main_orgunit ||
+            c.fieldValues.contract_main_orgunit == match.params.orgUnitId ||
+            (activeContract.fieldValues.contract_main_orgunit &&
+              c.fieldValues.contract_main_orgunit == activeContract.fieldValues.contract_main_orgunit);
+
+          return belongToOrgunitRelated && c.matchPeriod(period);
+        });
+
+        setLinkedContracts(allRelativeActiveContracts);
 
         setOrgUnit(activeContract.orgUnit);
         const expectedDataEntries = dataEntryRegistry.getExpectedDataEntries(activeContract, period);
@@ -139,7 +155,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
             [v.orgUnit, v.period, v.dataElement, v.categoryOptionCombo].join("-"),
           );
 
-          let calculator = undefined;
+          let calculator;
           if (dataEntryRegistry.getCalculator) {
             calculator = dataEntryRegistry.getCalculator(activeContract.orgUnit, period, match.params.dataEntryCode);
             if (calculator) {
@@ -307,7 +323,8 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
     loadData();
   }, []);
   let DataEntryForm = React.Fragment;
-  let dataEntryType = undefined;
+  let dataEntryType;
+
   if (
     dataEntryRegistry &&
     match.params.dataEntryCode &&
@@ -325,7 +342,11 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
 
   return (
     <Paper style={{ minHeight: "90vh", paddingLeft: "50px", paddingTop: "20px" }}>
-      {generalError && <div style={{ color: "red" }}>{generalError.message}</div>}
+      {generalError && (
+        <div style={{ color: "red" }} title={generalError.stack}>
+          {generalError.message}
+        </div>
+      )}
       {error && (
         <div>
           <Link to={error.link}>{error.message}</Link>
@@ -348,24 +369,31 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
       </div>
 
       {orgUnit && orgUnit.activeContracts && (
-        <div>
-          {t("dataEntry.contractFrom")} <code>{orgUnit.activeContracts[0].startPeriod}</code>{" "}
-          {t("dataEntry.contractTo")} <code>{orgUnit.activeContracts[0].endPeriod}</code>{" "}
-          <Link to={"/contracts/" + orgUnit.id}>
-            <IconButton>
-              <InfoIcon color="action" />
-            </IconButton>
-          </Link>{" "}
-          {orgUnit.activeContracts[0].codes.map((c, index) => (
-            <Chip key={c + "_" + index} label={c} style={{ margin: "5px" }} />
-          ))}
-        </div>
+        <React.Fragment>
+          <div>
+            {t("dataEntry.contractFrom")} <code>{orgUnit.activeContracts[0].startPeriod}</code>{" "}
+            {t("dataEntry.contractTo")} <code>{orgUnit.activeContracts[0].endPeriod}</code>{" "}
+            <Link to={"/contracts/" + orgUnit.id}>
+              <IconButton>
+                <InfoIcon color="action" />
+              </IconButton>
+            </Link>{" "}
+            {orgUnit.activeContracts[0].codes.map((c, index) => (
+              <Chip key={c + "_" + index} label={c} style={{ margin: "5px" }} />
+            ))}
+          </div>
+          {linkedContracts && linkedContracts.length > 1 && (
+            <div>
+              <LinkedContract period={quarterPeriod} orgUnit={orgUnit} linkedContracts={linkedContracts} />
+            </div>
+          )}
+        </React.Fragment>
       )}
 
       <PortalHeader>
         <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start" }}>
           <Typography variant="h6" style={{ marginRight: "20px" }}>
-              {t("dataEntry.dataEntries")}
+            {t("dataEntry.dataEntries")}
           </Typography>
           <div style={{ background: "rgba(255, 255, 255, 0.20)", color: "#fff; important!", padding: "5px" }}>
             <PeriodPicker
@@ -379,7 +407,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
               onPeriodChange={(newPeriod) => {
                 history.push("/dataEntry/" + match.params.orgUnitId + "/" + newPeriod);
               }}
-            ></PeriodPicker>
+            />
           </div>
         </div>
       </PortalHeader>

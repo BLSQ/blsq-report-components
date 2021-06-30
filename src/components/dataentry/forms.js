@@ -151,7 +151,6 @@ export const buildFormData = async ({ dhis2, api, dataEntryCode, activeContract,
     isDataSetComplete(dataSetId) {
       if (dataSetId == undefined) {
         const reg = this.completeDataSetRegistrations.find((registration) => registration.dataSet == this.dataSet.id);
-        debugger;
         const completed = isDataSetComplete(reg);
         return completed
       } else {

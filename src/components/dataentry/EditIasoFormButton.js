@@ -3,9 +3,9 @@ import React, {useContext} from "react";
 import FormDataContext from "./FormDataContext";
 import { Button } from "@material-ui/core";
 
-const EditIasoFormButton = ({ formId, currentUserId, period, orgUnitId, iasoToken }) => {
+const EditIasoFormButton = ({ formId, currentUserId, period, orgUnitId, iasoToken, dataSetId }) => {
   const formDataContext = useContext(FormDataContext);
-
+  const currentDataSetId  = dataSetId ? dataSetId : formDataContext.dataSet.id
   const iasoHost = "https://iaso.bluesquare.org";
   const iasoUrl = `${iasoHost}/api/enketo/public_create_url/`;
   const returnUrl = encodeURIComponent(window.location.href);
@@ -25,12 +25,14 @@ const EditIasoFormButton = ({ formId, currentUserId, period, orgUnitId, iasoToke
     }
   };
 
+  const writable = formDataContext.isDataWritable(currentDataSetId)
+
   return (
     <Button
       color="secondary"
       title={"Edit in iaso : " + formId}
       onClick={handleClick}
-      disabled={!formDataContext.isDataWritable()}
+      disabled={!writable}
     >
       Edit
     </Button>

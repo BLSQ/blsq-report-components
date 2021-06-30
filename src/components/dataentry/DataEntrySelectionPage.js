@@ -89,6 +89,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
         const api = await dhis2.api();
         if (match.params.dataEntryCode) {
           const newFormData = await buildFormData({
+            dhis2: dhis2,
             api: api,
             dataEntryCode: match.params.dataEntryCode,
             activeContract: activeContract,

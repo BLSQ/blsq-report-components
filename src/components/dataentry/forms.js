@@ -1,4 +1,5 @@
 import _ from "lodash";
+import PluginRegistry from "../core/PluginRegistry";
 
 export const isDataSetComplete = (completeDataSetRegistration) => {
   if (completeDataSetRegistration == undefined) {
@@ -73,7 +74,7 @@ const toggleDataSetCompletion = async (api, dataSetId, period, orgUnitId, comple
   } else if (completeDataSetRegistration && completed) {
     // older dhis2 delete the existing completion record
     await api.delete(
-      "completeDataSetRegistrations?ds=" + dataSetId + "&pe=" + this.period + "&ou=" + orgUnitId + "&multiOu=false",
+      "completeDataSetRegistrations?ds=" + dataSetId + "&pe=" + period + "&ou=" + orgUnitId + "&multiOu=false",
     );
   } else {
     // create a registration record (with the completed flag just in case)
@@ -91,7 +92,7 @@ const toggleDataSetCompletion = async (api, dataSetId, period, orgUnitId, comple
   }
 };
 
-export const buildFormData = async ({ api, dataEntryCode, activeContract, dataEntryRegistry, period, setFormData }) => {
+export const buildFormData = async ({ dhis2, api, dataEntryCode, activeContract, dataEntryRegistry, period, setFormData }) => {
   const dataEntry = dataEntryRegistry.getDataEntry(dataEntryCode);
   const dataSets = await fetchDataSets(api, dataEntry);
   const dataSet = dataSets[0];
@@ -149,7 +150,10 @@ export const buildFormData = async ({ api, dataEntryCode, activeContract, dataEn
 
     isDataSetComplete(dataSetId) {
       if (dataSetId == undefined) {
-        return this.dataSetComplete;
+        const reg = this.completeDataSetRegistrations.find((registration) => registration.dataSet == this.dataSet.id);
+        debugger;
+        const completed = isDataSetComplete(reg);
+        return completed
       } else {
         const reg = this.completeDataSetRegistrations.find((registration) => registration.dataSet == dataSetId);
         const completed = isDataSetComplete(reg);
@@ -245,7 +249,6 @@ export const buildFormData = async ({ api, dataEntryCode, activeContract, dataEn
       const completeDataSetRegistration = this.completeDataSetRegistrations.find(
         (registration) => registration.dataSet == dataSetId,
       );
-
       await toggleDataSetCompletion(
         api,
         dataSetId,
@@ -269,7 +272,6 @@ export const buildFormData = async ({ api, dataEntryCode, activeContract, dataEn
       this.completeDataSetRegistrations = completeDataSetRegistrations;
       const updatedFormaData = {
         ...this,
-        dataSetComplete: isDataSetComplete(completeDataSetRegistration[0]),
         completeDataSetRegistration: completeDataSetRegistrations[0],
         completeDataSetRegistrations: completeDataSetRegistrations,
       };

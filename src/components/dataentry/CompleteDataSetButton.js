@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { Button } from "@material-ui/core";
 import FormDataContext from "./FormDataContext";
 
-const CompleteDataSetButton = ({ calculations, completable, dataSetId }) => {
+const CompleteDataSetButton = ({ variant, calculations, completable, dataSetId }) => {
   const isDataSetCompletable = completable == undefined ? true : completable;
   const formDataContext = useContext(FormDataContext);
 
@@ -25,7 +25,7 @@ const CompleteDataSetButton = ({ calculations, completable, dataSetId }) => {
   return (
     <Button
       key={currentDataSetId + "-" + isComplete}
-      variant="contained"
+      variant={variant || "contained"}
       disabled={loading || !isWritable || (!isComplete && !isDataSetCompletable)}
       color="primary"
       onClick={onClick}

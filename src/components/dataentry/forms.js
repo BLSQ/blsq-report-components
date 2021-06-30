@@ -57,6 +57,40 @@ const fetchDataValues = async (api, dataEntry, activeContract, dataEntryRegistry
   return rawValues;
 };
 
+const toggleDataSetCompletion = async (api, dataSetId, period, orgUnitId, completeDataSetRegistration, completed) => {
+  if (completeDataSetRegistration && "completed" in completeDataSetRegistration) {
+    // newer dhis2 version just toggle "completed" or create one
+    await api.post("completeDataSetRegistrations", {
+      completeDataSetRegistrations: [
+        {
+          dataSet: dataSetId,
+          period: period,
+          organisationUnit: orgUnitId,
+          completed: !completed,
+        },
+      ],
+    });
+  } else if (completeDataSetRegistration && completed) {
+    // older dhis2 delete the existing completion record
+    await api.delete(
+      "completeDataSetRegistrations?ds=" + dataSetId + "&pe=" + this.period + "&ou=" + orgUnitId + "&multiOu=false",
+    );
+  } else {
+    // create a registration record (with the completed flag just in case)
+
+    await api.post("completeDataSetRegistrations", {
+      completeDataSetRegistrations: [
+        {
+          dataSet: dataSetId,
+          period: period,
+          organisationUnit: orgUnitId,
+          completed: !completed,
+        },
+      ],
+    });
+  }
+};
+
 export const buildFormData = async ({ api, dataEntryCode, activeContract, dataEntryRegistry, period, setFormData }) => {
   const dataEntry = dataEntryRegistry.getDataEntry(dataEntryCode);
   const dataSets = await fetchDataSets(api, dataEntry);
@@ -83,7 +117,7 @@ export const buildFormData = async ({ api, dataEntryCode, activeContract, dataEn
       dataElementsById[extraDe.id] = extraDe;
     }
   }
-  const defaultCoc = fetchDefaultCoc(api);
+  const defaultCoc = await fetchDefaultCoc(api);
 
   const indexedValues = _.groupBy(rawValues, (v) =>
     [v.orgUnit, v.period, v.dataElement, v.categoryOptionCombo].join("-"),
@@ -211,43 +245,15 @@ export const buildFormData = async ({ api, dataEntryCode, activeContract, dataEn
       const completeDataSetRegistration = this.completeDataSetRegistrations.find(
         (registration) => registration.dataSet == dataSetId,
       );
-      if (completeDataSetRegistration && "completed" in completeDataSetRegistration) {
-        // newer dhis2 version just toggle "completed" or create one
-        const resp = await api.post("completeDataSetRegistrations", {
-          completeDataSetRegistrations: [
-            {
-              dataSet: dataSetId,
-              period: this.period,
-              organisationUnit: activeContract.orgUnit.id,
-              completed: !completed,
-            },
-          ],
-        });
-      } else if (completeDataSetRegistration && completed) {
-        // older dhis2 delete the existing completion record
-        await api.delete(
-          "completeDataSetRegistrations?ds=" +
-            dataSetId +
-            "&pe=" +
-            this.period +
-            "&ou=" +
-            activeContract.orgUnit.id +
-            "&multiOu=false",
-        );
-      } else {
-        // create a registration record (with the completed flag just in case)
 
-        await api.post("completeDataSetRegistrations", {
-          completeDataSetRegistrations: [
-            {
-              dataSet: dataSetId,
-              period: this.period,
-              organisationUnit: activeContract.orgUnit.id,
-              completed: !completed,
-            },
-          ],
-        });
-      }
+      await toggleDataSetCompletion(
+        api,
+        dataSetId,
+        period,
+        activeContract.orgUnit.id,
+        completeDataSetRegistration,
+        completed,
+      );
 
       if (calculations && !completed) {
         const orbf2 = PluginRegistry.extension("invoices.hesabu");

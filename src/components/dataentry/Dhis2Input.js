@@ -58,7 +58,7 @@ const Dhis2Input = ({ dataElement }) => {
           onClose={handleCloseToolTip}
           title={
             <div>
-              <pre>{JSON.stringify(dataValue, undefined, 2)}</pre>
+              <pre>{JSON.stringify({dataValue, isComplete, isDataWritable}, undefined, 2)}</pre>
             </div>
           }
         >

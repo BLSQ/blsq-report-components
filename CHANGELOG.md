@@ -1,3 +1,6 @@
+# @blsq/blsq-report-components@1.0.60
+
+ - [dataentry] Allow multiple dataset and offer complete button where we can pass a dataSetId
 
 # @blsq/blsq-report-components@1.0.59
 

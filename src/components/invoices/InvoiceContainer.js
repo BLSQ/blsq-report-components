@@ -240,6 +240,7 @@ class InvoiceContainer extends Component {
       invoice.orgUnits.forEach((ou) => (orgUnitsById[ou.id] = ou));
 
       let allowedCalculations = calculations;
+
       if (this.props.invoices.getDataApprovals) {
         const approvableOrgUnitIds = new Set(
           invoice.currentApprovals
@@ -250,9 +251,12 @@ class InvoiceContainer extends Component {
         allowedCalculations = calculations.filter((calculation) => {
           const orgUnit = orgUnitsById[calculation.orgUnitId];
           if (orgUnit == undefined) {
-            return true // let's trust the code calculations "specific" code, perhaps an orgunit at higher level
+            return true; // let's trust the code calculations "specific" code, perhaps an orgunit at higher level
           }
-          return orgUnit && orgUnit.ancestors.some((ou) => approvableOrgUnitIds.has(ou.id));
+          return (
+            orgUnit &&
+            (orgUnit.ancestors.some((ou) => approvableOrgUnitIds.has(ou.id)) || approvableOrgUnitIds.has(orgUnit.id))
+          );
         });
 
         console.log(

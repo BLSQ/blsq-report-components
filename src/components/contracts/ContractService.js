@@ -326,12 +326,27 @@ class ContractService {
 
   async createContract(orgUnitIds, contract) {
     const events = orgUnitIds.map((orgUnitId) => this.getEvent(contract.fieldValues, orgUnitId));
+    try {
+      for (const orgUnitId of orgUnitIds) {
+        await this.api.post("programs/" + this.program.id + "/organisationUnits/" + orgUnitId, { id: orgUnitId });
+      }
+    } catch (ignore) {
+      console.log("probably no access to right to assign the orgunit", ignore.message);
+    }
     const res = await this.api.post("events", { events });
     return res;
   }
 
   async createContracts(contracts) {
     const events = contracts.map((contract) => this.getEvent(contract.fieldValues, contract.orgUnit.id));
+    try {
+      for (const contract of contracts) {
+        const orgUnitId = contract.orgUnit.id;
+        await this.api.post("programs/" + this.program.id + "/organisationUnits/" + orgUnitId, { id: orgUnitId });
+      }
+    } catch (ignore) {
+      console.log("probably no access to right to assign the orgunit", ignore.message);
+    }
     const res = await this.api.post("events", { events });
     return res;
   }

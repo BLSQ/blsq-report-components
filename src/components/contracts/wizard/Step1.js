@@ -4,6 +4,10 @@ import { InputLabel } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import PluginRegistry from "../../core/PluginRegistry";
 
+function isFunction(functionToCheck) {
+  return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
+ }
+
 const Step1 = ({ contractsToImport, setContractsToImport }) => {
   const contractService = PluginRegistry.extension("contracts.service");
 
@@ -14,8 +18,41 @@ const Step1 = ({ contractsToImport, setContractsToImport }) => {
 
     PapaParse.parse(file, {
       header: true,
-      dynamicTyping: true,
       complete: function (data) {
+        const contractService = PluginRegistry.extension("contracts.service");
+        const contractFields = contractService.contractFields();
+        const alternateNames = {
+          contract_main_orgunit: "Unité d'organisation principale",
+          contract_start_date: "Début",
+          contract_end_date: "Fin",
+        };
+        debugger;
+        
+        // Allow to read the "exported" format
+        for (const record of data.data) {
+          if (record["Nom d'unité d'organisation"]) {
+            record["orgUnit-name"] = record["Nom d'unité d'organisation"]
+          }
+          if (record["Id d'unité d'organisation"]) {
+            record["orgUnit-id"] = record["Id d'unité d'organisation"]
+          }
+          debugger;
+          for (const field of contractFields) {
+            const value = record[field.name] || record[alternateNames[field.code]];
+            if (value) {
+              if (!data.meta.fields.includes(field.code)) {
+                data.meta.fields.push(field.code);
+              }
+              record[field.code] = value;
+            }
+          }  
+          if (record.contract_start_date && isFunction(record.contract_start_date.toISOString)) {
+            record.contract_start_date = record.contract_start_date.toISOString().slice(0,8)
+          }
+          if (record.contract_end_date && isFunction(record.contract_end_date.toISOString)) {
+            record.contract_end_date = record.contract_start_date.toISOString().slice(0,8)
+          }
+        }
         setContractsToImport(data);
       },
     });

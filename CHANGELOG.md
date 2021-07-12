@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.61
+
+ - [contracts] Assign organisation unit to contract program when creating/importing contracts.
+
 # @blsq/blsq-report-components@1.0.60
 
  - [dataentry] Allow multiple dataset and offer complete button where we can pass a dataSetId

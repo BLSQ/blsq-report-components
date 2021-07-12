@@ -26,17 +26,9 @@ const Step1 = ({ contractsToImport, setContractsToImport }) => {
           contract_start_date: "Début",
           contract_end_date: "Fin",
         };
-        debugger;
         
         // Allow to read the "exported" format
         for (const record of data.data) {
-          if (record["Nom d'unité d'organisation"]) {
-            record["orgUnit-name"] = record["Nom d'unité d'organisation"]
-          }
-          if (record["Id d'unité d'organisation"]) {
-            record["orgUnit-id"] = record["Id d'unité d'organisation"]
-          }
-          debugger;
           for (const field of contractFields) {
             const value = record[field.name] || record[alternateNames[field.code]];
             if (value) {
@@ -46,6 +38,12 @@ const Step1 = ({ contractsToImport, setContractsToImport }) => {
               record[field.code] = value;
             }
           }  
+          if (record["Nom d'unité d'organisation"]) {
+            record["orgUnit-name"] = record["Nom d'unité d'organisation"]
+          }
+          if (record["Id d'unité d'organisation"]) {
+            record["orgUnit-id"] = record["Id d'unité d'organisation"]
+          }
           if (record.contract_start_date && isFunction(record.contract_start_date.toISOString)) {
             record.contract_start_date = record.contract_start_date.toISOString().slice(0,8)
           }

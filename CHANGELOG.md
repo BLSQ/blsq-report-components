@@ -1,5 +1,10 @@
 # @blsq/blsq-report-components@1.0.61
 
+ - [sync-dataset] Fix add missing data elements (broken since 1.0.60)
+
+
+# @blsq/blsq-report-components@1.0.61
+
  - [contracts] Assign organisation unit to contract program when creating/importing contracts.
 
 # @blsq/blsq-report-components@1.0.60
@@ -10,7 +15,6 @@
 
  - [dataentry] Allow [navigation](https://github.com/BLSQ/blsq-report-components/pull/127) between subcontract or main contracts.
  - [contracts] Allow to create contract with prefilled fields of latest [contract](https://github.com/BLSQ/blsq-report-components/pull/126)
-
 
 # @blsq/blsq-report-components@1.0.58
 

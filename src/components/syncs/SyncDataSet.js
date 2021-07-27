@@ -153,8 +153,8 @@ const SyncDataSet = (props) => {
 
   const addMissingDe = async (dataEntry) => {
     setLoading(true);
-    const missing = contractsByDataEntryCode[dataEntry.code].missingDataElements;
-
+    const missing = contractsByDataEntryCode[dataEntry.code][0].missingDataElements;
+    
     const api = await dhis2.api();
     const dataSet = await api.get("dataSets/" + dataEntry.dataSetId, {
       fields: ":all",

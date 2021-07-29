@@ -124,7 +124,6 @@ class ContractService {
           name: row[nameIndex],
         });
       }
-
       return {
         event: row[indexes.event_id],
         orgUnit: row[indexes.org_unit_id],
@@ -262,7 +261,7 @@ class ContractService {
     return this.computeContracts(contracts, orgUnitId);
   }
 
-  getEvent = (contractInfo, orgUnitId) => {
+  getEvent = (contractInfo, orgUnitId, contractId) => {
     const dataValues = [];
     const ignoredFields = ["id", "orgUnit"];
 
@@ -297,6 +296,9 @@ class ContractService {
       programStage: this.program.programStages[0].id,
       dataValues,
     };
+    if (contractId) {
+      event.event = contractId
+    }
     return event;
   };
 
@@ -325,7 +327,7 @@ class ContractService {
   }
 
   async createContract(orgUnitIds, contract) {
-    const events = orgUnitIds.map((orgUnitId) => this.getEvent(contract.fieldValues, orgUnitId));
+    const events = orgUnitIds.map((orgUnitId) => this.getEvent(contract.fieldValues, orgUnitId, contract.id));
     try {
       for (const orgUnitId of orgUnitIds) {
         await this.api.post("programs/" + this.program.id + "/organisationUnits/" + orgUnitId, { id: orgUnitId });
@@ -338,7 +340,7 @@ class ContractService {
   }
 
   async createContracts(contracts) {
-    const events = contracts.map((contract) => this.getEvent(contract.fieldValues, contract.orgUnit.id));
+    const events = contracts.map((contract) => this.getEvent(contract.fieldValues, contract.orgUnit.id, contract.id));
     try {
       for (const contract of contracts) {
         const orgUnitId = contract.orgUnit.id;

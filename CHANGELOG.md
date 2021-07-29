@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.62
+ 
+ - [contracts] Allow to mass update contracts fields with the wizard
+
 # @blsq/blsq-report-components@1.0.61
 
  - [sync-dataset] Fix add missing data elements (broken since 1.0.60)

@@ -84,6 +84,10 @@ function HorizontalLabelPositionBelowStepper({ dhis2 }) {
         contractFields.forEach((field) => (fieldValues[field.code] = contractRaw[field.code]));
 
         const contract = contractService.newContract(fieldValues);
+
+        if (contractRaw.action == "update") {
+          contract.id = contractRaw.id
+        }
         return contract;
       });
 

@@ -29,7 +29,7 @@ const Step2 = ({ contractsToImport, dhis2, setValidatedContracts, setIsLoading }
         };
 
         const fieldValues = {
-          id: "csv_" + (index + 1),
+          id: contractRaw.id ? contractRaw.id : undefined,
           contract_start_date: contractRaw.contract_start_date,
           contract_end_date: contractRaw.contract_end_date,
           orgUnit: orgUnit,
@@ -70,9 +70,13 @@ const Step2 = ({ contractsToImport, dhis2, setValidatedContracts, setIsLoading }
             }
           }
         });
+        const sameContractId = currentContracts.find(
+          (currentContract) => contractRaw.id && currentContract.id !== contractRaw.id
+        );        
+        contractRaw.action = sameContractId ? "update" : "create"
         // validate overlaps
         const overlappingContract = currentContracts.find(
-          (currentContract) => currentContract.orgUnit.id == contract.orgUnit.id && currentContract.overlaps(contract),
+          (currentContract) => currentContract.id !== contract.id && currentContract.orgUnit.id == contract.orgUnit.id && currentContract.overlaps(contract),
         );
         if (overlappingContract) {
           contractRaw.warnings.push(
@@ -81,7 +85,7 @@ const Step2 = ({ contractsToImport, dhis2, setValidatedContracts, setIsLoading }
               " -> " +
               overlappingContract.endPeriod +
               " : " +
-              overlappingContract.codes.join(" "),
+              overlappingContract.codes.join(" ") +`(${overlappingContract.id})`,
           );
         }
 
@@ -129,7 +133,7 @@ const Step2 = ({ contractsToImport, dhis2, setValidatedContracts, setIsLoading }
         <MUIDataTable
           title={""}
           data={contracts}
-          columns={["orgUnit-id", "orgUnit-name"].concat(contractFields.map((f) => f.code)).concat(["warnings", "orgUnit-path"])}
+          columns={["id","orgUnit-id", "orgUnit-name"].concat(contractFields.map((f) => f.code)).concat(["action","warnings", "orgUnit-path"])}
           options={{
             fixedHeader: true,
             responsive: 'scrollMaxHeight',

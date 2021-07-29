@@ -1,4 +1,4 @@
-# @blsq/blsq-report-components@1.0.62
+# @blsq/blsq-report-components@1.0.64
  
  - [contracts] Allow to mass update contracts fields with the wizard
 

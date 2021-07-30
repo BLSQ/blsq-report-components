@@ -59,6 +59,7 @@ const CompletenessView = (props) => {
   const [statsByZone, setStatsByZone] = React.useState([]);
   const [distinctDataEntries, setDistinctDataEntries] = React.useState([]);
   const [selectedZones, setSelectedZones] = React.useState([]);
+
   const loadContracts = async () => {
     const DataEntries = PluginRegistry.extension("dataentry.dataEntries");
 

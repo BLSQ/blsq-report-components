@@ -1,16 +1,18 @@
 import React, { useEffect } from "react";
 import { TableCell, TableRow } from "@material-ui/core";
-
+import { onTableChange } from "./urlParams";
 import CompletionInfo from "./CompletionInfo";
 
 export const tableOptions = (quarterPeriod) => {
   return {
     enableNestedDataAccess: ".",
     print: false,
+    filter: true,
+    onTableChange: onTableChange("ou."),
     rowsPerPage: 50,
     rowsPerPageOptions: [1, 5, 10, 20, 50, 100, 1000],
     downloadOptions: {
-      filename: "orgunit-completeness-" + quarterPeriod+".csv",
+      filename: "orgunit-completeness-" + quarterPeriod + ".csv",
       separator: ",",
     },
   };
@@ -19,11 +21,13 @@ export const tableOptions = (quarterPeriod) => {
 export const statsTableOptions = (quarterPeriod, statsByZone, setSelectedZones) => {
   return {
     enableNestedDataAccess: ".",
+    filter: true,
+    onTableChange: onTableChange("zone."),
     print: false,
     rowsPerPage: 5,
     rowsPerPageOptions: [1, 5, 10, 20, 50, 100, 1000],
     downloadOptions: {
-      filename: "zone-completeness-" + quarterPeriod+".csv",
+      filename: "zone-completeness-" + quarterPeriod + ".csv",
       separator: ",",
     },
     onRowSelectionChange: (_currentRowsSelected, _allRowsSelected, rowsSelected) => {
@@ -160,6 +164,19 @@ export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos) =>
       },
     },
     {
+      name: "status",
+      label: "Status",
+      options: {
+        filter: true,
+        sort: true,
+        display: true,
+        customBodyRenderLite: (dataIndex) => {
+          const info = filteredCompletnessInfos[dataIndex];
+          return <span>{info.status}</span>;
+        },
+      },
+    },
+    {
       name: "completedCount",
       label: "Completed",
       options: {
@@ -283,7 +300,7 @@ export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos) =>
         },
         {
           name: c.period + "-" + c.dataEntryType.category + "-users",
-          label: c.dataEntryType.category +" User "+ "\n" + c.period,
+          label: c.dataEntryType.category + " User " + "\n" + c.period,
           options: {
             filter: true,
             sort: true,
@@ -292,7 +309,7 @@ export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos) =>
         },
         {
           name: c.period + "-" + c.dataEntryType.category + "-dates",
-          label: c.dataEntryType.category +" Date "+ "\n" + c.period,
+          label: c.dataEntryType.category + " Date " + "\n" + c.period,
           options: {
             filter: true,
             sort: true,
@@ -301,7 +318,7 @@ export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos) =>
         },
         {
           name: c.period + "-" + c.dataEntryType.category + "-link",
-          label: c.dataEntryType.category +" Link "+ "\n" + c.period,
+          label: c.dataEntryType.category + " Link " + "\n" + c.period,
           options: {
             filter: true,
             sort: true,

@@ -4,10 +4,14 @@ import { onTableChange } from "./urlParams";
 import CompletionInfo from "./CompletionInfo";
 
 export const tableOptions = (quarterPeriod) => {
+  const queryParams = new URLSearchParams(window.location.hash.split("?")[1]);
+
   return {
     enableNestedDataAccess: ".",
     print: false,
+    searchOpen: !!queryParams.get("ou.searchText"),
     filter: true,
+    selectableRows: "none",
     onTableChange: onTableChange("ou."),
     rowsPerPage: 50,
     rowsPerPageOptions: [1, 5, 10, 20, 50, 100, 1000],
@@ -18,11 +22,14 @@ export const tableOptions = (quarterPeriod) => {
   };
 };
 
-export const statsTableOptions = (quarterPeriod, statsByZone, setSelectedZones) => {
+export const statsTableOptions = (quarterPeriod, statsByZone, setSelectedZones, t) => {
+  const queryParams = new URLSearchParams(window.location.hash.split("?")[1]);
+
   return {
     enableNestedDataAccess: ".",
     filter: true,
-    onTableChange: onTableChange("zone."),
+    searchOpen: !!queryParams.get("zone.searchText"),
+    onTableChange: onTableChange("zone.", t),
     print: false,
     rowsPerPage: 5,
     rowsPerPageOptions: [1, 5, 10, 20, 50, 100, 1000],
@@ -90,7 +97,7 @@ export const statsTableOptions = (quarterPeriod, statsByZone, setSelectedZones) 
   };
 };
 
-export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos) => {
+export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos, t) => {
   return [
     {
       name: "contract.orgUnit.id",
@@ -172,7 +179,7 @@ export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos) =>
         display: true,
         customBodyRenderLite: (dataIndex) => {
           const info = filteredCompletnessInfos[dataIndex];
-          return <span>{info.status}</span>;
+          return <span>{t("completeness."+info.status)}</span>;
         },
       },
     },

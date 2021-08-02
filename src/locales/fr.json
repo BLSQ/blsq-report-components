@@ -2,6 +2,14 @@
   "app_name": "Factures & Rapports",
   "clear": "Supprimer",
   "codes": "Codes",
+  "completeness": {
+    "header":"Complétude des datasets",
+    "statsByZone" : "Statistiques par zone",
+    "statsForOrgUnits" : "Situation par orgUnit" ,
+    "statsForOrgUnitsUnder":"Situation par orgUnit en dessous",
+    "complete": "complet",
+    "incomplete": "incomplet"    
+  },
   "contracts": {
     "activeToday": "Actif aujourd'hui",
     "activeAt": "Actif le",

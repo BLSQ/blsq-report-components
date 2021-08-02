@@ -6,7 +6,7 @@
     "header":"Completeness for datasets",
     "statsByZone" : "Statistics by zone",
     "statsForOrgUnits" : "Situation by orgUnit" ,
-    "statsForOrgUnitsUnder":"Situation by orgUnit under",
+    "statsForOrgUnitsUnder":"Situation by orgUnit under: ",
     "complete": "complete",
     "incomplete": "incomplete"
   },

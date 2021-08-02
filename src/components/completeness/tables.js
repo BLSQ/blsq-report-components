@@ -27,11 +27,24 @@ export const tableOptions = (quarterPeriod) => {
 export const statsTableOptions = (quarterPeriod, statsByZone, setSelectedZones, t) => {
   const queryParams = anchorQueryParams()
 
+  const selectIndexes = []
+  const selectedZones = queryParams.get("selectedZones");
+  if (statsByZone && selectedZones) {
+    let selectIndex = 0;
+    for (let row of statsByZone) {
+      if (row && row.orgUnit && selectedZones.includes(row.orgUnit.id)) {
+        selectIndexes.push(selectIndex)
+      }
+      selectIndex = selectIndex + 1;
+    }
+  }
+
   return {
     enableNestedDataAccess: ".",
     filter: true,
     searchOpen: !!queryParams.get("zone.searchText"),
-    onTableChange: onTableChange("zone.", t),
+    onTableChange: onTableChange("zone.", statsByZone),
+    rowsSelected: selectIndexes,
     print: false,
     rowsPerPage: 5,
     rowsPerPageOptions: [1, 5, 10, 20, 50, 100, 1000],

@@ -1,10 +1,22 @@
-
 export const anchorQueryParams = () => new URLSearchParams(window.location.hash.split("?")[1]);
 
-export const onTableChange = (tableQueryParamPrefix, t) => {
+export const urlWith = (queryParams) => {
+  const hash = window.location.hash.split("?")[0];
+  const newUrl =
+    window.location.protocol +
+    "//" +
+    window.location.host +
+    window.location.pathname +
+    hash +
+    "?" +
+    queryParams.toString();
+  return newUrl;
+};
+
+export const onTableChange = (tableQueryParamPrefix, rows) => {
   return (action, tableState) => {
     if (action === "propsUpdate") {
-      const queryParams = anchorQueryParams()
+      const queryParams = anchorQueryParams();
       let index = 0;
       for (let column of tableState.columns) {
         const paramName = tableQueryParamPrefix + column.name;
@@ -22,7 +34,7 @@ export const onTableChange = (tableQueryParamPrefix, t) => {
     }
 
     if (action === "filterChange" || action === "search") {
-      const queryParams = anchorQueryParams()
+      const queryParams = anchorQueryParams();
       let index = 0;
       for (let column of tableState.columns) {
         const value = tableState.filterList[index];
@@ -45,17 +57,7 @@ export const onTableChange = (tableQueryParamPrefix, t) => {
         queryParams.set(searchParamsName, tableState.searchText);
       }
 
-      const hash = window.location.hash.split("?")[0];
-      const newUrl =
-        window.location.protocol +
-        "//" +
-        window.location.host +
-        window.location.pathname +
-        hash +
-        "?" +
-        queryParams.toString();
-
-      window.history.replaceState({}, "", newUrl);
+      window.history.replaceState({}, "", urlWith(queryParams));
     }
   };
 };

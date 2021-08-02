@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
 import { TableCell, TableRow } from "@material-ui/core";
-import { onTableChange } from "./urlParams";
+import { onTableChange, anchorQueryParams } from "./urlParams";
 import CompletionInfo from "./CompletionInfo";
 
+
 export const tableOptions = (quarterPeriod) => {
-  const queryParams = new URLSearchParams(window.location.hash.split("?")[1]);
+  const queryParams = anchorQueryParams();
 
   return {
     enableNestedDataAccess: ".",
@@ -19,11 +20,12 @@ export const tableOptions = (quarterPeriod) => {
       filename: "orgunit-completeness-" + quarterPeriod + ".csv",
       separator: ",",
     },
+    selectToolbarPlacement: "above",
   };
 };
 
 export const statsTableOptions = (quarterPeriod, statsByZone, setSelectedZones, t) => {
-  const queryParams = new URLSearchParams(window.location.hash.split("?")[1]);
+  const queryParams = anchorQueryParams()
 
   return {
     enableNestedDataAccess: ".",

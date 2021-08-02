@@ -1,7 +1,10 @@
+
+export const anchorQueryParams = () => new URLSearchParams(window.location.hash.split("?")[1]);
+
 export const onTableChange = (tableQueryParamPrefix, t) => {
   return (action, tableState) => {
     if (action === "propsUpdate") {
-      const queryParams = new URLSearchParams(window.location.hash.split("?")[1]);
+      const queryParams = anchorQueryParams()
       let index = 0;
       for (let column of tableState.columns) {
         const paramName = tableQueryParamPrefix + column.name;
@@ -19,7 +22,7 @@ export const onTableChange = (tableQueryParamPrefix, t) => {
     }
 
     if (action === "filterChange" || action === "search") {
-      const queryParams = new URLSearchParams(window.location.hash.split("?")[1]);
+      const queryParams = anchorQueryParams()
       let index = 0;
       for (let column of tableState.columns) {
         const value = tableState.filterList[index];

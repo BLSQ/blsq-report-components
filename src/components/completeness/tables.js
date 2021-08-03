@@ -1,29 +1,55 @@
 import React, { useEffect } from "react";
 import { TableCell, TableRow } from "@material-ui/core";
-
+import { onTableChange, anchorQueryParams } from "./urlParams";
 import CompletionInfo from "./CompletionInfo";
 
+
 export const tableOptions = (quarterPeriod) => {
+  const queryParams = anchorQueryParams();
+
   return {
     enableNestedDataAccess: ".",
     print: false,
+    searchOpen: !!queryParams.get("ou.searchText"),
+    filter: true,
+    selectableRows: "none",
+    onTableChange: onTableChange("ou."),
     rowsPerPage: 50,
     rowsPerPageOptions: [1, 5, 10, 20, 50, 100, 1000],
     downloadOptions: {
-      filename: "orgunit-completeness-" + quarterPeriod+".csv",
+      filename: "orgunit-completeness-" + quarterPeriod + ".csv",
       separator: ",",
     },
+    selectToolbarPlacement: "above",
   };
 };
 
 export const statsTableOptions = (quarterPeriod, statsByZone, setSelectedZones) => {
+  const queryParams = anchorQueryParams()
+
+  const selectIndexes = []
+  const selectedZones = queryParams.get("selectedZones");
+  if (statsByZone && selectedZones) {
+    let selectIndex = 0;
+    for (let row of statsByZone) {
+      if (row && row.orgUnit && selectedZones.includes(row.orgUnit.id)) {
+        selectIndexes.push(selectIndex)
+      }
+      selectIndex = selectIndex + 1;
+    }
+  }
+
   return {
     enableNestedDataAccess: ".",
+    filter: true,
+    searchOpen: !!queryParams.get("zone.searchText"),
+    onTableChange: onTableChange("zone.", statsByZone),
+    rowsSelected: selectIndexes,
     print: false,
     rowsPerPage: 5,
     rowsPerPageOptions: [1, 5, 10, 20, 50, 100, 1000],
     downloadOptions: {
-      filename: "zone-completeness-" + quarterPeriod+".csv",
+      filename: "zone-completeness-" + quarterPeriod + ".csv",
       separator: ",",
     },
     onRowSelectionChange: (_currentRowsSelected, _allRowsSelected, rowsSelected) => {
@@ -86,7 +112,7 @@ export const statsTableOptions = (quarterPeriod, statsByZone, setSelectedZones) 
   };
 };
 
-export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos) => {
+export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos, t) => {
   return [
     {
       name: "contract.orgUnit.id",
@@ -156,6 +182,19 @@ export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos) =>
               {info.contract.orgUnit.name}
             </span>
           );
+        },
+      },
+    },
+    {
+      name: "status",
+      label: "Status",
+      options: {
+        filter: true,
+        sort: true,
+        display: true,
+        customBodyRenderLite: (dataIndex) => {
+          const info = filteredCompletnessInfos[dataIndex];
+          return <span>{t("completeness."+info.status)}</span>;
         },
       },
     },
@@ -283,7 +322,7 @@ export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos) =>
         },
         {
           name: c.period + "-" + c.dataEntryType.category + "-users",
-          label: c.dataEntryType.category +" User "+ "\n" + c.period,
+          label: c.dataEntryType.category + " User " + "\n" + c.period,
           options: {
             filter: true,
             sort: true,
@@ -292,7 +331,7 @@ export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos) =>
         },
         {
           name: c.period + "-" + c.dataEntryType.category + "-dates",
-          label: c.dataEntryType.category +" Date "+ "\n" + c.period,
+          label: c.dataEntryType.category + " Date " + "\n" + c.period,
           options: {
             filter: true,
             sort: true,
@@ -301,7 +340,7 @@ export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos) =>
         },
         {
           name: c.period + "-" + c.dataEntryType.category + "-link",
-          label: c.dataEntryType.category +" Link "+ "\n" + c.period,
+          label: c.dataEntryType.category + " Link " + "\n" + c.period,
           options: {
             filter: true,
             sort: true,

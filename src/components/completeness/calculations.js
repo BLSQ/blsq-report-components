@@ -40,6 +40,10 @@ export const toCompleteness = (contracts, completeDataSetRegistrations, DataEntr
           expectedDataEntries.length > 0 ? ((completedCount / expectedDataEntries.length) * 100).toFixed(2) : undefined,
       };
 
+      if (record.completionRatio) {
+        record.status = record.completionRatio < 100 ? "incomplete" : "complete";
+      }
+
       if (contract.orgUnit.ancestors) {
         contract.orgUnit.ancestors.forEach((ancestor, index) => {
           record["orgUnitLevel" + index] = ancestor;

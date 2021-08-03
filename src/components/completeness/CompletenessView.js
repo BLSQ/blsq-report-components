@@ -1,5 +1,5 @@
-import DatePeriods from "../../support/DatePeriods"
-import PluginRegistry from "../core/PluginRegistry"
+import DatePeriods from "../../support/DatePeriods";
+import PluginRegistry from "../core/PluginRegistry";
 import _ from "lodash";
 import MUIDataTable from "mui-datatables";
 import React, { useEffect } from "react";
@@ -9,6 +9,8 @@ import { Typography } from "@material-ui/core";
 
 import { toCompleteness, buildStatsByZone } from "./calculations";
 import { orgUnitColumns, zoneStatsColumns, statsTableOptions, tableOptions } from "./tables";
+import { useTranslation } from "react-i18next";
+import { anchorQueryParams, urlWith } from "./urlParams";
 
 const fetchCompleteDataSetRegistrations = async (api, quarterPeriod, DataEntries, accessibleZones) => {
   const periods = [quarterPeriod]
@@ -53,12 +55,28 @@ const fetchCompleteDataSetRegistrations = async (api, quarterPeriod, DataEntries
 const CompletenessView = (props) => {
   const history = props.history;
   const quarterPeriod = props.match.params.period;
-
+  const { t } = useTranslation();
   const [completnessInfos, setCompletnessInfos] = React.useState([]);
 
   const [statsByZone, setStatsByZone] = React.useState([]);
   const [distinctDataEntries, setDistinctDataEntries] = React.useState([]);
   const [selectedZones, setSelectedZones] = React.useState([]);
+  const setSelectedZonesAndQueryParams = (zones) => {
+    const queryParams = anchorQueryParams();
+    if (zones.length == 0) {
+      queryParams.delete("selectedZones");
+    } else {
+      queryParams.set("selectedZones", zones.filter(r => r.orgUnit).map((r) => r.orgUnit.id).join(";"));
+    }
+    const newUrl = urlWith(queryParams);
+
+    if (newUrl !== window.location.toString()) {
+      window.history.replaceState({}, "", urlWith(queryParams));
+    }
+
+    setSelectedZones(zones);
+  };
+
   const loadContracts = async () => {
     const DataEntries = PluginRegistry.extension("dataentry.dataEntries");
 
@@ -77,19 +95,32 @@ const CompletenessView = (props) => {
       quarterPeriod,
       DataEntries,
       currentUser.organisationUnits,
-    );    
+    );
     const { distinctDataEntries, results } = toCompleteness(
       contracts,
       completeDataSetRegistrations,
       DataEntries,
       quarterPeriod,
-      window.location.href.split("#")[0]
+      window.location.href.split("#")[0],
     );
     setDistinctDataEntries(distinctDataEntries);
 
     const statsByZone = buildStatsByZone(results, distinctDataEntries);
     setStatsByZone(statsByZone);
     setCompletnessInfos(results);
+
+    const queryParams = anchorQueryParams()
+    const selectedZones = queryParams.get("selectedZones");
+    if (statsByZone && selectedZones) {
+      const selectOrgUnits = []
+      for (let row of statsByZone) {
+        if (row && row.orgUnit && selectedZones.includes(row.orgUnit.id)) {
+          selectOrgUnits.push(row)
+        }
+      }
+      setSelectedZones(selectOrgUnits)
+    }
+  
   };
 
   useEffect(() => {
@@ -97,16 +128,16 @@ const CompletenessView = (props) => {
   }, [quarterPeriod]);
 
   let filteredCompletnessInfos = completnessInfos;
-  const zoneNames = selectedZones.map((stat) => stat.orgUnit.name);
+  const zoneNames = selectedZones.filter(r => r.orgUnit).map((stat) => stat.orgUnit.name);
 
   if (selectedZones.length > 0) {
-    const zoneIds = new Set(selectedZones.map((stat) => stat.orgUnit.id));
+    const zoneIds = new Set(selectedZones.filter(r=> r.orgUnit).map((stat) => stat.orgUnit.id));
     filteredCompletnessInfos = completnessInfos.filter((info) =>
       info.contract.orgUnit.ancestors.some((ancestor) => zoneIds.has(ancestor.id)),
     );
   }
 
-  const columns = orgUnitColumns(distinctDataEntries, filteredCompletnessInfos);
+  const columns = orgUnitColumns(distinctDataEntries, filteredCompletnessInfos, t);
   const columnsStats = zoneStatsColumns(distinctDataEntries, statsByZone);
 
   return (
@@ -114,7 +145,7 @@ const CompletenessView = (props) => {
       <PortalHeader>
         <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start" }}>
           <Typography variant="h6" style={{ marginRight: "20px" }}>
-            Completeness for datasets{" "}
+            {t("completeness.header")}
           </Typography>
           <div style={{ background: "rgba(255, 255, 255, 0.20)", color: "#fff; important!", padding: "5px" }}>
             <PeriodPicker
@@ -129,23 +160,32 @@ const CompletenessView = (props) => {
                 setCompletnessInfos([]);
                 setStatsByZone([]);
                 setDistinctDataEntries([]);
-                history.push("/completeness/" + newPeriod);
+                const newUrl = window.location.href.replace(
+                  "/completeness/" + quarterPeriod,
+                  "/completeness/" + newPeriod,
+                );
+                window.history.pushState({}, "", newUrl);
+                window.location.reload();
               }}
             ></PeriodPicker>
           </div>
         </div>
       </PortalHeader>
       <MUIDataTable
-        title="Statistics by zone"
+        title={t("completeness.statsByZone")}
         data={statsByZone}
         columns={columnsStats}
-        options={statsTableOptions(quarterPeriod, statsByZone, setSelectedZones)}
+        options={statsTableOptions(quarterPeriod, statsByZone, setSelectedZonesAndQueryParams)}
       />
 
       <br></br>
 
       <MUIDataTable
-        title={zoneNames.length == 0 ? "Situation by orgUnit" : "Situation by orgUnit under " + zoneNames.join(", ")}
+        title={
+          zoneNames.length == 0
+            ? t("completeness.statsForOrgUnits")
+            : t("completeness.statsForOrgUnitsUnder") + " " + zoneNames.join(", ")
+        }
         data={filteredCompletnessInfos}
         columns={columns}
         options={tableOptions(quarterPeriod)}

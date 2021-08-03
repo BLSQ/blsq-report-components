@@ -2,6 +2,14 @@
   "app_name": "ORBF2 - Invoices & Reports",
   "clear": "Clear",
   "codes": "Codes",
+  "completeness": {
+    "header":"Completeness for datasets",
+    "statsByZone" : "Statistics by zone",
+    "statsForOrgUnits" : "Situation by orgUnit" ,
+    "statsForOrgUnitsUnder":"Situation by orgUnit under: ",
+    "complete": "complete",
+    "incomplete": "incomplete"
+  },
   "contracts": {
     "activeToday": "Active today",
     "activeAt": "Active at",

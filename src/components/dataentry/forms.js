@@ -11,7 +11,10 @@ export const isDataSetComplete = (completeDataSetRegistration) => {
   return true;
 };
 
-const asDataSetIds = (dataEntry) => (dataEntry.dataSetId ? [dataEntry.dataSetId] : dataEntry.dataSetIds);
+const asDataSetIds = (dataEntry) => {
+  const d = dataEntry.dataSetId ? [dataEntry.dataSetId] : dataEntry.dataSetIds  
+  return d ? d : []
+};
 
 const fetchCompleteDataSetRegistrations = async (api, dataEntry, period, activeContract) => {
   const dsc = await api.get("completeDataSetRegistrations", {

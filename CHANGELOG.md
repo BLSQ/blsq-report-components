@@ -1,3 +1,8 @@
+# @blsq/blsq-report-components@1.0.65
+
+ - [completeness] Bookmarkable filters
+ - [completeness] Allow to filter based on incomplete/complete status
+
 # @blsq/blsq-report-components@1.0.64
  
  - [contracts] Allow to mass update contracts fields with the wizard

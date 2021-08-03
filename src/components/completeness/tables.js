@@ -24,7 +24,7 @@ export const tableOptions = (quarterPeriod) => {
   };
 };
 
-export const statsTableOptions = (quarterPeriod, statsByZone, setSelectedZones, t) => {
+export const statsTableOptions = (quarterPeriod, statsByZone, setSelectedZones) => {
   const queryParams = anchorQueryParams()
 
   const selectIndexes = []

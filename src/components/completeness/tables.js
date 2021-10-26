@@ -21,6 +21,7 @@ export const tableOptions = (quarterPeriod) => {
       separator: ",",
     },
     selectToolbarPlacement: "above",
+    filterArrayFullMatch: false
   };
 };
 
@@ -198,6 +199,20 @@ export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos, t)
         },
       },
     },
+    {
+      name: "contract.codes",
+      label: "Contracts",
+      options: {
+        filter: true,
+        filterType: 'multiselect',
+        sort: true,
+        display: false,
+        customBodyRenderLite: (dataIndex) => {
+          const info = filteredCompletnessInfos[dataIndex];
+          return <span>{info.contract.codes.join(", ")}</span>;
+        },
+      },
+    },    
     {
       name: "completedCount",
       label: "Completed",

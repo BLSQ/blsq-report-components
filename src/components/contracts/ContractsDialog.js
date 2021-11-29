@@ -61,6 +61,7 @@ const ContractsDialog = ({
 }) => {
   const [open, setOpen] = React.useState(false);
   const contractService = PluginRegistry.extension("contracts.service");
+
   const [currentContract, setCurrentContract] = React.useState(contractService.defaultPeriod(contract));
   const [validationErrors, setValidationErrors] = React.useState([]);
   const isLoading = useSelector((state) => state.load.isLoading);

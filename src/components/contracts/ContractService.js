@@ -297,17 +297,20 @@ class ContractService {
       dataValues,
     };
     if (contractId) {
-      event.event = contractId
+      event.event = contractId;
     }
     return event;
   };
 
   defaultPeriod(contract) {
-    const startDate = getStartDateFromPeriod(getQuarterFromDate(contract.fieldValues.contract_start_date));
-    const endDate = getEndDateFromPeriod(getQuarterFromDate(contract.fieldValues.contract_end_date));
+    const startDate = getStartDateFromPeriod(getQuarterFromDate(contract.fieldValues.contract_start_date))
+    const endDate =
+         getEndDateFromPeriod(getQuarterFromDate(contract.fieldValues.contract_end_date))
+
     contract.fieldValues.contract_start_date = startDate;
     contract.fieldValues.contract_end_date = endDate;
-    const tempContract = { ...contract };
+
+    const tempContract = { fieldValues: {},...contract };
 
     const startPeriod = startDate.split("-");
     const endPeriod = endDate.split("-");

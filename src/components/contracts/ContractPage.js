@@ -69,7 +69,10 @@ const ContractPage = ({ match, location, t, history }) => {
         setContractsDatas({
           ...contractsDatas,
         });
-        setPreviousDefaultMainContract({ ...findLastContract(contractsDatas.mainContracts.contracts) });
+        const previous = findLastContract(contractsDatas.mainContracts.contracts);
+        if (previous) {
+          setPreviousDefaultMainContract({ ...previous });
+        }
         dispatch(setIsLoading(false));
       });
     }
@@ -228,20 +231,22 @@ const ContractPage = ({ match, location, t, history }) => {
           options={mainContractProps.options}
         />
 
-        <Box mt={4} pr={4} justifyContent="flex-end" display="flex">
-          <ContractsDialog
-            contract={previousDefaultMainContract || defaultContract({ orgUnit: orgUnit })}
-            contracts={allContracts}
-            contractFields={contractFields}
-            onSavedSuccessfull={fetchContracts}
-            displayOrgUnit={false}
-            displayMainOrgUnit={false}
-          >
-            <Button color="primary" variant="contained" startIcon={<Add />} className={classes.createButton}>
-              {t("create")}
-            </Button>
-          </ContractsDialog>
-        </Box>
+        {orgUnit && (
+          <Box mt={4} pr={4} justifyContent="flex-end" display="flex">
+            <ContractsDialog
+              contract={previousDefaultMainContract || defaultContract({ orgUnit: orgUnit })}
+              contracts={allContracts}
+              contractFields={contractFields}
+              onSavedSuccessfull={fetchContracts}
+              displayOrgUnit={false}
+              displayMainOrgUnit={false}
+            >
+              <Button color="primary" variant="contained" startIcon={<Add />} className={classes.createButton}>
+                {t("create")}
+              </Button>
+            </ContractsDialog>
+          </Box>
+        )}
       </Box>
       {/* show the sub contract create button if orgunit has at least one contract */}
       {subcontractField && mainContracts.contracts.length > 0 && (

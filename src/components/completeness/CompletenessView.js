@@ -85,11 +85,17 @@ const CompletenessView = (props) => {
     const currentUser = props.currentUser;
     const contractService = PluginRegistry.extension("contracts.service");
     const accessibleOrgunitIds = new Set(currentUser.organisationUnits.map((ou) => ou.id));
-    const contracts = (await contractService.findAll()).filter(
+    let contracts = (await contractService.findAll()).filter(
       (contract) =>
         contract.matchPeriod(quarterPeriod) &&
         contract.orgUnit.ancestors.some((ancestor) => accessibleOrgunitIds.has(ancestor.id)),
     );
+    const queryParams = anchorQueryParams()
+
+    if (queryParams.get("ou.contract.codes")) {
+      const codes = queryParams.get("ou.contract.codes").split(",")
+      contracts = contracts.filter(c => c.codes.some(code => codes.includes(code)))
+    }
     const completeDataSetRegistrations = await fetchCompleteDataSetRegistrations(
       api,
       quarterPeriod,
@@ -109,7 +115,6 @@ const CompletenessView = (props) => {
     setStatsByZone(statsByZone);
     setCompletnessInfos(results);
 
-    const queryParams = anchorQueryParams()
     const selectedZones = queryParams.get("selectedZones");
     if (statsByZone && selectedZones) {
       const selectOrgUnits = []
@@ -121,6 +126,7 @@ const CompletenessView = (props) => {
       setSelectedZones(selectOrgUnits)
     }
   
+   
   };
 
   useEffect(() => {

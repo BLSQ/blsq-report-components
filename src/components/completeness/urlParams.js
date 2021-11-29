@@ -20,8 +20,12 @@ export const onTableChange = (tableQueryParamPrefix, rows) => {
       let index = 0;
       for (let column of tableState.columns) {
         const paramName = tableQueryParamPrefix + column.name;
-        const value = queryParams.get(paramName);
-        if (value == null) {
+        let value = queryParams.get(paramName);
+        if (column.filterType == "multiselect") {
+          try {
+            tableState.filterList[index] = value.split(',');
+          } catch (ignored) {}
+        } else if (value == null) {
           tableState.filterList[index] = [];
         } else {
           tableState.filterList[index] = [value];
@@ -43,6 +47,8 @@ export const onTableChange = (tableQueryParamPrefix, rows) => {
           queryParams.delete(paramName);
         } else if (value.length == 1) {
           queryParams.set(paramName, value);
+        } else if (column.filterType == "multiselect") {
+          queryParams.set(paramName, value.join(","));
         } else {
           queryParams.set(paramName, JSON.stringify(value));
         }

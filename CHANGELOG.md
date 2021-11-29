@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.66
+ - [contracts] fix contract page when no contract
+ - [completeness] allow to filter on contracts code
+
 # @blsq/blsq-report-components@1.0.65
 
  - [completeness] Bookmarkable filters

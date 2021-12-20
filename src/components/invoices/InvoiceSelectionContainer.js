@@ -17,7 +17,6 @@ const styles = (theme) => ({
   paper: theme.mixins.gutters({
     paddingTop: 16,
     paddingBottom: 16,
-    marginTop: theme.spacing(3),
     minHeight: "600px",
   }),
   table: {
@@ -28,7 +27,7 @@ const styles = (theme) => ({
   },
   periodContainer: {
     margin: theme.spacing(2, 1, 1, 1),
-    width: 150,
+    width: 300,
   },
 });
 

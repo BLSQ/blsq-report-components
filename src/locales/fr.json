@@ -34,7 +34,7 @@
       "visibleOverlaps": "Ce contrat se chevauche avec {{count}} contrat(s)"
     },
     "subContracts": "Sous-contrat(s)",
-    "title": "Contrats",
+    "title": "Recherche de contrats",
     "deleteTitle": "Suppression du contrat",
     "deleteWarning": "La suppression du contrat n'a aucune influence sur les données qui étaient liées à ce contrat. Si il y a des sous-contrats liés à ce contrat, supprimez ou mettez à jour ceux-ci d'abord.",
     "contract_main_orgunit_id": "Id de l'unité d'organisation principale",
@@ -50,6 +50,13 @@
     "invoices": "Factures",
     "dataSetNotWritable": "Vous n'avez pas le droit de saisie sur '{{dataSetName}}'"
   },
+  "levels": {
+    "level1": "Niveau 1",
+    "level2": "Niveau 2",
+    "level3": "Niveau 3",
+    "level4": "Niveau 4",
+    "level5": "Niveau 5"
+  },  
   "create": "Créer",
   "edit": "Editer",
   "delete": "Supprimer",
@@ -59,6 +66,11 @@
   "group": "Groupe",
   "groups": "Groupes",
   "invoice": "Facture",
+  "invoices": {
+    "search": {
+      "title": "Recherche de rapports & factures"
+    }
+  },
   "invoicing": {
     "job": {
       "error": "Message",
@@ -81,7 +93,7 @@
   "lock": "Verrouiller",
   "unlock": "Déverrouiller",
   "lock_unlock": "Verrouiller/Déverrouiller",
-  "report_and_invoices": "Rapports",
+  "report_and_invoices": "Rapports & factures",
   "save": "Sauver",
   "search": "Recherche",
   "search_org_unit": "Rechercher ou sélectionner l'unité d'organisation parente",

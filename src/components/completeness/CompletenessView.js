@@ -144,7 +144,7 @@ const CompletenessView = (props) => {
   }
 
   const columns = orgUnitColumns(distinctDataEntries, filteredCompletnessInfos, t);
-  const columnsStats = zoneStatsColumns(distinctDataEntries, statsByZone);
+  const columnsStats = zoneStatsColumns(distinctDataEntries, statsByZone, t);
 
   return (
     <div>

@@ -23,6 +23,18 @@ export const contractsTableColumns = (
   displayMainOrgUnit,
   withIndex,
 ) => {
+
+  contracts.forEach(c => {
+    if (c.orgUnit && c.orgUnit.ancestors) {
+      let index = 0
+      for (let ancestor of c.orgUnit.ancestors.slice(0, c.orgUnit.ancestors.length -1)) {
+        c.orgUnit["level"+(index+1)] = ancestor
+        index = index +1
+      }
+
+    }
+  })
+
   const columns = [
     {
       name: "id",
@@ -68,6 +80,46 @@ export const contractsTableColumns = (
         }),
         customBodyRenderLite: (dataIndex) => <div>{filteredContracts[dataIndex].statusDetail.validationErrors.map(err => err.message).join("\n") }</div>,
       },
+    },    
+    {
+      name: "orgUnit.level1.name",
+      label: t("levels.level1"),
+      options: {
+        sort: true ,
+        display: false
+      }
+    },
+    {
+      name: "orgUnit.level2.name",
+      label: t("levels.level2"),
+      options: {
+        sort: true ,
+        display: true
+      }
+    },    
+    {
+      name: "orgUnit.level3.name",
+      label: t("levels.level3"),
+      options: {
+        sort: true ,
+        display: true
+      }
+    },    
+    {
+      name: "orgUnit.level4.name",
+      label: t("levels.level4"),
+      options: {
+        sort: true ,
+        display: false
+      }
+    },    
+    {
+      name: "orgUnit.level5.name",
+      label: t("levels.level5"),      
+      options: {
+        sort: true ,
+        display: false
+      }
     },    
     {
       name: "orgUnit.name",
@@ -280,6 +332,7 @@ export const contractsTableOptions = (t, contracts, onTableChange, tableParams) 
   }
   return {
     ...defaultOptions(t),
+    enableNestedDataAccess: ".",
     search: false,
     filter: false,
     print: false,

@@ -1,4 +1,10 @@
+# @blsq/blsq-report-components@1.0.67
+
+- [contracts] Allow to have ancestors [displayed](https://github.com/BLSQ/blsq-report-components/pull/141) in the screen and csv export
+- [invoices] Fix some layout issue in invoice/orgunit selection [screen](https://github.com/BLSQ/blsq-report-components/pull/139)
+
 # @blsq/blsq-report-components@1.0.66
+
  - [contracts] fix contract page when no contract
  - [completeness] allow to filter on contracts code
 

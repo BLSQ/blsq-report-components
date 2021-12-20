@@ -25,8 +25,9 @@ const styles = (theme) => ({
   },
   input: {
     display: "flex",
-    width: "560px",
+    width: "700px",
     padding: 0,
+    margin: "5px",
   },
   valueContainer: {
     display: "flex",

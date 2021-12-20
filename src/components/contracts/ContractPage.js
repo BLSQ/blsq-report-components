@@ -175,7 +175,7 @@ const ContractPage = ({ match, location, t, history }) => {
               {t("contracts.title")}
             </Link>
 
-            <Typography color="textPrimary">{orgUnit ? orgUnit.name : "..."}</Typography>
+            <Typography color="textPrimary" variant="h5" component="h5" gutterBottom>{orgUnit ? orgUnit.name : "..."}</Typography>
           </Breadcrumbs>
         </Grid>
       </Grid>

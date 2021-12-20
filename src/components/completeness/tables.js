@@ -126,7 +126,7 @@ export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos, t)
     },
     {
       name: "orgUnitLevel1.name",
-      label: "Level 1",
+      label: t("levels.level2"),   
       options: {
         filter: true,
         sort: true,
@@ -135,7 +135,7 @@ export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos, t)
     },
     {
       name: "orgUnitLevel2.name",
-      label: "Level 2",
+      label: t("levels.level3"),   
       options: {
         filter: true,
         sort: true,
@@ -144,7 +144,7 @@ export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos, t)
     },
     {
       name: "orgUnitLevel3.name",
-      label: "Level 3",
+      label: t("levels.level4"),   
       options: {
         filter: true,
         sort: true,
@@ -153,7 +153,7 @@ export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos, t)
     },
     {
       name: "orgUnitLevel4.name",
-      label: "Level 4",
+      label: t("levels.level5"),   
       options: {
         filter: true,
         sort: true,
@@ -367,11 +367,11 @@ export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos, t)
   ];
 };
 
-export const zoneStatsColumns = (distinctDataEntries, statsByZone) => {
+export const zoneStatsColumns = (distinctDataEntries, statsByZone, t) => {
   return [
     {
       name: "ancestor.name",
-      label: "Level 2 name",
+      label: t("levels.level2"),   
       options: {
         filter: true,
         sort: true,
@@ -379,7 +379,7 @@ export const zoneStatsColumns = (distinctDataEntries, statsByZone) => {
     },
     {
       name: "orgUnit.name",
-      label: "Level 3 Name",
+      label: t("levels.level3"), 
       options: {
         filter: true,
         sort: true,

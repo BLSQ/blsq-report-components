@@ -189,7 +189,7 @@ class InvoiceSelectionContainer extends Component {
     return (
       <Paper className={classes.paper} square>
         <Typography variant="h5" component="h5" gutterBottom>
-          {t("report_and_invoices")}
+          {t("invoices.search.title")}
         </Typography>
         <div className={classes.filters}>
           <OrgUnitAutoComplete

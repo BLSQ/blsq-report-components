@@ -36,7 +36,7 @@
     "subContractCoveragesWarningSingle": "Sub contract {{rowIndex}} is more large than the main contract coverage",
     "subContractNotVisibleOverlap": "Sub contract {{rowIndex}} overlaps with {{count}} contract(s) not visible on this page",
     "subContracts": "Sub contract(s)",
-    "title": "Contracts",
+    "title": "Search contracts",
     "deleteTitle": "Delete contract",
     "deleteWarning": "This will only delete the contract, data generated based on these infos will remain. If subcontracted orgunits reference this contract, delete/update them first.",
     "contract_main_orgunit_id": "Main org unit id",
@@ -52,6 +52,13 @@
     "invoices": "Invoices",
     "dataSetNotWritable": "You don't have write access to '{{dataSetName}}'"
   },
+  "levels": {
+    "level1": "Level 1",
+    "level2": "Level 2",
+    "level3": "Level 3",
+    "level4": "Level 4",
+    "level5": "Level 5"
+  },  
   "create": "Create",
   "edit": "Edit",
   "delete": "Delete",
@@ -61,6 +68,11 @@
   "group": "Group",
   "groups": "Groups",
   "invoice": "Invoice",
+  "invoices": {
+    "search": {
+      "title": "Search reports & invoices"
+    }
+  },  
   "invoicing": {
     "job": {
       "error": "Message",

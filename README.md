@@ -131,6 +131,15 @@ you might need to upgrade jest snapshots (assertion based on latest recorded dat
 yarn test -- --updateSnapshot
 ```
 
+## Release
+
+1. Adapt the CHANGELOG.md
+2. Release the package on npm
+```
+yarn publish
+```
+3. Update downstream application using it : https://bitbucket.org/bluesquare_org/report-inventory/src/master/
+
 ## License
 
 MIT © [BLSQ](https://github.com/BLSQ)

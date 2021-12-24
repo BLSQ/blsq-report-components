@@ -319,21 +319,22 @@ class IncentiveContainer extends Component {
   }
 
   render() {
+    const { classes, dhis2 } = this.props;
     if (this.state.error !== undefined) {
       return (
-        <React.Fragment>
+        <Paper className={classes.root}>
           <IncentiveNavigationBar
             period={this.props.period}
             incentiveCode={this.props.incentiveCode}
             incentivesDescriptors={this.props.incentivesDescriptors}
           />
-          <Warning message={this.state.error} />;
-        </React.Fragment>
+          <Warning message={this.state.error} />
+        </Paper>
       );
     }
     if (this.state.dataSetInfos === undefined || this.props.currentUser === undefined) {
       return (
-        <div>
+        <Paper className={classes.root}>
           <IncentiveNavigationBar
             period={this.props.period}
             incentiveCode={this.props.incentiveCode}
@@ -341,11 +342,11 @@ class IncentiveContainer extends Component {
           />
           <Typography>Incentives</Typography>
           <Loader />
-        </div>
+        </Paper>
       );
     }
     const dsi = this.state.dataSetInfos;
-    const { classes, dhis2 } = this.props;
+   
     const dataElementCommonPrefix = IncentiveSupport.commonPrefix(
       dsi.dataSet.dataSetElements.map((de) => de.dataElement.name),
     );
@@ -359,35 +360,36 @@ class IncentiveContainer extends Component {
     const nonAllowedSee = dsi.dataSet.organisationUnits.filter((ou) => !allowedSeeOrgunitIds.includes(ou.id));
     return (
       <React.Fragment>
-
-<PortalHeader>
-        <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start"  }}>
-          <Typography variant="h6" style={{ marginRight: "20px" }}>
-            Incentives
-          </Typography>
-          <div style={{ background: "rgba(255, 255, 255, 0.20)", color: "#fff; important!",  padding:"5px" }}>
-            <PeriodPicker
-              variant="white"
-              disableInputLabel={true}
-              period={this.props.period}
-              periodDelta = {{
-                before: 5,
-                after: 5,
-              }}
-              onPeriodChange={(newPeriod) => {
-                this.props.history.push("/incentives/" + newPeriod+"/"+this.props.incentiveCode);
-              }}
-            ></PeriodPicker>
+        <PortalHeader>
+          <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start" }}>
+            <Typography variant="h6" style={{ marginRight: "20px" }}>
+              Incentives
+            </Typography>
+            <div style={{ background: "rgba(255, 255, 255, 0.20)", color: "#fff; important!", padding: "5px" }}>
+              <PeriodPicker
+                variant="white"
+                disableInputLabel={true}
+                period={this.props.period}
+                periodDelta={{
+                  before: 5,
+                  after: 5,
+                }}
+                onPeriodChange={(newPeriod) => {
+                  this.props.history.push("/incentives/" + newPeriod + "/" + this.props.incentiveCode);
+                }}
+              ></PeriodPicker>
+            </div>
           </div>
-        </div>
-      </PortalHeader>        
-        <IncentiveNavigationBar
-          period={this.props.period}
-          incentiveCode={this.props.incentiveCode}
-          incentivesDescriptors={this.props.incentivesDescriptors}
-        />
+        </PortalHeader>
 
         <Paper className={classes.root}>
+          {this.props.incentivesDescriptors && this.props.incentivesDescriptors.length > 0 && (
+            <IncentiveNavigationBar
+              period={this.props.period}
+              incentiveCode={this.props.incentiveCode}
+              incentivesDescriptors={this.props.incentivesDescriptors}
+            />
+          )}
           <Typography variant="headline">{dsi.dataSet.name}</Typography>
           <br />
           <Table padding="none">

@@ -101,7 +101,7 @@ class InvoiceToolBar extends Component {
     );
 
     return (
-      <div className={classes.center + " no-print"}>
+      <div className={ " no-print"}>
         <FormControl className={classes.formControl}>
           <Select
             value={dataElementGroupId}

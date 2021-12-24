@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 
 import { withStyles } from "@material-ui/core/styles";
-
+import Paper from "@material-ui/core/Paper";
 import BrowseDataToolBar from "./BrowseDataToolBar";
 import Cell from "../shared/Cell";
 
 import Loader from "../shared/Loader";
 
-const styles = {
+const styles = theme => ( { 
   table: {
     borderCollapse: "collapse",
     fontSize: "0.7500rem",
@@ -18,8 +18,13 @@ const styles = {
     borderCollapse: "collapse",
     padding: "0px 3px 0px 0px",
     border: "0.5pt solid black"
-  }
-};
+  },
+  root: {
+    ...theme.mixins.gutters(),
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(10),
+  },
+});
 
 const dataElementsComparator = (a, b) => {
   return a.name.localeCompare(b.name, undefined, {
@@ -170,24 +175,24 @@ class BrowseDataContainer extends Component {
         xlsdata={this.state.data ? this.state.data.xlsdata : undefined}
       />
     );
-
+    const classes = this.props.classes;
     if (this.state.data == undefined) {
       return (
-        <div>
+        <Paper className={classes.root}>
           {navigation}
           <Loader>Loading</Loader>
-        </div>
+        </Paper>
       );
     }
     if (this.state.error !== undefined) {
       return <Warning message={this.state.error} />;
     }
 
-    const classes = this.props.classes;
+   
     const { dataElements, orgUnits, indexedValues } = this.state.data;
 
     return (
-      <div>
+      <Paper className={classes.root}>
         {navigation}
         <table className={classes.table}>
           <thead>
@@ -238,7 +243,7 @@ class BrowseDataContainer extends Component {
           <br />
         </div>
         <p>{orgUnits.length} org units</p>
-      </div>
+      </Paper>
     );
   }
 }

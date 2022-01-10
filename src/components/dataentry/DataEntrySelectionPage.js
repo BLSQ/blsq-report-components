@@ -156,7 +156,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
           <div>
             {t("dataEntry.contractFrom")} <code>{orgUnit.activeContracts[0].startPeriod}</code>{" "}
             {t("dataEntry.contractTo")} <code>{orgUnit.activeContracts[0].endPeriod}</code>{" "}
-            <Link to={"/contracts/" + orgUnit.id}>
+            <Link to={"/contracts/" + (orgUnit.activeContracts[0] && orgUnit.activeContracts[0].fieldValues && orgUnit.activeContracts[0].fieldValues.contract_main_orgunit || orgUnit.id)}>
               <IconButton>
                 <InfoIcon color="action" />
               </IconButton>

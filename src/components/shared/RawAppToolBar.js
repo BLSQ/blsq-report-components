@@ -85,10 +85,7 @@ class RawAppToolBar extends React.Component {
           <Button aria-label="Menu" href="/" className={classes.appBarItem} variant="h6" color="inherit">
             <Dhis2Icon /> &nbsp;&nbsp;Dhis2
           </Button>
-          <Typography variant="h6" color="inherit" className={classNames(classes.flex, classes.appBarItem)}>
-            {t("app_name")}
-          </Typography>
-
+   
           <Switch>
             <ExtensionsComponent extensionKey="core.headerRoutes" {...this.props} />
           </Switch>

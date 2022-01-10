@@ -7,6 +7,9 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import PeriodPicker from "../shared/PeriodPicker";
 import PortalHeader from "../shared/PortalHeader";
+import Paper from "@material-ui/core/Paper";
+
+import { makeStyles } from "@material-ui/core";
 
 const codify = (str) => {
   if (str == undefined) {
@@ -301,7 +304,17 @@ const buildStats = (results, groupSetIndex) => {
 const distance = (contract, period) =>
   Math.min(parseInt(contract.startPeriod) - parseInt(period), parseInt(contract.endPeriod) - parseInt(period));
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    ...theme.mixins.gutters(),
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(10),
+  },
+}));
+
 const SyncProgramGroups = (props) => {
+  const classes = useStyles(props);
+
   const period = props.match.params.period;
   const [progress, setProgress] = useState("");
   const [filter, setFilter] = useState("");
@@ -416,17 +429,19 @@ const SyncProgramGroups = (props) => {
           </div>
         </div>
       </PortalHeader>
-      <ContractsStats groupStats={groupStats} groupSetIndex={groupSetIndex} />
-      <ContractsResume contractInfos={filteredContractInfos} progress={progress} />
-      <Input
-        type="text"
-        value={filter}
-        onChange={(e) => {
-          setFilter(e.target.value);
-        }}
-      />
-      <Button onClick={() => fixGroups(filteredContractInfos)}>Fix ALL !!</Button>
-      <ContractsTable contractInfos={filteredContractInfos} fixGroups={fixGroups} />
+      <Paper className={classes.root}>
+        <ContractsStats groupStats={groupStats} groupSetIndex={groupSetIndex} />
+        <ContractsResume contractInfos={filteredContractInfos} progress={progress} />
+        <Input
+          type="text"
+          value={filter}
+          onChange={(e) => {
+            setFilter(e.target.value);
+          }}
+        />
+        <Button onClick={() => fixGroups(filteredContractInfos)}>Fix ALL !!</Button>
+        <ContractsTable contractInfos={filteredContractInfos} fixGroups={fixGroups} />
+      </Paper>
     </div>
   );
 };

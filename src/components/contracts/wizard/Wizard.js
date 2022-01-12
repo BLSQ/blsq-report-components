@@ -16,7 +16,7 @@ import { Paper } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: "80%",
+    width: "80vw",
     margin: "auto",
   },
   backButton: {

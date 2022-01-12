@@ -124,7 +124,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
   }
 
   return (
-    <Paper style={{ minHeight: "90vh", paddingLeft: "50px", paddingTop: "20px" }}>
+    <Paper style={{ minHeight: "90vh", paddingLeft: "14px", paddingTop: "1px" }}>
       {generalError && (
         <div style={{ color: "red" }} title={generalError.stack}>
           {generalError.message}
@@ -135,9 +135,23 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
           <Link to={error.link}>{error.message}</Link>
         </div>
       )}
-      <h1>
-        <AssignmentIcon /> {orgUnit && orgUnit.name}
-      </h1>
+      <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+        <AssignmentIcon style={{ marginRight: "5px" }}/>
+        <h1>{t("dataEntry.dataEntries")} : {orgUnit && orgUnit.name}</h1>
+        <div style={{ marginLeft: "50px", maxWidth: "300px" }}>
+          <PeriodPicker
+            disableInputLabel={true}
+            period={quarterPeriod}
+            periodDelta={{
+              before: 5,
+              after: 5,
+            }}
+            onPeriodChange={(newPeriod) => {
+              history.push("/dataEntry/" + match.params.orgUnitId + "/" + newPeriod);
+            }}
+          />
+        </div>
+      </div>
 
       <div style={{ fontFamily: "monospace" }}>
         {orgUnit &&
@@ -156,7 +170,15 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
           <div>
             {t("dataEntry.contractFrom")} <code>{orgUnit.activeContracts[0].startPeriod}</code>{" "}
             {t("dataEntry.contractTo")} <code>{orgUnit.activeContracts[0].endPeriod}</code>{" "}
-            <Link to={"/contracts/" + (orgUnit.activeContracts[0] && orgUnit.activeContracts[0].fieldValues && orgUnit.activeContracts[0].fieldValues.contract_main_orgunit || orgUnit.id)}>
+            <Link
+              to={
+                "/contracts/" +
+                ((orgUnit.activeContracts[0] &&
+                  orgUnit.activeContracts[0].fieldValues &&
+                  orgUnit.activeContracts[0].fieldValues.contract_main_orgunit) ||
+                  orgUnit.id)
+              }
+            >
               <IconButton>
                 <InfoIcon color="action" />
               </IconButton>
@@ -172,28 +194,6 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
           )}
         </React.Fragment>
       )}
-
-      <PortalHeader>
-        <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start" }}>
-          <Typography variant="h6" style={{ marginRight: "20px" }}>
-            {t("dataEntry.dataEntries")}
-          </Typography>
-          <div style={{ background: "rgba(255, 255, 255, 0.20)", color: "#fff; important!", padding: "5px" }}>
-            <PeriodPicker
-              variant="white"
-              disableInputLabel={true}
-              period={quarterPeriod}
-              periodDelta={{
-                before: 5,
-                after: 5,
-              }}
-              onPeriodChange={(newPeriod) => {
-                history.push("/dataEntry/" + match.params.orgUnitId + "/" + newPeriod);
-              }}
-            />
-          </div>
-        </div>
-      </PortalHeader>
 
       <Grid container>
         <Grid item xs={3}>

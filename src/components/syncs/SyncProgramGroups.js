@@ -72,7 +72,7 @@ const ContractsStats = ({ groupStats, groupSetIndex }) => (
     {groupStats &&
       Object.values(_.groupBy(groupStats, (s) => s.group.groupSetCode)).map((stats, index) => (
         <div key={index} style={{ margin: "10px" }}>
-          <h2>{groupSetIndex.groupSetsByCode[stats[0].group.groupSetCode].name}</h2>
+          <h4>{groupSetIndex.groupSetsByCode[stats[0].group.groupSetCode].name}</h4>
           <GroupSetStats groupStats={stats}></GroupSetStats>
         </div>
       ))}
@@ -86,8 +86,6 @@ const ContractsResume = ({ contractInfos, progress }) => (
         {contractInfos.length} orgunits, {contractInfos.filter((c) => c.synchronized).length} already synchronized.
       </span>
     )}
-    <br></br>
-    {progress}
   </div>
 );
 
@@ -408,38 +406,48 @@ const SyncProgramGroups = (props) => {
   }
   return (
     <div>
-      <PortalHeader>
-        <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start" }}>
-          <Typography variant="h6" style={{ marginRight: "20px" }}>
-            Synchronize groups based on contracts
-          </Typography>
-          <div style={{ background: "rgba(255, 255, 255, 0.20)", color: "#fff; important!", padding: "5px" }}>
-            <PeriodPicker
-              variant="white"
-              disableInputLabel={true}
-              period={period}
-              periodDelta={{
-                before: 5,
-                after: 5,
-              }}
-              onPeriodChange={(newPeriod) => {
-                props.history.push("/sync/program-groups/" + newPeriod);
-              }}
-            ></PeriodPicker>
+      <Paper className={classes.root}>
+        <div>
+          <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start" }}>
+            <Typography variant="h5" style={{ marginRight: "20px" }}>
+              Synchronize groups based on contracts
+            </Typography>
+            <div>
+              <PeriodPicker
+                disableInputLabel={true}
+                period={period}
+                periodDelta={{
+                  before: 5,
+                  after: 5,
+                }}
+                onPeriodChange={(newPeriod) => {
+                  props.history.push("/sync/program-groups/" + newPeriod);
+                }}
+              ></PeriodPicker>
+            </div>
+            <br></br>
           </div>
         </div>
-      </PortalHeader>
-      <Paper className={classes.root}>
-        <ContractsStats groupStats={groupStats} groupSetIndex={groupSetIndex} />
-        <ContractsResume contractInfos={filteredContractInfos} progress={progress} />
-        <Input
-          type="text"
-          value={filter}
-          onChange={(e) => {
-            setFilter(e.target.value);
-          }}
-        />
-        <Button onClick={() => fixGroups(filteredContractInfos)}>Fix ALL !!</Button>
+        <div style={{ marginLeft: "50px", marginBottom: "20px" }}>
+          <ContractsStats groupStats={groupStats} groupSetIndex={groupSetIndex} />
+
+          <ContractsResume contractInfos={filteredContractInfos} progress={progress} />
+        </div>
+        <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start", columnGap: "2em" }}>
+          <Input
+            type="text"
+            value={filter}
+            onChange={(e) => {
+              setFilter(e.target.value);
+            }}
+          />
+          <Button onClick={() => fixGroups(filteredContractInfos)} color="primary" variant="contained">
+            Synchronize ALL !
+          </Button>
+          <b>
+            <i>{progress}</i>
+          </b>
+        </div>
         <ContractsTable contractInfos={filteredContractInfos} fixGroups={fixGroups} />
       </Paper>
     </div>

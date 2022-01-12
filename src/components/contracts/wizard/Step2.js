@@ -3,6 +3,20 @@ import MUIDataTable from "mui-datatables";
 import PluginRegistry from "../../core/PluginRegistry";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
 
+function isIsoDate(str) {
+  const isMatchingYYYYMMDD = /\d{4}-\d{2}-\d{2}/.test(str);
+  if (!isMatchingYYYYMMDD) {
+    return false;
+  }
+  try {
+    var d = new Date(str);
+    return d.toISOString().split("T")[0] === str;
+  } catch (e) {
+    // non V8 browser will arrive here because of invalid date eg 2045-02-31 => RangeError
+    return false;
+  }
+}
+
 const Step2 = ({ contractsToImport, dhis2, setValidatedContracts, setIsLoading }) => {
   const contractService = PluginRegistry.extension("contracts.service");
   const [contracts, setContracts] = useState(undefined);
@@ -37,12 +51,30 @@ const Step2 = ({ contractsToImport, dhis2, setValidatedContracts, setIsLoading }
         };
 
         const contract = contractService.newContract(fieldValues);
-        contractRaw["orgUnit-path"] = orgUnit && orgUnit.path ? orgUnit.path.split("/").filter(id => id).slice(1).map(id => organisationUnitsById[id]).map(ou => ou ? ou.name : "?").join(" > ") : undefined
+        contractRaw["orgUnit-path"] =
+          orgUnit && orgUnit.path
+            ? orgUnit.path
+                .split("/")
+                .filter((id) => id)
+                .slice(1)
+                .map((id) => organisationUnitsById[id])
+                .map((ou) => (ou ? ou.name : "?"))
+                .join(" > ")
+            : undefined;
 
         contractRaw.warnings = [];
         // validate orgunit
         if (organisationUnitsById[contractRaw["orgUnit-id"]] == undefined) {
           contractRaw.warnings.push("orgunit '" + contractRaw["orgUnit-id"] + "' not found");
+        }
+
+        if (!isIsoDate(contractRaw.contract_start_date)) {
+          contractRaw.warnings.push(
+            "start date : incorrect date format YYYY-MM-DD for " + contractRaw.contract_start_date,
+          );       
+        }
+        if (!isIsoDate(contractRaw.contract_end_date)) {
+          contractRaw.warnings.push("end date : incorrect date format YYYY-MM-DD for " + contractRaw.contract_end_date);
         }
 
         // validate contract_main_orgunit
@@ -71,12 +103,15 @@ const Step2 = ({ contractsToImport, dhis2, setValidatedContracts, setIsLoading }
           }
         });
         const sameContractId = currentContracts.find(
-          (currentContract) => contractRaw.id && currentContract.id !== contractRaw.id
-        );        
-        contractRaw.action = sameContractId ? "update" : "create"
+          (currentContract) => contractRaw.id && currentContract.id !== contractRaw.id,
+        );
+        contractRaw.action = sameContractId ? "update" : "create";
         // validate overlaps
         const overlappingContract = currentContracts.find(
-          (currentContract) => currentContract.id !== contract.id && currentContract.orgUnit.id == contract.orgUnit.id && currentContract.overlaps(contract),
+          (currentContract) =>
+            currentContract.id !== contract.id &&
+            currentContract.orgUnit.id == contract.orgUnit.id &&
+            currentContract.overlaps(contract),
         );
         if (overlappingContract) {
           contractRaw.warnings.push(
@@ -85,14 +120,15 @@ const Step2 = ({ contractsToImport, dhis2, setValidatedContracts, setIsLoading }
               " -> " +
               overlappingContract.endPeriod +
               " : " +
-              overlappingContract.codes.join(" ") +`(${overlappingContract.id})`,
+              overlappingContract.codes.join(" ") +
+              `(${overlappingContract.id})`,
           );
         }
 
         const errors = contractService.validateContract(contract);
         if (errors.length > 0) {
           for (let error of errors) {
-            contractRaw.warnings.push(error.message)
+            contractRaw.warnings.push(error.message);
           }
         }
       });
@@ -127,16 +163,18 @@ const Step2 = ({ contractsToImport, dhis2, setValidatedContracts, setIsLoading }
     });
 
   return (
-    <div style={{maxWidth:"95%"}}>
+    <div style={{ maxWidth: "95%" }}>
       <h2>Step 2 : Validations</h2>
       <MuiThemeProvider theme={getMuiTheme()}>
         <MUIDataTable
           title={""}
           data={contracts}
-          columns={["id","orgUnit-id", "orgUnit-name"].concat(contractFields.map((f) => f.code)).concat(["action","warnings", "orgUnit-path"])}
+          columns={["id", "orgUnit-id", "orgUnit-name"]
+            .concat(contractFields.map((f) => f.code))
+            .concat(["action", "warnings", "orgUnit-path"])}
           options={{
             fixedHeader: true,
-            responsive: 'scrollMaxHeight',
+            responsive: "scrollMaxHeight",
             onRowSelectionChange: onRowSelectionChange,
             rowsSelected: rowsSelected,
             rowsPerPage: 5,

@@ -71,7 +71,7 @@ const Step2 = ({ contractsToImport, dhis2, setValidatedContracts, setIsLoading }
         if (!isIsoDate(contractRaw.contract_start_date)) {
           contractRaw.warnings.push(
             "start date : incorrect date format YYYY-MM-DD for " + contractRaw.contract_start_date,
-          );       
+          );
         }
         if (!isIsoDate(contractRaw.contract_end_date)) {
           contractRaw.warnings.push("end date : incorrect date format YYYY-MM-DD for " + contractRaw.contract_end_date);
@@ -103,9 +103,34 @@ const Step2 = ({ contractsToImport, dhis2, setValidatedContracts, setIsLoading }
           }
         });
         const sameContractId = currentContracts.find(
-          (currentContract) => contractRaw.id && currentContract.id !== contractRaw.id,
+          (currentContract) => contractRaw.id && currentContract.id == contractRaw.id,
         );
         contractRaw.action = sameContractId ? "update" : "create";
+
+        if (sameContractId) {
+          const modifiedFields = [];
+          const modifiedFieldDetails = [];
+          for (let key of Object.keys(sameContractId.fieldValues)) {
+            if (key != "id") {
+              const existingValue = sameContractId.fieldValues[key];
+              const modifiedValue = fieldValues[key];
+              const modified =
+                key == "orgUnit" ? modifiedValue.id !== existingValue.id : existingValue !== modifiedValue;
+              if (key == "orgUnit" && contractRaw["orgUnit-name"] !== existingValue.name) {
+                modifiedFields.push("orgUnit-name");
+                modifiedFieldDetails.push(key + "(" + contractRaw["orgUnit-name"] + " vs " + existingValue.name + ")");
+              }
+              if (modified) {
+                modifiedFields.push(key);
+                modifiedFieldDetails.push(
+                  key + "(" + JSON.stringify(existingValue) + " vs " + JSON.stringify(modifiedValue) + ")",
+                );
+              }
+            }
+          }
+          contractRaw.modifiedFields = modifiedFields.join(" ");
+          contractRaw.modifiedFieldDetails = modifiedFieldDetails.join("\n");
+        }
         // validate overlaps
         const overlappingContract = currentContracts.find(
           (currentContract) =>
@@ -171,7 +196,24 @@ const Step2 = ({ contractsToImport, dhis2, setValidatedContracts, setIsLoading }
           data={contracts}
           columns={["id", "orgUnit-id", "orgUnit-name"]
             .concat(contractFields.map((f) => f.code))
-            .concat(["action", "warnings", "orgUnit-path"])}
+            .concat(["action", "warnings", "orgUnit-path", "modifiedFields", "modifiedFieldDetails"])
+            .map((name) => {
+              return {
+                name: name,
+                label: name,
+                options: {
+                  filter: true,
+                  sort: true,
+                  customBodyRenderLite: (dataIndex) => {
+                    const contract = contracts[dataIndex];
+                    if (name == "modifiedFieldDetails") {
+                      return <pre>{contract[name]}</pre>;
+                    }
+                    return contract[name];
+                  },
+                },
+              };
+            })}
           options={{
             fixedHeader: true,
             responsive: "scrollMaxHeight",

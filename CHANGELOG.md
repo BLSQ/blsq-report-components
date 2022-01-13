@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.70
+
+- [contracts] Import in case of update displayed the modified fields
+
 # @blsq/blsq-report-components@1.0.69
 
 - [contracts] Make import more robust by validating date format

@@ -52,7 +52,7 @@ const CopyValuesDialogButton = (props) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [fromPeriod, setFromPeriod] = React.useState(undefined);
-  const { fromPeriods, toPeriod, orgUnit, dsi, dhis2 } = props;
+  const { fromPeriods, toPeriod, orgUnit, dsi, dhis2, periodFormat } = props;
 
   const handleClose = () => {
     setOpen(false);
@@ -84,6 +84,10 @@ const CopyValuesDialogButton = (props) => {
     setFromPeriod(value);
   };
 
+  const displayPeriod= (period) => {
+    return DatePeriods.displayName(period, periodFormat[DatePeriods.detect(period)])
+  }
+
   return (
     <CustomTableCell style={{ backgroundColor: "lightGrey", color: "white", textAlign: "center" }}>
       <IconButton onClick={() => setOpen(true)}>
@@ -94,7 +98,7 @@ const CopyValuesDialogButton = (props) => {
         <List>
           {fromPeriods.map((period) => (
             <ListItem button onClick={() => handleListItemClick(period)} key={period} selected={period === fromPeriod}>
-              <ListItemText primary={period} />
+              <ListItemText primary={displayPeriod(period)} />
             </ListItem>
           ))}
         </List>
@@ -103,7 +107,7 @@ const CopyValuesDialogButton = (props) => {
             Cancel
           </Button>
           <Button onClick={handleCopy} color="primary" autoFocus>
-            Copy {fromPeriod && <span>&nbsp;from {fromPeriod} !</span>}
+            Copy {fromPeriod && <span>&nbsp;from {displayPeriod(fromPeriod)} !</span>}
           </Button>
         </DialogActions>
       </Dialog>
@@ -118,7 +122,7 @@ const orgunitLineStyle = {
 };
 
 const OrgUnitLine = (props) => {
-  const { ou, dsi, dhis2 } = props;
+  const { ou, dsi, dhis2, periodFormat } = props;
   return (
     <TableRow>
       <CustomTableCell colSpan="2" style={orgunitLineStyle} title={ou.ancestors.map((a) => a.name).join(" > ")}>
@@ -132,6 +136,7 @@ const OrgUnitLine = (props) => {
           orgUnit={ou}
           dsi={dsi}
           dhis2={dhis2}
+          periodFormat={periodFormat}
         ></CopyValuesDialogButton>
       ))}
     </TableRow>
@@ -323,6 +328,9 @@ class IncentiveContainer extends Component {
     if (this.state.error !== undefined) {
       return (
         <Paper className={classes.root}>
+          <Typography variant="h6" style={{ marginRight: "20px" }}>
+            Incentives
+          </Typography>
           <IncentiveNavigationBar
             period={this.props.period}
             incentiveCode={this.props.incentiveCode}
@@ -335,6 +343,9 @@ class IncentiveContainer extends Component {
     if (this.state.dataSetInfos === undefined || this.props.currentUser === undefined) {
       return (
         <Paper className={classes.root}>
+          <Typography variant="h6" style={{ marginRight: "20px" }}>
+            Incentives
+          </Typography>
           <IncentiveNavigationBar
             period={this.props.period}
             incentiveCode={this.props.incentiveCode}
@@ -346,7 +357,7 @@ class IncentiveContainer extends Component {
       );
     }
     const dsi = this.state.dataSetInfos;
-   
+
     const dataElementCommonPrefix = IncentiveSupport.commonPrefix(
       dsi.dataSet.dataSetElements.map((de) => de.dataElement.name),
     );
@@ -360,29 +371,30 @@ class IncentiveContainer extends Component {
     const nonAllowedSee = dsi.dataSet.organisationUnits.filter((ou) => !allowedSeeOrgunitIds.includes(ou.id));
     return (
       <React.Fragment>
-        <PortalHeader>
-          <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start" }}>
-            <Typography variant="h6" style={{ marginRight: "20px" }}>
-              Incentives
-            </Typography>
-            <div style={{ background: "rgba(255, 255, 255, 0.20)", color: "#fff; important!", padding: "5px" }}>
-              <PeriodPicker
-                variant="white"
-                disableInputLabel={true}
-                period={this.props.period}
-                periodDelta={{
-                  before: 5,
-                  after: 5,
-                }}
-                onPeriodChange={(newPeriod) => {
-                  this.props.history.push("/incentives/" + newPeriod + "/" + this.props.incentiveCode);
-                }}
-              ></PeriodPicker>
+        <Paper className={classes.root}>
+          <div>
+            <div
+              style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start" }}
+            >
+              <Typography variant="h6" style={{ marginRight: "20px" }}>
+                Incentives
+              </Typography>
+              <div style={{ background: "rgba(255, 255, 255, 0.20)", color: "#fff; important!", padding: "5px" }}>
+                <PeriodPicker
+                  disableInputLabel={true}
+                  period={this.props.period}
+                  periodDelta={{
+                    before: 5,
+                    after: 5,
+                  }}
+                  onPeriodChange={(newPeriod) => {
+                    this.props.history.push("/incentives/" + newPeriod + "/" + this.props.incentiveCode);
+                  }}
+                ></PeriodPicker>
+              </div>
             </div>
           </div>
-        </PortalHeader>
-
-        <Paper className={classes.root}>
+          <div style={{marginLeft:"20px"}}>
           {this.props.incentivesDescriptors && this.props.incentivesDescriptors.length > 0 && (
             <IncentiveNavigationBar
               period={this.props.period}
@@ -410,7 +422,7 @@ class IncentiveContainer extends Component {
                 .map((ou) => {
                   return (
                     <React.Fragment>
-                      <OrgUnitLine ou={ou} dsi={dsi} dhis2={this.props.dhis2} />
+                      <OrgUnitLine ou={ou} dsi={dsi} dhis2={this.props.dhis2} periodFormat={this.props.periodFormat}/>
                       {dsi.dataSet.dataSetElements.map((de, index) => (
                         <OrgUnitValues
                           de={de}
@@ -432,6 +444,7 @@ class IncentiveContainer extends Component {
           {nonAllowedSee.length > 1 && (
             <p>You are not allowed to see : {nonAllowedSee.map((ou) => ou.name).join(", ")}</p>
           )}
+          </div>
         </Paper>
       </React.Fragment>
     );

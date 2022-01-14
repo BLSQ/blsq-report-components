@@ -188,7 +188,7 @@ class InvoiceSelectionContainer extends Component {
     console.log("this.props.period", this.props.period);
     return (
       <Paper className={classes.paper} square>
-        <Typography variant="h5" component="h5" gutterBottom>
+        <Typography variant="h6" component="h6" gutterBottom>
           {t("invoices.search.title")}
         </Typography>
         <div className={classes.filters}>

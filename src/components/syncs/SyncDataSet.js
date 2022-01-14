@@ -179,15 +179,15 @@ const SyncDataSet = (props) => {
   };
 
   return (
-    <Paper style={{ minHeight: "85vh" }}>
-      <PortalHeader>
-        <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start" }}>
+    <Paper style={{ minHeight: "85vh", paddingTop: "14px", paddingLeft: "14px"}}>
+      <div>
+        <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start", paddingTop: "5px", paddingLeft:"5px", marginBottom: "20px" }}>
           <Typography variant="h6" style={{ marginRight: "20px" }}>
             Dataset Synchronisation for
           </Typography>
-          <div style={{ background: "rgba(255, 255, 255, 0.20)", color: "#fff; important!", padding: "5px" }}>
+          <div style={{ padding: "5px" }}>
             <PeriodPicker
-              variant="white"
+           
               disableInputLabel={true}
               period={period}
               periodDelta={{
@@ -200,7 +200,7 @@ const SyncDataSet = (props) => {
             ></PeriodPicker>
           </div>
         </div>
-      </PortalHeader>
+      </div>
       <Table>
         <TableHead>
           <TableRow>

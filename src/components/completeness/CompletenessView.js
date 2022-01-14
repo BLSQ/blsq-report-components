@@ -11,6 +11,20 @@ import { toCompleteness, buildStatsByZone } from "./calculations";
 import { orgUnitColumns, zoneStatsColumns, statsTableOptions, tableOptions } from "./tables";
 import { useTranslation } from "react-i18next";
 import { anchorQueryParams, urlWith } from "./urlParams";
+import { Paper } from "@material-ui/core";
+import { makeStyles } from "@material-ui/styles";
+
+
+
+const styles = (theme) => ({
+  root: {
+    paddingLeft:theme.spacing(1), 
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1)
+  }
+  
+});
+const useStyles = makeStyles((theme) => styles(theme));
 
 const fetchCompleteDataSetRegistrations = async (api, quarterPeriod, DataEntries, accessibleZones) => {
   const periods = [quarterPeriod]
@@ -53,6 +67,7 @@ const fetchCompleteDataSetRegistrations = async (api, quarterPeriod, DataEntries
 };
 
 const CompletenessView = (props) => {
+  const classes = useStyles();
   const history = props.history;
   const quarterPeriod = props.match.params.period;
   const { t } = useTranslation();
@@ -148,14 +163,13 @@ const CompletenessView = (props) => {
 
   return (
     <div>
-      <PortalHeader>
-        <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start" }}>
+      <Paper className={classes.root} elevation={3}>
+        <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start", margin: "12px" }}>
           <Typography variant="h6" style={{ marginRight: "20px" }}>
             {t("completeness.header")}
           </Typography>
           <div style={{ background: "rgba(255, 255, 255, 0.20)", color: "#fff; important!", padding: "5px" }}>
             <PeriodPicker
-              variant="white"
               disableInputLabel={true}
               period={quarterPeriod}
               periodDelta={{
@@ -176,14 +190,15 @@ const CompletenessView = (props) => {
             ></PeriodPicker>
           </div>
         </div>
-      </PortalHeader>
+      
+      </Paper>
+      <br></br>
       <MUIDataTable
         title={t("completeness.statsByZone")}
         data={statsByZone}
         columns={columnsStats}
         options={statsTableOptions(quarterPeriod, statsByZone, setSelectedZonesAndQueryParams)}
-      />
-
+      />  
       <br></br>
 
       <MUIDataTable

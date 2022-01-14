@@ -179,7 +179,7 @@ const SyncDataSet = (props) => {
   };
 
   return (
-    <Paper style={{ minHeight: "85vh" }}>
+    <Paper style={{ minHeight: "85vh", paddingTop: "14px", paddingLeft: "14px"}}>
       <div>
         <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start", paddingTop: "5px", paddingLeft:"5px", marginBottom: "20px" }}>
           <Typography variant="h6" style={{ marginRight: "20px" }}>

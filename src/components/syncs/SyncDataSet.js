@@ -185,7 +185,7 @@ const SyncDataSet = (props) => {
           <Typography variant="h6" style={{ marginRight: "20px" }}>
             Dataset Synchronisation for
           </Typography>
-          <div style={{ padding: "5px" }}>
+          <div style={{ padding: "1px" }}>
             <PeriodPicker
            
               disableInputLabel={true}

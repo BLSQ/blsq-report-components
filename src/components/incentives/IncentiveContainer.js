@@ -379,7 +379,7 @@ class IncentiveContainer extends Component {
               <Typography variant="h6" style={{ marginRight: "20px" }}>
                 Incentives
               </Typography>
-              <div style={{ background: "rgba(255, 255, 255, 0.20)", color: "#fff; important!", padding: "5px" }}>
+              <div>
                 <PeriodPicker
                   disableInputLabel={true}
                   period={this.props.period}

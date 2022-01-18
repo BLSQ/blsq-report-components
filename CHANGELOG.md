@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.71
+
+- [general] Align layouts, remove title/period picker in the header navigation.
+
 # @blsq/blsq-report-components@1.0.70
 
 - [contracts] Import in case of update displayed the modified fields

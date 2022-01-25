@@ -1,17 +1,16 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import { withTranslation } from "react-i18next";
-import Paper from "@material-ui/core/Paper";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import Typography from "@material-ui/core/Typography";
-import FormControl from "@material-ui/core/FormControl";
+import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { FormControl, LinearProgress, Paper, Typography } from "@material-ui/core";
+
+import { makeStyles } from "@material-ui/styles";
 import OrgUnitAutoComplete from "./OrgUnitAutoComplete";
-import PeriodPicker from "../shared/PeriodPicker";
 import OuPicker from "./OuPicker";
+
+import PeriodPicker from "../shared/PeriodPicker";
+import searchOrgunit from "./searchOrgunit";
 import SelectionResultsContainer from "./SelectionResultsContainer";
-import PluginRegistry from "../core/PluginRegistry";
-import debounce from "lodash/debounce";
+
+import useDebounce from "../dataentry/useDebounce";
 
 const styles = (theme) => ({
   paper: theme.mixins.gutters({
@@ -31,198 +30,105 @@ const styles = (theme) => ({
   },
 });
 
-class InvoiceSelectionContainer extends Component {
-  static defaultProps = {
-    periodFormat: {
-      quarterly: "quarter",
-      monthly: "yearMonth",
-    },
-  };
+const useStyles = makeStyles(styles);
 
-  constructor(props) {
-    super(props);
-    this.searchOrgunit = debounce(this.searchOrgunit.bind(this), 1500);
-    this.onOuSearchChange = this.onOuSearchChange.bind(this);
-    this.onPeriodChange = this.onPeriodChange.bind(this);
-    this.synchronizeUrl = debounce(this.synchronizeUrl.bind(this), 200);
-    this.onParentOrganisationUnit = this.onParentOrganisationUnit.bind(this);
-    this.state = { loading: false };
-  }
-
-  componentDidMount() {
-    this.searchOrgunit();
-  }
-
-  onOuSearchChange(event) {
-    let ouSearchValue = event.target.value;
-    this.synchronizeHistory(
-      this.props.parent,
-      ouSearchValue,
-      this.props.period,
-    );
-  }
-
-  synchronizeUrl() {
-    this.setState({ loading: true });
-    synchronizeHistory(
-      this.props.parent,
-      this.props.ouSearchValue,
-      this.props.period,
-    );
-  }
-
-  synchronizeHistory(parent, ouSearchValue, period) {
-    if (!ouSearchValue) {
-      ouSearchValue = "";
-    }
-    const parentParam = parent ? "&parent=" + parent : "";
-    this.props.history.replace({
-      pathname: this.props.defaultPathName,
-      search: "?q=" + ouSearchValue + "&period=" + period + parentParam,
-    });
-  }
-
-  onParentOrganisationUnit(orgUnit) {
-    this.synchronizeHistory(
-      orgUnit,
-      this.props.ouSearchValue,
-      this.props.period,
-    );
-  }
-
-  onPeriodChange(period) {
-    this.synchronizeHistory(
-      this.props.parent,
-      this.props.ouSearchValue,
-      period,
-    );
-  }
-
-  async searchOrgunit() {
-    let searchvalue = this.props.ouSearchValue
-      ? this.props.ouSearchValue.trim()
-      : "";
-    if (this.props.currentUser) {
-      this.setState({ loading: true });
-      const user = this.props.currentUser;
-      const orgUnitsResp = await this.props.dhis2.searchOrgunits(
-        searchvalue,
-        user.dataViewOrganisationUnits,
-        this.props.contractedOrgUnitGroupId,
-        this.props.parent,
-      );
-      let categoryList = [];
-      if (this.props.dhis2.categoryComboId) {
-        categoryList = await this.searchCategoryCombo(searchvalue);
-        categoryList.forEach((cl) =>
-          orgUnitsResp.organisationUnits.push({
-            id: cl.id,
-            shortName: cl.shortName,
-            name: cl.name,
-            ancestors: [],
-            level: cl.level,
-            organisationUnitGroups: cl.organisationUnitGroups,
-          }),
-        );
-      }
-      const contractService = PluginRegistry.extension("contracts.service");
-      if (contractService) {
-        const contracts = await contractService.findAll();
-        const contractByOrgUnitId = {};
-        contracts.forEach((contract) => {
-          if (contractByOrgUnitId[contract.orgUnit.id] == undefined) {
-            contractByOrgUnitId[contract.orgUnit.id] = [];
-          }
-          contractByOrgUnitId[contract.orgUnit.id].push(contract);
-        });
-        orgUnitsResp.organisationUnits.forEach((orgUnit) => {
-          orgUnit.contracts = contractByOrgUnitId[orgUnit.id] || [];
-          orgUnit.activeContracts = orgUnit.contracts.filter((c) =>
-            c.matchPeriod(this.props.period),
-          );
-        });
-      }
-      this.setState({
-        orgUnits: orgUnitsResp.organisationUnits,
-        loading: false,
-      });
-    }
-  }
-
-  async searchCategoryCombo(searchvalue) {
-    const categoryCombos = await this.props.dhis2.getCategoryComboById();
-    let optionsCombos = categoryCombos.categoryOptionCombos.filter(
-      (cc) => cc.name.toLowerCase().indexOf(searchvalue.toLowerCase()) > -1,
-    );
-    return optionsCombos.map((option) => {
-      return {
-        id: option.id,
-        shortName: option.shortName,
-        name: option.name,
-        ancestors: [],
-        level: 0,
-        organisationUnitGroups: [
-          { name: "", id: this.props.contractedOrgUnitGroupId },
-        ],
-      };
-    });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const dirty =
-      nextProps.ouSearchValue !== this.props.ouSearchValue ||
-      nextProps.parent != this.props.parent;
-    this.props = nextProps;
-
-    const user = this.props.currentUser;
-    if (user && dirty) {
-      this.searchOrgunit();
-    }
-  }
-
-  render() {
-    const { classes, t } = this.props;
-    const SelectionResults =
-      this.props.resultsElements || SelectionResultsContainer;
-
-    console.log("this.props.period", this.props.period);
-    return (
-      <Paper className={classes.paper} square>
-        <Typography variant="h6" component="h6" gutterBottom>
-          {t("invoices.search.title")}
-        </Typography>
-        <div className={classes.filters}>
-          <OrgUnitAutoComplete
-            organisationUnits={this.props.topLevelsOrgUnits}
-            onChange={this.onParentOrganisationUnit}
-            selected={this.props.parent}
-          />
-          <br />
-          <OuPicker
-            onOuSearchChange={this.onOuSearchChange}
-            ouSearchValue={this.props.ouSearchValue}
-          />
-          <FormControl className={classes.periodContainer}>
-            <PeriodPicker
-              period={this.props.period}
-              onPeriodChange={this.onPeriodChange}
-              periodFormat={this.props.periodFormat}
-            />
-          </FormControl>
-          <br />
-          {this.state.loading ? <LinearProgress variant="query" /> : ""}
-        </div>
-        <br />
-        <br />
-        <br />
-        <SelectionResults {...this.props} orgUnits={this.state.orgUnits} />
-      </Paper>
-    );
-  }
-}
-
-InvoiceSelectionContainer.propTypes = {
-  classes: PropTypes.object.isRequired,
+const updateHistory = (history, parent, period, searchValue, defaultPathName) => {
+  const parentParam = parent ? "&parent=" + parent : "";
+  history.replace({
+    pathname: defaultPathName,
+    search: "?q=" + searchValue + "&period=" + period + parentParam,
+  });
 };
 
-export default withStyles(styles)(withTranslation()(InvoiceSelectionContainer));
+const InvoiceSelectionContainer = (props) => {
+  const {
+    ouSearchValue,
+    currentUser,
+    period,
+    parent,
+    contractedOrgUnitGroupId,
+    dhis2,
+    defaultPathName,
+    history,
+    topLevelsOrgUnits,
+    periodFormat,
+    resultsElements,
+  } = props;
+  const [orgUnits, setOrgUnits] = useState();
+  const [loading, setLoading] = useState(false);
+  const [searchValue, setSearchValue] = useState(ouSearchValue);
+  const [searchPeriod, setSearchPeriod] = useState(period);
+  const [debouncedSearchValue, setDebouncedSearchValue] = useDebounce(ouSearchValue);
+
+  useEffect(() => {
+    const search = async () => {
+      if (!currentUser) {
+        return;
+      }
+      setLoading(true);
+      try {
+        const newOrgUnits = await searchOrgunit({
+          searchValue: debouncedSearchValue,
+          user: currentUser,
+          period,
+          parent,
+          contractedOrgUnitGroupId,
+          dhis2,
+        });
+        setOrgUnits(newOrgUnits);
+        if (debouncedSearchValue !== ouSearchValue) {
+          updateHistory(history, parent, period, debouncedSearchValue, defaultPathName);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    search();
+  }, [debouncedSearchValue, currentUser, period, parent, contractedOrgUnitGroupId, dhis2, defaultPathName, history]);
+
+  const onOuSearchChange = async (event) => {
+    setDebouncedSearchValue(event.target.value);
+    setSearchValue(event.target.value);
+  };
+
+  const onPeriodChange = (newPeriod) => {
+    setSearchPeriod(newPeriod);
+    updateHistory(history, parent, newPeriod, debouncedSearchValue, defaultPathName);
+  };
+
+  const onParentOrganisationUnit = (orgUnitId) => {
+    updateHistory(history, orgUnitId, period, debouncedSearchValue, defaultPathName);
+  };
+  const classes = useStyles();
+  const { t } = useTranslation();
+  const SelectionResults = resultsElements || SelectionResultsContainer;
+
+  return (
+    <Paper className={classes.paper} square>
+      <Typography variant="h6" component="h6" gutterBottom>
+        {t("invoices.search.title")}
+      </Typography>
+      <div className={classes.filters}>
+        <OrgUnitAutoComplete
+          organisationUnits={topLevelsOrgUnits}
+          onChange={onParentOrganisationUnit}
+          selected={parent}
+        />
+        <br />
+        <OuPicker onOuSearchChange={onOuSearchChange} ouSearchValue={searchValue} />{" "}
+        <FormControl className={classes.periodContainer}>
+          <PeriodPicker period={searchPeriod} onPeriodChange={onPeriodChange} periodFormat={periodFormat} />
+        </FormControl>
+        <br />
+        {loading ? <LinearProgress variant="query" /> : ""}
+      </div>
+      <br />
+      <br />
+      <br />
+      <SelectionResults {...props} orgUnits={orgUnits} />
+    </Paper>
+  );
+};
+
+export default InvoiceSelectionContainer;

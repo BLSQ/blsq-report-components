@@ -10,7 +10,7 @@ import PeriodPicker from "../shared/PeriodPicker";
 import searchOrgunit from "./searchOrgunit";
 import SelectionResultsContainer from "./SelectionResultsContainer";
 
-import useDebounce from "../dataentry/useDebounce";
+import useDebounce from "../shared/useDebounce";
 
 const styles = (theme) => ({
   paper: theme.mixins.gutters({

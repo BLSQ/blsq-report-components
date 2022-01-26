@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.72
+
+- [invoices] Performance improvement when searching orgunit by name
+
 # @blsq/blsq-report-components@1.0.71
 
 - [general] Align layouts, remove title/period picker in the header navigation.

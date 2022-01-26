@@ -1,7 +1,7 @@
 import React from "react";
 import InvoiceSelectionContainer from "./InvoiceSelectionContainer";
 import InvoicePage from "./InvoicePage";
-import { Route, Redirect } from "react-router-dom";
+import { Route } from "react-router-dom";
 import PluginRegistry from "../core/PluginRegistry";
 
 const invoiceRoutes = (props) => {
@@ -28,9 +28,7 @@ const invoiceRoutes = (props) => {
       path="/select"
       exact
       component={(routerProps) => {
-        const params = new URLSearchParams(
-          routerProps.location.search.substring(1),
-        );
+        const params = new URLSearchParams(routerProps.location.search.substring(1));
         const period = params.get("period");
         const parent = params.get("parent");
         let ouSearchValue = params.get("q");
@@ -56,15 +54,6 @@ const invoiceRoutes = (props) => {
         );
       }}
     />,
-    /*
-    TODO this break things ?
-    ,
-    <Redirect key={"redirect-invoices-to-reports"}
-      exact={true}
-      from="/invoices/:period/:orgUnitId/:invoiceCode"
-      to="/reports/:period/:orgUnitId/:invoiceCode"
-    />,
-    */
   ];
 };
 

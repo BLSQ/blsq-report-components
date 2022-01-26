@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { TextField, Tooltip, ClickAwayListener } from "@material-ui/core";
 import FormDataContext from "./FormDataContext";
-import useDebounce from "./useDebounce";
+import useDebounce from "../shared/useDebounce";
 
 const Dhis2Input = ({ dataElement }) => {
   const formDataContext = useContext(FormDataContext);

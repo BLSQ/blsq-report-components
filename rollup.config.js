@@ -24,6 +24,7 @@ export default {
     /^@blsq.*/,
     "classnames",
     "clsx",
+    "d2",
     "history",
     /^lodash.*/,
     "moment",

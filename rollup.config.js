@@ -18,6 +18,12 @@ export default {
     }
   ],
   external: [
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {}),
+      "i18next",
+      "papaparse",
+      "mui-datatables",
+      "recharts",
     /^@babel.*/,
     /^@date-io\/.*/,
     /^@material-ui\/.*/,
@@ -25,6 +31,7 @@ export default {
     "classnames",
     "clsx",
     "d2",
+    "d2/lib/d2",
     "history",
     /^lodash.*/,
     "moment",

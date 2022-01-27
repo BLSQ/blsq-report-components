@@ -1,3 +1,12 @@
+# @blsq/blsq-report-components@1.0.74
+
+- [invoices] Fix burundi regression introduced in 1.0.72
+- [general] Rollup config for all external dependencies
+
+# @blsq/blsq-report-components@1.0.73
+
+- [general] Rollup config for d2 bundling
+
 # @blsq/blsq-report-components@1.0.72
 
 - [invoices] Performance improvement when searching orgunit by name

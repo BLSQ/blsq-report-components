@@ -17,6 +17,7 @@
     "contract_main_orgunit": "Unité d'organisation principale",
     "createTitle": "Créer un contrat",
     "editTitle": "Editer le contrat",
+    "generateTables": "Générer des tableaux",
     "mainContracts": "Contrat(s) direct(s)",
     "onlyOverlaps": "Seulement les contracts se chevauchant",
     "onlySubContracts": "Seulement les sous contrats",

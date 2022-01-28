@@ -1,4 +1,6 @@
 import React from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 import PropTypes from "prop-types";
 import { HashRouter as Router } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
@@ -27,6 +29,8 @@ const styles = (theme) => ({
   },
 });
 
+const queryClient = new QueryClient();
+
 const App = ({
   classes,
   dhis2,
@@ -37,36 +41,39 @@ const App = ({
   drawerLinks,
   defaultPathName,
 }) => (
-  <SnackbarProvider
-    maxSnack={3}
-    autoHideDuration={4000}
-    anchorOrigin={{
-      vertical: "bottom",
-      horizontal: "center",
-    }}
-  >
-    <Provider store={store}>
-      <Router>
-        <div className={classes.root}>
-          <div className={classes.appFrame}>
-            <AppToolBar />
-            <AppDrawer
-              drawerLinks={drawerLinks}
-              defaultPathName={defaultPathName || "/select"}
-            />
-            <AppContent
-              dhis2={dhis2}
-              config={config}
-              invoices={invoices}
-              incentivesDescriptors={incentivesDescriptors}
-              dataElementGroups={dataElementGroups}
-            />
+  <QueryClientProvider client={queryClient}>
+    <SnackbarProvider
+      maxSnack={3}
+      autoHideDuration={4000}
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "center",
+      }}
+    >
+      <Provider store={store}>
+        <Router>
+          <div className={classes.root}>
+            <div className={classes.appFrame}>
+              <AppToolBar />
+              <AppDrawer
+                drawerLinks={drawerLinks}
+                defaultPathName={defaultPathName || "/select"}
+              />
+              <AppContent
+                dhis2={dhis2}
+                config={config}
+                invoices={invoices}
+                incentivesDescriptors={incentivesDescriptors}
+                dataElementGroups={dataElementGroups}
+              />
+            </div>
           </div>
-        </div>
-      </Router>
-      <SnackBarContainer />
-    </Provider>
-  </SnackbarProvider>
+        </Router>
+        <SnackBarContainer />
+      </Provider>
+    </SnackbarProvider>
+    <ReactQueryDevtools initialIsOpen={false} />
+  </QueryClientProvider>
 );
 
 App.propTypes = {

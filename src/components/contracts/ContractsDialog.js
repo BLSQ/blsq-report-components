@@ -31,6 +31,7 @@ import { getStartDateFromPeriod, getEndDateFromPeriod } from "./utils/periodsUti
 import { enqueueSnackbar } from "../redux/actions/snackBars";
 
 import LoadingSpinner from "../shared/LoadingSpinner";
+import GenerateTablesButton from "./GenerateTablesButton";
 
 const styles = (theme) => ({
   title: {
@@ -124,6 +125,7 @@ const ContractsDialog = ({
         dispatch(enqueueSnackbar(errorSnackBar("snackBar.error.save", null, err)));
       });
   };
+
   const childrenWithProps = React.Children.map(children, (child) => {
     const props = { onClick: () => handleClickOpen() };
     if (React.isValidElement(child)) {
@@ -252,6 +254,7 @@ const ContractsDialog = ({
           >
             {t("save")}
           </Button>
+          <GenerateTablesButton />
         </DialogActions>
       </Dialog>
     </>

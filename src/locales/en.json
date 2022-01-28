@@ -16,6 +16,7 @@
     "contract_main_orgunit": "Main org unit",
     "createTitle": "Create a contract",
     "editTitle": "Edit contract",
+    "generateTables": "Generate Tables",
     "mainContracts": "Main contract(s)",
     "onlyOverlaps": "Only with overlaps",
     "onlySubContracts": "Only sub contracts",

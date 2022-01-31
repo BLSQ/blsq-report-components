@@ -6,6 +6,7 @@ import { Button } from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import CheckIcon from "@material-ui/icons/Check";
 import green from "@material-ui/core/colors/green";
+import { Alert } from "@material-ui/lab";
 
 const UNKNOWN = "unknown";
 const STOPPED = "stopped";
@@ -34,16 +35,19 @@ const filterUncompletedTasks = (data) => {
     : values;
 };
 
-const GenerateTablesButton = () => {
+const GenerateTablesButton = ({ creationDate }) => {
   const [pollingStatus, setPollingStatus] = React.useState(UNKNOWN);
   const [pollingId, setPollingId] = React.useState();
+  const [lastExecutionDate, setLastExecutionDate] = React.useState();
 
-  const pollingStatusQuery = useQuery("verifyPollingStatus", getPollingStatus, {
+  const verifyPollingStatusQuery = useQuery("verifyPollingStatus", getPollingStatus, {
     onSuccess: (data) => {
       const uncompletedTasks = filterUncompletedTasks(data);
       setPollingStatus(uncompletedTasks.length > 0 ? RUNNING : STOPPED);
       if (uncompletedTasks.length > 0) {
         setPollingId(uncompletedTasks[0][0].id);
+        const tableCreationDates = Object.values(data).map((event) => event[0].time);
+        setLastExecutionDate(tableCreationDates.sort()[tableCreationDates.length - 1]);
       }
     },
   });
@@ -63,7 +67,7 @@ const GenerateTablesButton = () => {
   };
 
   // begin resource table polling
-  const resourceTablePolling = useQuery("beginResourceTablePolling", beginPolling, {
+  const resourceTablePollingQuery = useQuery("beginResourceTablePolling", beginPolling, {
     enabled: !!pollingId,
     refetchInterval: 30000,
     onSuccess: (data) => {
@@ -71,10 +75,15 @@ const GenerateTablesButton = () => {
       setPollingStatus(uncompletedTasks.length > 0 ? RUNNING : STOPPED);
       if (uncompletedTasks.length > 0) {
         setPollingId(undefined);
+        const tableCreationDates = Object.values(data).map((event) => event[0].time);
+        setLastExecutionDate(tableCreationDates.sort()[tableCreationDates.length - 1]);
       }
     },
   });
 
+  const queries = [verifyPollingStatusQuery, resourceTablePollingQuery, triggerResourceTableQuery];
+  const isError = queries.some((q) => q.isError);
+  const errorMessages = queries.map((q) => q?.error?.message).filter((m) => m);
   return (
     <div>
       <Button
@@ -88,8 +97,16 @@ const GenerateTablesButton = () => {
         Generate Tables
       </Button>
 
+      {isError ? (
+        <Alert onClose={() => {}} severity="error">
+          {errorMessages.join(" ")}
+        </Alert>
+      ) : (
+        ""
+      )}
+
       {pollingStatus === RUNNING ? <CircularProgress size={15} /> : ""}
-      {pollingStatus === STOPPED ? <CheckIcon sx={{ color: green }} fontSize="small" /> : ""}
+      {lastExecutionDate > creationDate ? <CheckIcon fontSize="small" /> : ""}
     </div>
   );
 };

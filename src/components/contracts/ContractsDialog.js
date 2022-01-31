@@ -31,7 +31,7 @@ import { getStartDateFromPeriod, getEndDateFromPeriod } from "./utils/periodsUti
 import { enqueueSnackbar } from "../redux/actions/snackBars";
 
 import LoadingSpinner from "../shared/LoadingSpinner";
-import GenerateTablesButton from "./GenerateTablesButton";
+import GenerateTablesNeeded from "./GenerateTablesNeeded";
 
 const styles = (theme) => ({
   title: {
@@ -201,6 +201,7 @@ const ContractsDialog = ({
                     orgUnit={currentContract.fieldValues.orgUnit}
                   />
                 )}
+                <GenerateTablesNeeded orgUnit={currentContract.fieldValues.orgUnit} />
                 {displayMainOrgUnit && (
                   <OuSearch
                     onChange={(orgUnit) => handleChange("fieldValues", orgUnit, "contract_main_orgunit")}
@@ -254,7 +255,6 @@ const ContractsDialog = ({
           >
             {t("save")}
           </Button>
-          <GenerateTablesButton />
         </DialogActions>
       </Dialog>
     </>

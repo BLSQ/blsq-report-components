@@ -40,7 +40,6 @@ const GenerateTablesButton = ({ creationDate }) => {
   const [lastExecutionDate, setLastExecutionDate] = React.useState();
 
   const verifyPollingStatusQuery = useQuery("verifyPollingStatus", getPollingStatus, {
-    retry: false,
     onSuccess: (data) => {
       const uncompletedTasks = filterUncompletedTasks(data);
       setPollingStatus(uncompletedTasks.length > 0 ? RUNNING : STOPPED);
@@ -55,7 +54,6 @@ const GenerateTablesButton = ({ creationDate }) => {
   // trigger resource table polling
   const triggerResourceTableQuery = useQuery("triggerResourceTableQueryForPolling", triggerResourceTable, {
     enabled: false,
-    retry: false,
     onSuccess: (response) => setPollingId(response.id),
   });
 
@@ -71,7 +69,6 @@ const GenerateTablesButton = ({ creationDate }) => {
   const resourceTablePollingQuery = useQuery("beginResourceTablePolling", beginPolling, {
     enabled: !!pollingId,
     refetchInterval: 30000,
-    retry: false,
     onSuccess: (data) => {
       const uncompletedTasks = filterUncompletedTasks(data);
       setPollingStatus(uncompletedTasks.length > 0 ? RUNNING : STOPPED);

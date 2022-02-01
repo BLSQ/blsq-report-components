@@ -29,7 +29,11 @@ const styles = (theme) => ({
   },
 });
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    retry: false,
+  },
+});
 
 const App = ({
   classes,

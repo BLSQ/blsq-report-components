@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.75
+
+- [contracts] Adds generate resource tables button during contract creation
+
 # @blsq/blsq-report-components@1.0.74
 
 - [invoices] Fix burundi regression introduced in 1.0.72

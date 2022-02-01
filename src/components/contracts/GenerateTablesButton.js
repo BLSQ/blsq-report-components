@@ -5,7 +5,6 @@ import _ from "lodash";
 import { Button } from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import CheckIcon from "@material-ui/icons/Check";
-import green from "@material-ui/core/colors/green";
 import { Alert } from "@material-ui/lab";
 
 const UNKNOWN = "unknown";
@@ -41,6 +40,7 @@ const GenerateTablesButton = ({ creationDate }) => {
   const [lastExecutionDate, setLastExecutionDate] = React.useState();
 
   const verifyPollingStatusQuery = useQuery("verifyPollingStatus", getPollingStatus, {
+    retry: false,
     onSuccess: (data) => {
       const uncompletedTasks = filterUncompletedTasks(data);
       setPollingStatus(uncompletedTasks.length > 0 ? RUNNING : STOPPED);
@@ -55,6 +55,7 @@ const GenerateTablesButton = ({ creationDate }) => {
   // trigger resource table polling
   const triggerResourceTableQuery = useQuery("triggerResourceTableQueryForPolling", triggerResourceTable, {
     enabled: false,
+    retry: false,
     onSuccess: (response) => setPollingId(response.id),
   });
 
@@ -70,6 +71,7 @@ const GenerateTablesButton = ({ creationDate }) => {
   const resourceTablePollingQuery = useQuery("beginResourceTablePolling", beginPolling, {
     enabled: !!pollingId,
     refetchInterval: 30000,
+    retry: false,
     onSuccess: (data) => {
       const uncompletedTasks = filterUncompletedTasks(data);
       setPollingStatus(uncompletedTasks.length > 0 ? RUNNING : STOPPED);

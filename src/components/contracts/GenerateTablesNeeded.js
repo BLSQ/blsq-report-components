@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import PluginRegistry from "../core/PluginRegistry";
 import GenerateTablesButton from "./GenerateTablesButton";
 
 const GenerateTablesNeeded = ({ orgUnit }) => {
+  const { t } = useTranslation();
   const generateTablesNeededQuery = useQuery(
     ["systemInfo", orgUnit?.id],
     async () => {
@@ -32,8 +34,7 @@ const GenerateTablesNeeded = ({ orgUnit }) => {
     <div>
       <div style={{ color: generateTablesNeededQuery.data ? "darkorange" : "" }}>
         {generateTablesNeededQuery.isLoading && "checking resources tables"}
-        {generateTablesNeededQuery.data &&
-          "The orgUnit is freshly created. Please generate resource tables before going on. You might be able to save the contract but not read it back."}
+        {generateTablesNeededQuery.data && t("contracts.resourceTables.generateHint")}
       </div>
       <div>{generateTablesNeededQuery.data && <GenerateTablesButton creationDate={orgUnit.created} />}</div>
     </div>

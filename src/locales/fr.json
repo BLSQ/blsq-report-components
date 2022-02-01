@@ -24,9 +24,13 @@
     "overlappingWith": "Se chevauchant avec",
     "overlaps": ", dont {{overlap}} se chevauchant",
     "invalids": " {{warnings}} invalides",
+    "resourceTables": {
+        "generateHint":  "l'orgUnit vient d'être créée. Veuillez lancer la génération des resource tables avant de continuer la création du contrat.",      
+        "generateButton":"Lancer la génération des Resource Tables"
+    },
     "result": "1 contrat",
     "results": "{{total}} contrats",
-    "resultsFiltered": "{{filtered}} contrats filtrés sur {{total}}",
+    "resultsFiltered": "{{filtered}} contrats filtrés sur {{total}}",    
     "searchInfos": "Chercher sur le nom ou le code du contrat",
     "seeOrgUnit": "Voir l'unité d'organisation",
     "status": {

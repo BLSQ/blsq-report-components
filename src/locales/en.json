@@ -23,6 +23,10 @@
     "overlappingWith": "Overlaps with",
     "overlaps": ", {{overlap}} overlapping globaly",
     "invalids": " {{warnings}} invalids",
+    "resourceTables": {
+      "generateHint":"The orgUnit is freshly created. Please generate resource tables before continuing with contract creation.",
+      "generateButton":"Generate Resource Tables"
+    },    
     "result": "1 contract",
     "results": "{{total}} contracts",
     "resultsFiltered": "{{filtered}} results filtered out {{total}} contracts",

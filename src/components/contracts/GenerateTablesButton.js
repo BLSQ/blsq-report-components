@@ -6,6 +6,7 @@ import { Button } from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import CheckIcon from "@material-ui/icons/Check";
 import { Alert } from "@material-ui/lab";
+import { useTranslation } from "react-i18next";
 
 const UNKNOWN = "unknown";
 const STOPPED = "stopped";
@@ -41,6 +42,7 @@ const getLastExecutionDate = (tasks) => {
 }
 
 const GenerateTablesButton = ({ creationDate }) => {
+  const { t } = useTranslation();
   const [pollingStatus, setPollingStatus] = React.useState(UNKNOWN);
   const [pollingId, setPollingId] = React.useState();
   const [lastExecutionDate, setLastExecutionDate] = React.useState();
@@ -104,7 +106,7 @@ const GenerateTablesButton = ({ creationDate }) => {
         }}
         color="primary"
       >
-        Generate Tables
+        {t("contracts.resourceTables.generateButton")}
       </Button>
 
       {isError ? (

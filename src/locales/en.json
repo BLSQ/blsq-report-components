@@ -16,12 +16,17 @@
     "contract_main_orgunit": "Main org unit",
     "createTitle": "Create a contract",
     "editTitle": "Edit contract",
+    "generateTables": "Generate Tables",
     "mainContracts": "Main contract(s)",
     "onlyOverlaps": "Only with overlaps",
     "onlySubContracts": "Only sub contracts",
     "overlappingWith": "Overlaps with",
     "overlaps": ", {{overlap}} overlapping globaly",
     "invalids": " {{warnings}} invalids",
+    "resourceTables": {
+      "generateHint":"The orgUnit is freshly created. Please generate resource tables before continuing with contract creation.",
+      "generateButton":"Generate Resource Tables"
+    },    
     "result": "1 contract",
     "results": "{{total}} contracts",
     "resultsFiltered": "{{filtered}} results filtered out {{total}} contracts",

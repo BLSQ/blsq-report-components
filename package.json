@@ -74,7 +74,8 @@
     "react-select": "^3.1.0",
     "react-test-renderer": "^16.6.3",
     "recharts": "1.8.5",
-    "rollup": "^2.10.0"
+    "rollup": "^2.10.0",
+    "@date-io/moment": "2.13.1"
   },
   "files": [
     "dist"
@@ -86,6 +87,7 @@
     "moment": "^2.27.0",
     "notistack": "^0.9.17",
     "qs": "^6.9.4",
+    "react-query": "^3.34.12",
     "react-redux": "^7.2.1",
     "react-router-redux": "^4.0.8",
     "redux": "^4.0.5",

@@ -27,12 +27,18 @@ const triggerResourceTable = async () => {
   return response;
 };
 
-const filterUncompletedTasks = (data) => {
-  const values = _.values(data);
-  return values.length > 1
-    ? _.values(data).filter((statuses) => !statuses.some((s) => s.completed) || statuses.completed)
-    : values;
+// statuses array of array of task
+const filterUncompletedTasks = (allStatuses) => {
+  return allStatuses.filter((statuses) => !statuses.some((s) => s.completed));
 };
+
+const getLastExecutionDate = (tasks) => {
+  const completedTaskDates = tasks
+          .flatMap((t) => t)
+          .filter((event) => event.completed)
+          .map((event) => event.time);
+  return completedTaskDates.sort()[completedTaskDates.length - 1]          
+}
 
 const GenerateTablesButton = ({ creationDate }) => {
   const [pollingStatus, setPollingStatus] = React.useState(UNKNOWN);
@@ -40,13 +46,16 @@ const GenerateTablesButton = ({ creationDate }) => {
   const [lastExecutionDate, setLastExecutionDate] = React.useState();
 
   const verifyPollingStatusQuery = useQuery("verifyPollingStatus", getPollingStatus, {
-    onSuccess: (data) => {
-      const uncompletedTasks = filterUncompletedTasks(data);
-      setPollingStatus(uncompletedTasks.length > 0 ? RUNNING : STOPPED);
+    onSuccess: (statusesById) => {
+      const statuses = Object.values(statusesById);
+      const uncompletedTasks = filterUncompletedTasks(statuses);      
+      setLastExecutionDate(getLastExecutionDate(statuses));
+
       if (uncompletedTasks.length > 0) {
         setPollingId(uncompletedTasks[0][0].id);
-        const tableCreationDates = Object.values(data).map((event) => event[0].time);
-        setLastExecutionDate(tableCreationDates.sort()[tableCreationDates.length - 1]);
+        setPollingStatus(RUNNING)
+      } else {
+        setPollingStatus(STOPPED);
       }
     },
   });
@@ -57,11 +66,11 @@ const GenerateTablesButton = ({ creationDate }) => {
     onSuccess: (response) => setPollingId(response.id),
   });
 
-  // step 4: poll to see when finished
+  // step 4: poll to see when finished returns an array of steps
   const beginPolling = async () => {
     const dhis2 = PluginRegistry.extension("core.dhis2");
     const api = await dhis2.api();
-    const response = await api.get(`system/tasks/RESOURCE_TABLE/${pollingId}`);
+    const response = await api.get(`system/tasks/RESOURCE_TABLE/${pollingId}`);  
     return response;
   };
 
@@ -69,13 +78,15 @@ const GenerateTablesButton = ({ creationDate }) => {
   const resourceTablePollingQuery = useQuery("beginResourceTablePolling", beginPolling, {
     enabled: !!pollingId,
     refetchInterval: 30000,
-    onSuccess: (data) => {
-      const uncompletedTasks = filterUncompletedTasks(data);
-      setPollingStatus(uncompletedTasks.length > 0 ? RUNNING : STOPPED);
-      if (uncompletedTasks.length > 0) {
+    onSuccess: (task) => {
+      const tasks = [task];
+      const uncompletedTasks = filterUncompletedTasks(tasks);
+      if (uncompletedTasks.length == 0) {
+        setPollingStatus( STOPPED);
         setPollingId(undefined);
-        const tableCreationDates = Object.values(data).map((event) => event[0].time);
-        setLastExecutionDate(tableCreationDates.sort()[tableCreationDates.length - 1]);
+        setLastExecutionDate(getLastExecutionDate(tasks));
+      } else {
+        setPollingStatus(RUNNING);
       }
     },
   });
@@ -105,7 +116,7 @@ const GenerateTablesButton = ({ creationDate }) => {
       )}
 
       {pollingStatus === RUNNING ? <CircularProgress size={15} /> : ""}
-      {lastExecutionDate > creationDate ? <CheckIcon fontSize="small" /> : ""}
+      {lastExecutionDate > creationDate ? <CheckIcon fontSize="small" /> : ""}   
     </div>
   );
 };

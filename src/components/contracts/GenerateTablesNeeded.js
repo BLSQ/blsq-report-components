@@ -30,7 +30,7 @@ const GenerateTablesNeeded = ({ orgUnit }) => {
   );
   return (
     <div>
-      <div style={{ color: generateTablesNeededQuery.data ? "orange" : "" }}>
+      <div style={{ color: generateTablesNeededQuery.data ? "darkorange" : "" }}>
         {generateTablesNeededQuery.isLoading && "checking resources tables"}
         {generateTablesNeededQuery.data &&
           "The orgUnit is freshly created. Please generate resource tables before going on. You might be able to save the contract but not read it back."}

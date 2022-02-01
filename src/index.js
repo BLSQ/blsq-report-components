@@ -33,8 +33,11 @@ import { generateCalculator } from "./components/dataentry/CalculatorFactory";
 import HesabuFormula from "./components/dataentry/HesabuFormula";
 import EditIasoFormButton from "./components/dataentry/EditIasoFormButton";
 
+const App = AppDrawer
+
 export {
   AppDrawer,
+  App,
   InvoiceSelectionContainer,
   Dhis2,
   Orbf2,

@@ -1,7 +1,6 @@
 import React from "react";
 import { useQuery } from "react-query";
 import PluginRegistry from "../core/PluginRegistry";
-import _ from "lodash";
 import { Button } from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import CheckIcon from "@material-ui/icons/Check";

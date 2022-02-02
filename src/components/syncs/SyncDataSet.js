@@ -7,6 +7,7 @@ import PluginRegistry from "../core/PluginRegistry";
 import _ from "lodash";
 import {
   Button,
+  Checkbox,
   Typography,
   makeStyles,
   Paper,
@@ -54,6 +55,7 @@ const SyncDataSet = (props) => {
   const classes = useStyles(props);
   const allDataEntries = DataEntries.getAllDataEntries();
   const [loading, setLoading] = useState(undefined);
+  const [loadingStatus, setLoadingStatus] = useState(undefined);
   const [dataElementsById, setDataElementsById] = useState(undefined);
   const [dataSetsById, setDataSetsById] = useState(undefined);
   const [contractsByDataEntryCode, setContractsByDataEntryCode] = useState(undefined);
@@ -134,8 +136,9 @@ const SyncDataSet = (props) => {
     fetchDataSets();
   }, []);
 
-  const addMissingOu = async (myDataSet, missingOrgunits) => {
-    setLoading(true);
+  const updateOu = async (myDataSet, missingOrgunits) => {
+    setLoadingStatus(`Updating ${myDataSet.name}`);
+    console.log(`Updating ${myDataSet.name}`);
     const api = await dhis2.api();
     const dataSet = await api.get("dataSets/" + myDataSet.id, {
       fields: ":all",
@@ -147,6 +150,25 @@ const SyncDataSet = (props) => {
       }
     }
     await api.update("dataSets/" + dataSet.id, dataSet);
+  };
+
+  const addAllMissingOus = async () => {
+    setLoading(true);
+    const contracts = Object.values(contractsByDataEntryCode);
+    for (let contractGroups of contracts) {
+      for (let contract of contractGroups) {
+        if (contract.missingOrgunits.length > 0) {
+          await updateOu(contract.dataSet, contract.missingOrgunits);
+        }
+      }
+    }
+    setLoading(false);
+    fetchDataSets();
+  };
+
+  const addSingleMissingOu = async (myDataSet, missingOrgunits) => {
+    setLoading(true);
+    await updateOu(myDataSet, missingOrgunits)
     setLoading(false);
     fetchDataSets();
   };
@@ -154,7 +176,6 @@ const SyncDataSet = (props) => {
   const addMissingDe = async (dataEntry) => {
     setLoading(true);
     const missing = contractsByDataEntryCode[dataEntry.code][0].missingDataElements;
-    
     const api = await dhis2.api();
     const dataSet = await api.get("dataSets/" + dataEntry.dataSetId, {
       fields: ":all",
@@ -197,9 +218,14 @@ const SyncDataSet = (props) => {
               onPeriodChange={(newPeriod) => {
                 props.history.push("/sync/datasets/" + newPeriod);
               }}
-            ></PeriodPicker>
+             />
           </div>
         </div>
+      </div>
+      <div>
+        <Button onClick={addAllMissingOus} color="primary">
+          Synchronize all {loading && loadingStatus}
+        </Button>
       </div>
       <Table>
         <TableHead>
@@ -222,7 +248,7 @@ const SyncDataSet = (props) => {
                   {dataEntry.name}
                   <br />
                   <code>
-                    {dataEntry.code} <br></br> {dataEntry.frequency}
+                    {dataEntry.code} <br /> {dataEntry.frequency}
                   </code>
                 </TableCell>
                 <TableCell>
@@ -242,11 +268,11 @@ const SyncDataSet = (props) => {
                     contracts.map((contract) => (
                       <Button
                         style={{ textAlign: "left" }}
-                        onClick={() => addMissingOu(contract.dataSet, contract.missingOrgunits)}
+                        onClick={() => addSingleMissingOu(contract.dataSet, contract.missingOrgunits)}
                         title={contract.missingOrgunits.map((ou) => ou.name).join(" , ")}
                         disabled={contract.missingOrgunits.length == 0}
                       >
-                        Add {contract.missingOrgunits.length} missing OrgUnits to dataset <br></br>{" "}
+                        Add {contract.missingOrgunits.length} missing OrgUnits to dataset <br />{" "}
                         {contract.dataSet.name}
                       </Button>
                     ))}
@@ -297,7 +323,7 @@ const SyncDataSet = (props) => {
                             >
                               <code>{contract.dataSet.id}</code>
                             </a>{" "}
-                            <br></br>
+                            <br />
                             {contract.dataSet.workflow && "Data approval : " + contract.dataSet.workflow.name+" "+contract.dataSet.workflow.periodType}
                             {contract.dataSet.workflow == undefined && (
                               <span style={{ color: "red" }}>no data approval configured</span>
@@ -315,7 +341,7 @@ const SyncDataSet = (props) => {
                                 dhis2RootUrl={dhis2RootUrl}
                               />
                             ))}
-                            <br></br>
+                            <br />
                           </>
                         );
                       })}

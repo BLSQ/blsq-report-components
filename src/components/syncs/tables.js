@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@material-ui/core";
-import { AccessDisplay } from "./accessDisplay";
+import AccessDisplay from "./AccessDisplay";
 
 export const constructDataSyncTableColumns = (
   data,
@@ -78,7 +78,7 @@ export const constructDataSyncTableColumns = (
               {!loading &&
                 contracts &&
                 contracts.map((contract) => (
-                  <div>
+                  <div key={contract.dataSet.id}>
                     <Button
                       style={{ textAlign: "left" }}
                       onClick={() => addSingleMissingOu(contract.dataSet, contract.missingOrgunits)}
@@ -135,7 +135,7 @@ export const constructDataSyncTableColumns = (
               {contracts &&
                 contracts.map((contract) => {
                   return (
-                    <>
+                    <div key={contract.dataSet.id}>
                       <b style={{ color: "grey" }}>{contract.dataSet.name}</b>{" "}
                       <a
                         href={
@@ -171,7 +171,7 @@ export const constructDataSyncTableColumns = (
                         />
                       ))}
                       <br />
-                    </>
+                    </div>
                   );
                 })}
             </div>

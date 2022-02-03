@@ -1,9 +1,7 @@
 import DatePeriods from "../../support/DatePeriods";
 import PluginRegistry from "../core/PluginRegistry";
-import _ from "lodash";
 import MUIDataTable from "mui-datatables";
 import React, { useEffect } from "react";
-import PortalHeader from "../shared/PortalHeader";
 import PeriodPicker from "../shared/PeriodPicker";
 import { Typography } from "@material-ui/core";
 

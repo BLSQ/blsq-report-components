@@ -49,6 +49,10 @@
     "warnings": "Warnings"
   },
   "dataEntry": {
+    "accessAndApproval": "Access & Approval Workflow",
+    "actions": "Actions",
+    "activeContracts": "Active Contracts",
+    "assignedTo": "Assigned To",
     "contractFrom": "Contract from",
     "contractTo": "to",
     "dataEntries": "Data entry",

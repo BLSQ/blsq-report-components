@@ -47,7 +47,7 @@
     "warnings": "Warnings"
   },
   "dataEntry": {
-    "accessAndApproval": "Workflow d'accès et d'approbation",
+    "accessAndApproval": "Workflow d'approbation et droit d'accès",
     "actions": "Actions",
     "activeContracts": "Contrats actifs",
     "assignedTo": "Assigné à",

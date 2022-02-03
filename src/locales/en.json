@@ -61,6 +61,10 @@
     "invoices": "Invoices",
     "dataSetNotWritable": "You don't have write access to '{{dataSetName}}'"
   },
+  "dataSync": {
+    "title": "Data Synchronization for",
+    "addAllOrgUnits": "Synchronize All Orgunits"
+  },
   "levels": {
     "level1": "Level 1",
     "level2": "Level 2",

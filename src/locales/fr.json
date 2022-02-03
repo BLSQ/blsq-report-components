@@ -59,6 +59,10 @@
     "invoices": "Factures",
     "dataSetNotWritable": "Vous n'avez pas le droit de saisie sur '{{dataSetName}}'"
   },
+  "dataSync": {
+    "title": "Synchronisation de données pour",
+    "addAllOrgunits": "Synchroniser toutes les orgunits"
+  },
   "levels": {
     "level1": "Niveau 1",
     "level2": "Niveau 2",

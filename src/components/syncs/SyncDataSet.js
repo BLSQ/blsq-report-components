@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useQuery } from "react-query";
 import MUIDataTable from "mui-datatables";
 import PeriodPicker from "../shared/PeriodPicker";
@@ -6,7 +6,6 @@ import PluginRegistry from "../core/PluginRegistry";
 
 import { constructDataSyncTableColumns } from "./tables";
 
-import _ from "lodash";
 import { Button, Typography, makeStyles, Paper, CircularProgress } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { fetchDataSets } from "./fetchDataSets";
@@ -145,7 +144,7 @@ const SyncDataSet = (props) => {
         <div className={classes.header}>
           <div className={classes.headerTitleHolder}>
             <Typography variant="h6" className={classes.headerTitle}>
-              Dataset Synchronisation for
+              {t("dataSync.title")}
             </Typography>
             <div classes={classes.picker}>
               <PeriodPicker
@@ -163,7 +162,7 @@ const SyncDataSet = (props) => {
           </div>
           <div className={classes.syncButton}>
             <Button onClick={addAllMissingOusQuery.refetch} color="primary">
-              Synchronize all {loading && loadingStatus ? <CircularProgress size={15} /> : ""}
+              {t("dataSync.addAllOrgunits")} {loading && loadingStatus ? <CircularProgress size={15} /> : ""}
             </Button>
           </div>
         </div>

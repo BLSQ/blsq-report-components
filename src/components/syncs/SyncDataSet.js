@@ -1,32 +1,13 @@
 import React, { useEffect, useState } from "react";
 import MUIDataTable from "mui-datatables";
-import PortalHeader from "../shared/PortalHeader";
 import PeriodPicker from "../shared/PeriodPicker";
-
 import PluginRegistry from "../core/PluginRegistry";
 
-import {
-  constructDataEntryName,
-  constructDataEntryAssignedTo,
-  constructDataEntryActiveContracts,
-  constructDataEntryActions,
-  constructAccessAndApprovalWorkflow,
-} from "./tables";
-
-import { AccessDisplay } from "./accessDisplay";
+import { constructDataSyncTableColumns } from "./tables";
 
 import _ from "lodash";
-import {
-  Button,
-  Typography,
-  makeStyles,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-  TableHead,
-} from "@material-ui/core";
+import { Button, Typography, makeStyles, Paper, CircularProgress } from "@material-ui/core";
+import { useTranslation } from "react-i18next";
 
 const useStyles = makeStyles({
   aligned: {
@@ -36,6 +17,7 @@ const useStyles = makeStyles({
 });
 
 const SyncDataSet = (props) => {
+  const { t } = useTranslation();
   const dhis2 = PluginRegistry.extension("core.dhis2");
   const dhis2RootUrl = dhis2.baseUrl;
 
@@ -188,25 +170,31 @@ const SyncDataSet = (props) => {
     fetchDataSets();
   };
 
-  const columns = ["Data Entry", "Assigned To", "Active Contracts", "Actions", "Access & Approval Workflow"];
   const data = allDataEntries.map((dataEntry) => {
-    // return constructDataForTable(contractsByDataEntryCode, dataEntry, loading, dhis2RootUrl);
-    const dataEntryName = constructDataEntryName(dataEntry);
-    const dataEntryAssignedTo = constructDataEntryAssignedTo(dataEntry);
-    const dataEntryActiveContracts = constructDataEntryActiveContracts(contractsByDataEntryCode, dataEntry);
-    const dataEntryActions = constructDataEntryActions(contractsByDataEntryCode, dataEntry, loading);
-    const dataEntryAccessAndApprovalWorkflow = constructAccessAndApprovalWorkflow(
-      contractsByDataEntryCode,
+    return {
       dataEntry,
-      dhis2RootUrl,
-    );
-    return [
-      dataEntryName,
-      dataEntryAssignedTo,
-      dataEntryActiveContracts,
-      dataEntryActions,
-      dataEntryAccessAndApprovalWorkflow,
-    ];
+      contracts: contractsByDataEntryCode
+        ? contractsByDataEntryCode && contractsByDataEntryCode[dataEntry.code]
+        : undefined,
+    };
+  });
+  const options = {
+    enableNestedDataAccess: ".",
+    filter: true,
+    print: false,
+    rowsPerPage: 5,
+    rowsPerPageOptions: [1, 5, 10, 20, 50, 100, 1000],
+    download: false,
+    selectableRows: "none",
+    elevation: 0,
+  };
+  const columns = constructDataSyncTableColumns(data, {
+    loading,
+    dhis2RootUrl,
+    dataElementsById,
+    addSingleMissingOu,
+    addMissingDe,
+    t,
   });
 
   return (
@@ -241,12 +229,14 @@ const SyncDataSet = (props) => {
           </div>
         </div>
       </div>
-      <div>
+      <div style={{ float: "right" }}>
         <Button onClick={addAllMissingOus} color="primary">
-          Synchronize all {loading && loadingStatus}
+          Synchronize all {loading && loadingStatus ? <CircularProgress size={15} /> : ""}
         </Button>
       </div>
-        <MUIDataTable title={"testing"} data={data} columns={columns} />
+      <div style={{ paddingTop: "50px" }}>
+        <MUIDataTable data={data} columns={columns} options={options} />
+      </div>
     </Paper>
   );
 };

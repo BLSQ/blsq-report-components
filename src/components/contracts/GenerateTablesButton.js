@@ -82,8 +82,8 @@ const GenerateTablesButton = ({ creationDate }) => {
     onSuccess: (task) => {
       const tasks = [task];
       const uncompletedTasks = filterUncompletedTasks(tasks);
-      if (uncompletedTasks.length == 0) {
-        setPollingStatus( STOPPED);
+      if (uncompletedTasks.length === 0) {
+        setPollingStatus(STOPPED);
         setPollingId(undefined);
         setLastExecutionDate(getLastExecutionDate(tasks));
       } else {

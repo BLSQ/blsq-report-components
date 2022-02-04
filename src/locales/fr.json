@@ -60,8 +60,11 @@
     "dataSetNotWritable": "Vous n'avez pas le droit de saisie sur '{{dataSetName}}'"
   },
   "dataSync": {
-    "title": "Synchronisation de données pour",
-    "addAllOrgunits": "Synchroniser toutes les orgunits"
+    "title": "Synchronisation de datasets pour",
+    "addAllOrgunits": "Synchroniser toutes les orgunits",
+    "addSingleMissingOu": "Ajouter {{length}} orgunits manquantes à dataset ",
+    "dataApproval": "Approbation des données : ",
+    "noDataApproval": "aucune approbation de données configurée"
   },
   "levels": {
     "level1": "Niveau 1",

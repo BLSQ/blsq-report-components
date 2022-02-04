@@ -88,7 +88,8 @@ export const constructDataSyncTableColumns = (
                       title={contract.missingOrgunits.map((ou) => ou.name).join(" , ")}
                       disabled={contract.missingOrgunits.length === 0}
                     >
-                      Add {contract.missingOrgunits.length} missing OrgUnits to dataset <br /> {contract.dataSet.name}
+                      {t("dataSync.addSingleMissingOu", { length: contract.missingOrgunits.length })} <br />{" "}
+                      {contract.dataSet.name}
                     </Button>
                   </div>
                 ))}
@@ -153,12 +154,12 @@ export const constructDataSyncTableColumns = (
                       </a>{" "}
                       <br />
                       {contract.dataSet.workflow &&
-                        "Data approval : " +
+                        t("dataSync.dataApproval") +
                           contract.dataSet.workflow.name +
                           " " +
                           contract.dataSet.workflow.periodType}
                       {contract.dataSet.workflow === undefined && (
-                        <span style={{ color: "red" }}>no data approval configured</span>
+                        <span style={{ color: "red" }}> {t("dataSync.noDataApproval")} </span>
                       )}
                       <AccessDisplay
                         access={contract.dataSet.publicAccess}

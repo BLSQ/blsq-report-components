@@ -62,8 +62,11 @@
     "dataSetNotWritable": "You don't have write access to '{{dataSetName}}'"
   },
   "dataSync": {
-    "title": "Data Synchronization for",
-    "addAllOrgUnits": "Synchronize All Orgunits"
+    "title": "Dataset Synchronization for",
+    "addAllOrgunits": "Synchronize All Orgunits",
+    "addSingleMissingOu": "Add {{length}} missing orgunits to dataset ",
+    "dataApproval": "Data approval : ",
+    "noDataApproval": "no data approval configured"
   },
   "levels": {
     "level1": "Level 1",

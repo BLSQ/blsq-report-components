@@ -1,9 +1,7 @@
-import React from "react";
 import PluginRegistry from "../core/PluginRegistry";
 import _ from "lodash";
 
 export const fetchDataSets = async (allDataEntries, period) => {
-  // setLoading(true);
   const dhis2 = PluginRegistry.extension("core.dhis2");
   const project = PluginRegistry.extension("hesabu.project");
   const api = await dhis2.api();
@@ -11,7 +9,6 @@ export const fetchDataSets = async (allDataEntries, period) => {
     (await api.get("dataElements", { paging: false, fields: "id,name" })).dataElements,
     (de) => de.id,
   );
-  // setDataElementsById(dataElements);
   const dataSetIds = allDataEntries.flatMap((d) => (d.dataSetId ? [d.dataSetId] : d.dataSetIds));
   const ds = await api.get("dataSets", {
     filter: ["id:in:[" + dataSetIds.join(",") + "]"],
@@ -27,9 +24,7 @@ export const fetchDataSets = async (allDataEntries, period) => {
   const contractsByDataEntryCode = {};
   for (let dataEntry of allDataEntries) {
     const dataEntryContracts = activeContracts.filter((activeContract) =>
-      dataEntry.contracts.some((contractFilter) =>
-        contractFilter.every((code) => activeContract.codes.includes(code)),
-      ),
+      dataEntry.contracts.some((contractFilter) => contractFilter.every((code) => activeContract.codes.includes(code))),
     );
     const dataSets = dataEntry.dataSetId
       ? [dataSetsById[dataEntry.dataSetId]]
@@ -45,8 +40,8 @@ export const fetchDataSets = async (allDataEntries, period) => {
       let expectedDataElements = [];
       const missingDataElements = [];
       if (dataEntry.hesabuInputs) {
-        const project_descriptor = project(period);
-        const payment = project_descriptor.payment_rules[dataEntry.hesabuPayment];
+        const projectDescriptor = project(period);
+        const payment = projectDescriptor.payment_rules[dataEntry.hesabuPayment];
         const hesabuPackage = payment.packages[dataEntry.hesabuPackage];
         expectedDataElements = hesabuPackage.activities
           .flatMap((activity) => dataEntry.hesabuInputs.map((state) => activity[state]))
@@ -69,11 +64,8 @@ export const fetchDataSets = async (allDataEntries, period) => {
     }
     contractsByDataEntryCode[dataEntry.code] = results;
   }
-  // setContractsByDataEntryCode(contractsByDataEntryCode);
-  // setLoading(false);
   return {
     contractsByDataEntryCode,
     dataElementsById: dataElements,
-
-  }
+  };
 };

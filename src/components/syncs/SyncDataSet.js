@@ -62,25 +62,19 @@ const SyncDataSet = (props) => {
     await api.update("dataSets/" + dataSet.id, dataSet);
   };
 
-  const addAllMissingOusQuery = useQuery(
-    ["addAllMissingOrgunits"],
-    async () => {
-      const contracts = Object.values(contractsByDataEntryCode);
-      for (let contractGroups of contracts) {
-        for (let contract of contractGroups) {
-          if (contract.missingOrgunits.length > 0) {
-            await updateOu(contract.dataSet, contract.missingOrgunits);
-          }
+  const addAllMissingOusMutation = useMutation(async () => {
+    const contracts = Object.values(contractsByDataEntryCode);
+    for (let contractGroups of contracts) {
+      for (let contract of contractGroups) {
+        if (contract.missingOrgunits.length > 0) {
+          await updateOu(contract.dataSet, contract.missingOrgunits);
         }
       }
-      fetchDataSetsQuery.refetch();
-    },
-    {
-      enabled: false,
-    },
-  );
+    }
+    fetchDataSetsQuery.refetch();
+  });
 
-  const loading = fetchDataSetsQuery.isLoading || addAllMissingOusQuery.isLoading;
+  const loading = fetchDataSetsQuery.isLoading || addAllMissingOusMutation.isLoading;
 
   const addSingleMissingOuMutation = useMutation(async ({ contract }) => {
     await updateOu(contract.dataSet, contract.missingOrgunits);
@@ -161,7 +155,12 @@ const SyncDataSet = (props) => {
             </div>
           </div>
           <div className={classes.syncButton}>
-            <Button onClick={addAllMissingOusQuery.refetch} color="primary">
+            <Button
+              onClick={() => {
+                addAllMissingOusMutation.mutate();
+              }}
+              color="primary"
+            >
               {t("dataSync.addAllOrgunits")} {loading && loadingStatus ? <CircularProgress size={15} /> : ""}
             </Button>
           </div>

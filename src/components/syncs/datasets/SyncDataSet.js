@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useQuery, useMutation } from "react-query";
 import MUIDataTable from "mui-datatables";
-import PeriodPicker from "../shared/PeriodPicker";
-import PluginRegistry from "../core/PluginRegistry";
+import PeriodPicker from "../../shared/PeriodPicker";
+import PluginRegistry from "../../core/PluginRegistry";
 
 import { constructDataSyncTableColumns } from "./tables";
 

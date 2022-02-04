@@ -1,4 +1,4 @@
-import PluginRegistry from "../core/PluginRegistry";
+import PluginRegistry from "../../core/PluginRegistry";
 import _ from "lodash";
 
 export const fetchDataSets = async (allDataEntries, period) => {

@@ -1,5 +1,5 @@
 import React from "react";
-import { useQuery } from "react-query";
+import { useQuery, useMutation } from "react-query";
 import PluginRegistry from "../core/PluginRegistry";
 import { Button } from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -19,14 +19,6 @@ const getPollingStatus = async () => {
   return pollingEvents;
 };
 
-// step 2: post request to start polling using new event id and return event id
-const triggerResourceTable = async () => {
-  const dhis2 = PluginRegistry.extension("core.dhis2");
-  const api = await dhis2.api();
-  const { response } = await api.post("resourceTables");
-  return response;
-};
-
 // statuses array of array of task
 const filterUncompletedTasks = (allStatuses) => {
   return allStatuses.filter((statuses) => !statuses.some((s) => s.completed));
@@ -34,11 +26,11 @@ const filterUncompletedTasks = (allStatuses) => {
 
 const getLastExecutionDate = (tasks) => {
   const completedTaskDates = tasks
-          .flatMap((t) => t)
-          .filter((event) => event.completed)
-          .map((event) => event.time);
-  return completedTaskDates.sort()[completedTaskDates.length - 1]          
-}
+    .flatMap((t) => t)
+    .filter((event) => event.completed)
+    .map((event) => event.time);
+  return completedTaskDates.sort()[completedTaskDates.length - 1];
+};
 
 const GenerateTablesButton = ({ creationDate }) => {
   const { t } = useTranslation();
@@ -49,29 +41,44 @@ const GenerateTablesButton = ({ creationDate }) => {
   const verifyPollingStatusQuery = useQuery("verifyPollingStatus", getPollingStatus, {
     onSuccess: (statusesById) => {
       const statuses = Object.values(statusesById);
-      const uncompletedTasks = filterUncompletedTasks(statuses);      
+      const uncompletedTasks = filterUncompletedTasks(statuses);
       setLastExecutionDate(getLastExecutionDate(statuses));
 
       if (uncompletedTasks.length > 0) {
         setPollingId(uncompletedTasks[0][0].id);
-        setPollingStatus(RUNNING)
+        setPollingStatus(RUNNING);
       } else {
         setPollingStatus(STOPPED);
       }
     },
   });
 
+  // step 2: post request to start polling using new event id and return event id
+  // const triggerResourceTable = async () => {
+  //   const dhis2 = PluginRegistry.extension("core.dhis2");
+  //   const api = await dhis2.api();
+  //   const { response } = await api.post("resourceTables");
+  //   return response;
+  // };
+
   // trigger resource table polling
-  const triggerResourceTableQuery = useQuery("triggerResourceTableQueryForPolling", triggerResourceTable, {
-    enabled: false,
-    onSuccess: (response) => setPollingId(response.id),
-  });
+  const triggerResourceTableMutation = useMutation(
+    async () => {
+      const dhis2 = PluginRegistry.extension("core.dhis2");
+      const api = await dhis2.api();
+      const { response } = await api.post("resourceTables");
+      return response;
+    },
+    {
+      onSuccess: (response) => setPollingId(response.id),
+    },
+  );
 
   // step 4: poll to see when finished returns an array of steps
   const beginPolling = async () => {
     const dhis2 = PluginRegistry.extension("core.dhis2");
     const api = await dhis2.api();
-    const response = await api.get(`system/tasks/RESOURCE_TABLE/${pollingId}`);  
+    const response = await api.get(`system/tasks/RESOURCE_TABLE/${pollingId}`);
     return response;
   };
 
@@ -92,7 +99,7 @@ const GenerateTablesButton = ({ creationDate }) => {
     },
   });
 
-  const queries = [verifyPollingStatusQuery, resourceTablePollingQuery, triggerResourceTableQuery];
+  const queries = [verifyPollingStatusQuery, resourceTablePollingQuery, triggerResourceTableMutation];
   const isError = queries.some((q) => q.isError);
   const errorMessages = queries.map((q) => q?.error?.message).filter((m) => m);
   return (
@@ -101,7 +108,7 @@ const GenerateTablesButton = ({ creationDate }) => {
         autoFocus
         disabled={pollingStatus === UNKNOWN || pollingStatus === RUNNING}
         onClick={() => {
-          triggerResourceTableQuery.refetch();
+          triggerResourceTableMutation.mutate();
         }}
         color="primary"
       >
@@ -117,7 +124,7 @@ const GenerateTablesButton = ({ creationDate }) => {
       )}
 
       {pollingStatus === RUNNING ? <CircularProgress size={15} /> : ""}
-      {lastExecutionDate > creationDate ? <CheckIcon fontSize="small" /> : ""}   
+      {lastExecutionDate > creationDate ? <CheckIcon fontSize="small" /> : ""}
     </div>
   );
 };

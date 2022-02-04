@@ -82,7 +82,7 @@ const SyncDataSet = (props) => {
 
   const loading = fetchDataSetsQuery.isLoading || addAllMissingOusQuery.isLoading;
 
-  const AddSingleMissingOuMutation = useMutation(async ({ contract }) => {
+  const addSingleMissingOuMutation = useMutation(async ({ contract }) => {
     await updateOu(contract.dataSet, contract.missingOrgunits);
     fetchDataSetsQuery.refetch();
   });
@@ -133,7 +133,7 @@ const SyncDataSet = (props) => {
     loading,
     dhis2RootUrl,
     dataElementsById,
-    AddSingleMissingOuMutation,
+    addSingleMissingOuMutation,
     addMissingDe,
     t,
   });

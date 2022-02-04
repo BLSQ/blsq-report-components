@@ -5,7 +5,7 @@ import AccessDisplay from "./AccessDisplay";
 
 export const constructDataSyncTableColumns = (
   data,
-  { loading, dhis2RootUrl, dataElementsById, AddSingleMissingOuMutation, addMissingDe, t },
+  { loading, dhis2RootUrl, dataElementsById, addSingleMissingOuMutation, addMissingDe, t },
 ) => {
   return [
     {
@@ -83,7 +83,7 @@ export const constructDataSyncTableColumns = (
                     <Button
                       style={{ textAlign: "left" }}
                       onClick={() => {
-                        AddSingleMissingOuMutation.mutate({ contract });
+                        addSingleMissingOuMutation.mutate({ contract });
                       }}
                       title={contract.missingOrgunits.map((ou) => ou.name).join(" , ")}
                       disabled={contract.missingOrgunits.length === 0}

@@ -53,15 +53,7 @@ const GenerateTablesButton = ({ creationDate }) => {
     },
   });
 
-  // step 2: post request to start polling using new event id and return event id
-  // const triggerResourceTable = async () => {
-  //   const dhis2 = PluginRegistry.extension("core.dhis2");
-  //   const api = await dhis2.api();
-  //   const { response } = await api.post("resourceTables");
-  //   return response;
-  // };
-
-  // trigger resource table polling
+  // step 2. trigger resource table polling
   const triggerResourceTableMutation = useMutation(
     async () => {
       const dhis2 = PluginRegistry.extension("core.dhis2");

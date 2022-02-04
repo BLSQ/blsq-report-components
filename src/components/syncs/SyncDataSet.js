@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useMutation } from "react-query";
 import MUIDataTable from "mui-datatables";
 import PeriodPicker from "../shared/PeriodPicker";
 import PluginRegistry from "../core/PluginRegistry";
@@ -82,10 +82,10 @@ const SyncDataSet = (props) => {
 
   const loading = fetchDataSetsQuery.isLoading || addAllMissingOusQuery.isLoading;
 
-  const addSingleMissingOu = async (myDataSet, missingOrgunits) => {
-    await updateOu(myDataSet, missingOrgunits);
+  const AddSingleMissingOuMutation = useMutation(async ({ contract }) => {
+    await updateOu(contract.dataSet, contract.missingOrgunits);
     fetchDataSetsQuery.refetch();
-  };
+  });
 
   const addMissingDe = async (dataEntry) => {
     const missing = contractsByDataEntryCode[dataEntry.code][0].missingDataElements;
@@ -133,7 +133,7 @@ const SyncDataSet = (props) => {
     loading,
     dhis2RootUrl,
     dataElementsById,
-    addSingleMissingOu,
+    AddSingleMissingOuMutation,
     addMissingDe,
     t,
   });

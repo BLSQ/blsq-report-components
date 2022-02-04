@@ -1,10 +1,11 @@
 import React from "react";
+import { useMutation } from "react-query";
 import { Button } from "@material-ui/core";
 import AccessDisplay from "./AccessDisplay";
 
 export const constructDataSyncTableColumns = (
   data,
-  { loading, dhis2RootUrl, dataElementsById, addSingleMissingOu, addMissingDe, t },
+  { loading, dhis2RootUrl, dataElementsById, AddSingleMissingOuMutation, addMissingDe, t },
 ) => {
   return [
     {
@@ -81,7 +82,9 @@ export const constructDataSyncTableColumns = (
                   <div key={contract.dataSet.id}>
                     <Button
                       style={{ textAlign: "left" }}
-                      onClick={() => addSingleMissingOu(contract.dataSet, contract.missingOrgunits)}
+                      onClick={() => {
+                        AddSingleMissingOuMutation.mutate({ contract });
+                      }}
                       title={contract.missingOrgunits.map((ou) => ou.name).join(" , ")}
                       disabled={contract.missingOrgunits.length === 0}
                     >

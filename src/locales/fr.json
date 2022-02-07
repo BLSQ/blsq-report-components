@@ -10,6 +10,8 @@
     "complete": "complet",
     "incomplete": "incomplet"    
   },
+  "confirmYes": "Oui",
+  "confirmNo": "Annuler",
   "contracts": {
     "activeToday": "Actif aujourd'hui",
     "activeAt": "Actif le",
@@ -64,7 +66,8 @@
     "addAllOrgunits": "Synchroniser toutes les orgunits",
     "addSingleMissingOu": "Ajouter {{length}} orgunits manquantes à dataset ",
     "dataApproval": "Approbation des données : ",
-    "noDataApproval": "aucune approbation de données configurée"
+    "noDataApproval": "aucune approbation de données configurée",
+    "areYouSure": "Êtes-vous sûr de vouloir synchroniser tous les Orgunits ?"
   },
   "levels": {
     "level1": "Niveau 1",

@@ -37,6 +37,7 @@ const PeriodPicker = ({ currentPeriod, mode, fieldName, min, max, onPeriodChange
     year = year + 1;
   }
   const visibleMonths = visibibleQuarters
+    .reverse()
     .map((period) => {
       const monthPeriod = DatePeriods.split(period, "monthly")[indexOfMonth];
       return {

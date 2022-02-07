@@ -85,7 +85,7 @@ export const constructDataSyncTableColumns = (
                         addSingleMissingOuMutation.mutate({ contract });
                       }}
                       title={contract.missingOrgunits.map((ou) => ou.name).join(" , ")}
-                      disabled={contract.missingOrgunits.length === 0}
+                      disabled={contract.missingOrgunits.length === 0 || addSingleMissingOuMutation.isLoading}
                     >
                       {t("dataSync.addSingleMissingOu", { length: contract.missingOrgunits.length })} <br />{" "}
                       {contract.dataSet.name}

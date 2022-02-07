@@ -41,7 +41,10 @@ const SyncDataSet = (props) => {
   const [loadingStatus, setLoadingStatus] = useState(undefined);
 
   const period = props.match.params.period;
-  const fetchDataSetsQuery = useQuery(["dataSets", period], () => fetchDataSets(allDataEntries, period));
+  const fetchDataSetsQuery = useQuery(["dataSets", period], async () => {
+    setLoadingStatus("fetching datasets");
+    return await fetchDataSets(allDataEntries, period);
+  });
 
   const dataElementsById = fetchDataSetsQuery?.data?.dataElementsById;
   const contractsByDataEntryCode = fetchDataSetsQuery?.data?.contractsByDataEntryCode;
@@ -71,14 +74,14 @@ const SyncDataSet = (props) => {
         }
       }
     }
-    fetchDataSetsQuery.refetch();
+    await fetchDataSetsQuery.refetch();
   });
 
   const loading = fetchDataSetsQuery.isLoading || addAllMissingOusMutation.isLoading;
 
   const addSingleMissingOuMutation = useMutation(async ({ contract }) => {
     await updateOu(contract.dataSet, contract.missingOrgunits);
-    fetchDataSetsQuery.refetch();
+    await fetchDataSetsQuery.refetch();
   });
 
   const addMissingDe = async (dataEntry) => {
@@ -166,7 +169,7 @@ const SyncDataSet = (props) => {
           </div>
         </div>
       </div>
-      <div>
+      <div>       
         <MUIDataTable data={data} columns={columns} options={options} />
       </div>
     </Paper>

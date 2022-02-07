@@ -67,7 +67,7 @@
     "addSingleMissingOu": "Ajouter {{length}} orgunits manquantes à dataset ",
     "dataApproval": "Approbation des données : ",
     "noDataApproval": "aucune approbation de données configurée",
-    "areYouSure": "Êtes-vous sûr de vouloir synchroniser tous les Orgunits ?"
+    "areYouSure": "Êtes-vous sûr de vouloir synchroniser toutes les Orgunits ?"
   },
   "levels": {
     "level1": "Niveau 1",

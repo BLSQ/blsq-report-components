@@ -28,7 +28,8 @@
     "invalids": " {{warnings}} invalides",
     "resourceTables": {
         "generateHint":  "l'orgUnit vient d'être créée. Veuillez lancer la génération des resource tables avant de continuer la création du contrat.",      
-        "generateButton":"Lancer la génération des Resource Tables"
+        "generateButton":"Lancer la génération des Resource Tables",
+        "running": "La génération prendra quelques minutes..."
     },
     "result": "1 contrat",
     "results": "{{total}} contrats",

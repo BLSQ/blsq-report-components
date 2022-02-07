@@ -115,7 +115,9 @@ const GenerateTablesButton = ({ creationDate }) => {
         ""
       )}
 
+
       {pollingStatus === RUNNING ? <CircularProgress size={15} /> : ""}
+      {pollingStatus === RUNNING ? <div> {t("contracts.resourceTables.running")} </div> : ""}
       {lastExecutionDate > creationDate ? <CheckIcon fontSize="small" /> : ""}
     </div>
   );

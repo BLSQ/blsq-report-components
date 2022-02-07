@@ -27,7 +27,8 @@
     "invalids": " {{warnings}} invalids",
     "resourceTables": {
       "generateHint":"The orgUnit is freshly created. Please generate resource tables before continuing with contract creation.",
-      "generateButton":"Generate Resource Tables"
+      "generateButton":"Generate Resource Tables",
+      "running": "Generation will take a few minutes..."
     },    
     "result": "1 contract",
     "results": "{{total}} contracts",

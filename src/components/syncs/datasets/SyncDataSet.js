@@ -108,14 +108,6 @@ const SyncDataSet = (props) => {
     fetchDataSetsQuery.refetch();
   };
 
-  const confirmButtonTitle = () => {
-    return (
-      <>
-        {t("dataSync.addAllOrgunits")} {loading && loadingStatus ? <CircularProgress size={15} /> : ""}
-      </>
-    );
-  };
-
   const data = allDataEntries.map((dataEntry) => {
     return {
       dataEntry,
@@ -167,12 +159,12 @@ const SyncDataSet = (props) => {
           </div>
           <div className={classes.syncButton}>
             <ConfirmButton
-              onConfirm={() => {
-                addAllMissingOusMutation.mutate();
-              }}
-              title={confirmButtonTitle()}
+              onConfirm={addAllMissingOusMutation.mutate}
               message={t("dataSync.areYouSure")}
-            />
+              disabled={loading}
+            >
+              {t("dataSync.addAllOrgunits")} {loading && loadingStatus ? <CircularProgress size={15} /> : ""}
+            </ConfirmButton>
           </div>
         </div>
       </div>

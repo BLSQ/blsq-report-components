@@ -8,13 +8,12 @@ const ConfirmButton = (props) => {
   const { t } = useTranslation();
   const [confirmOpen, setConfirmOpen] = useState(false);
   // onConfirm = This is a callback function when the user clicks Yes.
-  // title = button title
   // message = message inside dialog
-  const { onConfirm, title, message } = props;
+  const { onConfirm, children, message, disabled } = props;
   return (
     <div>
-      <Button onClick={() => setConfirmOpen(true)} color="primary">
-        {title}
+      <Button onClick={() => setConfirmOpen(true)} color="primary" disabled={disabled}>
+        {children}
       </Button>
       <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)} aria-labelledby="confirm-dialog">
         <DialogContent>{message}</DialogContent>

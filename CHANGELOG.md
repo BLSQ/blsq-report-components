@@ -1,3 +1,8 @@
+# @blsq/blsq-report-components@1.0.76
+
+- [sync-dataset] Adds button to synchronize all orgunits
+- [sync-dataset] Re-vamps tab with material-ui datatable, improved translations
+
 # @blsq/blsq-report-components@1.0.75
 
 - [contracts] Adds generate resource tables button during contract creation

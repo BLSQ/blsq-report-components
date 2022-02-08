@@ -10,6 +10,8 @@
     "complete": "complete",
     "incomplete": "incomplete"
   },
+  "confirmYes": "Yes",
+  "confirmNo": "Cancel",
   "contracts": {
     "activeToday": "Active today",
     "activeAt": "Active at",
@@ -25,7 +27,8 @@
     "invalids": " {{warnings}} invalids",
     "resourceTables": {
       "generateHint":"The orgUnit is freshly created. Please generate resource tables before continuing with contract creation.",
-      "generateButton":"Generate Resource Tables"
+      "generateButton":"Generate Resource Tables",
+      "running": "Generation will take a few minutes..."
     },    
     "result": "1 contract",
     "results": "{{total}} contracts",
@@ -49,6 +52,10 @@
     "warnings": "Warnings"
   },
   "dataEntry": {
+    "accessAndApproval": "Access & Approval Workflow",
+    "actions": "Actions",
+    "activeContracts": "Active Contracts",
+    "assignedTo": "Assigned To",
     "contractFrom": "Contract from",
     "contractTo": "to",
     "dataEntries": "Data entry",
@@ -56,6 +63,14 @@
     "seeLinkedData": "See data",
     "invoices": "Invoices",
     "dataSetNotWritable": "You don't have write access to '{{dataSetName}}'"
+  },
+  "dataSync": {
+    "title": "Dataset Synchronization for",
+    "addAllOrgunits": "Synchronize All Orgunits",
+    "addSingleMissingOu": "Add {{length}} missing orgunits to dataset ",
+    "dataApproval": "Data approval : ",
+    "noDataApproval": "no data approval configured",
+    "areYouSure": "Are you sure you want to synchronize all Orgunits?"
   },
   "levels": {
     "level1": "Level 1",

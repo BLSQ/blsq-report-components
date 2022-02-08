@@ -1,34 +1,21 @@
 import PluginRegistry from "../core/PluginRegistry";
-import DatePeriods from "../../support/DatePeriods";
-
-import { Typography } from "@material-ui/core";
-import { Button, Input, Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/core";
+import { useQuery, useMutation } from "react-query";
+import {
+  makeStyles,
+  Typography,
+  Button,
+  Input,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@material-ui/core";
 import _ from "lodash";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import PeriodPicker from "../shared/PeriodPicker";
-import PortalHeader from "../shared/PortalHeader";
 import Paper from "@material-ui/core/Paper";
-
-import { makeStyles } from "@material-ui/core";
-
-const codify = (str) => {
-  if (str == undefined) {
-    return undefined;
-  }
-  const code = str
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace("/", "_")
-    .replace(/-/g, "_")
-    .replace(/'/g, "_")
-    .replace(/ /g, "_")
-    .replace(/__/g, "_")
-    .toLowerCase();
-
-  return code;
-};
+import { fetchContracts, indexGroupSet, buildStats } from "./contracts";
 
 const StatSpan = ({ stat }) => {
   return <span style={{ color: stat > 0 ? "" : "grey" }}>{stat}</span>;
@@ -73,7 +60,7 @@ const ContractsStats = ({ groupStats, groupSetIndex }) => (
       Object.values(_.groupBy(groupStats, (s) => s.group.groupSetCode)).map((stats, index) => (
         <div key={index} style={{ margin: "10px" }}>
           <h4>{groupSetIndex.groupSetsByCode[stats[0].group.groupSetCode].name}</h4>
-          <GroupSetStats groupStats={stats}></GroupSetStats>
+          <GroupSetStats groupStats={stats} />
         </div>
       ))}
   </div>
@@ -108,7 +95,7 @@ const ContractsTable = ({ contractInfos, fixGroups }) => (
       {contractInfos.map((contractInfos) => (
         <TableRow key={contractInfos.orgUnit.id}>
           <TableCell>
-            {contractInfos.orgUnit.name} <br></br>
+            {contractInfos.orgUnit.name} <br />
             <code>
               {" "}
               {contractInfos.orgUnit.ancestors.slice(1, contractInfos.orgUnit.ancestors.length - 1).map((a, index) => (
@@ -117,7 +104,7 @@ const ContractsTable = ({ contractInfos, fixGroups }) => (
                 </span>
               ))}
             </code>
-            <br></br> contracts : {contractInfos.orgUnitContracts.length}
+            <br /> contracts : {contractInfos.orgUnitContracts.length}
           </TableCell>
           <TableCell>
             {contractInfos.contractForPeriod && (
@@ -126,7 +113,7 @@ const ContractsTable = ({ contractInfos, fixGroups }) => (
                   color: contractInfos.contractedForPeriod ? "" : "grey",
                 }}
               >
-                {Array.from(new Set(contractInfos.contractForPeriod.codes)).join(", ")} <br></br>
+                {Array.from(new Set(contractInfos.contractForPeriod.codes)).join(", ")} <br />
                 <a target="_blank" href={"./index.html#/contracts/" + contractInfos.orgUnit.id}>
                   {contractInfos.contractForPeriod.startPeriod} - {contractInfos.contractForPeriod.endPeriod}
                 </a>
@@ -143,7 +130,7 @@ const ContractsTable = ({ contractInfos, fixGroups }) => (
                 }}
                 title={action.kind + " " + action.group.name}
               >
-                {action.group.name} <br></br>
+                {action.group.name} <br />
               </span>
             ))}
           </TableCell>
@@ -159,149 +146,6 @@ const ContractsTable = ({ contractInfos, fixGroups }) => (
   </Table>
 );
 
-const codifyObject = (dhis2Object) => (dhis2Object.hesabuCode = codify(dhis2Object.code) || codify(dhis2Object.name));
-
-const indexGroupSet = (organisationUnitGroupSets) => {
-  const groupsByCode = {};
-  const groupSetsByCode = {};
-  for (let organisationUnitGroupSet of organisationUnitGroupSets) {
-    codifyObject(organisationUnitGroupSet);
-    groupSetsByCode[organisationUnitGroupSet.hesabuCode] = organisationUnitGroupSet;
-    for (let organisationUnitGroup of organisationUnitGroupSet.organisationUnitGroups) {
-      organisationUnitGroup.groupSetCode = organisationUnitGroupSet.hesabuCode;
-      codifyObject(organisationUnitGroup);
-      groupsByCode[organisationUnitGroup.hesabuCode] = organisationUnitGroup;
-    }
-  }
-  return {
-    groupsByCode,
-    groupSetsByCode,
-  };
-};
-
-const buildContractInfos = (contractsByOrgunits, groupSetIndex, period, contractFields) => {
-  const monthPeriod = DatePeriods.split(period, "monthly")[0];
-  const results = [];
-  for (let orgUnitContracts of Object.values(contractsByOrgunits)) {
-    const warnings = [];
-    const orgUnit = orgUnitContracts[0].orgUnit;
-    const contractsForPeriod = orgUnitContracts.filter((contract) => contract.matchPeriod(period));
-
-    let contractForPeriod;
-    let contractedForPeriod;
-
-    if (contractsForPeriod.length > 1) {
-      warnings.push(contractsForPeriod.length + " contracts for the period");
-    } else {
-      contractForPeriod = contractsForPeriod[0];
-
-      if (contractsForPeriod.length == 0) {
-        contractForPeriod = _.minBy(orgUnitContracts, (contract) => distance(contract, monthPeriod));
-        contractedForPeriod = false;
-      } else {
-        contractedForPeriod = true;
-      }
-    }
-
-    let actions = [];
-    if (contractForPeriod) {
-      const groupSet = groupSetIndex.groupSetsByCode["contracts"];
-
-      if (groupSet) {
-        const contractedGroup = groupSet.organisationUnitGroups.find((g) => g.hesabuCode == "contracted");
-        const nonContractedGroup = groupSet.organisationUnitGroups.find((g) => g.hesabuCode == "non_contracted");
-
-        if (contractedGroup && nonContractedGroup) {
-          const isInContractedGroup = contractedGroup.organisationUnits.some((ou) => ou.id == orgUnit.id);
-          const isInNonContractedGroup = nonContractedGroup.organisationUnits.some((ou) => ou.id == orgUnit.id);
-
-          if (contractedForPeriod) {
-            if (isInContractedGroup) {
-              actions.push({ kind: "keep", group: contractedGroup, orgUnit });
-            }
-            if (!isInContractedGroup) {
-              actions.push({ kind: "add", group: contractedGroup, orgUnit });
-            }
-            if (isInNonContractedGroup) {
-              actions.push({
-                kind: "remove",
-                group: nonContractedGroup,
-                orgUnit,
-              });
-            }
-          } else {
-            if (isInContractedGroup) {
-              actions.push({ kind: "remove", group: contractedGroup, orgUnit });
-            }
-            if (!isInNonContractedGroup) {
-              actions.push({ kind: "add", group: nonContractedGroup, orgUnit });
-            }
-            if (isInNonContractedGroup) {
-              actions.push({ kind: "keep", group: nonContractedGroup, orgUnit });
-            }
-          }
-        }
-      }
-    }
-    if (contractForPeriod) {
-      for (let contractField of contractFields) {
-        const groupSet = groupSetIndex.groupSetsByCode[contractField.code];
-        if (groupSet) {
-          for (let group of groupSet.organisationUnitGroups) {
-            if (contractField.optionSet.options.some((o) => o.code === group.hesabuCode)) {
-              const isInGroup = group.organisationUnits.some((ou) => ou.id == orgUnit.id);
-              if (isInGroup && !contractForPeriod.codes.includes(group.hesabuCode)) {
-                actions.push({ kind: "remove", group, orgUnit });
-              }
-              if (!isInGroup && contractForPeriod.codes.includes(group.hesabuCode)) {
-                actions.push({ kind: "add", group, orgUnit });
-              }
-              if (isInGroup && contractForPeriod.codes.includes(group.hesabuCode)) {
-                actions.push({ kind: "keep", group, orgUnit });
-              }
-            }
-          }
-        }
-      }
-    }
-
-    actions = _.uniqBy(actions, (e) => e.group.id + "-" + e.kind);
-
-    results.push({
-      orgUnit,
-      orgUnitContracts,
-      contractForPeriod,
-      contractedForPeriod,
-      synchronized: actions.every((a) => a.kind == "keep"),
-      actions,
-      warnings,
-    });
-  }
-  return results;
-};
-
-const buildStats = (results, groupSetIndex) => {
-  const statsPerGroup = {};
-  for (let contactInfo of results) {
-    for (let action of contactInfo.actions) {
-      if (statsPerGroup[action.group.hesabuCode] == undefined) {
-        statsPerGroup[action.group.hesabuCode] = {};
-      }
-      statsPerGroup[action.group.hesabuCode][action.kind] =
-        (statsPerGroup[action.group.hesabuCode][action.kind] || 0) + 1;
-    }
-  }
-  const displayableStats = [];
-  for (const [groupCode, stats] of Object.entries(statsPerGroup)) {
-    const group = groupSetIndex.groupsByCode[groupCode];
-    displayableStats.push({ group, stats });
-  }
-  return displayableStats;
-};
-
-const distance = (contract, period) =>
-  Math.min(parseInt(contract.startPeriod) - parseInt(period), parseInt(contract.endPeriod) - parseInt(period));
-
 const useStyles = makeStyles((theme) => ({
   root: {
     ...theme.mixins.gutters(),
@@ -312,43 +156,24 @@ const useStyles = makeStyles((theme) => ({
 
 const SyncProgramGroups = (props) => {
   const classes = useStyles(props);
-
   const period = props.match.params.period;
   const [progress, setProgress] = useState("");
   const [filter, setFilter] = useState("");
-  const [contractInfos, setContractInfos] = useState([]);
-  const [groupStats, setGroupStats] = useState(undefined);
   const [groupSetIndex, setGroupSetIndex] = useState(undefined);
 
-  const loadContracts = async () => {
-    const dhis2 = PluginRegistry.extension("core.dhis2");
-    const api = await dhis2.api();
+  const fetchContractsQuery = useQuery(["contracts", period], async () => {
     setProgress("Loading groups");
-    const ds = await api.get("organisationUnitGroupSets", {
-      paging: false,
-      fields: "id,code,name,organisationUnitGroups[id,code,name,organisationUnits[id,name]]",
-    });
-
-    const groupSetIndex = indexGroupSet(ds.organisationUnitGroupSets);
+    const groupSetIndex = await indexGroupSet();
     setGroupSetIndex(groupSetIndex);
-
-    const contractService = PluginRegistry.extension("contracts.service");
-    setProgress("Loading contracts");
-
-    const contracts = await contractService.findAll();
-    const contractsByOrgunits = _.groupBy(contracts, (c) => c.orgUnit.id);
-
-    const results = buildContractInfos(contractsByOrgunits, groupSetIndex, period, contractService.contractFields());
-    results.sort((a, b) => {
-      return a.orgUnit.path.localeCompare(b.orgUnit.path);
-    });
-
-    const displayableStats = buildStats(results, groupSetIndex);
+    const results = await fetchContracts(groupSetIndex, period);
     setProgress("Actions computed");
+    return results;
+  });
 
-    setGroupStats(displayableStats);
-    setContractInfos(results);
-  };
+  const groupStats =
+    fetchContractsQuery?.data !== undefined ? buildStats(fetchContractsQuery?.data, groupSetIndex) : undefined;
+
+  const contractInfos = fetchContractsQuery?.data !== undefined ? fetchContractsQuery?.data : [];
 
   const fixGroups = async (contractInfosToFix) => {
     const dhis2 = PluginRegistry.extension("core.dhis2");
@@ -379,12 +204,8 @@ const SyncProgramGroups = (props) => {
       console.log(resp);
       setProgress("Updated " + orgUnitGroup.name);
     }
-    loadContracts();
+    await fetchContractsQuery.refetch();
   };
-
-  useEffect(() => {
-    loadContracts();
-  }, [period]);
 
   let filteredContractInfos = contractInfos;
   if (filter != "") {
@@ -423,9 +244,9 @@ const SyncProgramGroups = (props) => {
                 onPeriodChange={(newPeriod) => {
                   props.history.push("/sync/program-groups/" + newPeriod);
                 }}
-              ></PeriodPicker>
+              />
             </div>
-            <br></br>
+            <br />
           </div>
         </div>
         <div style={{ marginLeft: "50px", marginBottom: "20px" }}>
@@ -433,7 +254,15 @@ const SyncProgramGroups = (props) => {
 
           <ContractsResume contractInfos={filteredContractInfos} progress={progress} />
         </div>
-        <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start", columnGap: "2em" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignContent: "center",
+            justifyContent: "flex-start",
+            columnGap: "2em",
+          }}
+        >
           <Input
             type="text"
             value={filter}

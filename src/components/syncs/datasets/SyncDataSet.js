@@ -3,10 +3,10 @@ import { useQuery, useMutation } from "react-query";
 import MUIDataTable from "mui-datatables";
 import PeriodPicker from "../../shared/PeriodPicker";
 import PluginRegistry from "../../core/PluginRegistry";
-import ConfirmDialog from "../../shared/ConfirmDialog";
+import ConfirmButton from "../../shared/ConfirmButton";
 import { constructDataSyncTableColumns } from "./tables";
 
-import { Button, Typography, makeStyles, Paper, CircularProgress } from "@material-ui/core";
+import { Typography, makeStyles, Paper, CircularProgress } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { fetchDataSets } from "./fetchDataSets";
 
@@ -159,19 +159,9 @@ const SyncDataSet = (props) => {
             </div>
           </div>
           <div className={classes.syncButton}>
-            <Button onClick={() => setConfirmOpen(true)} color="primary">
+            <ConfirmButton onConfirm={addAllMissingOusMutation}>
               {t("dataSync.addAllOrgunits")} {loading && loadingStatus ? <CircularProgress size={15} /> : ""}
-            </Button>
-            <ConfirmDialog
-              title=""
-              open={confirmOpen}
-              setOpen={setConfirmOpen}
-              onConfirm={() => {
-                addAllMissingOusMutation.mutate();
-              }}
-            >
-              {t("dataSync.areYouSure")}
-            </ConfirmDialog>
+            </ConfirmButton>
           </div>
         </div>
       </div>

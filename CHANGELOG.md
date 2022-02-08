@@ -2,6 +2,7 @@
 
 - [sync-dataset] Adds button to synchronize all orgunits
 - [sync-dataset] Re-vamps tab with material-ui datatable, improved translations
+- [contracts] Reverses dates in period picker
 
 # @blsq/blsq-report-components@1.0.75
 

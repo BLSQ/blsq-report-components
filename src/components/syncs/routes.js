@@ -1,5 +1,5 @@
 import React from "react";
-import SyncDataSet from "./SyncDataSet";
+import SyncDataSet from "./datasets/SyncDataSet";
 import { Route } from "react-router-dom";
 import SyncProgramGroups from "./SyncProgramGroups";
 

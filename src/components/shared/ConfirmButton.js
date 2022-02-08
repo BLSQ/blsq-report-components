@@ -1,21 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
 import { useTranslation } from "react-i18next";
 const ConfirmButton = (props) => {
   const { t } = useTranslation();
+  const [confirmOpen, setConfirmOpen] = useState(false);
   // onConfirm = This is a callback function when the user clicks Yes.
-  // children = This is what will show in the dialog content. This can be a string, or it can be another, more complex component.
-  const { onConfirm, children } = props;
+  // title = button title
+  // message = message inside dialog
+  const { onConfirm, title, message } = props;
   return (
     <div>
-      <Button
-        onClick={() => {
-          if (window.confirm(t("dataSync.areYouSure"))) onConfirm.mutate();
-        }}
-        color="primary"
-      >
-        {children}
+      <Button onClick={() => setConfirmOpen(true)} color="primary">
+        {title}
       </Button>
+      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)} aria-labelledby="confirm-dialog">
+        <DialogContent>{message}</DialogContent>
+        <DialogActions>
+          <Button variant="contained" onClick={() => setConfirmOpen(false)} color="secondary">
+            {t("confirmNo")}
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setConfirmOpen(false);
+              onConfirm();
+            }}
+            color="secondary"
+          >
+            {t("confirmYes")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

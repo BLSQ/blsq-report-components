@@ -39,7 +39,6 @@ const SyncDataSet = (props) => {
   const DataEntries = PluginRegistry.extension("dataentry.dataEntries");
   const allDataEntries = DataEntries.getAllDataEntries();
   const [loadingStatus, setLoadingStatus] = useState(undefined);
-  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const period = props.match.params.period;
   const fetchDataSetsQuery = useQuery(["dataSets", period], async () => {
@@ -109,6 +108,14 @@ const SyncDataSet = (props) => {
     fetchDataSetsQuery.refetch();
   };
 
+  const confirmButtonTitle = () => {
+    return (
+      <>
+        {t("dataSync.addAllOrgunits")} {loading && loadingStatus ? <CircularProgress size={15} /> : ""}
+      </>
+    );
+  };
+
   const data = allDataEntries.map((dataEntry) => {
     return {
       dataEntry,
@@ -159,9 +166,13 @@ const SyncDataSet = (props) => {
             </div>
           </div>
           <div className={classes.syncButton}>
-            <ConfirmButton onConfirm={addAllMissingOusMutation}>
-              {t("dataSync.addAllOrgunits")} {loading && loadingStatus ? <CircularProgress size={15} /> : ""}
-            </ConfirmButton>
+            <ConfirmButton
+              onConfirm={() => {
+                addAllMissingOusMutation.mutate();
+              }}
+              title={confirmButtonTitle()}
+              message={t("dataSync.areYouSure")}
+            />
           </div>
         </div>
       </div>

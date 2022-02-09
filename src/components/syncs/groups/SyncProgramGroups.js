@@ -1,72 +1,16 @@
-import PluginRegistry from "../../core/PluginRegistry";
-import { useQuery, useMutation } from "react-query";
-import { makeStyles, Typography, Button, Input } from "@material-ui/core";
-import _ from "lodash";
 import React, { useState } from "react";
+
+import { Button, Input, makeStyles, Typography } from "@material-ui/core";
 import MUIDataTable from "mui-datatables";
-import PeriodPicker from "../../shared/PeriodPicker";
 import Paper from "@material-ui/core/Paper";
-import { fetchContracts, indexGroupSet, buildStats } from "./contracts";
+import { useMutation, useQuery } from "react-query";
+
+import { buildStats, fetchContracts, indexGroupSet } from "./contracts";
 import { constructGroupSyncTableColumns } from "./tables";
-
-const StatSpan = ({ stat }) => {
-  return <span style={{ color: stat > 0 ? "" : "grey" }}>{stat}</span>;
-};
-
-const GroupSetStats = ({ groupStats }) => (
-  <table>
-    <thead>
-      <tr>
-        <th width="200px">Group</th>
-        <th width="100px">Add</th>
-        <th width="100px">Remove</th>
-        <th width="100px">Keep</th>
-      </tr>
-    </thead>
-    <tbody>
-      {groupStats
-        .sort((a, b) => (a.group.name > b.group.name ? 1 : -1))
-        .map((groupInfo) => {
-          return (
-            <tr key={groupInfo.group.name}>
-              <td>{groupInfo.group.name}</td>
-              <td style={{ textAlign: "right" }}>
-                <StatSpan stat={groupInfo.stats.add || 0} />
-              </td>
-              <td style={{ textAlign: "right" }}>
-                <StatSpan stat={groupInfo.stats.remove || 0} />
-              </td>
-              <td style={{ textAlign: "right" }}>
-                <StatSpan stat={groupInfo.stats.keep || 0} />
-              </td>
-            </tr>
-          );
-        })}
-    </tbody>
-  </table>
-);
-
-const ContractsStats = ({ groupStats, groupSetIndex }) => (
-  <div style={{ display: "flex", flexWrap: "wrap" }}>
-    {groupStats &&
-      Object.values(_.groupBy(groupStats, (s) => s.group.groupSetCode)).map((stats, index) => (
-        <div key={index} style={{ margin: "10px" }}>
-          <h4>{groupSetIndex.groupSetsByCode[stats[0].group.groupSetCode].name}</h4>
-          <GroupSetStats groupStats={stats} />
-        </div>
-      ))}
-  </div>
-);
-
-const ContractsResume = ({ contractInfos, progress }) => (
-  <div>
-    {contractInfos && (
-      <span>
-        {contractInfos.length} orgunits, {contractInfos.filter((c) => c.synchronized).length} already synchronized.
-      </span>
-    )}
-  </div>
-);
+import ContractsResume from "./ContractsResume";
+import ContractsStats from "./ContractsStats";
+import PeriodPicker from "../../shared/PeriodPicker";
+import PluginRegistry from "../../core/PluginRegistry";
 
 const useStyles = makeStyles((theme) => ({
   root: {

@@ -1,7 +1,7 @@
 import React from "react";
 import SyncDataSet from "./datasets/SyncDataSet";
 import { Route } from "react-router-dom";
-import SyncProgramGroups from "./SyncProgramGroups";
+import SyncProgramGroups from "./groups/SyncProgramGroups";
 
 export const syncsRoutes = (props) => {
   return [

@@ -1,5 +1,5 @@
-import DatePeriods from "../../support/DatePeriods";
-import PluginRegistry from "../core/PluginRegistry";
+import DatePeriods from "../../../support/DatePeriods";
+import PluginRegistry from "../../core/PluginRegistry";
 import _ from "lodash";
 const codify = (str) => {
   if (str === undefined) {
@@ -94,15 +94,16 @@ const buildContractInfos = (contractsByOrgunits, groupSetIndex, period, contract
         const groupSet = groupSetIndex.groupSetsByCode[contractField.code];
         if (groupSet) {
           for (let group of groupSet.organisationUnitGroups) {
-            if (contractField.optionSet.options.some((o) => o.code === group.hesabuCode)) {
-              const isInGroup = group.organisationUnits.some((ou) => ou.id === orgUnit.id);
-              if (isInGroup && !contractForPeriod.codes.includes(group.hesabuCode)) {
+            if (contractField.optionSet.options.some((o) => o.code.toLowerCase() === group.hesabuCode)) {
+              const isInGroup = group.organisationUnits.some((ou) => ou.id == orgUnit.id);
+              const contractCodes = contractForPeriod.codes.map((c) => c.toLowerCase());
+              if (isInGroup && !contractCodes.includes(group.hesabuCode)) {
                 actions.push({ kind: "remove", group, orgUnit });
               }
-              if (!isInGroup && contractForPeriod.codes.includes(group.hesabuCode)) {
+              if (!isInGroup && contractCodes.includes(group.hesabuCode)) {
                 actions.push({ kind: "add", group, orgUnit });
               }
-              if (isInGroup && contractForPeriod.codes.includes(group.hesabuCode)) {
+              if (isInGroup && contractCodes.includes(group.hesabuCode)) {
                 actions.push({ kind: "keep", group, orgUnit });
               }
             }

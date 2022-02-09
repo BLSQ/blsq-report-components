@@ -1,21 +1,13 @@
-import PluginRegistry from "../core/PluginRegistry";
+import PluginRegistry from "../../core/PluginRegistry";
 import { useQuery, useMutation } from "react-query";
-import {
-  makeStyles,
-  Typography,
-  Button,
-  Input,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-} from "@material-ui/core";
+import { makeStyles, Typography, Button, Input } from "@material-ui/core";
 import _ from "lodash";
 import React, { useState } from "react";
-import PeriodPicker from "../shared/PeriodPicker";
+import MUIDataTable from "mui-datatables";
+import PeriodPicker from "../../shared/PeriodPicker";
 import Paper from "@material-ui/core/Paper";
 import { fetchContracts, indexGroupSet, buildStats } from "./contracts";
+import { constructGroupSyncTableColumns } from "./tables";
 
 const StatSpan = ({ stat }) => {
   return <span style={{ color: stat > 0 ? "" : "grey" }}>{stat}</span>;
@@ -76,76 +68,6 @@ const ContractsResume = ({ contractInfos, progress }) => (
   </div>
 );
 
-const ContractsTable = ({ contractInfos, fixGroups }) => (
-  <Table>
-    <TableHead>
-      <TableRow>
-        <TableCell component="th">
-          <b>Org unit</b>
-        </TableCell>
-        <TableCell component="th">
-          <b>Selected contract</b>
-        </TableCell>
-        <TableCell component="th">
-          <b>Proposed Changes</b>
-        </TableCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {contractInfos.map((contractInfos) => (
-        <TableRow key={contractInfos.orgUnit.id}>
-          <TableCell>
-            {contractInfos.orgUnit.name} <br />
-            <code>
-              {" "}
-              {contractInfos.orgUnit.ancestors.slice(1, contractInfos.orgUnit.ancestors.length - 1).map((a, index) => (
-                <span key={"ancestor-" + index}>
-                  {a.name} {index < contractInfos.orgUnit.ancestors.length - 3 ? " > " : ""}
-                </span>
-              ))}
-            </code>
-            <br /> contracts : {contractInfos.orgUnitContracts.length}
-          </TableCell>
-          <TableCell>
-            {contractInfos.contractForPeriod && (
-              <div
-                style={{
-                  color: contractInfos.contractedForPeriod ? "" : "grey",
-                }}
-              >
-                {Array.from(new Set(contractInfos.contractForPeriod.codes)).join(", ")} <br />
-                <a target="_blank" href={"./index.html#/contracts/" + contractInfos.orgUnit.id}>
-                  {contractInfos.contractForPeriod.startPeriod} - {contractInfos.contractForPeriod.endPeriod}
-                </a>
-              </div>
-            )}
-          </TableCell>
-          <TableCell>
-            {contractInfos.actions.map((action) => (
-              <span
-                key={action.kind + "-" + action.group.name}
-                style={{
-                  textDecoration: action.kind == "remove" ? "line-through" : "",
-                  color: action.kind == "keep" ? "grey" : "",
-                }}
-                title={action.kind + " " + action.group.name}
-              >
-                {action.group.name} <br />
-              </span>
-            ))}
-          </TableCell>
-          <TableCell>{contractInfos.warnings.join("\n")}</TableCell>
-          <TableCell>
-            {contractInfos && !contractInfos.synchronized && (
-              <Button onClick={() => fixGroups([contractInfos])}>Fix me !</Button>
-            )}
-          </TableCell>
-        </TableRow>
-      ))}
-    </TableBody>
-  </Table>
-);
-
 const useStyles = makeStyles((theme) => ({
   root: {
     ...theme.mixins.gutters(),
@@ -183,7 +105,7 @@ const SyncProgramGroups = (props) => {
     for (let contractInfo of contractInfosToFix) {
       const actions = contractInfo.actions.filter((a) => a.kind !== "keep");
       for (const action of actions) {
-        if (modifiedGroups[action.group.id] == undefined) {
+        if (modifiedGroups[action.group.id] === undefined) {
           const loadedGroup = await api.get("organisationUnitGroups/" + action.group.id);
           modifiedGroups[action.group.id] = loadedGroup;
         }
@@ -208,7 +130,7 @@ const SyncProgramGroups = (props) => {
   };
 
   let filteredContractInfos = contractInfos;
-  if (filter != "") {
+  if (filter !== "") {
     if (filter.startsWith("ancestor:")) {
       const ancestorName = filter.slice("ancestor:".length);
       filteredContractInfos = filteredContractInfos.filter((c) => {
@@ -216,15 +138,27 @@ const SyncProgramGroups = (props) => {
       });
     } else {
       filteredContractInfos = filteredContractInfos.filter((c) => {
-        const actionsToApply = c.actions.filter((k) => k.kind == "remove" || k.kind == "add");
+        const actionsToApply = c.actions.filter((k) => k.kind === "remove" || k.kind === "add");
 
-        if (actionsToApply.length == 0) {
+        if (actionsToApply.length === 0) {
           return false;
         }
-        return actionsToApply.every((c) => c.group.name == filter);
+        return actionsToApply.every((c) => c.group.name === filter);
       });
     }
   }
+  const data = filteredContractInfos;
+  const options = {
+    enableNestedDataAccess: ".",
+    filter: true,
+    print: false,
+    rowsPerPage: 5,
+    rowsPerPageOptions: [1, 5, 10, 20, 50, 100, 1000],
+    download: false,
+    selectableRows: "none",
+    elevation: 0,
+  };
+  const columns = constructGroupSyncTableColumns(data, {fixGroups});
   return (
     <div>
       <Paper className={classes.root}>
@@ -277,7 +211,9 @@ const SyncProgramGroups = (props) => {
             <i>{progress}</i>
           </b>
         </div>
-        <ContractsTable contractInfos={filteredContractInfos} fixGroups={fixGroups} />
+        <div>
+          <MUIDataTable data={data} columns={columns} options={options} />
+        </div>
       </Paper>
     </div>
   );

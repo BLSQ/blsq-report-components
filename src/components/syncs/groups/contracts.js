@@ -1,6 +1,8 @@
+import _ from "lodash";
+
 import DatePeriods from "../../../support/DatePeriods";
 import PluginRegistry from "../../core/PluginRegistry";
-import _ from "lodash";
+
 const codify = (str) => {
   if (str === undefined) {
     return undefined;

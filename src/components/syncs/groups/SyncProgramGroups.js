@@ -18,6 +18,31 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(10),
   },
+  header: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingTop: "5px",
+    paddingLeft: "5px",
+    marginBottom: "20px",
+  },
+  headerTitleHolder: { display: "inline-flex" },
+  headerTitle: {
+    marginRight: "20px",
+  },
+  contractsStatsHolder: {
+    marginBottom: "20px",
+  },
+  actions: {
+    display: "flex",
+    flexDirection: "row",
+    alignContent: "center",
+    justifyContent: "flex-start",
+    columnGap: "2em",
+  },
+  syncButton: {
+    float: "right",
+  },
 }));
 
 const SyncProgramGroups = (props) => {
@@ -109,13 +134,13 @@ const SyncProgramGroups = (props) => {
     selectableRows: "none",
     elevation: 0,
   };
-  const columns = constructGroupSyncTableColumns(data, {fixGroupsMutation});
+  const columns = constructGroupSyncTableColumns(data, { fixGroupsMutation });
   return (
     <div>
       <Paper className={classes.root}>
-        <div>
-          <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start" }}>
-            <Typography variant="h5" style={{ marginRight: "20px" }}>
+        <div className={classes.header}>
+          <div className={classes.headerTitleHolder}>
+            <Typography variant="h6" className={classes.headerTitle}>
               Synchronize groups based on contracts
             </Typography>
             <div>
@@ -131,23 +156,28 @@ const SyncProgramGroups = (props) => {
                 }}
               />
             </div>
-            <br />
+          </div>
+          <div className={classes.syncButton}>
+            <Button
+              onClick={() => fixGroupsMutation.mutate({ contractInfosToFix: filteredContractInfos })}
+              color="primary"
+              variant="contained"
+            >
+              Synchronize ALL !
+            </Button>
+            <div>
+              <b>
+                <i>{progress}</i>
+              </b>
+            </div>
           </div>
         </div>
-        <div style={{ marginLeft: "50px", marginBottom: "20px" }}>
+        <div className={classes.contractsStatsHolder}>
           <ContractsStats groupStats={groupStats} groupSetIndex={groupSetIndex} />
 
           <ContractsResume contractInfos={filteredContractInfos} progress={progress} />
         </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignContent: "center",
-            justifyContent: "flex-start",
-            columnGap: "2em",
-          }}
-        >
+        <div className={classes.actions}>
           <Input
             type="text"
             value={filter}
@@ -155,16 +185,6 @@ const SyncProgramGroups = (props) => {
               setFilter(e.target.value);
             }}
           />
-          <Button
-            onClick={() => fixGroupsMutation.mutate({ contractInfosToFix: filteredContractInfos })}
-            color="primary"
-            variant="contained"
-          >
-            Synchronize ALL !
-          </Button>
-          <b>
-            <i>{progress}</i>
-          </b>
         </div>
         <div>
           <MUIDataTable data={data} columns={columns} options={options} />

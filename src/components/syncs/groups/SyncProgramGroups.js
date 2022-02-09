@@ -97,37 +97,44 @@ const SyncProgramGroups = (props) => {
 
   const contractInfos = fetchContractsQuery?.data !== undefined ? fetchContractsQuery?.data : [];
 
-  const fixGroups = async (contractInfosToFix) => {
+  const performAction = async (modifiedGroups, action) => {
+    if (modifiedGroups[action.group.id] === undefined) {
+      const dhis2 = PluginRegistry.extension("core.dhis2");
+      const api = await dhis2.api();
+      const loadedGroup = await api.get("organisationUnitGroups/" + action.group.id);
+      modifiedGroups[action.group.id] = loadedGroup;
+    }
+    const groupToModify = modifiedGroups[action.group.id];
+    const isInGroup = groupToModify.organisationUnits.find((ou) => ou.id === action.orgUnit.id);
+    if (action.kind === "remove" && isInGroup) {
+      groupToModify.organisationUnits = groupToModify.organisationUnits.filter((ou) => ou.id !== action.orgUnit.id);
+    }
+    if (action.kind === "add" && !isInGroup) {
+      groupToModify.organisationUnits.push({ id: action.orgUnit.id });
+    }
+  };
+
+  const updateOrgUnitGroup = async (orgUnitGroup) => {
+    setProgress("Updating " + orgUnitGroup.name);
     const dhis2 = PluginRegistry.extension("core.dhis2");
     const api = await dhis2.api();
+    await api.update("organisationUnitGroups/" + orgUnitGroup.id, orgUnitGroup);
+    setProgress("Updated " + orgUnitGroup.name);
+  };
 
+  const fixGroupsMutation = useMutation(async ({ contractInfosToFix }) => {
     const modifiedGroups = {};
     for (let contractInfo of contractInfosToFix) {
       const actions = contractInfo.actions.filter((a) => a.kind !== "keep");
       for (const action of actions) {
-        if (modifiedGroups[action.group.id] === undefined) {
-          const loadedGroup = await api.get("organisationUnitGroups/" + action.group.id);
-          modifiedGroups[action.group.id] = loadedGroup;
-        }
-        const groupToModify = modifiedGroups[action.group.id];
-        const isInGroup = groupToModify.organisationUnits.find((ou) => ou.id === action.orgUnit.id);
-        if (action.kind === "remove" && isInGroup) {
-          groupToModify.organisationUnits = groupToModify.organisationUnits.filter((ou) => ou.id !== action.orgUnit.id);
-        }
-        if (action.kind === "add" && !isInGroup) {
-          groupToModify.organisationUnits.push({ id: action.orgUnit.id });
-        }
+        await performAction(modifiedGroups, action);
       }
     }
-
     for (let orgUnitGroup of Object.values(modifiedGroups)) {
-      setProgress("Updating " + orgUnitGroup.name);
-      const resp = await api.update("organisationUnitGroups/" + orgUnitGroup.id, orgUnitGroup);
-      console.log(resp);
-      setProgress("Updated " + orgUnitGroup.name);
+      await updateOrgUnitGroup(orgUnitGroup);
     }
     await fetchContractsQuery.refetch();
-  };
+  });
 
   let filteredContractInfos = contractInfos;
   if (filter !== "") {
@@ -158,7 +165,7 @@ const SyncProgramGroups = (props) => {
     selectableRows: "none",
     elevation: 0,
   };
-  const columns = constructGroupSyncTableColumns(data, {fixGroups});
+  const columns = constructGroupSyncTableColumns(data, {fixGroupsMutation});
   return (
     <div>
       <Paper className={classes.root}>
@@ -204,7 +211,11 @@ const SyncProgramGroups = (props) => {
               setFilter(e.target.value);
             }}
           />
-          <Button onClick={() => fixGroups(filteredContractInfos)} color="primary" variant="contained">
+          <Button
+            onClick={() => fixGroupsMutation.mutate({ filteredContractInfos })}
+            color="primary"
+            variant="contained"
+          >
             Synchronize ALL !
           </Button>
           <b>

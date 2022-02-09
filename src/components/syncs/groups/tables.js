@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@material-ui/core";
 
-export const constructGroupSyncTableColumns = (data, { fixGroups }) => {
+export const constructGroupSyncTableColumns = (data, { fixGroupsMutation }) => {
   return [
     {
       name: "orgUnit.overview",
@@ -102,9 +102,19 @@ export const constructGroupSyncTableColumns = (data, { fixGroups }) => {
         sort: true,
         customBodyRenderLite: (dataIndex) => {
           const info = data[dataIndex];
-          const infoToFix = [info];
+          const contractInfosToFix = [info];
           return (
-            <span>{info && !info.synchronized && <Button onClick={() => fixGroups(infoToFix)}>Fix me !</Button>}</span>
+            <span>
+              {info && !info.synchronized && (
+                <Button
+                  onClick={() => {
+                    fixGroupsMutation.mutate({ contractInfosToFix });
+                  }}
+                >
+                  Fix me !
+                </Button>
+              )}
+            </span>
           );
         },
       },

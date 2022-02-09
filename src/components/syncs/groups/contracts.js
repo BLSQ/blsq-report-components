@@ -154,7 +154,6 @@ export const indexGroupSet = async () => {
 
 export const fetchContracts = async (groupSetIndex, period) => {
   const contractService = PluginRegistry.extension("contracts.service");
-
   const contracts = await contractService.findAll();
   const contractsByOrgunits = _.groupBy(contracts, (c) => c.orgUnit.id);
 

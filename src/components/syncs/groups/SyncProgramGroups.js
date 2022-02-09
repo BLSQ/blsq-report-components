@@ -212,7 +212,7 @@ const SyncProgramGroups = (props) => {
             }}
           />
           <Button
-            onClick={() => fixGroupsMutation.mutate({ filteredContractInfos })}
+            onClick={() => fixGroupsMutation.mutate({ contractInfosToFix: filteredContractInfos })}
             color="primary"
             variant="contained"
           >

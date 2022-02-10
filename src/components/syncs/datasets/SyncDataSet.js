@@ -19,7 +19,6 @@ const useStyles = makeStyles({
   header: {
     display: "flex",
     flexDirection: "row",
-    alignContent: "center",
     justifyContent: "space-between",
     paddingTop: "5px",
     paddingLeft: "5px",
@@ -158,11 +157,7 @@ const SyncDataSet = (props) => {
             </div>
           </div>
           <div className={classes.syncButton}>
-            <ConfirmButton
-              onConfirm={addAllMissingOusMutation.mutate}
-              message={t("dataSync.areYouSure")}
-              disabled={loading}
-            >
+            <ConfirmButton onConfirm={addAllMissingOusMutation} message={t("dataSync.areYouSure")} disabled={loading}>
               {t("dataSync.addAllOrgunits")} {loading && loadingStatus ? <CircularProgress size={15} /> : ""}
             </ConfirmButton>
           </div>

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { TableCell, TableRow } from "@material-ui/core";
-import { onTableChange, anchorQueryParams } from "./urlParams";
+import { onTableChange, anchorQueryParams } from "../shared/tables/urlParams";
 import CompletionInfo from "./CompletionInfo";
 
 

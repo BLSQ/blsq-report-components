@@ -122,7 +122,7 @@ const buildContractInfos = (contractsByOrgunits, groupSetIndex, period, contract
       contractForPeriod,
       contractedForPeriod,
       synchronized: actions.every((a) => a.kind === "keep"),
-      synchronizedStatus: actions.every((a) => a.kind === "keep") ? "synchronized" : "unsynchronized",
+      synchronizedStatus: actions.every((a) => a.kind === "keep") ? "synchronized" : "not synchronized",
       actions,
       warnings,
       selectedContract: Array.from(new Set(contractForPeriod.codes)),

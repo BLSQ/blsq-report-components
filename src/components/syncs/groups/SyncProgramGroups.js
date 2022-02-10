@@ -13,6 +13,7 @@ import ContractsResume from "./ContractsResume";
 import ContractsStats from "./ContractsStats";
 import PeriodPicker from "../../shared/PeriodPicker";
 import PluginRegistry from "../../core/PluginRegistry";
+import { onTableChange } from "../../shared/tables/urlParams";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,18 +45,17 @@ const SyncProgramGroups = (props) => {
   const classes = useStyles(props);
   const period = props.match.params.period;
   const [progress, setProgress] = useState("");
-  const [filter, setFilter] = useState("");
   const [groupSetIndex, setGroupSetIndex] = useState(undefined);
   const { t } = useTranslation();
 
   const fetchContractsQuery = useQuery(
     ["contracts", period],
     async () => {
-      setProgress("Loading groups");
+      setProgress(t("groupSync.loadingGroups"));
       const groupSetIndex = await indexGroupSet();
       setGroupSetIndex(groupSetIndex);
       const results = await fetchContracts(groupSetIndex, period);
-      setProgress("Actions computed");
+      setProgress(t("groupSync.actionsComputed"));
       return results;
     },
     {
@@ -86,11 +86,11 @@ const SyncProgramGroups = (props) => {
   };
 
   const updateOrgUnitGroup = async (orgUnitGroup) => {
-    setProgress("Updating " + orgUnitGroup.name);
+    setProgress(t("groupSync.updatingGroup", { group: orgUnitGroup.name }));
     const dhis2 = PluginRegistry.extension("core.dhis2");
     const api = await dhis2.api();
     await api.update("organisationUnitGroups/" + orgUnitGroup.id, orgUnitGroup);
-    setProgress("Updated " + orgUnitGroup.name);
+    setProgress(t("groupSync.updatedGroup", { group: orgUnitGroup.name }));
   };
 
   const fixGroupsMutation = useMutation(async ({ contractInfosToFix }) => {
@@ -107,8 +107,6 @@ const SyncProgramGroups = (props) => {
     await fetchContractsQuery.refetch();
   });
 
-  let filteredContractInfos = contractInfos;
-  const data = filteredContractInfos;
   const options = {
     enableNestedDataAccess: ".",
     filter: true,
@@ -118,8 +116,9 @@ const SyncProgramGroups = (props) => {
     download: false,
     selectableRows: "none",
     elevation: 0,
+    onTableChange: onTableChange("", contractInfos),
   };
-  const columns = constructGroupSyncTableColumns(data, { fixGroupsMutation });
+  const columns = constructGroupSyncTableColumns(contractInfos, { fixGroupsMutation });
   return (
     <div>
       <Paper className={classes.root}>
@@ -137,7 +136,12 @@ const SyncProgramGroups = (props) => {
                   after: 5,
                 }}
                 onPeriodChange={(newPeriod) => {
-                  props.history.push("/sync/program-groups/" + newPeriod);
+                  const newUrl = window.location.href.replace(
+                    "/sync/program-groups/" + period,
+                    "/sync/program-groups/" + newPeriod,
+                  );
+                  window.history.pushState({}, "", newUrl);
+                  window.location.reload();
                 }}
               />
             </div>
@@ -145,7 +149,7 @@ const SyncProgramGroups = (props) => {
           <div className={classes.syncButton}>
             <ConfirmButton
               onConfirm={fixGroupsMutation}
-              mutateParams={{ contractInfosToFix: filteredContractInfos }}
+              mutateParams={{ contractInfosToFix: contractInfos }}
               message={"Are you sure you want to synchronize all groups?"}
               disabled={false}
             >
@@ -161,10 +165,10 @@ const SyncProgramGroups = (props) => {
         <div className={classes.contractsStatsHolder}>
           <ContractsStats groupStats={groupStats} groupSetIndex={groupSetIndex} />
 
-          <ContractsResume contractInfos={filteredContractInfos} progress={progress} />
+          <ContractsResume contractInfos={contractInfos} progress={progress} />
         </div>
         <div>
-          <MUIDataTable data={data} columns={columns} options={options} />
+          <MUIDataTable data={contractInfos} columns={columns} options={options} />
         </div>
       </Paper>
     </div>

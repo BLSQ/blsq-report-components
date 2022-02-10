@@ -72,6 +72,11 @@
     "noDataApproval": "no data approval configured",
     "areYouSure": "Are you sure you want to synchronize all Orgunits?"
   },
+  "groupSync": {
+    "title": "Synchronise groups based on contracts",
+    "syncAll": "Synchronise all groups"
+
+  },
   "levels": {
     "level1": "Level 1",
     "level2": "Level 2",

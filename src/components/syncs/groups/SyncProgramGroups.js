@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 
-import { Button, Input, makeStyles, Typography } from "@material-ui/core";
+import { makeStyles, Typography } from "@material-ui/core";
 import MUIDataTable from "mui-datatables";
 import Paper from "@material-ui/core/Paper";
 import { useMutation, useQuery } from "react-query";
+import { useTranslation } from "react-i18next";
 
 import { buildStats, fetchContracts, indexGroupSet } from "./contracts";
+import ConfirmButton from "../../shared/ConfirmButton";
 import { constructGroupSyncTableColumns } from "./tables";
 import ContractsResume from "./ContractsResume";
 import ContractsStats from "./ContractsStats";
@@ -33,13 +35,6 @@ const useStyles = makeStyles((theme) => ({
   contractsStatsHolder: {
     marginBottom: "20px",
   },
-  actions: {
-    display: "flex",
-    flexDirection: "row",
-    alignContent: "center",
-    justifyContent: "flex-start",
-    columnGap: "2em",
-  },
   syncButton: {
     float: "right",
   },
@@ -51,15 +46,22 @@ const SyncProgramGroups = (props) => {
   const [progress, setProgress] = useState("");
   const [filter, setFilter] = useState("");
   const [groupSetIndex, setGroupSetIndex] = useState(undefined);
+  const { t } = useTranslation();
 
-  const fetchContractsQuery = useQuery(["contracts", period], async () => {
-    setProgress("Loading groups");
-    const groupSetIndex = await indexGroupSet();
-    setGroupSetIndex(groupSetIndex);
-    const results = await fetchContracts(groupSetIndex, period);
-    setProgress("Actions computed");
-    return results;
-  });
+  const fetchContractsQuery = useQuery(
+    ["contracts", period],
+    async () => {
+      setProgress("Loading groups");
+      const groupSetIndex = await indexGroupSet();
+      setGroupSetIndex(groupSetIndex);
+      const results = await fetchContracts(groupSetIndex, period);
+      setProgress("Actions computed");
+      return results;
+    },
+    {
+      staleTime: 120000,
+    },
+  );
 
   const groupStats =
     fetchContractsQuery?.data !== undefined ? buildStats(fetchContractsQuery?.data, groupSetIndex) : undefined;
@@ -106,23 +108,6 @@ const SyncProgramGroups = (props) => {
   });
 
   let filteredContractInfos = contractInfos;
-  if (filter !== "") {
-    if (filter.startsWith("ancestor:")) {
-      const ancestorName = filter.slice("ancestor:".length);
-      filteredContractInfos = filteredContractInfos.filter((c) => {
-        return c.orgUnit.ancestors.some((a) => a.name.includes(ancestorName));
-      });
-    } else {
-      filteredContractInfos = filteredContractInfos.filter((c) => {
-        const actionsToApply = c.actions.filter((k) => k.kind === "remove" || k.kind === "add");
-
-        if (actionsToApply.length === 0) {
-          return false;
-        }
-        return actionsToApply.every((c) => c.group.name === filter);
-      });
-    }
-  }
   const data = filteredContractInfos;
   const options = {
     enableNestedDataAccess: ".",
@@ -141,7 +126,7 @@ const SyncProgramGroups = (props) => {
         <div className={classes.header}>
           <div className={classes.headerTitleHolder}>
             <Typography variant="h6" className={classes.headerTitle}>
-              Synchronize groups based on contracts
+              {t("groupSync.title")}
             </Typography>
             <div>
               <PeriodPicker
@@ -158,13 +143,14 @@ const SyncProgramGroups = (props) => {
             </div>
           </div>
           <div className={classes.syncButton}>
-            <Button
-              onClick={() => fixGroupsMutation.mutate({ contractInfosToFix: filteredContractInfos })}
-              color="primary"
-              variant="contained"
+            <ConfirmButton
+              onConfirm={fixGroupsMutation}
+              mutateParams={{ contractInfosToFix: filteredContractInfos }}
+              message={"Are you sure you want to synchronize all groups?"}
+              disabled={false}
             >
-              Synchronize ALL !
-            </Button>
+              {t("groupSync.syncAll")}
+            </ConfirmButton>
             <div>
               <b>
                 <i>{progress}</i>
@@ -176,15 +162,6 @@ const SyncProgramGroups = (props) => {
           <ContractsStats groupStats={groupStats} groupSetIndex={groupSetIndex} />
 
           <ContractsResume contractInfos={filteredContractInfos} progress={progress} />
-        </div>
-        <div className={classes.actions}>
-          <Input
-            type="text"
-            value={filter}
-            onChange={(e) => {
-              setFilter(e.target.value);
-            }}
-          />
         </div>
         <div>
           <MUIDataTable data={data} columns={columns} options={options} />

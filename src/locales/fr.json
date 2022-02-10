@@ -72,8 +72,11 @@
   },
   "groupSync": {
     "title": "Synchroniser les groupes en fonction des contrats",
-    "syncAll": "Synchroniser toutes les groupes"
-
+    "syncAll": "Synchroniser toutes les groupes",
+    "loadingGroups": "Chargement des groupes",
+    "actionsComputed": "Actions calculées",
+    "updatingGroup": "{{group}} de mise à jour",
+    "updatedGroup": "{{group}} mis à jour"
   },
   "levels": {
     "level1": "Niveau 1",

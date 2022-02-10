@@ -74,8 +74,11 @@
   },
   "groupSync": {
     "title": "Synchronise groups based on contracts",
-    "syncAll": "Synchronise all groups"
-
+    "syncAll": "Synchronise all groups",
+    "loadingGroups": "Loading groups",
+    "actionsComputed": "Actions computed",
+    "updatingGroup": "Updating {{group}}",
+    "updatedGroup": "Updated {{group}}"
   },
   "levels": {
     "level1": "Level 1",

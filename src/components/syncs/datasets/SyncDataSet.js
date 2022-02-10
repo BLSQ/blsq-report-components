@@ -9,6 +9,7 @@ import { constructDataSyncTableColumns } from "./tables";
 import { Typography, makeStyles, Paper, CircularProgress } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { fetchDataSets } from "./fetchDataSets";
+import { onTableChange } from "../../shared/tables/urlParams";
 
 const useStyles = makeStyles({
   aligned: {
@@ -124,6 +125,7 @@ const SyncDataSet = (props) => {
     download: false,
     selectableRows: "none",
     elevation: 0,
+    onTableChange: onTableChange("", data),
   };
   const columns = constructDataSyncTableColumns(data, {
     loading,
@@ -151,7 +153,12 @@ const SyncDataSet = (props) => {
                   after: 5,
                 }}
                 onPeriodChange={(newPeriod) => {
-                  props.history.push("/sync/datasets/" + newPeriod);
+                  const newUrl = window.location.href.replace(
+                    "/sync/datasets/" + period,
+                    "/sync/datasets/" + newPeriod,
+                  );
+                  window.history.pushState({}, "", newUrl);
+                  window.location.reload();
                 }}
               />
             </div>

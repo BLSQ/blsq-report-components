@@ -4,7 +4,7 @@ import { Button } from "@material-ui/core";
 export const constructGroupSyncTableColumns = (data, { fixGroupsMutation }) => {
   return [
     {
-      name: "orgUnit.overview",
+      name: "orgUnit.name",
       label: "Org unit",
       options: {
         filter: true,
@@ -29,7 +29,7 @@ export const constructGroupSyncTableColumns = (data, { fixGroupsMutation }) => {
       },
     },
     {
-      name: "orgUnit.selectedContract",
+      name: "selectedContract",
       label: "Selected contract",
       options: {
         filter: true,
@@ -56,7 +56,7 @@ export const constructGroupSyncTableColumns = (data, { fixGroupsMutation }) => {
       },
     },
     {
-      name: "orgUnit.proposedChanges",
+      name: "proposedChanges",
       label: "Proposed changes",
       options: {
         filter: true,
@@ -86,7 +86,7 @@ export const constructGroupSyncTableColumns = (data, { fixGroupsMutation }) => {
       name: "orgUnit.warnings",
       label: "Warnings",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
         customBodyRenderLite: (dataIndex) => {
           const info = data[dataIndex];
@@ -98,7 +98,7 @@ export const constructGroupSyncTableColumns = (data, { fixGroupsMutation }) => {
       name: "orgUnit.actions",
       label: "Actions",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
         customBodyRenderLite: (dataIndex) => {
           const info = data[dataIndex];
@@ -117,6 +117,15 @@ export const constructGroupSyncTableColumns = (data, { fixGroupsMutation }) => {
             </span>
           );
         },
+      },
+    },
+    {
+      name: "synchronizedStatus",
+      label: "Synchronized status",
+      options: {
+        filter: true,
+        sort: true,
+        display: false,
       },
     },
   ];

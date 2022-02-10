@@ -122,8 +122,15 @@ const buildContractInfos = (contractsByOrgunits, groupSetIndex, period, contract
       contractForPeriod,
       contractedForPeriod,
       synchronized: actions.every((a) => a.kind === "keep"),
+      synchronizedStatus: actions.every((a) => a.kind === "keep") ? "synchronized" : "unsynchronized",
       actions,
       warnings,
+      selectedContract: Array.from(new Set(contractForPeriod.codes)),
+      proposedChanges: actions.map((action) => {
+        if (action.kind === "remove" || action.kind === "keep") {
+          return `${action.kind} ${action.group.name}`;
+        }
+      }),
     });
   }
   return results;

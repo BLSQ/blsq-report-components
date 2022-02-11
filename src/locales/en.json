@@ -1,4 +1,5 @@
 {
+  "add": "Add",
   "app_name": "ORBF2 - Invoices & Reports",
   "clear": "Clear",
   "codes": "Codes",
@@ -29,7 +30,7 @@
       "generateHint":"The orgUnit is freshly created. Please generate resource tables before continuing with contract creation.",
       "generateButton":"Generate Resource Tables",
       "running": "Generation will take a few minutes..."
-    },    
+    },   
     "result": "1 contract",
     "results": "{{total}} contracts",
     "resultsFiltered": "{{filtered}} results filtered out {{total}} contracts",
@@ -50,7 +51,7 @@
     "contract_main_orgunit_id": "Main org unit id",
     "massUpdate": "Mass Update",
     "warnings": "Warnings"
-  },
+  }, 
   "dataEntry": {
     "accessAndApproval": "Access & Approval Workflow",
     "actions": "Actions",
@@ -78,7 +79,18 @@
     "loadingGroups": "Loading groups",
     "actionsComputed": "Actions computed",
     "updatingGroup": "Updating {{group}}",
-    "updatedGroup": "Updated {{group}}"
+    "updatedGroup": "Updated {{group}}",
+    "selectedContract": "Selected contract",
+    "proposedChanges": "Proposed changes",
+    "warnings": "Warnings",
+    "alreadySynchronized": " already synchronized",
+    "fixMe": "Fix me"
+  },
+  "dataTableFilters": {
+    "synchronized": "Synchronized",
+    "not_synchronized": "Not synchronized",
+    "add_missing_data_elements": "Add missing dataelements",
+    "add_missing_orgunits": "Add missing orgunits"
   },
   "levels": {
     "level1": "Level 1",
@@ -110,6 +122,7 @@
       "period": "Period"
     }
   },
+  "keep": "Keep",
   "limit_org_unit_under": "Limit to the children organisation units of ...",
   "missing_invoice_types": "Missing invoice...",
   "name": "Name",
@@ -120,6 +133,7 @@
   "period": "Period",
   "print": "Print",
   "re_calculate": "Calculate",
+  "remove": "Remove",
   "lock": "Lock",
   "unlock": "Unlock",
   "lock_unlock": "Lock/Unlock",

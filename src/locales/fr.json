@@ -1,4 +1,5 @@
 {
+  "add": "Ajouter",
   "app_name": "Factures & Rapports",
   "clear": "Supprimer",
   "codes": "Codes",
@@ -76,7 +77,18 @@
     "loadingGroups": "Chargement des groupes",
     "actionsComputed": "Actions calculées",
     "updatingGroup": "{{group}} de mise à jour",
-    "updatedGroup": "{{group}} mis à jour"
+    "updatedGroup": "{{group}} mis à jour",
+    "selectedContract": "Contrat sélectionné",
+    "proposedChanges": "Changements proposés",
+    "warnings": "Avertissements",
+    "alreadySynchronized": " déjà synchronisées",
+    "fixMe": "Répare-moi"
+  },
+  "dataTableFilters": {
+    "synchronized": "Synchronisée",
+    "not_synchronized": "Non synchronisée",
+    "add_missing_data_elements": "Ajouter les dataelements manquants",
+    "add_missing_orgunits": "Ajouter les orgunits manquantes"
   },
   "levels": {
     "level1": "Niveau 1",
@@ -108,6 +120,7 @@
       "period": "Période"
     }
   },
+  "keep": "Garder",
   "limit_org_unit_under": "Limiter aux unités d'organisation enfant de ...",
   "missing_invoice_types": "Facture introuvable...",
   "name": "Nom",
@@ -118,6 +131,7 @@
   "period": "Période",
   "print": "Imprimer",
   "re_calculate": "Recalculer",
+  "remove": "Supprimer",
   "lock": "Verrouiller",
   "unlock": "Déverrouiller",
   "lock_unlock": "Verrouiller/Déverrouiller",

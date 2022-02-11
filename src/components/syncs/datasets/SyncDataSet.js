@@ -10,6 +10,7 @@ import { Typography, makeStyles, Paper, CircularProgress } from "@material-ui/co
 import { useTranslation } from "react-i18next";
 import { fetchDataSets } from "./fetchDataSets";
 import { onTableChange } from "../../shared/tables/urlParams";
+import CustomFilterList from "../../shared/tables/CustomFilterList";
 
 const useStyles = makeStyles({
   aligned: {
@@ -51,7 +52,6 @@ const SyncDataSet = (props) => {
 
   const updateOu = async (myDataSet, missingOrgunits) => {
     setLoadingStatus(`Updating ${myDataSet.name}`);
-    console.log(`Updating ${myDataSet.name}`);
     const api = await dhis2.api();
     const dataSet = await api.get("dataSets/" + myDataSet.id, {
       fields: ":all",
@@ -109,11 +109,19 @@ const SyncDataSet = (props) => {
   };
 
   const data = allDataEntries.map((dataEntry) => {
+    const contracts = contractsByDataEntryCode
+      ? contractsByDataEntryCode && contractsByDataEntryCode[dataEntry.code]
+      : undefined;
+    let actionsNeeded = [];
+    if (contracts && contracts.some((c) => c.missingOrgunits.length !== 0)) {
+      actionsNeeded.push("add missing orgunits");
+    } else if (contracts && contracts.some((c) => c.missingDataElements.length !== 0)) {
+      actionsNeeded.push("add missing data elements");
+    }
     return {
       dataEntry,
-      contracts: contractsByDataEntryCode
-        ? contractsByDataEntryCode && contractsByDataEntryCode[dataEntry.code]
-        : undefined,
+      contracts: contracts,
+      actionsNeeded: actionsNeeded,
     };
   });
   const options = {
@@ -171,7 +179,14 @@ const SyncDataSet = (props) => {
         </div>
       </div>
       <div>
-        <MUIDataTable data={data} columns={columns} options={options} />
+        <MUIDataTable
+          data={data}
+          columns={columns}
+          options={options}
+          components={{
+            TableFilterList: CustomFilterList,
+          }}
+        />
       </div>
     </Paper>
   );

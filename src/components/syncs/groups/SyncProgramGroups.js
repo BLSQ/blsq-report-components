@@ -12,6 +12,7 @@ import { constructGroupSyncTableColumns } from "./tables";
 import ContractsResume from "./ContractsResume";
 import ContractsStats from "./ContractsStats";
 import PeriodPicker from "../../shared/PeriodPicker";
+import CustomFilterList from "../../shared/tables/CustomFilterList";
 import PluginRegistry from "../../core/PluginRegistry";
 import { onTableChange } from "../../shared/tables/urlParams";
 
@@ -168,7 +169,14 @@ const SyncProgramGroups = (props) => {
           <ContractsResume contractInfos={contractInfos} progress={progress} />
         </div>
         <div>
-          <MUIDataTable data={contractInfos} columns={columns} options={options} />
+          <MUIDataTable
+            data={contractInfos}
+            columns={columns}
+            options={options}
+            components={{
+              TableFilterList: CustomFilterList,
+            }}
+          />
         </div>
       </Paper>
     </div>

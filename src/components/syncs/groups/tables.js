@@ -1,11 +1,13 @@
 import React from "react";
 import { Button } from "@material-ui/core";
+import { useTranslation } from "react-i18next";
 
 export const constructGroupSyncTableColumns = (data, { fixGroupsMutation }) => {
+  const { t } = useTranslation();
   return [
     {
       name: "orgUnit.name",
-      label: "Org unit",
+      label: "Orgunit",
       options: {
         filter: true,
         sort: true,
@@ -30,7 +32,7 @@ export const constructGroupSyncTableColumns = (data, { fixGroupsMutation }) => {
     },
     {
       name: "selectedContract",
-      label: "Selected contract",
+      label: t("groupSync.selectedContract"),
       options: {
         filter: true,
         sort: true,
@@ -57,7 +59,7 @@ export const constructGroupSyncTableColumns = (data, { fixGroupsMutation }) => {
     },
     {
       name: "proposedChanges",
-      label: "Proposed changes",
+      label: t("groupSync.proposedChanges"),
       options: {
         filter: true,
         sort: true,
@@ -84,7 +86,7 @@ export const constructGroupSyncTableColumns = (data, { fixGroupsMutation }) => {
     },
     {
       name: "orgUnit.warnings",
-      label: "Warnings",
+      label: t("groupSync.warnings"),
       options: {
         filter: false,
         sort: true,
@@ -111,7 +113,7 @@ export const constructGroupSyncTableColumns = (data, { fixGroupsMutation }) => {
                     fixGroupsMutation.mutate({ contractInfosToFix });
                   }}
                 >
-                  Fix me !
+                  {t("groupSync.fixMe")}
                 </Button>
               )}
             </span>

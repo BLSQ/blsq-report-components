@@ -69,7 +69,7 @@
     "addSingleMissingOu": "Ajouter {{length}} orgunits manquantes à dataset ",
     "dataApproval": "Approbation des données : ",
     "noDataApproval": "aucune approbation de données configurée",
-    "areYouSure": "Êtes-vous sûr de vouloir synchroniser toutes les Orgunits ?"
+    "areYouSure": "Vous êtes sur le point de synchroniser {{orgunitCount}} orgunit(s). Une fois la synchronisation effectuée, il n'y a pas de retour en arrière possible. Voulez-vous procéder ?"
   },
   "groupSync": {
     "title": "Synchroniser les groupes en fonction des contrats",
@@ -82,7 +82,8 @@
     "proposedChanges": "Changements proposés",
     "warnings": "Avertissements",
     "alreadySynchronized": " déjà synchronisées",
-    "fixMe": "Répare-moi"
+    "fixMe": "Répare-moi",
+    "areYouSure": "Vous êtes sur le point de synchroniser {{groupCount}} groupe(s). Une fois la synchronisation effectuée, il n'y a pas de retour en arrière possible. Voulez-vous procéder ?"
   },
   "dataTableFilters": {
     "synchronized": "Synchronisée",

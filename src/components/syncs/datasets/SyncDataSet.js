@@ -65,6 +65,19 @@ const SyncDataSet = (props) => {
     await api.update("dataSets/" + dataSet.id, dataSet);
   };
 
+  const allMissingOusCount = () => {
+    if (contractsByDataEntryCode) {
+      const contracts = Object.values(contractsByDataEntryCode);
+      let count = 0;
+      for (let contractGroups of contracts) {
+        for (let contract of contractGroups) {
+          count = count + contract.missingOrgunits.length;
+        }
+      }
+      return count;
+    }
+  };
+
   const addAllMissingOusMutation = useMutation(async () => {
     const contracts = Object.values(contractsByDataEntryCode);
     for (let contractGroups of contracts) {
@@ -172,7 +185,11 @@ const SyncDataSet = (props) => {
             </div>
           </div>
           <div className={classes.syncButton}>
-            <ConfirmButton onConfirm={addAllMissingOusMutation} message={t("dataSync.areYouSure")} disabled={loading}>
+            <ConfirmButton
+              onConfirm={addAllMissingOusMutation}
+              message={t("dataSync.areYouSure", { orgunitCount: allMissingOusCount() })}
+              disabled={loading}
+            >
               {t("dataSync.addAllOrgunits")} {loading && loadingStatus ? <CircularProgress size={15} /> : ""}
             </ConfirmButton>
           </div>

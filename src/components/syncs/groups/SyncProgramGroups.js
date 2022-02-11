@@ -43,8 +43,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const SyncProgramGroups = (props) => {
+  const { history, match } = props;
   const classes = useStyles(props);
-  const period = props.match.params.period;
+  const period = match.params.period;
   const [progress, setProgress] = useState("");
   const [groupSetIndex, setGroupSetIndex] = useState(undefined);
   const { t } = useTranslation();
@@ -92,6 +93,11 @@ const SyncProgramGroups = (props) => {
     const api = await dhis2.api();
     await api.update("organisationUnitGroups/" + orgUnitGroup.id, orgUnitGroup);
     setProgress(t("groupSync.updatedGroup", { group: orgUnitGroup.name }));
+  };
+
+  const contractInfosToFixCount = (contractInfosToFix) => {
+    const contracts = contractInfosToFix.filter((contract) => contract.actions.some((a) => a.kind !== "keep"));
+    return contracts.length;
   };
 
   const fixGroupsMutation = useMutation(async ({ contractInfosToFix }) => {
@@ -151,7 +157,7 @@ const SyncProgramGroups = (props) => {
             <ConfirmButton
               onConfirm={fixGroupsMutation}
               mutateParams={{ contractInfosToFix: contractInfos }}
-              message={"Are you sure you want to synchronize all groups?"}
+              message={t("groupSync.areYouSure", { groupCount: contractInfosToFixCount(contractInfos) })}
               disabled={false}
             >
               {t("groupSync.syncAll")}

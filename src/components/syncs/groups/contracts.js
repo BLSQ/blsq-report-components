@@ -127,7 +127,7 @@ const buildContractInfos = (contractsByOrgunits, groupSetIndex, period, contract
       warnings,
       selectedContract: Array.from(new Set(contractForPeriod.codes)),
       proposedChanges: actions.map((action) => {
-        if (action.kind === "remove" || action.kind === "keep") {
+        if (action.kind === "remove" || action.kind === "add") {
           return `${action.kind} ${action.group.name}`;
         }
       }),

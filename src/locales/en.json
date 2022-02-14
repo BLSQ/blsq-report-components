@@ -84,7 +84,7 @@
     "proposedChanges": "Proposed changes",
     "warnings": "Warnings",
     "alreadySynchronized": " already synchronized",
-    "fixMe": "Fix me",
+    "fixMe": "Synchronize",
     "areYouSure": "You are about to synchronize {{groupCount}} group(s). This action cannot be undone. Are you sure you want to proceed?"
 
   },

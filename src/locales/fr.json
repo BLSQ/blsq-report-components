@@ -82,7 +82,7 @@
     "proposedChanges": "Changements proposés",
     "warnings": "Avertissements",
     "alreadySynchronized": " déjà synchronisées",
-    "fixMe": "Répare-moi",
+    "fixMe": "Synchroniser",
     "areYouSure": "Vous êtes sur le point de synchroniser {{groupCount}} groupe(s). Une fois la synchronisation effectuée, il n'y a pas de retour en arrière possible. Voulez-vous procéder ?"
   },
   "dataTableFilters": {

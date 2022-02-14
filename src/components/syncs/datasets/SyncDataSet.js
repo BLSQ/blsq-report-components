@@ -49,6 +49,7 @@ const SyncDataSet = (props) => {
 
   const dataElementsById = fetchDataSetsQuery?.data?.dataElementsById;
   const contractsByDataEntryCode = fetchDataSetsQuery?.data?.contractsByDataEntryCode;
+  const orgunitMissingCount = fetchDataSetsQuery?.data?.missingOrgunitsCount;
 
   const updateOu = async (myDataSet, missingOrgunits) => {
     setLoadingStatus(`Updating ${myDataSet.name}`);
@@ -63,19 +64,6 @@ const SyncDataSet = (props) => {
       }
     }
     await api.update("dataSets/" + dataSet.id, dataSet);
-  };
-
-  const allMissingOusCount = () => {
-    if (contractsByDataEntryCode) {
-      const contracts = Object.values(contractsByDataEntryCode);
-      let count = 0;
-      for (let contractGroups of contracts) {
-        for (let contract of contractGroups) {
-          count = count + contract.missingOrgunits.length;
-        }
-      }
-      return count;
-    }
   };
 
   const addAllMissingOusMutation = useMutation(async () => {
@@ -187,7 +175,7 @@ const SyncDataSet = (props) => {
           <div className={classes.syncButton}>
             <ConfirmButton
               onConfirm={addAllMissingOusMutation}
-              message={t("dataSync.areYouSure", { orgunitCount: allMissingOusCount() })}
+              message={t("dataSync.areYouSure", { orgunitCount: orgunitMissingCount })}
               disabled={loading}
             >
               {t("dataSync.addAllOrgunits")} {loading && loadingStatus ? <CircularProgress size={15} /> : ""}

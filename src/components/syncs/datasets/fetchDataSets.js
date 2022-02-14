@@ -48,6 +48,17 @@ const computeContractsByDataEntryCode = (allDataEntries, activeContracts, dataSe
   return contractsByDataEntryCode;
 };
 
+const allMissingOusCount = (contractsByDataEntryCode) => {
+  const contracts = Object.values(contractsByDataEntryCode);
+  let count = 0;
+  for (let contractGroups of contracts) {
+    for (let contract of contractGroups) {
+      count = count + contract.missingOrgunits.length;
+    }
+  }
+  return count;
+};
+
 export const fetchDataSets = async (allDataEntries, period) => {
   const dhis2 = PluginRegistry.extension("core.dhis2");
   const api = await dhis2.api();
@@ -76,5 +87,6 @@ export const fetchDataSets = async (allDataEntries, period) => {
   return {
     contractsByDataEntryCode,
     dataElementsById: dataElements,
+    missingOrgunitsCount: allMissingOusCount(contractsByDataEntryCode),
   };
 };

@@ -9,7 +9,7 @@ const ConfirmButton = (props) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   // onConfirm = This is a callback function when the user clicks Yes.
   // message = message inside dialog
-  const { onConfirm, children, message, disabled } = props;
+  const { onConfirm, children, message, disabled, mutateParams=null } = props;
   return (
     <div>
       <Button onClick={() => setConfirmOpen(true)} color="primary" disabled={disabled}>
@@ -25,7 +25,7 @@ const ConfirmButton = (props) => {
             variant="contained"
             onClick={() => {
               setConfirmOpen(false);
-              onConfirm();
+              onConfirm.mutate(mutateParams);
             }}
             color="secondary"
           >

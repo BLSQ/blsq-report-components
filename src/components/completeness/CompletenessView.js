@@ -8,7 +8,7 @@ import { Typography } from "@material-ui/core";
 import { toCompleteness, buildStatsByZone } from "./calculations";
 import { orgUnitColumns, zoneStatsColumns, statsTableOptions, tableOptions } from "./tables";
 import { useTranslation } from "react-i18next";
-import { anchorQueryParams, urlWith } from "./urlParams";
+import { anchorQueryParams, urlWith } from "../shared/tables/urlParams";
 import { Paper } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 
@@ -185,7 +185,7 @@ const CompletenessView = (props) => {
                 window.history.pushState({}, "", newUrl);
                 window.location.reload();
               }}
-            ></PeriodPicker>
+             />
           </div>
         </div>
       

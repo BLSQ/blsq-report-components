@@ -9,6 +9,8 @@ import { constructDataSyncTableColumns } from "./tables";
 import { Typography, makeStyles, Paper, CircularProgress } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { fetchDataSets } from "./fetchDataSets";
+import { onTableChange } from "../../shared/tables/urlParams";
+import CustomFilterList from "../../shared/tables/CustomFilterList";
 
 const useStyles = makeStyles({
   aligned: {
@@ -19,7 +21,6 @@ const useStyles = makeStyles({
   header: {
     display: "flex",
     flexDirection: "row",
-    alignContent: "center",
     justifyContent: "space-between",
     paddingTop: "5px",
     paddingLeft: "5px",
@@ -48,10 +49,10 @@ const SyncDataSet = (props) => {
 
   const dataElementsById = fetchDataSetsQuery?.data?.dataElementsById;
   const contractsByDataEntryCode = fetchDataSetsQuery?.data?.contractsByDataEntryCode;
+  const orgunitMissingCount = fetchDataSetsQuery?.data?.missingOrgunitsCount;
 
   const updateOu = async (myDataSet, missingOrgunits) => {
     setLoadingStatus(`Updating ${myDataSet.name}`);
-    console.log(`Updating ${myDataSet.name}`);
     const api = await dhis2.api();
     const dataSet = await api.get("dataSets/" + myDataSet.id, {
       fields: ":all",
@@ -109,11 +110,19 @@ const SyncDataSet = (props) => {
   };
 
   const data = allDataEntries.map((dataEntry) => {
+    const contracts = contractsByDataEntryCode
+      ? contractsByDataEntryCode && contractsByDataEntryCode[dataEntry.code]
+      : undefined;
+    let actionsNeeded = [];
+    if (contracts && contracts.some((c) => c.missingOrgunits.length !== 0)) {
+      actionsNeeded.push("add missing orgunits");
+    } else if (contracts && contracts.some((c) => c.missingDataElements.length !== 0)) {
+      actionsNeeded.push("add missing data elements");
+    }
     return {
       dataEntry,
-      contracts: contractsByDataEntryCode
-        ? contractsByDataEntryCode && contractsByDataEntryCode[dataEntry.code]
-        : undefined,
+      contracts: contracts,
+      actionsNeeded: actionsNeeded,
     };
   });
   const options = {
@@ -125,6 +134,7 @@ const SyncDataSet = (props) => {
     download: false,
     selectableRows: "none",
     elevation: 0,
+    onTableChange: onTableChange("", data),
   };
   const columns = constructDataSyncTableColumns(data, {
     loading,
@@ -152,15 +162,20 @@ const SyncDataSet = (props) => {
                   after: 5,
                 }}
                 onPeriodChange={(newPeriod) => {
-                  props.history.push("/sync/datasets/" + newPeriod);
+                  const newUrl = window.location.href.replace(
+                    "/sync/datasets/" + period,
+                    "/sync/datasets/" + newPeriod,
+                  );
+                  window.history.pushState({}, "", newUrl);
+                  window.location.reload();
                 }}
               />
             </div>
           </div>
           <div className={classes.syncButton}>
             <ConfirmButton
-              onConfirm={addAllMissingOusMutation.mutate}
-              message={t("dataSync.areYouSure")}
+              onConfirm={addAllMissingOusMutation}
+              message={t("dataSync.areYouSure", { orgunitCount: orgunitMissingCount })}
               disabled={loading}
             >
               {t("dataSync.addAllOrgunits")} {loading && loadingStatus ? <CircularProgress size={15} /> : ""}
@@ -169,7 +184,14 @@ const SyncDataSet = (props) => {
         </div>
       </div>
       <div>
-        <MUIDataTable data={data} columns={columns} options={options} />
+        <MUIDataTable
+          data={data}
+          columns={columns}
+          options={options}
+          components={{
+            TableFilterList: CustomFilterList,
+          }}
+        />
       </div>
     </Paper>
   );

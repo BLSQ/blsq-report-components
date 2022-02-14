@@ -31,7 +31,7 @@ export const constructDataSyncTableColumns = (
       name: "dataEntry.assignedTo",
       label: t("dataEntry.assignedTo"),
       options: {
-        filter: true,
+        filter: false,
         sort: true,
         customBodyRenderLite: (dataIndex) => {
           const info = data[dataIndex];
@@ -51,7 +51,7 @@ export const constructDataSyncTableColumns = (
       name: "dataEntry.activeContracts",
       label: t("dataEntry.activeContracts"),
       options: {
-        filter: true,
+        filter: false,
         sort: true,
         customBodyRenderLite: (dataIndex) => {
           const info = data[dataIndex];
@@ -65,7 +65,7 @@ export const constructDataSyncTableColumns = (
       },
     },
     {
-      name: "dataEntry.actions",
+      name: "actionsNeeded",
       label: t("dataEntry.actions"),
       options: {
         filter: true,
@@ -128,7 +128,7 @@ export const constructDataSyncTableColumns = (
       name: "dataEntry.accessAndApprovalWorkflow",
       label: t("dataEntry.accessAndApproval"),
       options: {
-        filter: true,
+        filter: false,
         sort: true,
         customBodyRenderLite: (dataIndex) => {
           const info = data[dataIndex];

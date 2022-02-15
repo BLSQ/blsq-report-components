@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import MassContractUpdate from "./MassContractUpdate";
 import PropTypes from "prop-types";
 import { Typography, Breadcrumbs, Paper, Divider, Box } from "@material-ui/core";
-import { withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import { withTranslation } from "react-i18next";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
@@ -22,156 +22,113 @@ import mainStyles from "../styles/main";
 import containersStyles from "../styles/containers";
 import icons from "../styles/icons";
 
-import { setIsLoading } from "../redux/actions/load";
-
 const styles = (theme) => ({
   ...tablesStyles(theme),
   ...containersStyles(theme),
   ...mainStyles(theme),
   ...icons(theme),
 });
+const useStyles = makeStyles((theme) => styles(theme));
 
-class ContractsPage extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      contracts: [],
-      filteredContracts: [],
-      contractsById: null,
-      contractsOverlaps: {},
-      contractService: PluginRegistry.extension("contracts.service"),
-      contractFields: [],
-      mode: "list",
-    };
-    this.handleModeChange = this.handleModeChange.bind(this);
-  }
+const ContractsPage = ({ t, location, history, currentUser }) => {
+  const classes = useStyles();
+  const contractService = PluginRegistry.extension("contracts.service");
+  const [contracts, setContracts] = useState([]);
+  const [finalFilteredContracts, setFinalFilteredContracts] = useState([]);
+  const [contractsOverlaps, setContractsOverlaps] = useState({});
+  const [contractFields, setContractFields] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [mode, setMode] = useState("list");
 
-  handleModeChange() {
-    const newState = {
-      ...this.state,
-      mode: this.state.mode == "list" ? "mass_update" : "list",
-    };
+  const computeOverlapsTotal = () => {
+    return Object.keys(contractsOverlaps).filter((ouId) => contracts.find((fc) => fc.id === ouId)).length;
+  };
 
-    this.setState(newState);
-  }
+  const handleModeChange = () => {
+    setMode(mode === "list" ? "mass_update" : "list");
+  };
 
-  setContracts(data) {
-    this.setState({
-      ...data,
-    });
-  }
+  const fetchContracts = async () => {
+    if (contractService) {
+      setIsLoading(true);
+      contractService.fetchContracts().then((response) => {
+        const { contracts, contractsOverlaps, contractFields } = response;
+        setContracts(contracts);
+        setContractsOverlaps(contractsOverlaps);
+        setContractFields(contractFields);
+        setIsLoading(false);
+      });
+    }
+  };
 
-  onTableChange(key, value) {
-    const { location, history } = this.props;
+  const onTableChange = (key, value) => {
     history.push({
       pathname: location.pathname,
       search: encodeTableQueryParams(location, key, value),
     });
-  }
+  };
 
-  async fetchContracts() {
-    const { contractService } = this.state;
-    const { dispatch } = this.props;
-    if (contractService) {
-      dispatch(setIsLoading(true));
-      contractService.fetchContracts().then((contracts) => {
-        this.setContracts({
-          ...contracts,
-        });
-        dispatch(setIsLoading(false));
-      });
-    }
-  }
+  useEffect(() => {
+    fetchContracts();
+  });
 
-  componentDidMount() {
-    this.fetchContracts();
-  }
-
-  render() {
-    const { t, classes, location, isLoading } = this.props;
-    const { contracts, contractsOverlaps, filteredContracts, contractFields, mode } = this.state;
-    const overlapsTotal = Object.keys(contractsOverlaps).filter((ouId) =>
-      filteredContracts.find((fc) => fc.id === ouId),
-    ).length;
-    return (
-      <>
-        <Paper square className={classes.rootContainer}>
-          <Breadcrumbs aria-label="breadcrumb">
-            <Box mb={2}>
-              <Typography variant="h5" component="h5" gutterBottom color="textPrimary">
-                {t("contracts.title")}
-              </Typography>
-            </Box>
-          </Breadcrumbs>
-          <ContractFilters
-            contractFields={contractFields}
-            contracts={contracts}
-            fetchContracts={() => this.fetchContracts()}
-            changeTable={(key, value) => this.onTableChange(key, value)}
-            contractsOverlaps={contractsOverlaps}
-            setFilteredContracts={(newFilteredContracts) => this.setState({ filteredContracts: newFilteredContracts })}
-            onModeChange={this.handleModeChange}
-            currentUser={this.props.currentUser}
+  return (
+    <>
+      <Paper square className={classes.rootContainer}>
+        <Breadcrumbs aria-label="breadcrumb">
+          <Box mb={2}>
+            <Typography variant="h5" component="h5" gutterBottom color="textPrimary">
+              {t("contracts.title")}
+            </Typography>
+          </Box>
+        </Breadcrumbs>
+        <ContractFilters
+          contractFields={contractFields}
+          contracts={contracts}
+          fetchContracts={() => fetchContracts()}
+          changeTable={(key, value) => onTableChange(key, value)}
+          contractsOverlaps={contractsOverlaps}
+          setFilteredContracts={(newFilteredContracts) => setFinalFilteredContracts(newFilteredContracts)}
+          onModeChange={handleModeChange}
+          currentUser={currentUser}
+        />
+        <Divider />
+        {mode === "list" && (
+          <Table
+            isLoading={isLoading}
+            title={
+              <ContractsResume
+                filteredContracts={finalFilteredContracts}
+                contracts={contracts}
+                overlapsTotal={computeOverlapsTotal()}
+              />
+            }
+            data={finalFilteredContracts}
+            columns={contractsTableColumns(
+              t,
+              classes,
+              finalFilteredContracts,
+              contractFields,
+              location,
+              () => fetchContracts(),
+              false,
+              contracts,
+            )}
+            options={contractsTableOptions(
+              t,
+              finalFilteredContracts,
+              (key, value) => onTableChange(key, value),
+              decodeTableQueryParams(location),
+            )}
           />
-          <Divider />
-          {mode == "list" && (
-            <Table
-              isLoading={isLoading}
-              title={
-                <ContractsResume
-                  filteredContracts={filteredContracts}
-                  contracts={contracts}
-                  overlapsTotal={overlapsTotal}
-                />
-              }
-              data={filteredContracts}
-              columns={contractsTableColumns(
-                t,
-                classes,
-                filteredContracts,
-                contractFields,
-                location,
-                () => this.fetchContracts(),
-                false,
-                contracts,
-              )}
-              options={contractsTableOptions(
-                t,
-                filteredContracts,
-                (key, value) => this.onTableChange(key, value),
-                decodeTableQueryParams(location),
-              )}
-            />
-          )}
+        )}
 
-          {mode == "mass_update" && <MassContractUpdate filteredContracts={filteredContracts} onUpdate={() => this.fetchContracts()}/>}
-        </Paper>
-      </>
-    );
-  }
-}
-
-ContractsPage.propTypes = {
-  t: PropTypes.func.isRequired,
-  location: PropTypes.object.isRequired,
-  classes: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
-  dispatch: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool.isRequired,
-  mode: PropTypes.oneOf("list", "mass_update"),
+        {mode === "mass_update" && (
+          <MassContractUpdate filteredContracts={finalFilteredContracts} onUpdate={() => fetchContracts()} />
+        )}
+      </Paper>
+    </>
+  );
 };
 
-const MapStateToProps = (state) => ({
-  currentUser: state.currentUser.profile,
-  isLoading: state.load.isLoading,
-  drawerOpen: state.drawer.isOpen,
-  period: state.period.current,
-});
-
-const MapDispatchToProps = (dispatch) => ({
-  dispatch,
-});
-
-export default withRouter(
-  withTranslation()(withStyles(styles)(connect(MapStateToProps, MapDispatchToProps)(ContractsPage))),
-);
+export default withRouter(withTranslation()(ContractsPage));

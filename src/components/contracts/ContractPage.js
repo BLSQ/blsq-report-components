@@ -37,7 +37,7 @@ import containersStyles from "../styles/containers";
 import linksStyles from "../styles/links";
 import Table from "../shared/Table";
 import Filter from "../shared/Filter";
-import filtersConfig, { activeToday } from "./filters";
+import { filtersConfig, activeToday } from "./filters";
 
 const styles = (theme) => ({
   ...linksStyles(theme),
@@ -51,13 +51,13 @@ const styles = (theme) => ({
 });
 const useStyles = makeStyles((theme) => styles(theme));
 
-const ContractPage = ({ match, location, t, history }) => {
+const ContractPage = ({ match, location, t, history, currentUser }) => {
   const classes = useStyles();
   const isLoading = useSelector((state) => state.load.isLoading);
   const dispatch = useDispatch();
   const dhis2 = useSelector((state) => state.dhis2.support);
   const [orgUnit, setOrgUnit] = useState(undefined);
-  const [filters, setFilters] = useState([activeToday, ...filtersConfig([])]);
+  const [filters, setFilters] = useState([activeToday, ...filtersConfig([], currentUser)]);
   const [contractsDatas, setContractsDatas] = useState(detailInitialState);
   const contractService = PluginRegistry.extension("contracts.service");
   let [previousDefaultMainContract, setPreviousDefaultMainContract] = useState(undefined);
@@ -123,7 +123,7 @@ const ContractPage = ({ match, location, t, history }) => {
   }, []);
 
   useEffect(() => {
-    let newFilters = decodeFiltersQueryParams(location, [activeToday, ...filtersConfig(contractFields)]);
+    let newFilters = decodeFiltersQueryParams(location, [activeToday, ...filtersConfig(contractFields, currentUser)]);
     newFilters = checkFilters(newFilters);
     setFilters(newFilters);
     const newContractData = {

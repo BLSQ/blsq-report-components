@@ -111,6 +111,7 @@ class ContractsPage extends Component {
             contractsOverlaps={contractsOverlaps}
             setFilteredContracts={(newFilteredContracts) => this.setState({ filteredContracts: newFilteredContracts })}
             onModeChange={this.handleModeChange}
+            currentUser={this.props.currentUser}
           />
           <Divider />
           {mode == "list" && (

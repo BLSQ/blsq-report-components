@@ -82,92 +82,110 @@ export const activeToday = {
 };
 
 export const columnsCount = 4;
-const defaultFilters = [
-  {
-    id: "search",
-    key: "search",
-    keyInfo: "contracts.searchInfos",
-    type: "search",
-    column: 1,
-    value: "",
-    onFilter: (value, contracts) => {
-      if (value && value.startsWith("warnings:")) {
-        const filterValue = value.slice("warnings:".length);
-        return contracts.filter((c) => c.statusDetail && c.statusDetail.warnings.includes(filterValue));
-      }
 
-      return contracts.filter(
-        (c) =>
-          c.codes.includes(value) ||
-          c.orgUnit.name.toLowerCase().includes(value.toLowerCase()) ||
-          c.startPeriod.includes(value) ||
-          c.endPeriod.includes(value),
-      );
+const defaultFilters = (currentUser) => {
+  return [
+    {
+      id: "search",
+      key: "search",
+      keyInfo: "contracts.searchInfos",
+      type: "search",
+      column: 1,
+      value: "",
+      onFilter: (value, contracts) => {
+        if (value && value.startsWith("warnings:")) {
+          const filterValue = value.slice("warnings:".length);
+          return contracts.filter((c) => c.statusDetail && c.statusDetail.warnings.includes(filterValue));
+        }
+        return contracts.filter(
+          (c) =>
+            c.codes.includes(value) ||
+            c.orgUnit.name.toLowerCase().includes(value.toLowerCase()) ||
+            c.startPeriod.includes(value) ||
+            c.endPeriod.includes(value),
+        );
+      },
     },
-  },
-  {
-    ...activeAtFilter,
-  },
-  {
-    id: "only_overlaps",
-    key: "contracts.onlyOverlaps",
-    type: "checkbox",
-    column: 1,
-    value: false,
-    onFilter: (onlyOverlaps, contracts, contractsOverlaps) => {
-      if (!onlyOverlaps) {
-        return contracts;
-      }
-      return contracts.filter((c) => contractsOverlaps[c.id] && contractsOverlaps[c.id].size > 0);
+    {
+      ...activeAtFilter,
     },
-    urlEncode: (value) => (value ? "true" : "false"),
-    urlDecode: (value) => value === "true",
-  },
-  {
-    id: "only_sub_contracts",
-    key: "contracts.onlySubContracts",
-    type: "checkbox",
-    column: 2,
-    value: false,
-    onFilter: (onlySubContracts, contracts, contractsOverlaps) => {
-      if (!onlySubContracts) {
-        return contracts;
-      }
-      return contracts.filter((c) => c.fieldValues.contract_main_orgunit && c.fieldValues.contract_main_orgunit !== "");
+    {
+      id: "only_overlaps",
+      key: "contracts.onlyOverlaps",
+      type: "checkbox",
+      column: 1,
+      value: false,
+      onFilter: (onlyOverlaps, contracts, contractsOverlaps) => {
+        if (!onlyOverlaps) {
+          return contracts;
+        }
+        return contracts.filter((c) => contractsOverlaps[c.id] && contractsOverlaps[c.id].size > 0);
+      },
+      urlEncode: (value) => (value ? "true" : "false"),
+      urlDecode: (value) => value === "true",
     },
-    urlEncode: (value) => (value ? "true" : "false"),
-    urlDecode: (value) => value === "true",
-  },
-  {
-    id: "under_orgunit",
-    key: "contracts.underOrgunit",
-    type: "ouSearch",
-    column: 2,
-    value: "",
-    onFilter: (orgUnitId, contracts, contractsOverlaps) => {
-      if (orgUnitId == undefined || orgUnitId == "") {
-        return contracts;
-      }
-      return contracts.filter((c) => c.orgUnit.path.includes(orgUnitId));
+    {
+      id: "show_all",
+      key: "Show all",
+      type: "checkbox",
+      column: 1,
+      value: false,
+      onFilter: (showAll, contracts) => {
+        if (showAll) {
+          return contracts;
+        }
+        const userOrgUnitIds = currentUser.organisationUnits.map((ou) => ou.id);
+        return contracts.filter((c) => userOrgUnitIds.some((id) => c.orgUnit.path.includes(id)));
+      },
+      urlEncode: (value) => (value ? "true" : "false"),
+      urlDecode: (value) => value === "true",
     },
-    urlEncode: (value) => (value ? value : undefined),
-    urlDecode: (value) => value,
-  },
-  {
-    ...endAtFilter,
-  },
-];
+    {
+      id: "only_sub_contracts",
+      key: "contracts.onlySubContracts",
+      type: "checkbox",
+      column: 2,
+      value: false,
+      onFilter: (onlySubContracts, contracts, contractsOverlaps) => {
+        if (!onlySubContracts) {
+          return contracts;
+        }
+        return contracts.filter((c) => c.fieldValues.contract_main_orgunit && c.fieldValues.contract_main_orgunit !== "");
+      },
+      urlEncode: (value) => (value ? "true" : "false"),
+      urlDecode: (value) => value === "true",
+    },
+    {
+      id: "under_orgunit",
+      key: "contracts.underOrgunit",
+      type: "ouSearch",
+      column: 2,
+      value: "",
+      onFilter: (orgUnitId, contracts, contractsOverlaps) => {
+        if (orgUnitId == undefined || orgUnitId == "") {
+          return contracts;
+        }
+        return contracts.filter((c) => c.orgUnit.path.includes(orgUnitId));
+      },
+      urlEncode: (value) => (value ? value : undefined),
+      urlDecode: (value) => value,
+    },
+    {
+      ...endAtFilter,
+    },
+  ];
+};
 
-const filterConfig = (contractFields) => {
+export const filtersConfig = (contractFields, currentUser) => {
   if (contractFields === undefined) {
     return [];
   }
-  const config = [...defaultFilters];
+  const config = [...defaultFilters(currentUser)];
   if (contractFields.length === 0) {
     return config;
   }
   let lastIndex = 0;
-  defaultFilters.forEach((f) => {
+  defaultFilters(currentUser).forEach((f) => {
     if (f.column > lastIndex) {
       lastIndex = f.column + 2;
     }
@@ -203,5 +221,3 @@ const filterConfig = (contractFields) => {
   });
   return config;
 };
-
-export default filterConfig;

@@ -8,7 +8,7 @@ import { Box, Grid, Button, makeStyles } from "@material-ui/core";
 import Add from "@material-ui/icons/Add";
 
 import Filter from "../shared/Filter";
-import filtersConfig, { columnsCount } from "./filters";
+import { filtersConfig, columnsCount } from "./filters";
 
 import ContractsDialog from "./ContractsDialog";
 
@@ -33,13 +33,14 @@ const ContractFilters = ({
   changeTable,
   fetchContracts,
   onModeChange,
+  currentUser
 }) => {
-  const [filters, setFilters] = React.useState(filtersConfig(contractFields));
+  const [filters, setFilters] = React.useState(filtersConfig(contractFields, currentUser));
   const [isTouched, setIsTouched] = React.useState(false);
   const [hasError, setHasError] = React.useState(false);
   const classes = useStyles();
   useEffect(() => {
-    const newFilters = decodeFiltersQueryParams(location, filtersConfig(contractFields));
+    const newFilters = decodeFiltersQueryParams(location, filtersConfig(contractFields, currentUser));
     const filteredContracts = filterItems(newFilters, contracts, contractsOverlaps);
     setFilteredContracts(filteredContracts);
     setFilters(newFilters);

@@ -28,16 +28,35 @@ const contractsToTooltip = (orgUnit, period) => {
 };
 
 const SelectionResultsContainer = (props) => {
-  const { classes, t, orgUnits, levels, period } = props;
+  const { classes, t, orgUnits, levels, period, pager } = props;
   const invoices = PluginRegistry.extension("invoices.invoices");
-  const filteredOrgunits =
-    orgUnits &&
-    orgUnits.filter((ou) => {
+  const filteredOrgunits = [];
+  const omitedOrgunits = [];
+
+  if (orgUnits)
+    for (let ou of orgUnits) {
       const codes = invoices.getInvoiceTypeCodes(ou, period);
-      return codes && codes.length > 0;
-    });
+      if (codes && codes.length > 0) {
+        filteredOrgunits.push(ou);
+      } else {
+        omitedOrgunits.push(ou);
+      }
+    }
+  const omitedCount = omitedOrgunits.length;
   return (
     <React.Fragment>
+      {orgUnits && pager && pager.nextPage && <b style={{ color: "darkblue" }}>{t("invoices.refineYourQuery")}</b>}
+      {orgUnits && (
+        <span
+          style={{ float: "right", color:"grey" }}
+          title={omitedOrgunits
+            .slice(0, 20)
+            .map((o) => o.name)
+            .join("\n")}
+        >
+          {t("invoices.displayStatus", { displayCount: filteredOrgunits.length, omitedCount: omitedCount })}
+        </span>
+      )}
       <Table>
         <TableHead>
           <TableRow>
@@ -47,7 +66,8 @@ const SelectionResultsContainer = (props) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {filteredOrgunits &&
+          {orgUnits &&
+            filteredOrgunits &&
             filteredOrgunits.map((orgUnit, index) => (
               <TableRow key={orgUnit.id + index}>
                 <TableCell>

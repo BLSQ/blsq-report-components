@@ -75,6 +75,7 @@ const InvoiceSelectionContainer = (props) => {
           contractedOrgUnitGroupId,
           dhis2,
         });
+
         setOrgUnits(newOrgUnits);
         if (debouncedSearchValue !== ouSearchValue) {
           updateHistory(history, parent, period, debouncedSearchValue, defaultPathName);
@@ -126,7 +127,7 @@ const InvoiceSelectionContainer = (props) => {
       <br />
       <br />
       <br />
-      <SelectionResults {...props} orgUnits={orgUnits} />
+      <SelectionResults {...props} orgUnits={orgUnits?.organisationUnits} pager={orgUnits?.pager}/>
     </Paper>
   );
 };

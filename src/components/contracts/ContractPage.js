@@ -9,7 +9,6 @@ import { Breadcrumbs, Grid, makeStyles, Divider, Box, Button } from "@material-u
 import LocationOnIcon from "@material-ui/icons/LocationOn";
 import Add from "@material-ui/icons/Add";
 import { Link, withRouter } from "react-router-dom";
-import { useSelector } from "react-redux";
 import moment from "moment";
 import PluginRegistry from "../core/PluginRegistry";
 import ContractsResume from "./ContractsResume";
@@ -52,7 +51,7 @@ const useStyles = makeStyles((theme) => styles(theme));
 
 const ContractPage = ({ match, location, t, history, currentUser }) => {
   const classes = useStyles();
-  const dhis2 = useSelector((state) => state.dhis2.support);
+  const dhis2 = PluginRegistry.extension("core.dhis2");
   const [orgUnit, setOrgUnit] = useState(undefined);
   const [filters, setFilters] = useState([activeToday, ...filtersConfig([], currentUser)]);
   const [contractsDatas, setContractsDatas] = useState(detailInitialState);
@@ -72,16 +71,14 @@ const ContractPage = ({ match, location, t, history, currentUser }) => {
 
   const isLoading = fetchContractsQuery.isLoading;
 
-  const fetchOrgUnit = () => {
-    dhis2
-      .api()
-      .then((api) =>
-        api.get("organisationUnits/" + match.params.orgUnitId, {
-          fields: "[*],ancestors[id,name],organisationUnitGroups[id,name,code]",
-        }),
-      )
-      .then((org) => setOrgUnit(org));
-  };
+  const fetchOrgUnitQuery = useQuery("fetchOrgUnit", async () => {
+    const api = await dhis2.api();
+    const response = await api.get("organisationUnits/" + match.params.orgUnitId, {
+      fields: "[*],ancestors[id,name],organisationUnitGroups[id,name,code]",
+    });
+    setOrgUnit(response);
+  });
+
   const { allContracts, subContracts, mainContracts, contractFields } = contractsDatas;
   const subcontractField = contractFields.find((f) => f.code == "contract_main_orgunit");
   const mainContractProps = getContractTableProps(
@@ -110,10 +107,6 @@ const ContractPage = ({ match, location, t, history, currentUser }) => {
     true,
   );
   const mainOrgUnit = getMainOrgUnit(allContracts, match.params.orgUnitId);
-
-  useEffect(() => {
-    fetchOrgUnit();
-  }, []);
 
   useEffect(() => {
     let newFilters = decodeFiltersQueryParams(location, [activeToday, ...filtersConfig(contractFields, currentUser)]);

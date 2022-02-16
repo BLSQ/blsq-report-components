@@ -1,4 +1,5 @@
 import React from "react";
+import { useMutation, useQueryClient } from "react-query";
 import { withTranslation } from "react-i18next";
 import {
   Button,
@@ -17,7 +18,6 @@ import { errorSnackBar, succesfullSnackBar } from "../shared/snackBars/snackBar"
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsLoading } from "../redux/actions/load";
 
 const styles = (theme) => ({
   title: {
@@ -40,14 +40,12 @@ const styles = (theme) => ({
 const useStyles = makeStyles((theme) => styles(theme));
 
 const DeleteContractDialog = ({ t, contract, onSavedSuccessfull }) => {
-
   const contractService = PluginRegistry.extension("contracts.service");
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const dispatch = useDispatch();
-  const isLoading = useSelector((state) => state.load.isLoading);
-
+  const queryClient = useQueryClient();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -55,21 +53,42 @@ const DeleteContractDialog = ({ t, contract, onSavedSuccessfull }) => {
   const handleClose = () => {
     setOpen(false);
   };
-  const handleSave = () => {
-    setOpen(false);
-    dispatch(setIsLoading(true));
-    const deleteContract = contractService.deleteContract(contract);
-    deleteContract
-      .then(() => {
-        dispatch(setIsLoading(false));
+
+  const handleSaveMutation = useMutation(
+    async () => {
+      setOpen(false);
+      const deleteContract = await contractService.deleteContract(contract);
+      return deleteContract;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("fetchContracts");
         onSavedSuccessfull();
         dispatch(enqueueSnackbar(succesfullSnackBar("snackBar.success.save")));
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        dispatch(enqueueSnackbar(errorSnackBar("snackBar.error.save", null, err)));
-      });
-  };
+      },
+      onError: (error) => {
+        dispatch(enqueueSnackbar(errorSnackBar("snackBar.error.save", null, error)));
+      },
+    },
+  );
+
+  const isLoading = handleSaveMutation.isLoading;
+
+  // const handleSave = () => {
+  //   setOpen(false);
+  //   dispatch(setIsLoading(true));
+  //   const deleteContract = contractService.deleteContract(contract);
+  //   deleteContract
+  //     .then(() => {
+  //       dispatch(setIsLoading(false));
+  //       onSavedSuccessfull();
+  //       dispatch(enqueueSnackbar(succesfullSnackBar("snackBar.success.save")));
+  //     })
+  //     .catch((err) => {
+  //       setIsLoading(false);
+  //       dispatch(enqueueSnackbar(errorSnackBar("snackBar.error.save", null, err)));
+  //     });
+  // };
 
   return (
     <>
@@ -94,7 +113,7 @@ const DeleteContractDialog = ({ t, contract, onSavedSuccessfull }) => {
         <DialogContent>{t("contracts.deleteWarning")}</DialogContent>
 
         <DialogActions>
-          <Button autoFocus onClick={handleSave} color="primary" disabled={isLoading}>
+          <Button autoFocus onClick={() => handleSaveMutation.mutate()} color="primary" disabled={isLoading}>
             {t("delete")}
           </Button>
         </DialogActions>

@@ -65,7 +65,6 @@ const ContractsDialog = ({
 
   const [currentContract, setCurrentContract] = React.useState(contractService.defaultPeriod(contract));
   const [validationErrors, setValidationErrors] = React.useState([]);
-  // const isLoading = useSelector((state) => state.load.isLoading);
   const classes = useStyles();
   const dispatch = useDispatch();
   const queryClient = useQueryClient();

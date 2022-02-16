@@ -17,7 +17,7 @@ import {
 import CloseIcon from "@material-ui/icons/Close";
 import Edit from "@material-ui/icons/Edit";
 import AddIcon from "@material-ui/icons/Add";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import PeriodPicker from "./PeriodPicker";
 import PluginRegistry from "../core/PluginRegistry";
 

@@ -33,7 +33,8 @@ const ContractFilters = ({
   changeTable,
   fetchContracts,
   onModeChange,
-  currentUser
+  currentUser,
+  automaticSearch
 }) => {
   const [filters, setFilters] = React.useState(filtersConfig(contractFields, currentUser));
   const [isTouched, setIsTouched] = React.useState(false);
@@ -65,6 +66,11 @@ const ContractFilters = ({
       setFilters(newFilters);
       setIsTouched(true);
       checkErrors();
+      if (automaticSearch) {
+        const filteredContracts = filterItems(newFilters, contracts, contractsOverlaps);
+        setFilteredContracts(filteredContracts);  
+      }
+      setIsTouched(false);
       history.push({
         pathname: location.pathname,
         search: encodeFiltersQueryParams(location, filters),

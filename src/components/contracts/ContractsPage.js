@@ -88,6 +88,7 @@ const ContractsPage = ({ t, location, history, currentUser }) => {
           setFilteredContracts={(newFilteredContracts) => setFinalFilteredContracts(newFilteredContracts)}
           onModeChange={handleModeChange}
           currentUser={currentUser}
+          automaticSearch={true}
         />
         <Divider />
         {mode === "list" && (

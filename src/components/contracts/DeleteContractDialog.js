@@ -74,22 +74,6 @@ const DeleteContractDialog = ({ t, contract, onSavedSuccessfull }) => {
 
   const isLoading = handleSaveMutation.isLoading;
 
-  // const handleSave = () => {
-  //   setOpen(false);
-  //   dispatch(setIsLoading(true));
-  //   const deleteContract = contractService.deleteContract(contract);
-  //   deleteContract
-  //     .then(() => {
-  //       dispatch(setIsLoading(false));
-  //       onSavedSuccessfull();
-  //       dispatch(enqueueSnackbar(succesfullSnackBar("snackBar.success.save")));
-  //     })
-  //     .catch((err) => {
-  //       setIsLoading(false);
-  //       dispatch(enqueueSnackbar(errorSnackBar("snackBar.error.save", null, err)));
-  //     });
-  // };
-
   return (
     <>
       <Tooltip onClick={() => handleClickOpen()} placement="bottom" title={t("delete")} arrow>

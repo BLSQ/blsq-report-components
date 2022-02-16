@@ -109,11 +109,11 @@ const ContractsDialog = ({
   };
 
   const handleSaveMutation = useMutation(
-    () => {
+    async () => {
       const saveContract =
         currentContract.id !== 0
-          ? contractService.updateContract(currentContract)
-          : contractService.createContract([currentContract.fieldValues.orgUnit.id], currentContract);
+          ? await contractService.updateContract(currentContract)
+          : await contractService.createContract([currentContract.fieldValues.orgUnit.id], currentContract);
       return saveContract;
     },
     {

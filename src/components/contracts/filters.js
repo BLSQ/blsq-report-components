@@ -126,7 +126,7 @@ const defaultFilters = (currentUser) => {
     },
     {
       id: "show_all",
-      key: "Show all",
+      key: "contracts.showAll",
       type: "checkbox",
       column: 1,
       value: false,

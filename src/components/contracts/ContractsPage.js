@@ -52,9 +52,9 @@ const ContractsPage = ({ t, location, history, currentUser }) => {
     if (contractService) {
       const response = await contractService.fetchContracts();
       const { contracts, contractsOverlaps, contractFields } = response;
-      setContracts(contracts);
-      setContractsOverlaps(contractsOverlaps);
       setContractFields(contractFields);
+      setContractsOverlaps(contractsOverlaps);
+      setContracts(contracts);
     }
   });
 

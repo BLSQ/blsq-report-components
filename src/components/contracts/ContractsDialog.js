@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useMutation, useQueryClient } from "react-query";
 import PropTypes from "prop-types";
 import { withTranslation } from "react-i18next";
 import {
@@ -16,13 +17,12 @@ import {
 import CloseIcon from "@material-ui/icons/Close";
 import Edit from "@material-ui/icons/Edit";
 import AddIcon from "@material-ui/icons/Add";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import PeriodPicker from "./PeriodPicker";
 import PluginRegistry from "../core/PluginRegistry";
 
 import OuSearch from "../shared/OuSearch";
 import { errorSnackBar, succesfullSnackBar } from "../shared/snackBars/snackBar";
-import { setIsLoading } from "../redux/actions/load";
 
 import ContractFieldSelect from "./ContractFieldSelect";
 import { getNonStandartContractFields, getContractByOrgUnit, cloneContractWithoutId } from "./utils/index";
@@ -65,9 +65,9 @@ const ContractsDialog = ({
 
   const [currentContract, setCurrentContract] = React.useState(contractService.defaultPeriod(contract));
   const [validationErrors, setValidationErrors] = React.useState([]);
-  const isLoading = useSelector((state) => state.load.isLoading);
   const classes = useStyles();
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const errors = contractService.validateContract(contract);
@@ -107,24 +107,28 @@ const ContractsDialog = ({
     });
     setValidationErrors(errors);
   };
-  const handleSave = () => {
-    dispatch(setIsLoading(true));
 
-    const saveContract =
-      currentContract.id !== 0
-        ? contractService.updateContract(currentContract)
-        : contractService.createContract([currentContract.fieldValues.orgUnit.id], currentContract);
-    saveContract
-      .then(() => {
-        dispatch(setIsLoading(false));
+  const handleSaveMutation = useMutation(
+    async () => {
+      const saveContract =
+        currentContract.id !== 0
+          ? await contractService.updateContract(currentContract)
+          : await contractService.createContract([currentContract.fieldValues.orgUnit.id], currentContract);
+      return saveContract;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("fetchContracts");
         onSavedSuccessfull();
         dispatch(enqueueSnackbar(succesfullSnackBar("snackBar.success.save")));
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        dispatch(enqueueSnackbar(errorSnackBar("snackBar.error.save", null, err)));
-      });
-  };
+      },
+      onError: (error) => {
+        dispatch(enqueueSnackbar(errorSnackBar("snackBar.error.save", null, error)));
+      },
+    },
+  );
+
+  const isLoading = handleSaveMutation.isLoading;
 
   const childrenWithProps = React.Children.map(children, (child) => {
     const props = { onClick: () => handleClickOpen() };
@@ -249,7 +253,7 @@ const ContractsDialog = ({
         <DialogActions>
           <Button
             autoFocus
-            onClick={handleSave}
+            onClick={() => handleSaveMutation.mutate()}
             color="primary"
             disabled={isLoading || (displayOrgUnit && !currentContract.fieldValues.orgUnit)}
           >

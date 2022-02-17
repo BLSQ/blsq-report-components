@@ -82,7 +82,7 @@ export const getContractTableProps = (
     contractsData.contracts,
     contractFields,
     location,
-    () => fetchContracts(),
+    () => fetchContracts.refetch(),
     true,
     allContracts,
     displayOrgUnit,

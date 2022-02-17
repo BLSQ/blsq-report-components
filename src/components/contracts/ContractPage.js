@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useQuery } from "react-query";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import DatePeriods from "../../support/DatePeriods";
 import PropTypes from "prop-types";
@@ -8,13 +9,10 @@ import { Breadcrumbs, Grid, makeStyles, Divider, Box, Button } from "@material-u
 import LocationOnIcon from "@material-ui/icons/LocationOn";
 import Add from "@material-ui/icons/Add";
 import { Link, withRouter } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import PluginRegistry from "../core/PluginRegistry";
 import ContractsResume from "./ContractsResume";
-import { setIsLoading } from "../redux/actions/load";
 import ContractsDialog from "./ContractsDialog";
-import _ from "lodash";
 import {
   getContractTableProps,
   detailInitialState,
@@ -37,7 +35,7 @@ import containersStyles from "../styles/containers";
 import linksStyles from "../styles/links";
 import Table from "../shared/Table";
 import Filter from "../shared/Filter";
-import filtersConfig, { activeToday } from "./filters";
+import { filtersConfig, activeToday } from "./filters";
 
 const styles = (theme) => ({
   ...linksStyles(theme),
@@ -51,43 +49,36 @@ const styles = (theme) => ({
 });
 const useStyles = makeStyles((theme) => styles(theme));
 
-const ContractPage = ({ match, location, t, history }) => {
+const ContractPage = ({ match, location, t, history, currentUser }) => {
   const classes = useStyles();
-  const isLoading = useSelector((state) => state.load.isLoading);
-  const dispatch = useDispatch();
-  const dhis2 = useSelector((state) => state.dhis2.support);
+  const dhis2 = PluginRegistry.extension("core.dhis2");
   const [orgUnit, setOrgUnit] = useState(undefined);
-  const [filters, setFilters] = useState([activeToday, ...filtersConfig([])]);
+  const [filters, setFilters] = useState([activeToday, ...filtersConfig([], currentUser)]);
   const [contractsDatas, setContractsDatas] = useState(detailInitialState);
   const contractService = PluginRegistry.extension("contracts.service");
   let [previousDefaultMainContract, setPreviousDefaultMainContract] = useState(undefined);
 
-  const fetchContracts = () => {
+  const fetchContractsQuery = useQuery("fetchSingleContracts", async () => {
     if (contractService) {
-      dispatch(setIsLoading(true));
-      contractService.fetchContracts(match.params.orgUnitId).then((contractsDatas) => {
-        setContractsDatas({
-          ...contractsDatas,
-        });
-        const previous = findLastContract(contractsDatas.mainContracts.contracts);
-        if (previous) {
-          setPreviousDefaultMainContract({ ...previous });
-        }
-        dispatch(setIsLoading(false));
-      });
+      const response = await contractService.fetchContracts(match.params.orgUnitId);
+      setContractsDatas(response);
+      const previous = findLastContract(response.mainContracts.contracts);
+      if (previous) {
+        setPreviousDefaultMainContract({ ...previous });
+      }
     }
-  };
+  });
 
-  const fetchOrgUnit = () => {
-    dhis2
-      .api()
-      .then((api) =>
-        api.get("organisationUnits/" + match.params.orgUnitId, {
-          fields: "[*],ancestors[id,name],organisationUnitGroups[id,name,code]",
-        }),
-      )
-      .then((org) => setOrgUnit(org));
-  };
+  const isLoading = fetchContractsQuery.isLoading;
+
+  const fetchOrgUnitQuery = useQuery("fetchOrgUnit", async () => {
+    const api = await dhis2.api();
+    const response = await api.get("organisationUnits/" + match.params.orgUnitId, {
+      fields: "[*],ancestors[id,name],organisationUnitGroups[id,name,code]",
+    });
+    setOrgUnit(response);
+  });
+
   const { allContracts, subContracts, mainContracts, contractFields } = contractsDatas;
   const subcontractField = contractFields.find((f) => f.code == "contract_main_orgunit");
   const mainContractProps = getContractTableProps(
@@ -95,7 +86,7 @@ const ContractPage = ({ match, location, t, history }) => {
     classes,
     mainContracts,
     allContracts,
-    fetchContracts,
+    fetchContractsQuery,
     location,
     contractFields,
     ["orgUnit.name", "fieldValues.contract_main_orgunit"],
@@ -107,7 +98,7 @@ const ContractPage = ({ match, location, t, history }) => {
     classes,
     subContracts,
     allContracts,
-    fetchContracts,
+    fetchContractsQuery,
     location,
     contractFields,
     ["fieldValues.contract_main_orgunit"],
@@ -118,12 +109,7 @@ const ContractPage = ({ match, location, t, history }) => {
   const mainOrgUnit = getMainOrgUnit(allContracts, match.params.orgUnitId);
 
   useEffect(() => {
-    fetchOrgUnit();
-    fetchContracts();
-  }, []);
-
-  useEffect(() => {
-    let newFilters = decodeFiltersQueryParams(location, [activeToday, ...filtersConfig(contractFields)]);
+    let newFilters = decodeFiltersQueryParams(location, [activeToday, ...filtersConfig(contractFields, currentUser)]);
     newFilters = checkFilters(newFilters);
     setFilters(newFilters);
     const newContractData = {
@@ -237,7 +223,7 @@ const ContractPage = ({ match, location, t, history }) => {
               contract={previousDefaultMainContract || defaultContract({ orgUnit: orgUnit })}
               contracts={allContracts}
               contractFields={contractFields}
-              onSavedSuccessfull={fetchContracts}
+              onSavedSuccessfull={() => fetchContractsQuery.refetch()}
               displayOrgUnit={false}
               displayMainOrgUnit={false}
             >
@@ -276,7 +262,7 @@ const ContractPage = ({ match, location, t, history }) => {
                 })}
                 contracts={allContracts}
                 contractFields={contractFields}
-                onSavedSuccessfull={fetchContracts}
+                onSavedSuccessfull={() => fetchContractsQuery.refetch()}
                 displayMainOrgUnit={false}
               >
                 <Button color="primary" variant="contained" startIcon={<Add />} className={classes.createButton}>

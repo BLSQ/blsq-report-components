@@ -50,7 +50,8 @@
     "deleteWarning": "This will only delete the contract, data generated based on these infos will remain. If subcontracted orgunits reference this contract, delete/update them first.",
     "contract_main_orgunit_id": "Main org unit id",
     "massUpdate": "Mass Update",
-    "warnings": "Warnings"
+    "warnings": "Warnings",
+    "showAll":"Show non editable contracts"
   }, 
   "dataEntry": {
     "accessAndApproval": "Access & Approval Workflow",

@@ -113,7 +113,9 @@
   "invoices": {
     "search": {
       "title": "Search reports & invoices"
-    }
+    },
+    "refineYourQuery": "There are more results, refine your query to find the orgunit you are looking for.",
+    "displayStatus": "{{displayCount}} orgunits displayed, {{omitedCount}} without invoices."
   },  
   "invoicing": {
     "job": {

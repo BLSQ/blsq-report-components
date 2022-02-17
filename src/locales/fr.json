@@ -110,7 +110,9 @@
   "invoices": {
     "search": {
       "title": "Recherche de rapports & factures"
-    }
+    },
+    "refineYourQuery": "Il y a plus de résultats, si besoin, affinez vos critères de recherche.",
+    "displayStatus": "{{displayCount}} unités affichées, {{omitedCount}} sans facture."
   },
   "invoicing": {
     "job": {

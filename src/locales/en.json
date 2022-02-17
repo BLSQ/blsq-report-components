@@ -16,6 +16,7 @@
   "contracts": {
     "activeToday": "Active today",
     "activeAt": "Active at",
+    "endsAt": "Ends at",
     "contract_main_orgunit": "Main org unit",
     "createTitle": "Create a contract",
     "editTitle": "Edit contract",

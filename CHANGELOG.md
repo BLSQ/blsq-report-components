@@ -1,3 +1,10 @@
+# @blsq/blsq-report-components@1.0.77
+
+- [contracts] Filters contracts according to user's orgunit access
+- [contracts] Migrates requests to react queries, mutations
+- [contracts] Migrates class component to functional
+- [invoices] Filters invoices to limit display of orgunit pyramid
+
 # @blsq/blsq-report-components@1.0.76
 
 - [sync-dataset] Adds button to synchronize all orgunits

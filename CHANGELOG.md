@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.79
+
+- [general] Tweaks translations
+
 # @blsq/blsq-report-components@1.0.78
 
 - [general] Tweaks translations

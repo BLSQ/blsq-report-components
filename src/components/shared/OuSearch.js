@@ -75,7 +75,7 @@ const OuSearch = ({ t, orgUnit, onChange, label, defaultValue }) => {
     setIsLoading(true);
     const orgUnitsResp = await dhis2.searchOrgunits(
       searchValue,
-      currentUser,
+      currentUser.organisationUnits,
       null,
       null,
       maxResult,

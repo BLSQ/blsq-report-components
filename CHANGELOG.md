@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.80
+
+- [contracts] Filters orgunits during contract creation according to user's access
+
 # @blsq/blsq-report-components@1.0.79
 
 - [general] Tweaks translations

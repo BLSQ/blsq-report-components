@@ -27,11 +27,13 @@ import { errorSnackBar, succesfullSnackBar } from "../shared/snackBars/snackBar"
 import ContractFieldSelect from "./ContractFieldSelect";
 import { getNonStandartContractFields, getContractByOrgUnit, cloneContractWithoutId } from "./utils/index";
 
-import { getStartDateFromPeriod, getEndDateFromPeriod } from "./utils/periodsUtils";
+import { getStartDateFromPeriod, getEndDateFromPeriod, toMonthlyPeriod } from "./utils/periodsUtils";
 import { enqueueSnackbar } from "../redux/actions/snackBars";
 
 import LoadingSpinner from "../shared/LoadingSpinner";
 import GenerateTablesNeeded from "./GenerateTablesNeeded";
+
+
 
 const styles = (theme) => ({
   title: {
@@ -79,10 +81,8 @@ const ContractsDialog = ({
 
   const handleClickOpen = (previousContractInfo = null, isNewContract) => {
     if (isNewContract || previousContractInfo === undefined || previousContractInfo === null) {
-      debugger
       setCurrentContract(cloneContractWithoutId(contract));
     } else {
-      debugger
       contract.id = contract.fieldValues.id;
       setCurrentContract(contract);
     }
@@ -103,6 +103,10 @@ const ContractsDialog = ({
             [subKey]: value,
           },
     };
+
+    updatedContract.startPeriod = toMonthlyPeriod(updatedContract.fieldValues.contract_start_date);
+    updatedContract.endPeriod = toMonthlyPeriod(updatedContract.fieldValues.contract_end_date);
+
     const errors = contractService.validateContract(updatedContract);
 
     setCurrentContract({
@@ -113,14 +117,11 @@ const ContractsDialog = ({
 
   const handleSaveMutation = useMutation(
     async () => {
-      console.log(currentContract);
-      debugger;
-      /* const saveContract =
+      const saveContract =
         currentContract.id !== 0
           ? await contractService.updateContract(currentContract)
           : await contractService.createContract([currentContract.fieldValues.orgUnit.id], currentContract);
       return saveContract;
-      */
     },
     {
       onSuccess: () => {
@@ -162,7 +163,7 @@ const ContractsDialog = ({
               title={t("create")}
               arrow
             >
-              <span>              
+              <span>
                 <IconButton size="small">
                   <AddIcon />
                 </IconButton>
@@ -220,38 +221,29 @@ const ContractsDialog = ({
                 )}
               </Grid>
             )}
+  
             <Grid container item xs={6}>
-              <span>
-                {currentContract && currentContract.startPeriod}
-                {currentContract && currentContract.fieldValues && currentContract.fieldValues.contract_start_date}
-              </span>
               <PeriodPicker
                 contract={currentContract}
                 currentPeriod={currentContract.startPeriod}
                 max={currentContract.endPeriod}
                 mode="beginning"
                 fieldName={t("start_period")}
-                onPeriodChange={(startPeriod) =>
-                  handleChange("fieldValues", getStartDateFromPeriod(startPeriod), "contract_start_date")
-                  //TODO synchronise contract.startPeriod
+                onPeriodChange={
+                  (startPeriod) =>
+                    handleChange("fieldValues", getStartDateFromPeriod(startPeriod), "contract_start_date")
                 }
               />
             </Grid>
             <Grid container item xs={6}>
-              <span>
-                {currentContract && currentContract.endPeriod}
-                {currentContract && currentContract.fieldValues && currentContract.fieldValues.contract_end_date}
-              </span>
-
               <PeriodPicker
                 contract={currentContract}
                 currentPeriod={currentContract.endPeriod}
                 min={currentContract.startPeriod}
                 fieldName={t("end_period")}
                 mode="end"
-                onPeriodChange={(endPeriod) =>
-                  handleChange("fieldValues", getEndDateFromPeriod(endPeriod), "contract_end_date")
-                  //TODO synchronise contract.endPeriod
+                onPeriodChange={
+                  (endPeriod) => handleChange("fieldValues", getEndDateFromPeriod(endPeriod), "contract_end_date")
                 }
               />
             </Grid>

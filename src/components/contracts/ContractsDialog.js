@@ -233,6 +233,7 @@ const ContractsDialog = ({
                 fieldName={t("start_period")}
                 onPeriodChange={(startPeriod) =>
                   handleChange("fieldValues", getStartDateFromPeriod(startPeriod), "contract_start_date")
+                  //TODO synchronise contract.startPeriod
                 }
               />
             </Grid>
@@ -250,6 +251,7 @@ const ContractsDialog = ({
                 mode="end"
                 onPeriodChange={(endPeriod) =>
                   handleChange("fieldValues", getEndDateFromPeriod(endPeriod), "contract_end_date")
+                  //TODO synchronise contract.endPeriod
                 }
               />
             </Grid>

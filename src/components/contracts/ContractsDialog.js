@@ -70,16 +70,19 @@ const ContractsDialog = ({
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const errors = contractService.validateContract(contract);
+    const newCurrentContract = contract.id ? contract : currentContract;
+    const errors = contractService.validateContract(newCurrentContract);
 
-    setCurrentContract(contract);
+    setCurrentContract(newCurrentContract);
     setValidationErrors(errors);
   }, [contract]);
 
   const handleClickOpen = (previousContractInfo = null, isNewContract) => {
     if (isNewContract || previousContractInfo === undefined || previousContractInfo === null) {
+      debugger
       setCurrentContract(cloneContractWithoutId(contract));
     } else {
+      debugger
       contract.id = contract.fieldValues.id;
       setCurrentContract(contract);
     }
@@ -110,11 +113,14 @@ const ContractsDialog = ({
 
   const handleSaveMutation = useMutation(
     async () => {
-      const saveContract =
+      console.log(currentContract);
+      debugger;
+      /* const saveContract =
         currentContract.id !== 0
           ? await contractService.updateContract(currentContract)
           : await contractService.createContract([currentContract.fieldValues.orgUnit.id], currentContract);
       return saveContract;
+      */
     },
     {
       onSuccess: () => {
@@ -156,7 +162,7 @@ const ContractsDialog = ({
               title={t("create")}
               arrow
             >
-              <span>
+              <span>              
                 <IconButton size="small">
                   <AddIcon />
                 </IconButton>
@@ -195,7 +201,6 @@ const ContractsDialog = ({
           )}
         </DialogTitle>
         <DialogContent dividers>
-          {false && <pre>{JSON.stringify(currentContract, undefined, 4)}</pre>}
           <Grid container spacing={2}>
             {(displayOrgUnit || displayMainOrgUnit) && (
               <Grid container item xs={12}>
@@ -216,6 +221,10 @@ const ContractsDialog = ({
               </Grid>
             )}
             <Grid container item xs={6}>
+              <span>
+                {currentContract && currentContract.startPeriod}
+                {currentContract && currentContract.fieldValues && currentContract.fieldValues.contract_start_date}
+              </span>
               <PeriodPicker
                 contract={currentContract}
                 currentPeriod={currentContract.startPeriod}
@@ -228,6 +237,11 @@ const ContractsDialog = ({
               />
             </Grid>
             <Grid container item xs={6}>
+              <span>
+                {currentContract && currentContract.endPeriod}
+                {currentContract && currentContract.fieldValues && currentContract.fieldValues.contract_end_date}
+              </span>
+
               <PeriodPicker
                 contract={currentContract}
                 currentPeriod={currentContract.endPeriod}

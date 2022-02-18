@@ -68,7 +68,7 @@ const PeriodPicker = ({ currentPeriod, mode, fieldName, min, max, onPeriodChange
     },
   });
   const current = visibleMonths.filter((v) => v.monthPeriod === defaultPeriod);
-
+  debugger;
   return (
     <FormControl>
       <Autocomplete
@@ -79,6 +79,7 @@ const PeriodPicker = ({ currentPeriod, mode, fieldName, min, max, onPeriodChange
         defaultValue={current[0]}
         options={visibleMonths}
         getOptionLabel={(option) => option.label}
+        getOptionSelected={(option) => option.value}
         filterOptions={filterOptions}
         onChange={(event, newValue) => handleChange(newValue)}
         renderInput={(params) => (

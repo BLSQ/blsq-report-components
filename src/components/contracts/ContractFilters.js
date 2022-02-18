@@ -13,6 +13,7 @@ import { filtersConfig, columnsCount } from "./filters";
 import ContractsDialog from "./ContractsDialog";
 
 import { filterItems, encodeFiltersQueryParams, decodeFiltersQueryParams } from "./utils/filtersUtils";
+import PluginRegistry from "../core/PluginRegistry";
 
 const styles = (theme) => ({
   createButton: {
@@ -34,7 +35,7 @@ const ContractFilters = ({
   fetchContracts,
   onModeChange,
   currentUser,
-  automaticSearch
+  automaticSearch,
 }) => {
   const [filters, setFilters] = React.useState(filtersConfig(contractFields, currentUser));
   const [isTouched, setIsTouched] = React.useState(false);
@@ -68,7 +69,7 @@ const ContractFilters = ({
       checkErrors();
       if (automaticSearch) {
         const filteredContracts = filterItems(newFilters, contracts, contractsOverlaps);
-        setFilteredContracts(filteredContracts);  
+        setFilteredContracts(filteredContracts);
       }
       setIsTouched(false);
       history.push({
@@ -83,7 +84,7 @@ const ContractFilters = ({
     setFilteredContracts(filterItems(filters, contracts, contractsOverlaps));
     changeTable("page", 0);
   };
-
+  const contractService = PluginRegistry.extension("contracts.service");
   return (
     <Box mb={3}>
       <Grid container item xs={12} spacing={4}>
@@ -103,13 +104,13 @@ const ContractFilters = ({
       <Grid container item xs={12} spacing={4}>
         <Grid container item xs={12} justify="flex-end">
           <ContractsDialog
-            contract={{
+            contract={contractService.defaultPeriod({
               id: 0,
               orgUnit: null,
               codes: [],
               fieldValues: {},
               children: null,
-            }}
+            })}
             contracts={contracts}
             contractFields={contractFields}
             onSavedSuccessfull={fetchContracts}

@@ -1,3 +1,8 @@
+# @blsq/blsq-report-components@1.0.81
+
+- [contracts] Fixes problem with empty date period in contract forms
+- [contracts] Fixes problem of main contract orgunit display when not in contract
+
 # @blsq/blsq-report-components@1.0.80
 
 - [contracts] Filters orgunits during contract creation according to user's access

@@ -106,7 +106,7 @@ const ContractsDialog = ({
     };
 
     updatedContract.startPeriod = toMonthlyPeriod(updatedContract.fieldValues.contract_start_date);
-    updatedContract.endPeriod = toMonthlyPeriodg(updatedContract.fieldValues.contract_end_date);
+    updatedContract.endPeriod = toMonthlyPeriod(updatedContract.fieldValues.contract_end_date);
 
     const errors = contractService.validateContract(updatedContract);
 

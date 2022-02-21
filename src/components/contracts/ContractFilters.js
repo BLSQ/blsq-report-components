@@ -84,6 +84,7 @@ const ContractFilters = ({
     setFilteredContracts(filterItems(filters, contracts, contractsOverlaps));
     changeTable("page", 0);
   };
+
   const contractService = PluginRegistry.extension("contracts.service");
   return (
     <Box mb={3}>

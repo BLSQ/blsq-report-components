@@ -70,6 +70,7 @@ const ContractsDialog = ({
   const classes = useStyles();
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
+  const hasSubContractEnabled = !!contractFields.find((c) => c.code == "contract_main_orgunit");
 
   useEffect(() => {
     const newCurrentContract = contract.id ? contract : currentContract;
@@ -105,7 +106,7 @@ const ContractsDialog = ({
     };
 
     updatedContract.startPeriod = toMonthlyPeriod(updatedContract.fieldValues.contract_start_date);
-    updatedContract.endPeriod = toMonthlyPeriod(updatedContract.fieldValues.contract_end_date);
+    updatedContract.endPeriod = toMonthlyPeriodg(updatedContract.fieldValues.contract_end_date);
 
     const errors = contractService.validateContract(updatedContract);
 
@@ -212,7 +213,7 @@ const ContractsDialog = ({
                   />
                 )}
                 <GenerateTablesNeeded orgUnit={currentContract.fieldValues.orgUnit} />
-                {displayMainOrgUnit && (
+                {hasSubContractEnabled && displayMainOrgUnit && (
                   <OuSearch
                     onChange={(orgUnit) => handleChange("fieldValues", orgUnit, "contract_main_orgunit")}
                     label={t("contracts.contract_main_orgunit")}

@@ -23,17 +23,16 @@ export const contractsTableColumns = (
   displayMainOrgUnit,
   withIndex,
 ) => {
-
-  contracts.forEach(c => {
+  const hasSubContractEnabled = !!contractFields.find((c) => c.code == "contract_main_orgunit");
+  contracts.forEach((c) => {
     if (c.orgUnit && c.orgUnit.ancestors) {
-      let index = 0
-      for (let ancestor of c.orgUnit.ancestors.slice(0, c.orgUnit.ancestors.length -1)) {
-        c.orgUnit["level"+(index+1)] = ancestor
-        index = index +1
+      let index = 0;
+      for (let ancestor of c.orgUnit.ancestors.slice(0, c.orgUnit.ancestors.length - 1)) {
+        c.orgUnit["level" + (index + 1)] = ancestor;
+        index = index + 1;
       }
-
     }
-  })
+  });
 
   const columns = [
     {
@@ -78,49 +77,51 @@ export const contractsTableColumns = (
         setCellHeaderProps: () => ({
           className: classNames(classes.cellCentered, classes.headerCell),
         }),
-        customBodyRenderLite: (dataIndex) => <div>{filteredContracts[dataIndex].statusDetail.validationErrors.map(err => err.message).join("\n") }</div>,
+        customBodyRenderLite: (dataIndex) => (
+          <div>{filteredContracts[dataIndex].statusDetail.validationErrors.map((err) => err.message).join("\n")}</div>
+        ),
       },
-    },    
+    },
     {
       name: "orgUnit.level1.name",
       label: t("levels.level1"),
       options: {
-        sort: true ,
-        display: false
-      }
+        sort: true,
+        display: false,
+      },
     },
     {
       name: "orgUnit.level2.name",
       label: t("levels.level2"),
       options: {
-        sort: true ,
-        display: true
-      }
-    },    
+        sort: true,
+        display: true,
+      },
+    },
     {
       name: "orgUnit.level3.name",
       label: t("levels.level3"),
       options: {
-        sort: true ,
-        display: true
-      }
-    },    
+        sort: true,
+        display: true,
+      },
+    },
     {
       name: "orgUnit.level4.name",
       label: t("levels.level4"),
       options: {
-        sort: true ,
-        display: false
-      }
-    },    
+        sort: true,
+        display: false,
+      },
+    },
     {
       name: "orgUnit.level5.name",
-      label: t("levels.level5"),      
+      label: t("levels.level5"),
       options: {
-        sort: true ,
-        display: false
-      }
-    },    
+        sort: true,
+        display: false,
+      },
+    },
     {
       name: "orgUnit.name",
       label: t("orgUnit_name"),
@@ -197,6 +198,7 @@ export const contractsTableColumns = (
       options: {
         filter: false,
         sort: true,
+        display: hasSubContractEnabled,
         setCellProps: () => ({
           align: "center",
         }),
@@ -206,7 +208,7 @@ export const contractsTableColumns = (
         customBodyRender: (contractMainOrgunitId) => {
           if (!contractMainOrgunitId) return "";
           const mainContract = getContractByOrgUnit(contracts, contractMainOrgunitId);
-         
+
           if (!mainContract) {
             // if you the orgunit hasn't a contract at least display the uid
             return contractMainOrgunitId;
@@ -268,6 +270,7 @@ export const contractsTableColumns = (
     options: {
       filter: false,
       sort: false,
+
       setCellProps: () => ({
         align: "center",
       }),
@@ -277,6 +280,7 @@ export const contractsTableColumns = (
       customBodyRender: (contractId) => {
         const contract = filteredContracts.find((c) => c.id === contractId);
         if (!contract) return null;
+
         return (
           <>
             <ContractsDialog
@@ -285,17 +289,18 @@ export const contractsTableColumns = (
               contractFields={contractFields}
               onSavedSuccessfull={fetchContracts}
               displayOrgUnit={displayOrgUnit}
-              displayMainOrgUnit={displayMainOrgUnit}
+              displayMainOrgUnit={hasSubContractEnabled && displayMainOrgUnit}
             />
             {isDetail && <DeleteContractDialog contract={contract} onSavedSuccessfull={fetchContracts} />}
 
             {!isDetail && (
               <Tooltip placement="bottom" title={t("contracts.seeOrgUnit")} arrow>
                 <Link
-                  to={`/contracts/${contract.fieldValues.contract_main_orgunit
+                  to={`/contracts/${
+                    contract.fieldValues.contract_main_orgunit
                       ? contract.fieldValues.contract_main_orgunit
                       : contract.orgUnit.id
-                    }`}
+                  }`}
                   className={classes.marginLeft}
                 >
                   <IconButton size="small">

@@ -72,7 +72,7 @@ const PeriodPicker = ({ currentPeriod, mode, fieldName, min, max, onPeriodChange
     },
   });
   const current = visibleMonths.filter((v) => v.monthPeriod === defaultPeriod);
-  debugger;
+
   return (
     <FormControl>
       <Autocomplete

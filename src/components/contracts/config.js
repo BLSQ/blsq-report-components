@@ -289,7 +289,7 @@ export const contractsTableColumns = (
               contractFields={contractFields}
               onSavedSuccessfull={fetchContracts}
               displayOrgUnit={displayOrgUnit}
-              displayMainOrgUnit={hasSubContractEnabled && displayMainOrgUnit}
+              displayMainOrgUnit={displayMainOrgUnit}
             />
             {isDetail && <DeleteContractDialog contract={contract} onSavedSuccessfull={fetchContracts} />}
 

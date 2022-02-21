@@ -38,6 +38,7 @@ const ContractsPage = ({ t, location, history, currentUser }) => {
   const [contractFields, setContractFields] = useState([]);
   const [mode, setMode] = useState("list");
 
+
   const computeOverlapsTotal = () => {
     if (contractsOverlaps) {
       return Object.keys(contractsOverlaps).filter((ouId) => contracts.find((fc) => fc.id === ouId)).length;

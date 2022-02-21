@@ -27,11 +27,13 @@ import { errorSnackBar, succesfullSnackBar } from "../shared/snackBars/snackBar"
 import ContractFieldSelect from "./ContractFieldSelect";
 import { getNonStandartContractFields, getContractByOrgUnit, cloneContractWithoutId } from "./utils/index";
 
-import { getStartDateFromPeriod, getEndDateFromPeriod } from "./utils/periodsUtils";
+import { getStartDateFromPeriod, getEndDateFromPeriod, toMonthlyPeriod } from "./utils/periodsUtils";
 import { enqueueSnackbar } from "../redux/actions/snackBars";
 
 import LoadingSpinner from "../shared/LoadingSpinner";
 import GenerateTablesNeeded from "./GenerateTablesNeeded";
+
+
 
 const styles = (theme) => ({
   title: {
@@ -68,11 +70,13 @@ const ContractsDialog = ({
   const classes = useStyles();
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
+  const hasSubContractEnabled = !!contractFields.find((c) => c.code == "contract_main_orgunit");
 
   useEffect(() => {
-    const errors = contractService.validateContract(contract);
+    const newCurrentContract = contract.id ? contract : currentContract;
+    const errors = contractService.validateContract(newCurrentContract);
 
-    setCurrentContract(contract);
+    setCurrentContract(newCurrentContract);
     setValidationErrors(errors);
   }, [contract]);
 
@@ -100,6 +104,10 @@ const ContractsDialog = ({
             [subKey]: value,
           },
     };
+
+    updatedContract.startPeriod = toMonthlyPeriod(updatedContract.fieldValues.contract_start_date);
+    updatedContract.endPeriod = toMonthlyPeriod(updatedContract.fieldValues.contract_end_date);
+
     const errors = contractService.validateContract(updatedContract);
 
     setCurrentContract({
@@ -195,7 +203,6 @@ const ContractsDialog = ({
           )}
         </DialogTitle>
         <DialogContent dividers>
-          {false && <pre>{JSON.stringify(currentContract, undefined, 4)}</pre>}
           <Grid container spacing={2}>
             {(displayOrgUnit || displayMainOrgUnit) && (
               <Grid container item xs={12}>
@@ -206,7 +213,7 @@ const ContractsDialog = ({
                   />
                 )}
                 <GenerateTablesNeeded orgUnit={currentContract.fieldValues.orgUnit} />
-                {displayMainOrgUnit && (
+                {hasSubContractEnabled && displayMainOrgUnit && (
                   <OuSearch
                     onChange={(orgUnit) => handleChange("fieldValues", orgUnit, "contract_main_orgunit")}
                     label={t("contracts.contract_main_orgunit")}
@@ -215,6 +222,7 @@ const ContractsDialog = ({
                 )}
               </Grid>
             )}
+  
             <Grid container item xs={6}>
               <PeriodPicker
                 contract={currentContract}
@@ -222,8 +230,9 @@ const ContractsDialog = ({
                 max={currentContract.endPeriod}
                 mode="beginning"
                 fieldName={t("start_period")}
-                onPeriodChange={(startPeriod) =>
-                  handleChange("fieldValues", getStartDateFromPeriod(startPeriod), "contract_start_date")
+                onPeriodChange={
+                  (startPeriod) =>
+                    handleChange("fieldValues", getStartDateFromPeriod(startPeriod), "contract_start_date")
                 }
               />
             </Grid>
@@ -234,8 +243,8 @@ const ContractsDialog = ({
                 min={currentContract.startPeriod}
                 fieldName={t("end_period")}
                 mode="end"
-                onPeriodChange={(endPeriod) =>
-                  handleChange("fieldValues", getEndDateFromPeriod(endPeriod), "contract_end_date")
+                onPeriodChange={
+                  (endPeriod) => handleChange("fieldValues", getEndDateFromPeriod(endPeriod), "contract_end_date")
                 }
               />
             </Grid>

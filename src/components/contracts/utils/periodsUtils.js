@@ -40,3 +40,10 @@ export const getContractDates = (contract) => ({
 });
 
 export const isToday = (dateString) => moment(dateString, "MM/DD/YYYY").isSame(moment(), "day");
+
+export const toMonthlyPeriod = (dateString) => {
+  if (dateString == undefined) {
+    return;
+  }
+  return dateString.replace("-", "").substring(0, 6);
+};

@@ -36,8 +36,12 @@ const PeriodPicker = ({ currentPeriod, mode, fieldName, min, max, onPeriodChange
     DatePeriods.split("" + year, "quarterly").forEach((p) => visibibleQuarters.push(p));
     year = year + 1;
   }
+
+  if (mode === "beginning") {
+    visibibleQuarters.reverse();
+  }
+
   const visibleMonths = visibibleQuarters
-    .reverse()
     .map((period) => {
       const monthPeriod = DatePeriods.split(period, "monthly")[indexOfMonth];
       return {
@@ -79,6 +83,7 @@ const PeriodPicker = ({ currentPeriod, mode, fieldName, min, max, onPeriodChange
         defaultValue={current[0]}
         options={visibleMonths}
         getOptionLabel={(option) => option.label}
+        getOptionSelected={(option) => option.value}
         filterOptions={filterOptions}
         onChange={(event, newValue) => handleChange(newValue)}
         renderInput={(params) => (

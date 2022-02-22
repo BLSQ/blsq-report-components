@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DatePeriods from "../../support/DatePeriods";
 import PluginRegistry from "../core/PluginRegistry";
-import _ from "lodash";
 import { Link } from "react-router-dom";
 import { Button, Paper, Typography, Chip, Grid, IconButton } from "@material-ui/core";
 import AssignmentIcon from "@material-ui/icons/Assignment";
@@ -13,7 +12,6 @@ import InvoiceLinks from "../invoices/InvoiceLinks";
 import { useTranslation } from "react-i18next";
 import { withRouter } from "react-router";
 import PeriodPicker from "../shared/PeriodPicker";
-import PortalHeader from "../shared/PortalHeader";
 import LinkedContract from "./LinkedContract";
 import { buildFormData } from "./forms";
 
@@ -28,6 +26,20 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
   const [generalError, setGeneralError] = useState(undefined);
 
   const period = match.params.period;
+
+  const checkOverlaps = (contracts) => {
+    const overlaps = [];
+    contracts.forEach((contract1) => {
+      contracts.forEach((contract2) => {
+        const contractsOverlap = contract1.overlaps(contract2);
+        if (contractsOverlap) {
+          overlaps.push(contractsOverlap);
+        }
+      });
+    });
+    return overlaps.length > 0;
+  };
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -47,9 +59,10 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
           return undefined;
         }
 
-        if (activeContracts.length > 1) {
+        const hasOverlaps = checkOverlaps(activeContracts);
+        if (activeContracts.length > 1 && hasOverlaps) {
           setError({
-            message: match.params.orgUnitId + " has multiple contracts for that period : " + period,
+            message: match.params.orgUnitId + " has overlapping contracts for that period : " + period,
             link: "/contracts/" + match.params.orgUnitId,
           });
           return undefined;
@@ -136,8 +149,10 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
         </div>
       )}
       <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
-        <AssignmentIcon style={{ marginRight: "5px" }}/>
-        <h1>{t("dataEntry.dataEntries")} : {orgUnit && orgUnit.name}</h1>
+        <AssignmentIcon style={{ marginRight: "5px" }} />
+        <h1>
+          {t("dataEntry.dataEntries")} : {orgUnit && orgUnit.name}
+        </h1>
         <div style={{ marginLeft: "50px", maxWidth: "300px" }}>
           <PeriodPicker
             disableInputLabel={true}

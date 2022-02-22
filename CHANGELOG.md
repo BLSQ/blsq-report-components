@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.82
+
+- [dataentry] Performs validation on overlapping contracts
+
 # @blsq/blsq-report-components@1.0.81
 
 - [contracts] Fixes problem with empty date period in contract forms

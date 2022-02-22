@@ -15,6 +15,17 @@ import PeriodPicker from "../shared/PeriodPicker";
 import LinkedContract from "./LinkedContract";
 import { buildFormData } from "./forms";
 
+const checkOverlaps = (contracts) => {
+  contracts.forEach((contract1) => {
+    contracts.forEach((contract2) => {
+      if (contract1.overlaps(contract2)) {
+        return true;
+      }
+    });
+  });
+  return false;
+};
+
 const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
   const { t, i18n } = useTranslation();
   const dataEntryRegistry = PluginRegistry.extension("dataentry.dataEntries");
@@ -26,19 +37,6 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
   const [generalError, setGeneralError] = useState(undefined);
 
   const period = match.params.period;
-
-  const checkOverlaps = (contracts) => {
-    const overlaps = [];
-    contracts.forEach((contract1) => {
-      contracts.forEach((contract2) => {
-        const contractsOverlap = contract1.overlaps(contract2);
-        if (contractsOverlap) {
-          overlaps.push(contractsOverlap);
-        }
-      });
-    });
-    return overlaps.length > 0;
-  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -60,7 +58,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
         }
 
         const hasOverlaps = checkOverlaps(activeContracts);
-        if (activeContracts.length > 1 && hasOverlaps) {
+        if (hasOverlaps) {
           setError({
             message: match.params.orgUnitId + " has overlapping contracts for that period : " + period,
             link: "/contracts/" + match.params.orgUnitId,

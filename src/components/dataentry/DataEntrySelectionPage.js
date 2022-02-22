@@ -16,13 +16,13 @@ import LinkedContract from "./LinkedContract";
 import { buildFormData } from "./forms";
 
 const checkOverlaps = (contracts) => {
-  contracts.forEach((contract1) => {
-    contracts.forEach((contract2) => {
+  for (let contract1 of contracts) {
+    for (let contract2 of contracts) {
       if (contract1.overlaps(contract2)) {
         return true;
       }
-    });
-  });
+    }
+  }
   return false;
 };
 

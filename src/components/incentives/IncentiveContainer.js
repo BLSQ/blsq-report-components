@@ -28,8 +28,9 @@ import ListItemText from "@material-ui/core/ListItemText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
-import PortalHeader from "../shared/PortalHeader";
 import PeriodPicker from "../shared/PeriodPicker";
+
+import PluginRegistry from "../core/PluginRegistry";
 
 const CustomTableCell = withStyles((theme) => ({
   head: {
@@ -287,12 +288,27 @@ class IncentiveContainer extends Component {
       const values = await this.props.dhis2.getValues(this.props.currentUser, dataSet, periods);
       const defaultCategoryCombo = await this.props.dhis2.getDefaultCategoryCombo();
       const indexedValues = {};
-
-      dataSet.dataSetElements.sort(function (a, b) {
-        var x = a.dataElement.code;
-        var y = b.dataElement.code;
-        return x < y ? -1 : x > y ? 1 : 0;
-      });
+      const project = PluginRegistry.extension("hesabu.project");
+      const projectDescriptor = project(this.props.period);
+      const incentiveCode = this.props.incentiveCode;
+      const incentivesDescriptors = this.props.incentivesDescriptors;
+      const incentive = incentivesDescriptors.filter((d) => d.dataSet === incentiveCode)[0];
+      if (incentive && incentive.hesabuPayment) {
+        const payment = projectDescriptor.payment_rules[incentive.hesabuPayment];
+        const hesabuPackage = payment.packages[incentive.hesabuPackage];
+        const orderedDataElementIds = hesabuPackage.activities.map((activity) => activity[incentive.hesabuState]);
+        dataSet.dataSetElements.sort(function (a, b) {
+          var x = orderedDataElementIds.indexOf(a.dataElement.id);
+          var y = orderedDataElementIds.indexOf(b.dataElement.id);
+          return x < y ? -1 : x > y ? 1 : 0;
+        });
+      } else {
+        dataSet.dataSetElements.sort(function (a, b) {
+          var x = a.dataElement.code;
+          var y = b.dataElement.code;
+          return x < y ? -1 : x > y ? 1 : 0;
+        });
+      }
 
       if (values.dataValues) {
         values.dataValues.forEach((dataValue) => {

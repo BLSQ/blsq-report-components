@@ -107,20 +107,26 @@ class IncentiveContainer extends Component {
       const defaultCategoryCombo = await this.props.dhis2.getDefaultCategoryCombo();
       const indexedValues = {};
       const project = PluginRegistry.extension("hesabu.project");
-      const projectDescriptor = project(this.props.period);
-      const incentiveCode = this.props.incentiveCode;
-      const incentivesDescriptors = this.props.incentivesDescriptors;
-      const incentive = incentivesDescriptors.filter((d) => d.dataSet === incentiveCode)[0];
-      if (incentive && incentive.hesabuPayment) {
-        const payment = projectDescriptor.payment_rules[incentive.hesabuPayment];
-        const hesabuPackage = payment.packages[incentive.hesabuPackage];
-        const orderedDataElementIds = hesabuPackage.activities.map((activity) => activity[incentive.hesabuState]);
-        dataSet.dataSetElements.sort(function (a, b) {
-          var x = orderedDataElementIds.indexOf(a.dataElement.id);
-          var y = orderedDataElementIds.indexOf(b.dataElement.id);
-          return x < y ? -1 : x > y ? 1 : 0;
-        });
-      } else {
+      let sortedByHesabuPackage = false;
+      if (project) {
+        const projectDescriptor = project(this.props.period);
+        const incentiveCode = this.props.incentiveCode;
+        const incentivesDescriptors = this.props.incentivesDescriptors;
+        const incentive = incentivesDescriptors.filter((d) => d.dataSet === incentiveCode)[0];
+        if (incentive && incentive.hesabuPayment) {
+          const payment = projectDescriptor.payment_rules[incentive.hesabuPayment];
+          const hesabuPackage = payment.packages[incentive.hesabuPackage];
+          const orderedDataElementIds = hesabuPackage.activities.map((activity) => activity[incentive.hesabuState]);
+          dataSet.dataSetElements.sort(function (a, b) {
+            var x = orderedDataElementIds.indexOf(a.dataElement.id);
+            var y = orderedDataElementIds.indexOf(b.dataElement.id);
+            return x < y ? -1 : x > y ? 1 : 0;
+          });
+          sortedByHesabuPackage = true;
+        }
+      }
+
+      if (!sortedByHesabuPackage) {
         dataSet.dataSetElements.sort(function (a, b) {
           var x = a.dataElement.code;
           var y = b.dataElement.code;

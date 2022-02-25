@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.83
+
+- [incentives] Performs sort on activities according to hesabu project, payment scheme
+
 # @blsq/blsq-report-components@1.0.82
 
 - [dataentry] Performs validation on overlapping contracts

@@ -21,6 +21,7 @@ import { useDispatch } from "react-redux";
 import PeriodPicker from "./PeriodPicker";
 import PluginRegistry from "../core/PluginRegistry";
 
+import ConfirmButton from "../shared/ConfirmButton";
 import OuSearch from "../shared/OuSearch";
 import { errorSnackBar, succesfullSnackBar } from "../shared/snackBars/snackBar";
 
@@ -32,8 +33,6 @@ import { enqueueSnackbar } from "../redux/actions/snackBars";
 
 import LoadingSpinner from "../shared/LoadingSpinner";
 import GenerateTablesNeeded from "./GenerateTablesNeeded";
-
-
 
 const styles = (theme) => ({
   title: {
@@ -222,7 +221,7 @@ const ContractsDialog = ({
                 )}
               </Grid>
             )}
-  
+
             <Grid container item xs={6}>
               <PeriodPicker
                 contract={currentContract}
@@ -230,9 +229,8 @@ const ContractsDialog = ({
                 max={currentContract.endPeriod}
                 mode="beginning"
                 fieldName={t("start_period")}
-                onPeriodChange={
-                  (startPeriod) =>
-                    handleChange("fieldValues", getStartDateFromPeriod(startPeriod), "contract_start_date")
+                onPeriodChange={(startPeriod) =>
+                  handleChange("fieldValues", getStartDateFromPeriod(startPeriod), "contract_start_date")
                 }
               />
             </Grid>
@@ -243,8 +241,8 @@ const ContractsDialog = ({
                 min={currentContract.startPeriod}
                 fieldName={t("end_period")}
                 mode="end"
-                onPeriodChange={
-                  (endPeriod) => handleChange("fieldValues", getEndDateFromPeriod(endPeriod), "contract_end_date")
+                onPeriodChange={(endPeriod) =>
+                  handleChange("fieldValues", getEndDateFromPeriod(endPeriod), "contract_end_date")
                 }
               />
             </Grid>
@@ -260,14 +258,13 @@ const ContractsDialog = ({
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button
-            autoFocus
-            onClick={() => handleSaveMutation.mutate()}
-            color="primary"
+          <ConfirmButton
+            onConfirm={handleSaveMutation}
+            message={t("contracts.areYouSure")}
             disabled={isLoading || (displayOrgUnit && !currentContract.fieldValues.orgUnit)}
           >
             {t("save")}
-          </Button>
+          </ConfirmButton>
         </DialogActions>
       </Dialog>
     </>

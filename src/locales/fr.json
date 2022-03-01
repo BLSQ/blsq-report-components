@@ -16,6 +16,7 @@
   "contracts": {
     "activeToday": "Actif aujourd'hui",
     "activeAt": "Actif le",
+    "areYouSure": "Vous venez de créer un contrat, n’oubliez pas d’aller synchroniser les Datasets (Synch dataSets) et les groupes (Synch groups) ainsi que de mettre Iaso à jour",
     "endsAt": "Terminant le",
     "contract_main_orgunit": "Unité d'organisation principale",
     "createTitle": "Créer un contrat",

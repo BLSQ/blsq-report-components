@@ -16,6 +16,7 @@
   "contracts": {
     "activeToday": "Active today",
     "activeAt": "Active at",
+    "areYouSure": "You are about to create a contract, do not forget to synchronize the Datasets (Synch dataSets) and the groups (Synch groups) as well as to update Iaso",
     "endsAt": "Ends at",
     "contract_main_orgunit": "Main org unit",
     "createTitle": "Create a contract",

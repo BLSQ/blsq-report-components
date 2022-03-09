@@ -37,16 +37,23 @@ const ContractFilters = ({
   currentUser,
   automaticSearch,
 }) => {
-  const [filters, setFilters] = React.useState(filtersConfig(contractFields, currentUser));
+  let filtersToUse = filtersConfig(contractFields, currentUser);
+  const useShowAllFilter = PluginRegistry.extension("contracts.filters");
+  if (useShowAllFilter && !useShowAllFilter.showAll) {
+    filtersToUse = filtersToUse.filter((f) => f.id !== "show_all");
+  }
+  const [filters, setFilters] = React.useState(filtersToUse);
   const [isTouched, setIsTouched] = React.useState(false);
   const [hasError, setHasError] = React.useState(false);
   const classes = useStyles();
+
   useEffect(() => {
-    const newFilters = decodeFiltersQueryParams(location, filtersConfig(contractFields, currentUser));
+    const newFilters = decodeFiltersQueryParams(location, filtersToUse);
     const filteredContracts = filterItems(newFilters, contracts, contractsOverlaps);
     setFilteredContracts(filteredContracts);
     setFilters(newFilters);
   }, [contracts]);
+
 
   const checkErrors = () => {
     setHasError(false);

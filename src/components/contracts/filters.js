@@ -1,6 +1,7 @@
 import moment from "moment";
 import { getOptionFromField, getNonStandartContractFields } from "./utils/index";
 import { getContractDates } from "./utils/periodsUtils";
+import PluginRegistry from "../core/PluginRegistry";
 
 /**
  * A Filters list
@@ -180,7 +181,12 @@ export const filtersConfig = (contractFields, currentUser) => {
   if (contractFields === undefined) {
     return [];
   }
-  const config = [...defaultFilters(currentUser)];
+  let filtersToUse = [...defaultFilters(currentUser)];
+  const useShowAllFilter = PluginRegistry.extension("contracts.filters");
+  if (useShowAllFilter && !useShowAllFilter.showAll) {
+    filtersToUse = filtersToUse.filter((f) => f.id !== "show_all");
+  }
+  const config = filtersToUse;
   if (contractFields.length === 0) {
     return config;
   }

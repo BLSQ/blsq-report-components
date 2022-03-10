@@ -41,6 +41,7 @@ const ContractFilters = ({
   const [isTouched, setIsTouched] = React.useState(false);
   const [hasError, setHasError] = React.useState(false);
   const classes = useStyles();
+
   useEffect(() => {
     const newFilters = decodeFiltersQueryParams(location, filtersConfig(contractFields, currentUser));
     const filteredContracts = filterItems(newFilters, contracts, contractsOverlaps);

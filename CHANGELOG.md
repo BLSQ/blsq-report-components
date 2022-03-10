@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.84
+
+- [contracts] Removes show all filter depending on pbf settings 
+
 # @blsq/blsq-report-components@1.0.83
 
 - [incentives] Performs sort on activities according to hesabu project, payment scheme

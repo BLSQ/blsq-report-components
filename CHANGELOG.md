@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.85
+
+- [contracts] Reminds users to sync datasets, groups after successful contract creation
+
 # @blsq/blsq-report-components@1.0.84
 
 - [contracts] Removes show all filter depending on pbf settings 

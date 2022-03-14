@@ -32,8 +32,8 @@ import { enqueueSnackbar } from "../redux/actions/snackBars";
 
 import LoadingSpinner from "../shared/LoadingSpinner";
 import GenerateTablesNeeded from "./GenerateTablesNeeded";
-
-
+import { Link } from "react-router-dom";
+import DatePeriods from "../../support/DatePeriods";
 
 const styles = (theme) => ({
   title: {
@@ -47,6 +47,9 @@ const styles = (theme) => ({
   },
   label: {
     paddingTop: 4,
+  },
+  syncReminder: {
+    padding: "0.8rem",
   },
 });
 
@@ -137,6 +140,7 @@ const ContractsDialog = ({
   );
 
   const isLoading = handleSaveMutation.isLoading;
+  const displaySyncReminder = handleSaveMutation.isSuccess;
 
   const childrenWithProps = React.Children.map(children, (child) => {
     const props = { onClick: () => handleClickOpen() };
@@ -260,6 +264,13 @@ const ContractsDialog = ({
           </Grid>
         </DialogContent>
         <DialogActions>
+          {displaySyncReminder && (
+            <div className={classes.syncReminder}>
+              {t("contracts.syncReminder")}
+              <Link to={`/sync/datasets/${DatePeriods.currentQuarter()}`}>Sync Datasets</Link>,{" "}
+              <Link to={`/sync/program-groups/${DatePeriods.currentQuarter()}`}>Sync Groups</Link>
+            </div>
+          )}
           <Button
             autoFocus
             onClick={() => handleSaveMutation.mutate()}

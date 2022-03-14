@@ -46,6 +46,7 @@
     "subContractCoveragesWarningSingle": "Sub contract {{rowIndex}} is more large than the main contract coverage",
     "subContractNotVisibleOverlap": "Sub contract {{rowIndex}} overlaps with {{count}} contract(s) not visible on this page",
     "subContracts": "Sub contract(s)",
+    "syncReminder": "You have just created a contract. Remember to syncronize the datasets and the groups, as well as update Iaso : ",
     "title": "Search contracts",
     "deleteTitle": "Delete contract",
     "deleteWarning": "This will only delete the contract, data generated based on these infos will remain. If subcontracted orgunits reference this contract, delete/update them first.",

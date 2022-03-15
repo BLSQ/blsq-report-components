@@ -94,9 +94,9 @@ const Step2 = ({ contractsToImport, dhis2, setValidatedContracts, setIsLoading }
               contractRaw.warnings.push(
                 "invalid value for " +
                   field.code +
-                  " " +
+                  " '" +
                   fieldValue +
-                  " unknown : " +
+                  "' unknown : " +
                   field.optionSet.options.map((o) => o.code).join(" , "),
               );
             }

@@ -77,7 +77,7 @@ const ContractsDialog = ({
 
   useEffect(() => {
     const newCurrentContract = contract.id ? contract : currentContract;
-    const errors = contractService.validateContract(newCurrentContract);
+    const errors = contractService.validateContract(newCurrentContract, contracts);
 
     setCurrentContract(newCurrentContract);
     setValidationErrors(errors);
@@ -111,7 +111,7 @@ const ContractsDialog = ({
     updatedContract.startPeriod = toMonthlyPeriod(updatedContract.fieldValues.contract_start_date);
     updatedContract.endPeriod = toMonthlyPeriod(updatedContract.fieldValues.contract_end_date);
 
-    const errors = contractService.validateContract(updatedContract);
+    const errors = contractService.validateContract(updatedContract, contracts);
 
     setCurrentContract({
       ...updatedContract,

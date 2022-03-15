@@ -8,6 +8,14 @@ function isFunction(functionToCheck) {
   return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
  }
 
+
+ function parseDynamicReturningUndefined(value, field) {
+   if (value == '') { 
+      return undefined
+   }
+   return value.trim()
+ }
+
 const Step1 = ({ contractsToImport, setContractsToImport }) => {
   const contractService = PluginRegistry.extension("contracts.service");
 
@@ -18,6 +26,7 @@ const Step1 = ({ contractsToImport, setContractsToImport }) => {
 
     PapaParse.parse(file, {
       header: true,
+      transform: parseDynamicReturningUndefined,
       complete: function (data) {
         const contractService = PluginRegistry.extension("contracts.service");
         const contractFields = contractService.contractFields();

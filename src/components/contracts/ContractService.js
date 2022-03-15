@@ -141,12 +141,12 @@ class ContractService {
     return contracts;
   }
 
-  validateContract(contract) {
+  validateContract(contract, contracts) {
     const i18n = PluginRegistry.extension("core.i18n");
     const t = (key, options) => i18n.translator.translate(key, options);
     const validators = this.getValidators();
     const contractFields = this.toContractFields(this.program);
-    return this._validate(validators, contract, { contractFields, t });
+    return this._validate(validators, contract, { contractFields, t, contracts });
   }
 
   getValidators() {

@@ -1,3 +1,8 @@
+# @blsq/blsq-report-components@1.0.86
+
+- [contracts] Allow validator to access all other contracts for cross validations.
+- [contracts] Import omit blanks in csv and turn them as undefined.
+
 # @blsq/blsq-report-components@1.0.85
 
 - [contracts] Reminds users to sync datasets, groups after successful contract creation

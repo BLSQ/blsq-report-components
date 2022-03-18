@@ -30,13 +30,17 @@ const contractsToTooltip = (orgUnit, period) => {
 const SelectionResultsContainer = (props) => {
   const { classes, t, orgUnits, levels, period, pager } = props;
   const invoices = PluginRegistry.extension("invoices.invoices");
+  const dataEntries = PluginRegistry.extension("dataentry.dataEntries");
   const filteredOrgunits = [];
   const omitedOrgunits = [];
 
   if (orgUnits)
     for (let ou of orgUnits) {
       const codes = invoices.getInvoiceTypeCodes(ou, period);
-      if (codes && codes.length > 0) {
+      const activeContract = ou.activeContracts && ou.activeContracts[0];
+      const dataEntryCodes = activeContract ? dataEntries.getExpectedDataEntries(activeContract, period) : [];
+
+      if ((codes && codes.length > 0) || dataEntryCodes.length > 0) {
         filteredOrgunits.push(ou);
       } else {
         omitedOrgunits.push(ou);
@@ -48,7 +52,7 @@ const SelectionResultsContainer = (props) => {
       {orgUnits && pager && pager.nextPage && <b style={{ color: "darkblue" }}>{t("invoices.refineYourQuery")}</b>}
       {orgUnits && (
         <span
-          style={{ float: "right", color:"grey" }}
+          style={{ float: "right", color: "grey" }}
           title={omitedOrgunits
             .slice(0, 20)
             .map((o) => o.name)

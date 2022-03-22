@@ -30,16 +30,17 @@ const contractsToTooltip = (orgUnit, period) => {
 const SelectionResultsContainer = (props) => {
   const { classes, t, orgUnits, levels, period, pager } = props;
   const invoices = PluginRegistry.extension("invoices.invoices");
-  const dataEntries = PluginRegistry.extension("dataentry.dataEntries");
   const filteredOrgunits = [];
   const omitedOrgunits = [];
 
   if (orgUnits)
     for (let ou of orgUnits) {
       const codes = invoices.getInvoiceTypeCodes(ou, period);
-      const activeContract = ou.activeContracts && ou.activeContracts[0];
+      // WARN if you modify this code check a project (ex ethiopia) that don't have contracts or no data entry
+      const activeContract = ou.activeContracts && ou.activeContracts[0];     
+      const dataEntries = PluginRegistry.extension("dataentry.dataEntries");
       const dataEntryCodes = activeContract ? dataEntries.getExpectedDataEntries(activeContract, period) : [];
-
+      // display the orgunit if some invoices or if some data entry (note having a data entry, doesn't imply having invoices, (ex burundi))
       if ((codes && codes.length > 0) || dataEntryCodes.length > 0) {
         filteredOrgunits.push(ou);
       } else {

@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.87
+
+- [invoices] Allow to show orgunit that have only a data entry and no invoice. 
+
 # @blsq/blsq-report-components@1.0.86
 
 - [contracts] Allow validator to access all other contracts for cross validations.

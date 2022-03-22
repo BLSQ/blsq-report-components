@@ -36,7 +36,12 @@ const SelectionResultsContainer = (props) => {
   if (orgUnits)
     for (let ou of orgUnits) {
       const codes = invoices.getInvoiceTypeCodes(ou, period);
-      if (codes && codes.length > 0) {
+      // WARN if you modify this code check a project (ex ethiopia) that don't have contracts or no data entry
+      const activeContract = ou.activeContracts && ou.activeContracts[0];     
+      const dataEntries = PluginRegistry.extension("dataentry.dataEntries");
+      const dataEntryCodes = activeContract ? dataEntries.getExpectedDataEntries(activeContract, period) : [];
+      // display the orgunit if some invoices or if some data entry (note having a data entry, doesn't imply having invoices, (ex burundi))
+      if ((codes && codes.length > 0) || dataEntryCodes.length > 0) {
         filteredOrgunits.push(ou);
       } else {
         omitedOrgunits.push(ou);
@@ -48,7 +53,7 @@ const SelectionResultsContainer = (props) => {
       {orgUnits && pager && pager.nextPage && <b style={{ color: "darkblue" }}>{t("invoices.refineYourQuery")}</b>}
       {orgUnits && (
         <span
-          style={{ float: "right", color:"grey" }}
+          style={{ float: "right", color: "grey" }}
           title={omitedOrgunits
             .slice(0, 20)
             .map((o) => o.name)

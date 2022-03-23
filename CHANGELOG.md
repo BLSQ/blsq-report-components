@@ -1,3 +1,6 @@
+# @blsq/blsq-report-components@1.0.89
+
+- [dataentry] Prevent Dhis2Formula to have the tab focus
 
 # @blsq/blsq-report-components@1.0.88
 

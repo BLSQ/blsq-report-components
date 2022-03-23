@@ -77,6 +77,7 @@ const Dhis2Formula = ({ formula }) => {
             type="text"
             value={rawValue || ""}
             inputProps={{
+              tabIndex: -1,
               style: {
                 textAlign: "right",
                 backgroundColor: error ? "red" : "lightgrey",

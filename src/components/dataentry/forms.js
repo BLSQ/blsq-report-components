@@ -31,7 +31,7 @@ const fetchDataSets = async (api, dataEntry) => {
     filter: ["id:in:[" + asDataSetIds(dataEntry).join(",") + "]"],
     paging: false,
     fields:
-      "id,name,periodType,access,dataSetElements[dataElement[id,name,valueType,optionSet[options[code,name]],categoryCombo[id,name,categoryOptionCombos[id,name]]]]",
+      "id,name,periodType,access,dataSetElements[dataElement[id,name,valueType,optionSet[options[code,name]],categoryCombo[id,name,categoryOptionCombos[id,name]]]],dataEntryForm[:all],indicators[id,name,numerator,denominator]",
   });
   return response.dataSets;
 };

@@ -2,41 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { TextField, Tooltip, ClickAwayListener } from "@material-ui/core";
 import FormDataContext from "./FormDataContext";
 
-const parseDependencies = (expression) => {
-  const components = expression
-    .split("+")
-    .flatMap((s) => s.split(","))
-    .flatMap((s) => s.split("-"))
-    .flatMap((s) => s.split("*"))
-    .flatMap((s) => s.split("ROUND("))
-    .flatMap((s) => s.split("IF("))
-    .flatMap((s) => s.split("SAFE_DIV("))
-    .flatMap((s) => s.split("ABS("))
-    .flatMap((s) => s.split("("))
-    .flatMap((s) => s.split(")"))
-    .map((s) => s.trim());
-  const deReferences = components.filter((s) => s.includes("#{"));
-  const deps = deReferences.map((de) => de.replace("#{", "").replace("}", ""));
-  return Array.from(new Set(deps));
-};
-
-const safeDiv = (a, b) => {
-  if (b !== 0) {
-    return a / b;
-  }
-  return 0;
-};
-
-const abs = (a) => {
-  return Math.abs(a);
-};
-
-const iff = (a, b, c) => {
-  return a ? b : c;
-};
-const roundFunction = (a, position) => {
-  return a.toFixed(position);
-};
+import {safeDiv, iff, abs,roundFunction, parseDependencies} from "./dhis2FormulaParsing"
 
 const Dhis2Formula = ({ formula }) => {
   const formDataContext = useContext(FormDataContext);
@@ -50,7 +16,10 @@ const Dhis2Formula = ({ formula }) => {
       let expression = formula;
       dependencies.forEach((dep) => {
         const val = formDataContext.getValue(dep);
-        const valExpression = val !== undefined ? val.value : 0;
+        let valExpression = val !== undefined ? val.value : 0;
+        if (valExpression === "" || valExpression === " " || valExpression === null) {
+          valExpression = 0
+        }
         expression = expression.split("#{" + dep + "}").join(" " + valExpression + " ");
       });
 
@@ -83,7 +52,7 @@ const Dhis2Formula = ({ formula }) => {
   };
 
   return (
-    <div>
+    <span>
       <ClickAwayListener onClickAway={handleCloseToolTip}>
         <Tooltip
           title={
@@ -93,6 +62,8 @@ const Dhis2Formula = ({ formula }) => {
               {expression} <br />
               <br />
               {rawValue}
+              <br />
+              ERROR ? {error}
             </div>
           }
           disableFocusListener
@@ -108,17 +79,16 @@ const Dhis2Formula = ({ formula }) => {
             inputProps={{
               style: {
                 textAlign: "right",
-                backgroundColor: "lightgrey",
+                backgroundColor: error ? "red" : "lightgrey",
               },
             }}
             error={error}
-            helperText={error ? expression + " : " + error : undefined}
             onDoubleClick={handleOpenToolTip}
             onClick={handleCloseToolTip}
           />
         </Tooltip>
       </ClickAwayListener>
-    </div>
+    </span>
   );
 };
 

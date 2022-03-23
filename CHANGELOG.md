@@ -1,3 +1,10 @@
+
+# @blsq/blsq-report-components@1.0.88
+
+- [dataentry] Add support for division in Dhis2Formula
+- [dataentry] Make error display less verbose for Dhis2Formula
+- [dataentry] Fetch indicators and custom data entry form
+
 # @blsq/blsq-report-components@1.0.87
 
 - [invoices] Allow to show orgunit that have only a data entry and no invoice. 

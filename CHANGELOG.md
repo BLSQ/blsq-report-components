@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.99
+
+- [synch] Synch groups use "max/latest contract" when no contract for period
+
 # @blsq/blsq-report-components@1.0.89
 
 - [dataentry] Prevent Dhis2Formula to have the tab focus

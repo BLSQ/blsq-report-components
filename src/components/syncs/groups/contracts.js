@@ -44,7 +44,13 @@ const buildContractInfos = (contractsByOrgunits, groupSetIndex, period, contract
       contractForPeriod = contractsForPeriod[0];
 
       if (contractsForPeriod.length === 0) {
+
         contractForPeriod = _.minBy(orgUnitContracts, (contract) => distance(contract, monthPeriod));
+        
+        if (orgUnitContracts.length >0) {
+          const sortedContracts = _.sortBy(orgUnitContracts, c=> c.endPeriod)
+          contractForPeriod = sortedContracts[sortedContracts.length - 1]
+        }        
         contractedForPeriod = false;
       } else {
         contractedForPeriod = true;
@@ -125,7 +131,7 @@ const buildContractInfos = (contractsByOrgunits, groupSetIndex, period, contract
       synchronizedStatus: actions.every((a) => a.kind === "keep") ? "synchronized" : "not synchronized",
       actions,
       warnings,
-      selectedContract: Array.from(new Set(contractForPeriod.codes)),
+      selectedContract: contractForPeriod ? Array.from(new Set(contractForPeriod.codes)) : [],
       proposedChanges: actions.map((action) => {
         if (action.kind === "remove" || action.kind === "add") {
           return `${action.kind} ${action.group.name}`;

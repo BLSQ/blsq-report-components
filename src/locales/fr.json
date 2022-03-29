@@ -63,7 +63,14 @@
     "otherRelatedContracts": "Autres contrats liés",
     "seeLinkedData": "Accéder aux données",
     "invoices": "Factures",
-    "dataSetNotWritable": "Vous n'avez pas le droit de saisie sur '{{dataSetName}}'"
+    "dataSetNotWritable": "Vous n'avez pas le droit de saisie sur '{{dataSetName}}'",
+    "valueType": {
+      "BOOLEAN" : {
+        "true" : "Oui",
+        "false" : "Non",
+        "undefined": "-"
+      }
+    }
   },
   "dataSync": {
     "title": "Synchronisation de datasets pour",

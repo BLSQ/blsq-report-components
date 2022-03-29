@@ -66,7 +66,14 @@
     "otherRelatedContracts": "Other related contracts",
     "seeLinkedData": "See data",
     "invoices": "Invoices",
-    "dataSetNotWritable": "You don't have write access to '{{dataSetName}}'"
+    "dataSetNotWritable": "You don't have write access to '{{dataSetName}}'",
+    "valueType": {
+      "BOOLEAN" : {
+        "true" : "Yes",
+        "false" : "No",
+        "undefined": "-"
+      }
+    }
   },
   "dataSync": {
     "title": "Dataset Synchronization for",

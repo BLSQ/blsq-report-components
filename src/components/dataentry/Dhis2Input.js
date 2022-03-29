@@ -1,15 +1,29 @@
 import React, { useEffect, useState, useContext } from "react";
-import { TextField, Tooltip, ClickAwayListener } from "@material-ui/core";
+import { withTranslation } from "react-i18next";
+import {
+  TextField,
+  Tooltip,
+  ClickAwayListener,
+  RadioGroup,
+  FormControl,
+  FormControlLabel,
+  Radio,
+} from "@material-ui/core";
 import FormDataContext from "./FormDataContext";
 import useDebounce from "../shared/useDebounce";
 
-const Dhis2Input = ({ dataElement }) => {
+const Dhis2Input = ({ element, dataElement, t }) => {
   const formDataContext = useContext(FormDataContext);
   const [rawValue, setRawValue] = useState("");
   const [dataValue, setDataValue] = useState("");
 
   const [debouncedState, setDebouncedState] = useDebounce(undefined);
   const [open, setOpen] = useState(false);
+
+  const WrapperElement = element || "div";
+  const dataElementId = dataElement && dataElement.split(".")[0];
+  const dataElementDescriptor = formDataContext.dataElementsById[dataElementId];
+  const isBoolean = dataElementDescriptor && dataElementDescriptor.valueType == "BOOLEAN";
 
   useEffect(() => {
     const value = formDataContext && formDataContext.getValue && formDataContext.getValue(dataElement);
@@ -36,6 +50,11 @@ const Dhis2Input = ({ dataElement }) => {
     setDebouncedState(e.target.value);
   };
 
+  const onBooleanChange = (e) => {
+    setRawValue(e.target.value);
+    setDebouncedState(e.target.value);
+  }
+
   const handleOpenToolTip = () => {
     setOpen(true);
   };
@@ -43,8 +62,50 @@ const Dhis2Input = ({ dataElement }) => {
     setOpen(false);
   };
 
+
+  const widget = isBoolean ? (
+    <FormControl
+      style={{
+        backgroundColor:
+          formDataContext && formDataContext.isModified(dataElement)
+            ? "#badbad"
+            : formDataContext.isUpdating(dataElement)
+            ? "orange"
+            : "",
+      }}
+    >
+      <RadioGroup row value={rawValue} onChange={onBooleanChange} disabled={isComplete || !isDataWritable}>
+        <FormControlLabel value="true" control={<Radio />} label={t("dataEntry.valueType.BOOLEAN.true")} />
+        <FormControlLabel value="false" control={<Radio />} label={t("dataEntry.valueType.BOOLEAN.false")} />
+        <FormControlLabel value="" control={<Radio />} label={t("dataEntry.valueType.BOOLEAN.undefined")} />
+      </RadioGroup>
+    </FormControl>
+  ) : (
+    <TextField
+      error={formDataContext.isInvalid(dataElement)}
+      type="text"
+      disabled={isComplete || !isDataWritable}
+      value={rawValue}
+      onChange={onChange}
+      onDoubleClick={handleOpenToolTip}
+      onClick={handleCloseToolTip}
+      inputProps={{
+        style: {
+          textAlign: "right",
+          backgroundColor:
+            formDataContext && formDataContext.isModified(dataElement)
+              ? "#badbad"
+              : formDataContext.isUpdating(dataElement)
+              ? "orange"
+              : "",
+        },
+      }}
+      helperText={formDataContext && formDataContext.error(dataElement)}
+    />
+  );
+
   return (
-    <div>
+    <WrapperElement>
       <ClickAwayListener onClickAway={handleCloseToolTip}>
         <Tooltip
           PopperProps={{
@@ -58,35 +119,15 @@ const Dhis2Input = ({ dataElement }) => {
           onClose={handleCloseToolTip}
           title={
             <div>
-              <pre>{JSON.stringify({dataValue, isComplete, isDataWritable}, undefined, 2)}</pre>
+              <pre>{JSON.stringify({ dataValue, isComplete, isDataWritable }, undefined, 2)}</pre>
             </div>
           }
         >
-          <TextField
-            error={formDataContext.isInvalid(dataElement)}
-            type="text"
-            disabled={isComplete || !isDataWritable}
-            value={rawValue}
-            onChange={onChange}
-            onDoubleClick={handleOpenToolTip}
-            onClick={handleCloseToolTip}
-            inputProps={{
-              style: {
-                textAlign: "right",
-                backgroundColor:
-                  formDataContext && formDataContext.isModified(dataElement)
-                    ? "#badbad"
-                    : formDataContext.isUpdating(dataElement)
-                    ? "orange"
-                    : "",
-              },
-            }}
-            helperText={formDataContext && formDataContext.error(dataElement)}
-          />
+          {widget}
         </Tooltip>
       </ClickAwayListener>
-    </div>
+    </WrapperElement>
   );
 };
 
-export default Dhis2Input;
+export default withTranslation()(Dhis2Input);

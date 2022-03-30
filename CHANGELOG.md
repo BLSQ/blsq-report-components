@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.101
+
+- [completeness] migrates request to react query to refetch data on url changes
+
 # @blsq/blsq-report-components@1.0.100
 
 - [dataentry] dhis2 input add support for boolean as radio button

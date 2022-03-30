@@ -1,17 +1,16 @@
-import DatePeriods from "../../support/DatePeriods";
 import PluginRegistry from "../core/PluginRegistry";
 import MUIDataTable from "mui-datatables";
 import React, { useEffect } from "react";
 import PeriodPicker from "../shared/PeriodPicker";
 import { Typography } from "@material-ui/core";
-
+import { QueryErrorResetBoundary, useQuery } from "react-query";
 import { toCompleteness, buildStatsByZone } from "./calculations";
 import { orgUnitColumns, zoneStatsColumns, statsTableOptions, tableOptions } from "./tables";
 import { useTranslation } from "react-i18next";
 import { anchorQueryParams, urlWith } from "../shared/tables/urlParams";
 import { Paper } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
-
+import { fetchCompleteDataSetRegistrations } from "./fetchCompleteDataSetRegistrations";
 
 
 const styles = (theme) => ({
@@ -24,49 +23,8 @@ const styles = (theme) => ({
 });
 const useStyles = makeStyles((theme) => styles(theme));
 
-const fetchCompleteDataSetRegistrations = async (api, quarterPeriod, DataEntries, accessibleZones) => {
-  const periods = [quarterPeriod]
-    .concat(DatePeriods.split(quarterPeriod, "monthly"))
-    .concat(DatePeriods.split(quarterPeriod, "yearly"));
-
-  const dataSets = DataEntries.getAllDataEntries().flatMap((de) => {
-    if (de.dataSetId) {
-      return [de.dataSetId];
-    } else if (de.dataSetIds) {
-      return de.dataSetIds;
-    } else {
-      return [];
-    }
-  });
-
-  let completeDataSetRegistrations = [];
-  for (let ou of accessibleZones) {
-    const ds = await api.get("completeDataSetRegistrations", {
-      orgUnit: ou.id,
-      children: true,
-      period: periods,
-      dataSet: dataSets,
-    });
-    completeDataSetRegistrations = completeDataSetRegistrations.concat(ds.completeDataSetRegistrations);
-  }
-
-  completeDataSetRegistrations = completeDataSetRegistrations
-    .filter((c) => c)
-    .filter((c) => {
-      // handle newer dhis2 version that has the completed flag
-      if (c.hasOwnProperty("completed")) {
-        return c.completed;
-      }
-      // else keep all records
-      return true;
-    });
-
-  return completeDataSetRegistrations;
-};
-
 const CompletenessView = (props) => {
   const classes = useStyles();
-  const history = props.history;
   const quarterPeriod = props.match.params.period;
   const { t } = useTranslation();
   const [completnessInfos, setCompletnessInfos] = React.useState([]);
@@ -90,20 +48,21 @@ const CompletenessView = (props) => {
     setSelectedZones(zones);
   };
 
-  const loadContracts = async () => {
-    const DataEntries = PluginRegistry.extension("dataentry.dataEntries");
-
-    const dhis2 = PluginRegistry.extension("core.dhis2");
+  const DataEntries = PluginRegistry.extension("dataentry.dataEntries");
+  const dhis2 = PluginRegistry.extension("core.dhis2");
+  const currentUser = props.currentUser;
+  const contractService = PluginRegistry.extension("contracts.service");
+  const accessibleOrgunitIds = new Set(currentUser.organisationUnits.map((ou) => ou.id));
+  const queryParams = anchorQueryParams()
+  const pageName = queryParams.get("pageName")
+  
+  const fetchContractsQuery = useQuery(["fetchContracts", quarterPeriod, pageName], async () => {
     const api = await dhis2.api();
-    const currentUser = props.currentUser;
-    const contractService = PluginRegistry.extension("contracts.service");
-    const accessibleOrgunitIds = new Set(currentUser.organisationUnits.map((ou) => ou.id));
     let contracts = (await contractService.findAll()).filter(
       (contract) =>
         contract.matchPeriod(quarterPeriod) &&
         contract.orgUnit.ancestors.some((ancestor) => accessibleOrgunitIds.has(ancestor.id)),
     );
-    const queryParams = anchorQueryParams()
 
     if (queryParams.get("ou.contract.codes")) {
       const codes = queryParams.get("ou.contract.codes").split(",")
@@ -138,13 +97,7 @@ const CompletenessView = (props) => {
       }
       setSelectedZones(selectOrgUnits)
     }
-  
-   
-  };
-
-  useEffect(() => {
-    loadContracts();
-  }, [quarterPeriod]);
+  })
 
   let filteredCompletnessInfos = completnessInfos;
   const zoneNames = selectedZones.filter(r => r.orgUnit).map((stat) => stat.orgUnit.name);

@@ -36,6 +36,7 @@ const styles = (theme) => ({
 const queryClient = new QueryClient({
   defaultOptions: {
     retry: false,
+    refetchOnWindowFocus: false,
   },
 });
 

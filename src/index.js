@@ -32,6 +32,8 @@ import CompleteDataSetButton from "./components/dataentry/CompleteDataSetButton"
 import { generateCalculator } from "./components/dataentry/CalculatorFactory";
 import HesabuFormula from "./components/dataentry/HesabuFormula";
 import EditIasoFormButton from "./components/dataentry/EditIasoFormButton";
+import { toOrgUnitFacts } from "./components/dataentry/CodeGenerator"
+import DecisionTable from "./components/dataentry/DecisionTable"
 
 const App = AppDrawer
 
@@ -66,5 +68,7 @@ export {
   CompleteDataSetButton,
   generateCalculator,
   HesabuFormula,
-  EditIasoFormButton
+  EditIasoFormButton,
+  DecisionTable,
+  toOrgUnitFacts,  
 };

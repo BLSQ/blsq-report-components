@@ -155,7 +155,7 @@ describe("getVisibleAndOrderedActivities", () => {
       in_headers: ["activity_code","groupset_code_contract_type"],
     });
 
-    expect(getVisibleAndOrderedActivities(quantitePmaPackage, "2021Q1", orgUnitCs).map((a) => a.code)).toEqual([
+    expect(getVisibleAndOrderedActivities(quantitePmaPackage, "202101", orgUnitCs).map((a) => a.code)).toEqual([
       "quant01",
       "quant02",
       "quant04",
@@ -183,13 +183,13 @@ describe("getVisibleAndOrderedActivities", () => {
       in_headers: ["activity_code","groupset_code_contract_type"],
     });
 
-    expect(getVisibleAndOrderedActivities(quantitePmaPackage, "2021Q1", orgUnitCs).map((a) => a.code)).toEqual([
+    expect(getVisibleAndOrderedActivities(quantitePmaPackage, "202101", orgUnitCs).map((a) => a.code)).toEqual([
       "quant02",
       "quant04",
       "quant01",
     ]);
 
-    expect(getVisibleAndOrderedActivities(quantitePmaPackage, "2021Q1", orgUnitCsr).map((a) => a.code)).toEqual([
+    expect(getVisibleAndOrderedActivities(quantitePmaPackage, "202101", orgUnitCsr).map((a) => a.code)).toEqual([
         "quant02",
         "quant03",
       ]);

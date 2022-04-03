@@ -2,15 +2,16 @@ import DecisionTable from "./DecisionTable"
 import { toOrgUnitFacts }  from "./CodeGenerator";
 import _ from "lodash";
 
-export const getVisibleAndOrderedActivities = (quantityPackage, decisionPeriod, orgUnit) => {
-  const decisionTables = quantityPackage.activity_decision_tables
+export const getVisibleAndOrderedActivities = (hesabuPackage, decisionPeriod, orgUnit) => {
+  
+  const decisionTables = hesabuPackage.activity_decision_tables
     .map((d) => new DecisionTable(d))
     .filter((dec) => dec.matchPeriod(decisionPeriod));
 
   const visibleDecisionTables = decisionTables.filter((dec) => {
     return dec.outHeaders.includes("visible");
   });
-  let activities = quantityPackage.activities.filter((activity) => {
+  let activities = hesabuPackage.activities.filter((activity) => {
     if (visibleDecisionTables.length == 0) {
       return true;
     }

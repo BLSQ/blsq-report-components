@@ -36,6 +36,8 @@ import { toOrgUnitFacts } from "./components/dataentry/CodeGenerator"
 import DecisionTable from "./components/dataentry/DecisionTable"
 import { getVisibleAndOrderedActivities } from "./components/dataentry/getVisibleAndOrderedActivities"
 
+import IasoIcon from "./components/shared/icons/IasoIcon";
+
 const App = AppDrawer
 
 export {
@@ -71,6 +73,8 @@ export {
   HesabuFormula,
   EditIasoFormButton,
   DecisionTable,
-  toOrgUnitFacts,  
-  getVisibleAndOrderedActivities
+  toOrgUnitFacts,
+  getVisibleAndOrderedActivities,
+  // icons
+  IasoIcon,
 };

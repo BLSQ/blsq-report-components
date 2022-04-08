@@ -9,6 +9,12 @@ export const defaultSubstitutions = () => {
   return { IF: "IFF", sum: "SUM", " =": "==", "=": "==" };
 };
 
+
+export const fixIfStatement = (expression) => {
+  expression = expression.replace("if (", 'IF(')
+  expression = expression.replace("if(", 'IF(')
+  return expression
+}
 export const generateGetterSetterForState = (hesabuPackage, activity, state, orgunitid, period) => {
   const codes = [];
   const field_name = `${hesabuPackage.code}_${activity.code}_${state}_${orgunitid}_${period}`;
@@ -56,6 +62,7 @@ export const generateIsNullForState = (hesabuPackage, activity, state, orgunitid
 
 export const generateActivityFormula = (hesabuPackage, activity, formula, orgunitid, period, stateOrFormulaCodes) => {
   let expandedformula = "" + formula.expression;
+  expandedformula = fixIfStatement(expandedformula)
   const substitutions = defaultSubstitutions();
   for (let substit of stateOrFormulaCodes) {
     substitutions[substit] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`;
@@ -99,6 +106,7 @@ export const generatePackageFormula = (hesabuPackage, formulaCode, orgunitid, pe
   }
 
   let expression = hesabuPackage.formulas[formulaCode].expression + "";
+  expression = fixIfStatement(expression)
 
   const tokens = tokenize(expression);
   // references between package formulas

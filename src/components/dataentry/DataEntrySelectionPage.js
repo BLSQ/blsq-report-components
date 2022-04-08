@@ -26,6 +26,18 @@ const checkOverlaps = (contracts) => {
   return false;
 };
 
+const ErrorTogglable = ({ generalError }) => {
+  const lines = generalError.message.split("\n");
+  const [fullDisplay, setFullDisplay] = useState(false);
+  return (
+    <div>
+      <pre style={{ color: "red" }} title={generalError.stack}>
+        {fullDisplay ? generalError.message : lines[0]}
+      </pre>{" "}
+      {lines.length > 1 && <Button onClick={() => setFullDisplay(!fullDisplay)}>...</Button>}
+    </div>
+  );
+};
 const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
   const { t, i18n } = useTranslation();
   const dataEntryRegistry = PluginRegistry.extension("dataentry.dataEntries");
@@ -136,11 +148,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
 
   return (
     <Paper style={{ minHeight: "90vh", paddingLeft: "14px", paddingTop: "1px" }}>
-      {generalError && (
-        <div style={{ color: "red" }} title={generalError.stack}>
-          {generalError.message}
-        </div>
-      )}
+      {generalError && <ErrorTogglable generalError={generalError}></ErrorTogglable>}
       {error && (
         <div>
           <Link to={error.link}>{error.message}</Link>

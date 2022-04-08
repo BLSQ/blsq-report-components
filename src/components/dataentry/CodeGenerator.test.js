@@ -1,4 +1,4 @@
-import { tokenize, valuesDependencies } from "./CodeGenerator"
+import { tokenize, valuesDependencies, fixIfStatement } from "./CodeGenerator"
 
 
 describe("Tokenizing process", () => {
@@ -39,5 +39,13 @@ describe("Tokenizing process", () => {
         expect(valuesDependencies("ROUND( sum(%{subsides_values}) , 2)")).toEqual([
             "%{subsides_values}"
         ])
+    })
+
+    it("fixes if statement", () => {
+        expect(fixIfStatement("if (0 >1 , 1 ,2)")).toEqual("IF(0 >1 , 1 ,2)")
+    })
+
+    it("fixes if statement", () => {
+        expect(fixIfStatement("if(0 >1 , 1 ,2)")).toEqual("IF(0 >1 , 1 ,2)")
     })
 })

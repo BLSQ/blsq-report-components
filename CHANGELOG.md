@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.103
+
+- [general] makes available iaso icon
+
 # @blsq/blsq-report-components@1.0.102
 
  - [dataentry] add support for visible and ordered rows via decision tables

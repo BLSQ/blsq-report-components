@@ -174,7 +174,7 @@ describe("CalculatorFactory", () => {
                 "can_compute_score" : {
                     "expression":"IF( points_maximum_is_null == 0 || points_attribues_is_null == 0, 1, 0)",     
                     "frequency": "quarterly",               
-                }
+                }             
             },
             "activity_decision_tables": [],
             "formulas": {

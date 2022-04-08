@@ -1,9 +1,14 @@
 /* eslint-disable max-len */
 import React from "react";
+import SvgIcon from "@material-ui/core/SvgIcon";
 
-const IasoIcon = () => {
+const IasoIcon = (props) => {
+  const finalProps = {
+    ...props,
+    viewBox: "0 0 32 36",
+  };
   return (
-    <svg width="32" height="36" viewBox="0 0 32 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <SvgIcon {...finalProps}>
       <g clipPath="url(#clip0_2_2)">
         <path
           fillRule="evenodd"
@@ -38,7 +43,9 @@ const IasoIcon = () => {
           <rect width="32" height="35.6923" fill="white" />
         </clipPath>
       </defs>
-    </svg>
+    </SvgIcon>
+    // <svg width="32" height="36" viewBox="0 0 32 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    // </svg>
   );
 };
 

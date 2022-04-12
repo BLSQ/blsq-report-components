@@ -153,7 +153,7 @@ class InvoiceLinks extends Component {
         {this.props.t('show_avalaible_invoices')}
       </Button>
     )
-    let invoicePrompt = this.props.t('missing_invoice_types')
+    let invoicePrompt = this.props.orgUnit.noDirectInvoice === false ? this.props.t('missing_invoice_types') : "";
 
     if (invoiceTypes !== null) {
       invoicePrompt =

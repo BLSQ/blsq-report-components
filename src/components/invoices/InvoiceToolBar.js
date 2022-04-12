@@ -292,7 +292,11 @@ class InvoiceToolBar extends Component {
             {...this.props}
           />
         )}
-        <Button onClick={() => window.print()}>{this.props.t("print")}</Button>
+        {this.props.invoice.invoiceType &&
+          (this.props.invoice.invoiceType.isPrintable === undefined ||
+            (this.props.invoice.invoiceType.isPrintable && this.props.invoice.invoiceType.isPrintable !== false)) && (
+            <Button onClick={() => window.print()}>{this.props.t("print")}</Button>
+          )}
         {recalculateButton}
         {this.props.calculateState &&
           this.props.calculateState.errors &&

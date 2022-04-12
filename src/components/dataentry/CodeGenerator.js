@@ -9,6 +9,12 @@ export const defaultSubstitutions = () => {
   return { IF: "IFF", sum: "SUM", " =": "==", "=": "==" };
 };
 
+
+export const fixIfStatement = (expression) => {
+  expression = expression.replace("if (", 'IF(')
+  expression = expression.replace("if(", 'IF(')
+  return expression
+}
 export const generateGetterSetterForState = (hesabuPackage, activity, state, orgunitid, period) => {
   const codes = [];
   const field_name = `${hesabuPackage.code}_${activity.code}_${state}_${orgunitid}_${period}`;
@@ -56,6 +62,7 @@ export const generateIsNullForState = (hesabuPackage, activity, state, orgunitid
 
 export const generateActivityFormula = (hesabuPackage, activity, formula, orgunitid, period, stateOrFormulaCodes) => {
   let expandedformula = "" + formula.expression;
+  expandedformula = fixIfStatement(expandedformula)
   const substitutions = defaultSubstitutions();
   for (let substit of stateOrFormulaCodes) {
     substitutions[substit] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`;
@@ -99,6 +106,7 @@ export const generatePackageFormula = (hesabuPackage, formulaCode, orgunitid, pe
   }
 
   let expression = hesabuPackage.formulas[formulaCode].expression + "";
+  expression = fixIfStatement(expression)
 
   const tokens = tokenize(expression);
   // references between package formulas
@@ -121,17 +129,13 @@ export const generatePackageFormula = (hesabuPackage, formulaCode, orgunitid, pe
   return codes.join("\n");
 };
 
-export const generateDecisionTable = (hesabuPackage, activity, decisionTable, orgUnit, period) => {
-  const orgunitid = orgUnit.id;
-  let selectedRows = decisionTable.data;
-  const facts = {
-    activity_code: activity.code,
-  };
+export const toOrgUnitFacts = (orgUnit, decisionTable) => {
+  const facts = {};
 
   const remainingInHeaders = decisionTable.inHeaders
     .filter((h) => h !== "activity_code")
     .map((h) => h.slice("groupset_code_".length));
-    
+
   const contract = orgUnit.activeContracts[0];
 
   for (let field of remainingInHeaders) {
@@ -145,8 +149,16 @@ export const generateDecisionTable = (hesabuPackage, activity, decisionTable, or
         facts["level_" + index] = id;
       }
     });
-    facts["level"] = contract.orgUnit.path.split("/").length - 1 // first id is empty string because starst with /...
+    facts["level"] = contract.orgUnit.path.split("/").length - 1; // first id is empty string because starst with /...
   }
+  return facts;
+};
+
+export const generateDecisionTable = (hesabuPackage, activity, decisionTable, orgUnit, period) => {
+  const orgunitid = orgUnit.id;
+
+  let facts = toOrgUnitFacts(orgUnit, decisionTable, activity);
+  facts.activity_code = activity.code;
 
   const matchedRule = decisionTable.matchingRule(facts);
 

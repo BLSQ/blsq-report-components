@@ -1,3 +1,14 @@
+# @blsq/blsq-report-components@1.0.103
+
+- [general] makes available iaso icon
+
+# @blsq/blsq-report-components@1.0.102
+
+ - [dataentry] add support for visible and ordered rows via decision tables
+ - [invoice] add support for visible and ordered rows via decision tables
+ - [dataentry] add support for `if (` and `if(` (was only supporting `IF(`)
+ - [dataentry] improve error message display when hesabu expressions are not working as expected
+
 # @blsq/blsq-report-components@1.0.101
 
 - [completeness] migrates request to react query to refetch data on url changes

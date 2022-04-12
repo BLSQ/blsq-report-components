@@ -154,6 +154,8 @@ export const toOrgUnitFacts = (orgUnit, decisionTable) => {
   return facts;
 };
 
+const hasSomeLettersRegExp = /[a-zA-Z]/g;
+
 export const generateDecisionTable = (hesabuPackage, activity, decisionTable, orgUnit, period) => {
   const orgunitid = orgUnit.id;
 
@@ -174,10 +176,15 @@ export const generateDecisionTable = (hesabuPackage, activity, decisionTable, or
     for (let outHeader of decisionTable.outHeaders) {
       codes.push("/* decision table" + JSON.stringify(matchedRule) + " */");
       codes.push(`${hesabuPackage.code}_${activity.code}_${outHeader}_${orgunitid}_${period}: () => {`);
-      codes.push("  return " + matchedRule[outHeader]);
-      codes.push("},");
+      const value = matchedRule[outHeader]
+      if (hasSomeLettersRegExp.test(value)) {
+        codes.push("  return \"" + value+"\"");
+      } else {
+        codes.push("  return " + value);
+      }
+      codes.push("},");   
     }
-  }
+  } 
   return codes.join("\n");
 };
 

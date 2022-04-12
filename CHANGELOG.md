@@ -1,3 +1,8 @@
+# @blsq/blsq-report-components@1.0.104
+
+- [dataentry] Allow to override name of activities with a decision table
+- [dataentry] Allow decistion table to return strings
+
 # @blsq/blsq-report-components@1.0.103
 
 - [general] makes available iaso icon

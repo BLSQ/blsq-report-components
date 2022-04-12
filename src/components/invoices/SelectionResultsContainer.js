@@ -42,7 +42,8 @@ const SelectionResultsContainer = (props) => {
       const dataEntryCodes = activeContract
         ? dataEntries && dataEntries.getExpectedDataEntries(activeContract, period)
         : [];
-
+      let noDirectInvoice = dataEntryCodes.filter(dataEntryCode => dataEntryCode.dataEntryType.noDirectInvoice === true);
+      ou.noDirectInvoice = noDirectInvoice.length > 0;
       // display the orgunit if some invoices or if some data entry (note having a data entry, doesn't imply having invoices, (ex burundi))
       if ((codes && codes.length > 0) || (dataEntryCodes && dataEntryCodes.length > 0)) {
         filteredOrgunits.push(ou);

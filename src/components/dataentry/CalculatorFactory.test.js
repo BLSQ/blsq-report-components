@@ -91,9 +91,9 @@ describe("CalculatorFactory", () => {
                         "groupset_code_equite_fbr"
                     ],
                     "out_headers": [
-                        "bareme_unitaire"
+                        "bareme_unitaire","name"
                     ],
-                    "content": "\"in:activity_code\",\"in:groupset_code_equite_fbr\",\"out:bareme_unitaire\"\n*,*,\"666\""
+                    "content": "\"in:activity_code\",\"in:groupset_code_equite_fbr\",\"out:bareme_unitaire\",\"out:name\"\n*,*,\"666\",\"diabolic\""
                 }                
             ],
             "formulas": {
@@ -283,6 +283,7 @@ describe("CalculatorFactory", () => {
         calculator.setIndexedValues(indexedValues)
         calculator.setDefaultCoc(defaultCoc)
         expect(calculator.quantite_pma_quant03_bareme_unitaire_zaerz654_202004()).toEqual(666)
+        expect(calculator.quantite_pma_quant03_name_zaerz654_202004()).toEqual("diabolic")
 
     });
 

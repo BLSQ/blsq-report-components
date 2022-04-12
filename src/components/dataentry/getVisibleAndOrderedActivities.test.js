@@ -194,4 +194,42 @@ describe("getVisibleAndOrderedActivities", () => {
         "quant03",
       ]);
   });
+  it("return visible and ordered activities if decision tables with visible and order and new_name", () => {
+    const quantitePmaPackage = createQuantityPmaPackage();
+
+    quantitePmaPackage.activity_decision_tables.push({
+      content: [
+        "in:activity_code,in:groupset_code_contract_type,out:visible,out:order,out:new_name",
+        "quant01,cs,1,4,consultation ambulatoire",
+        "quant02,cs,1,1,",
+        "quant03,cs,0,2,",
+        "quant04,cs,1,2,",
+        "quant01,csr,0,4,consultation ambulatoire",
+        "quant02,csr,1,1,",
+        "quant03,csr,1,2,",
+        "quant04,csr,0,2,",
+      ].join("\n"),
+      start_period: undefined,
+      end_period: undefined,
+      out_headers: ["visible","order","new_name"],
+      in_headers: ["activity_code","groupset_code_contract_type"],
+    });
+
+    expect(getVisibleAndOrderedActivities(quantitePmaPackage, "202101", orgUnitCs).map((a) => a.code)).toEqual([
+      "quant02",
+      "quant04",
+      "quant01",
+    ]);
+
+    expect(getVisibleAndOrderedActivities(quantitePmaPackage, "202101", orgUnitCs).map((a) => a.name)).toEqual([
+         "Nouvelle consult curative pour des pers indigents (max 5%)",
+         "Chirurgie majeure",
+         "consultation ambulatoire",
+    ]);
+
+    expect(getVisibleAndOrderedActivities(quantitePmaPackage, "202101", orgUnitCsr).map((a) => a.code)).toEqual([
+        "quant02",
+        "quant03",
+      ]);
+  });  
 });

@@ -42,5 +42,27 @@ export const getVisibleAndOrderedActivities = (hesabuPackage, decisionPeriod, or
   if (Object.keys(orderByActivityCode).length > 0) {
     activities = _.sortBy(activities, (a) => orderByActivityCode[a.code]);
   }
-  return activities;
+
+  const newNameDecisionTables = decisionTables.filter((dec) => {
+    return dec.outHeaders.includes("new_name");
+  });
+
+  const newNamesByActivityCode = {}
+  for (let activity of activities) {
+    for (let decisionTable of newNameDecisionTables) {
+      const facts = toOrgUnitFacts(orgUnit, decisionTable);
+      facts["activity_code"] = activity.code;
+      const matchingLine = decisionTable.matchingRule(facts);
+      if (matchingLine) {
+        newNamesByActivityCode[activity.code] = matchingLine.new_name;
+      }
+    }
+  }
+  
+  return activities.map(activity => {
+    const act = _.clone(activity)
+    act.old_name = act.name 
+    act.name = newNamesByActivityCode[activity.code] || act.name
+    return act
+  });
 };

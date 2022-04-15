@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.105
+
+- [general] fixes global query configuration
+
 # @blsq/blsq-report-components@1.0.104
 
 - [dataentry] Allow to override name of activities with a decision table

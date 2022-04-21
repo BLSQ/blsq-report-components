@@ -38,7 +38,7 @@
     "searchInfos": "Filter on name or contract codes",
     "seeOrgUnit": "Voir l'unité d'organisation",
     "status": {
-      "coverageIssue": "This contract ismore large than the main contract coverage",
+      "coverageIssue": "This contract periods are larger than the main contract coverage",
       "nonVisibleOverlaps": "This contract overlaps with {{count}} contract(s) not visible on this page",
       "visibleOverlaps": "This contract overlaps with {{count}} contract(s)"
     },

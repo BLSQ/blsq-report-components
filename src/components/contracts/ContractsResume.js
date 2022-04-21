@@ -6,7 +6,7 @@ import { withTranslation } from "react-i18next";
 import tablesStyles from "../styles/tables";
 import { IconButton } from "@material-ui/core";
 import InfoIcon from "@material-ui/icons/Info";
-import ContractsStats from "./ContractsStats";
+import ContractsStats from "./stats/ContractsStats";
 
 const styles = (theme) => ({
   ...tablesStyles(theme),
@@ -43,7 +43,7 @@ const ContractResume = ({ contracts, filteredContracts, overlapsTotal, t }) => {
       >
         <InfoIcon color="action" />
       </IconButton>
-      {showStats && <ContractsStats filteredContracts={filteredContracts} />}
+      {showStats && <ContractsStats filteredContracts={filteredContracts} contracts={contracts}/>}
     </>
   );
 };

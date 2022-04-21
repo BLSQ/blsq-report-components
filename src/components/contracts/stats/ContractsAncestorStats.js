@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
-import PluginRegistry from "../core/PluginRegistry";
+import PluginRegistry from "../../core/PluginRegistry";
 import { Button, Typography } from "@material-ui/core";
 const styles = (theme) => ({
   td: {

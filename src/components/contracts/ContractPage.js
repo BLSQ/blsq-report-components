@@ -235,7 +235,7 @@ const ContractPage = ({ match, location, t, history, currentUser }) => {
         )}
       </Box>
       {/* show the sub contract create button if orgunit has at least one contract */}
-      {subcontractField && mainContracts.contracts.length > 0 && (
+      {subcontractField  && (
         <>
           <Divider />
           <Box mb={4} mt={2}>
@@ -265,7 +265,7 @@ const ContractPage = ({ match, location, t, history, currentUser }) => {
                 onSavedSuccessfull={() => fetchContractsQuery.refetch()}
                 displayMainOrgUnit={false}
               >
-                <Button color="primary" variant="contained" startIcon={<Add />} className={classes.createButton}>
+                <Button disabled={mainContracts.contracts.length === 0} color="primary" variant="contained" startIcon={<Add />} className={classes.createButton}>
                   {t("create")}
                 </Button>
               </ContractsDialog>

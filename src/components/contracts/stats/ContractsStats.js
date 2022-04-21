@@ -1,10 +1,11 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
-import PluginRegistry from "../core/PluginRegistry";
+import PluginRegistry from "../../core/PluginRegistry";
 import { Typography } from "@material-ui/core";
 import ContractsPeriodStats from "./ContractsPeriodStats";
 import ContractsAncestorStats from "./ContractsAncestorStats";
+import ContractorsStats from "./ContractorsStats";
 
 const styles = (theme) => ({
   td: {
@@ -22,7 +23,7 @@ const styles = (theme) => ({
 
 const useStyles = makeStyles((theme) => styles(theme));
 
-const ContractsStats = ({ filteredContracts }) => {
+const ContractsStats = ({ filteredContracts, contracts }) => {
   const classes = useStyles();
   const contractService = PluginRegistry.extension("contracts.service");
   const fields = contractService.contractFields();
@@ -40,8 +41,17 @@ const ContractsStats = ({ filteredContracts }) => {
 
       statsPerField[field.code].push({ field: field, option: undefined, count: undefinedContracts.length });
     }
+    if (field.code === "contract_main_orgunit") {
+      statsPerField[field.code] = [];
+      const filledContracts = filteredContracts.filter((c) => c.fieldValues[field.code] !== undefined);
+      const emptyContracts = filteredContracts.filter((c) => c.fieldValues[field.code] === undefined);
+
+      statsPerField[field.code].push({ field: field, option: {id: "1", name: "Filled"}, count: filledContracts.length });
+      statsPerField[field.code].push({ field: field, option: undefined, count: emptyContracts.length });
+    }
   });
 
+  
   return (
     <div style={{ display: "flex", flexWrap: "wrap" }}>
       {fields
@@ -74,6 +84,7 @@ const ContractsStats = ({ filteredContracts }) => {
         })}
       <ContractsPeriodStats filteredContracts={filteredContracts} />
       <ContractsAncestorStats filteredContracts={filteredContracts} />
+      <ContractorsStats filteredContracts={filteredContracts} contracts={contracts} fields={fields}></ContractorsStats>
     </div>
   );
 };

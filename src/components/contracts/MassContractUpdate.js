@@ -2,7 +2,7 @@ import { Button, Grid, Typography } from "@material-ui/core";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import PluginRegistry from "../core/PluginRegistry";
-import ContractsStats from "./ContractsStats";
+import ContractsStats from "./stats/ContractsStats";
 import PeriodPicker from "./PeriodPicker";
 import { getEndDateFromPeriod } from "./utils/periodsUtils";
 

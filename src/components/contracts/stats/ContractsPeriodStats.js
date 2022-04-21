@@ -1,5 +1,5 @@
 import React from "react";
-import DatePeriods from "../../support/DatePeriods";
+import DatePeriods from "../../../support/DatePeriods";
 
 import { BarChart, Bar, Brush, ReferenceLine, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 

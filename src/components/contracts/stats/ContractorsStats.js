@@ -41,7 +41,7 @@ const ContractorsStats = ({ contracts, filteredContracts, fields }) => {
     subcontractorsDistributionSample[numberOfSubcontractors] ||= [];
     subcontractorsDistributionSample[numberOfSubcontractors].push(mainContractor);
   }
-  debugger;
+
   return (
     <div className={classes.statContainer}>
       <Typography variant="h5">Number of subcontractors distribution</Typography>

@@ -1,3 +1,9 @@
+# @blsq/blsq-report-components@1.0.106
+
+- [contracts] add 2 new stats block about contract/sub contracts
+- [contracts] change a bit the wording of one of the error message
+- [contracts] in the contract detail page, show the sub contracts (even if no main contract)
+
 # @blsq/blsq-report-components@1.0.105
 
 - [general] fixes global query configuration

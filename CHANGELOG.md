@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.107
+
+- [dataentry] allow to specify fullWidth on Dhis2Input component
+
 # @blsq/blsq-report-components@1.0.106
 
 - [contracts] add 2 new stats block about contract/sub contracts

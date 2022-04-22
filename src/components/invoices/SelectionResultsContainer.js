@@ -37,11 +37,13 @@ const SelectionResultsContainer = (props) => {
     for (let ou of orgUnits) {
       const codes = invoices.getInvoiceTypeCodes(ou, period);
       // WARN if you modify this code check a project (ex ethiopia) that don't have contracts or no data entry
-      const activeContract = ou.activeContracts && ou.activeContracts[0];     
+      const activeContract = ou.activeContracts && ou.activeContracts[0];
       const dataEntries = PluginRegistry.extension("dataentry.dataEntries");
-      const dataEntryCodes = activeContract ? dataEntries.getExpectedDataEntries(activeContract, period) : [];
+      const dataEntryCodes = activeContract
+        ? dataEntries && dataEntries.getExpectedDataEntries(activeContract, period)
+        : [];
       // display the orgunit if some invoices or if some data entry (note having a data entry, doesn't imply having invoices, (ex burundi))
-      if ((codes && codes.length > 0) || dataEntryCodes.length > 0) {
+      if ((codes && codes.length > 0) || (dataEntryCodes && dataEntryCodes.length > 0)) {
         filteredOrgunits.push(ou);
       } else {
         omitedOrgunits.push(ou);

@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.108
+
+- [invoice] allow to hide print button and make default the invoice prompt to empty if no invoice
+
 # @blsq/blsq-report-components@1.0.107
 
 - [dataentry] allow to specify fullWidth on Dhis2Input component

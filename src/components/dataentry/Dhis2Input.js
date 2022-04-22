@@ -12,7 +12,7 @@ import {
 import FormDataContext from "./FormDataContext";
 import useDebounce from "../shared/useDebounce";
 
-const Dhis2Input = ({ element, dataElement, t }) => {
+const Dhis2Input = ({ element, dataElement, t, fullWidth }) => {
   const formDataContext = useContext(FormDataContext);
   const [rawValue, setRawValue] = useState("");
   const [dataValue, setDataValue] = useState("");
@@ -89,6 +89,7 @@ const Dhis2Input = ({ element, dataElement, t }) => {
       onChange={onChange}
       onDoubleClick={handleOpenToolTip}
       onClick={handleCloseToolTip}
+      fullWidth={fullWidth}
       inputProps={{
         style: {
           textAlign: "right",

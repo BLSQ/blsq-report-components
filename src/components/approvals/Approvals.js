@@ -13,11 +13,17 @@ const buildApprovals = (results, periods, orgUnits) => {
   const approvals = [];
   for (let orgUnit of orgUnits) {
     const result = { orgUnit: orgUnit };
+    let atleastOneData = false;
     for (let period of periods) {
       const approval = approvalsByOrgUnitPeriod[orgUnit.id + period];
       result[period] = approval ? approval[0] : undefined;
+      if (atleastOneData == false && approval && approval[0]) {
+        atleastOneData = true;
+      }
     }
-    approvals.push(result);
+    if (atleastOneData) {
+      approvals.push(result);
+    }
   }
   return approvals;
 };
@@ -32,7 +38,11 @@ const buildColumns = (approvals) => {
       filter: true,
       customBodyRenderLite: (dataIndex) => {
         const orgUnit = approvals[dataIndex]["orgUnit"];
-        return <span>{orgUnit.name}</span>;
+        return (
+          <span>
+            {orgUnit.name} {orgUnit.id}
+          </span>
+        );
       },
     },
   };
@@ -46,7 +56,11 @@ const buildColumns = (approvals) => {
         customBodyRenderLite: (dataIndex) => {
           const data = approvals[dataIndex][period];
           if (data && data.approval) {
-            return <span title={data.approval.wf + "\n"+JSON.stringify(data.approval.permissions, undefined, 3)}>{data.approval.state}</span>;
+            return (
+              <span title={data.approval.wf + "\n" + JSON.stringify(data.approval.permissions, undefined, 3)}>
+                {data.approval.state}
+              </span>
+            );
           }
           return "";
         },
@@ -104,7 +118,7 @@ const Approvals = () => {
         results.push({ orgUnit: orgUnitsById[approval.ou], approval });
       }
     }
-    const nonEmptyApprovals = results.filter(a => a.approval.state)
+    const nonEmptyApprovals = results.filter((a) => a.approval.state && a.approval.state !== "UNAPPROVED_ABOVE");
     debugger;
     return buildApprovals(nonEmptyApprovals, periods, orgUnits);
   });

@@ -44,7 +44,11 @@ const buildColumns = (approvals) => {
       options: {
         filter: true,
         customBodyRenderLite: (dataIndex) => {
-          return <span>something</span>;
+          const data = approvals[dataIndex][period];
+          if (data && data.approval) {
+            return <span title={data.approval.wf + "\n"+JSON.stringify(data.approval.permissions, undefined, 3)}>{data.approval.state}</span>;
+          }
+          return "";
         },
       },
     };
@@ -92,7 +96,7 @@ const Approvals = () => {
       const approvals = await api.get("dataApprovals/approvals", {
         pe: periods,
         ou: orgUnitChunk.map((o) => o.id),
-        wf: "kxzOOv3ztkc",
+        wf: workflowIds,
         fields: ":all",
       });
 
@@ -100,8 +104,9 @@ const Approvals = () => {
         results.push({ orgUnit: orgUnitsById[approval.ou], approval });
       }
     }
-
-    return buildApprovals(results, periods, orgUnits);
+    const nonEmptyApprovals = results.filter(a => a.approval.state)
+    debugger;
+    return buildApprovals(nonEmptyApprovals, periods, orgUnits);
   });
 
   const approvals = loadApprovalsQuery?.data;
@@ -114,7 +119,7 @@ const Approvals = () => {
   if (approvals) {
     columns = buildColumns(approvals);
   }
-  
+
   return (
     <div>
       <Paper elevation={3}>

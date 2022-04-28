@@ -55,7 +55,7 @@ const invoiceRoutes = (props) => {
         );
       }}
     />,
-    <Route key="approvalsRoute" path="/approvals" exact component={Approvals} />,
+    <Route key="approvalsRoute" path="/approvals/:workflowids/:period" exact component={Approvals} />,
   ];
 };
 

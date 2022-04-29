@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.0.109
+
+- [invoice] allow to calculate simple indicators in the mapper
+
 # @blsq/blsq-report-components@1.0.108
 
 - [invoice] allow to hide print button and make default the invoice prompt to empty if no invoice

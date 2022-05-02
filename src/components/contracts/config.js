@@ -344,7 +344,7 @@ export const contractsTableOptions = (t, contracts, onTableChange, tableParams) 
     rowsPerPage: tableParams.rowsPerPage,
     page,
     sortOrder: {
-      name: tableParams.sort.column || "fieldValues.contract_end_date",
+      name: tableParams.sort.column || "statusDetail.warnings",
       direction: tableParams.sort.direction || "desc",
     },
     selectableRowsHideCheckboxes: false,

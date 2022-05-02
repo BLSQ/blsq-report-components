@@ -3,10 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "react-query";
 import PluginRegistry from "../core/PluginRegistry";
 import _ from "lodash";
 import DatePeriods from "../../support/DatePeriods";
-import MUIDataTable, { ExpandButton } from "mui-datatables";
-import { TableRow, TableCell, Typography, Paper, Button } from "@material-ui/core";
-
-import { makeStyles } from "@material-ui/styles";
+import MUIDataTable from "mui-datatables";
+import { Typography, Paper, Button } from "@material-ui/core";
 import PeriodPicker from "../shared/PeriodPicker";
 import { Alert } from "@material-ui/lab";
 
@@ -23,7 +21,7 @@ const buildApprovals = (results, periods, orgUnits) => {
     for (let period of periods) {
       const approval = approvalsByOrgUnitPeriod[orgUnit.id + period];
       result[period] = approval ? approval[0] : undefined;
-      if (atleastOneData == false && approval && approval[0]) {
+      if (atleastOneData === false && approval && approval[0]) {
         atleastOneData = true;
       }
     }
@@ -54,7 +52,7 @@ const buildColumns = (approvals, levels, periods, loadApprovalsQuery, dhis2) => 
       filter: true,
       customBodyRenderLite: (dataIndex) => {
         const orgUnit = approvals[dataIndex]["orgUnit"];
-        const isbold = levels[0] == orgUnit.level;
+        const isbold = levels[0] === orgUnit.level;
         return (
           <span style={{ marginLeft: orgUnit.level * 30 + "px", fontWeight: isbold ? "bold" : "" }}>
             {orgUnit.name}
@@ -107,10 +105,10 @@ const buildColumns = (approvals, levels, periods, loadApprovalsQuery, dhis2) => 
             {
               onSuccess: () => {
                 return loadApprovalsQuery.refetch();
-                //dispatch(enqueueSnackbar(succesfullSnackBar("snackBar.success.save")));
+                // dispatch(enqueueSnackbar(succesfullSnackBar("snackBar.success.save")));
               },
               onError: (error) => {
-                //dispatch(enqueueSnackbar(errorSnackBar("snackBar.error.save", null, error)));
+                // dispatch(enqueueSnackbar(errorSnackBar("snackBar.error.save", null, error)));
               },
             },
           );
@@ -124,7 +122,7 @@ const buildColumns = (approvals, levels, periods, loadApprovalsQuery, dhis2) => 
                     .map((n) => humanize(n))
                     .join(" ")}
                 </span>
-                <br></br>
+                <br />
                 {permissions.mayApprove && !data.approval.state.startsWith("APPROVED") && (
                   <Button
                     variant="contained"
@@ -185,7 +183,7 @@ const Approvals = (props) => {
 
     setLoadingStatus("organisationUnits");
 
-    let ou = undefined;
+    let ou;
     for (let meOrgUnit of me.organisationUnits) {
       const ouCurrent = await api.get("organisationUnits", {
         filter: [
@@ -200,7 +198,7 @@ const Approvals = (props) => {
         paging: false,
         fields: "id,name,level,path,ancestors[id,name]",
       });
-      if (ou == undefined) {
+      if (ou === undefined) {
         ou = ouCurrent;
       } else {
         ou.organisationUnits = ou.organisationUnits.concat(ouCurrent.organisationUnits);

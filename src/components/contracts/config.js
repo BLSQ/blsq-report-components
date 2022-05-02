@@ -72,8 +72,8 @@ export const contractsTableColumns = (
       label: t("contracts.warnings"),
       options: {
         filter: false,
-        display: false,
         sort: true,
+        sortDescFirst: true,
         setCellHeaderProps: () => ({
           className: classNames(classes.cellCentered, classes.headerCell),
         }),

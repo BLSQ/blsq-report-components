@@ -126,6 +126,21 @@ const defaultFilters = (currentUser) => {
       urlDecode: (value) => value === "true",
     },
     {
+      id: "only_invalid",
+      key: "contracts.onlyInvalids",
+      type: "checkbox",
+      column: 1,
+      value: false,
+      onFilter: (onlyInvalids, contracts) => {
+        if (!onlyInvalids) {
+          return contracts;
+        }
+        return contracts.filter((c) => c.statusDetail.validationErrors.length > 0);
+      },
+      urlEncode: (value) => (value ? "true" : "false"),
+      urlDecode: (value) => value === "true",
+    },
+    {
       id: "show_all",
       key: "contracts.showAll",
       type: "checkbox",

@@ -74,6 +74,8 @@ const ContractsDialog = ({
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const hasSubContractEnabled = !!contractFields.find((c) => c.code == "contract_main_orgunit");
+  const isContractViewPage =
+    window.location.href.split("/")[4] === "contracts" && window.location.href.split("/").length > 5;
 
   useEffect(() => {
     const newCurrentContract = contract.id ? contract : currentContract;
@@ -156,7 +158,6 @@ const ContractsDialog = ({
       mainOrgUnit = mainContract.orgUnit;
     }
   }
-
   return (
     <>
       {!children && (
@@ -208,6 +209,15 @@ const ContractsDialog = ({
         </DialogTitle>
         <DialogContent dividers>
           <Grid container spacing={2}>
+            {isContractViewPage && (
+              <Grid container item xs={12}>
+                <OuSearch
+                  onChange={(orgUnit) => handleChange("fieldValues", orgUnit, "orgUnit")}
+                  orgUnit={currentContract.fieldValues.orgUnit}
+                  disabled={isContractViewPage}
+                />
+              </Grid>
+            )}
             {(displayOrgUnit || displayMainOrgUnit) && (
               <Grid container item xs={12}>
                 {displayOrgUnit && (
@@ -226,7 +236,7 @@ const ContractsDialog = ({
                 )}
               </Grid>
             )}
-  
+
             <Grid container item xs={6}>
               <PeriodPicker
                 contract={currentContract}
@@ -234,9 +244,8 @@ const ContractsDialog = ({
                 max={currentContract.endPeriod}
                 mode="beginning"
                 fieldName={t("start_period")}
-                onPeriodChange={
-                  (startPeriod) =>
-                    handleChange("fieldValues", getStartDateFromPeriod(startPeriod), "contract_start_date")
+                onPeriodChange={(startPeriod) =>
+                  handleChange("fieldValues", getStartDateFromPeriod(startPeriod), "contract_start_date")
                 }
               />
             </Grid>
@@ -247,8 +256,8 @@ const ContractsDialog = ({
                 min={currentContract.startPeriod}
                 fieldName={t("end_period")}
                 mode="end"
-                onPeriodChange={
-                  (endPeriod) => handleChange("fieldValues", getEndDateFromPeriod(endPeriod), "contract_end_date")
+                onPeriodChange={(endPeriod) =>
+                  handleChange("fieldValues", getEndDateFromPeriod(endPeriod), "contract_end_date")
                 }
               />
             </Grid>

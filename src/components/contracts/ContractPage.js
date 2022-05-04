@@ -80,13 +80,14 @@ const ContractPage = ({ match, location, t, history, currentUser }) => {
   });
 
   const { allContracts, subContracts, mainContracts, contractFields } = contractsDatas;
-  const subcontractField = contractFields.find((f) => f.code == "contract_main_orgunit");
+  const subcontractField = contractFields.find((f) => f.code === "contract_main_orgunit");
   const mainContractProps = getContractTableProps(
     t,
     classes,
     mainContracts,
     allContracts,
     fetchContractsQuery,
+    true,
     location,
     contractFields,
     ["orgUnit.name", "fieldValues.contract_main_orgunit"],
@@ -99,6 +100,7 @@ const ContractPage = ({ match, location, t, history, currentUser }) => {
     subContracts,
     allContracts,
     fetchContractsQuery,
+    true,
     location,
     contractFields,
     ["fieldValues.contract_main_orgunit"],

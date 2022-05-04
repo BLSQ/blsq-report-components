@@ -17,6 +17,7 @@ export const contractsTableColumns = (
   contractFields,
   location,
   fetchContracts,
+  isContractViewPage,
   isDetail = false,
   contracts,
   displayOrgUnit,
@@ -33,7 +34,6 @@ export const contractsTableColumns = (
       }
     }
   });
-
   const columns = [
     {
       name: "id",
@@ -280,7 +280,6 @@ export const contractsTableColumns = (
       customBodyRender: (contractId) => {
         const contract = filteredContracts.find((c) => c.id === contractId);
         if (!contract) return null;
-
         return (
           <>
             <ContractsDialog
@@ -290,6 +289,7 @@ export const contractsTableColumns = (
               onSavedSuccessfull={fetchContracts}
               displayOrgUnit={displayOrgUnit}
               displayMainOrgUnit={displayMainOrgUnit}
+              isContractViewPage={isContractViewPage}
             />
             {isDetail && <DeleteContractDialog contract={contract} onSavedSuccessfull={fetchContracts} />}
 

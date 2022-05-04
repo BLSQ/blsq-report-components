@@ -64,6 +64,7 @@ const ContractsDialog = ({
   contracts,
   displayOrgUnit,
   displayMainOrgUnit,
+  isContractViewPage,
 }) => {
   const [open, setOpen] = React.useState(false);
   const contractService = PluginRegistry.extension("contracts.service");
@@ -74,8 +75,6 @@ const ContractsDialog = ({
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const hasSubContractEnabled = !!contractFields.find((c) => c.code == "contract_main_orgunit");
-  const isContractViewPage =
-    window.location.href.split("/")[4] === "contracts" && window.location.href.split("/").length > 5;
 
   useEffect(() => {
     const newCurrentContract = contract.id ? contract : currentContract;
@@ -209,21 +208,13 @@ const ContractsDialog = ({
         </DialogTitle>
         <DialogContent dividers>
           <Grid container spacing={2}>
-            {isContractViewPage && (
+            {(displayOrgUnit || displayMainOrgUnit || isContractViewPage) && (
               <Grid container item xs={12}>
-                <OuSearch
-                  onChange={(orgUnit) => handleChange("fieldValues", orgUnit, "orgUnit")}
-                  orgUnit={currentContract.fieldValues.orgUnit}
-                  disabled={isContractViewPage}
-                />
-              </Grid>
-            )}
-            {(displayOrgUnit || displayMainOrgUnit) && (
-              <Grid container item xs={12}>
-                {displayOrgUnit && (
+                {(displayOrgUnit || isContractViewPage) && (
                   <OuSearch
                     onChange={(orgUnit) => handleChange("fieldValues", orgUnit, "orgUnit")}
                     orgUnit={currentContract.fieldValues.orgUnit}
+                    disabled={isContractViewPage}
                   />
                 )}
                 <GenerateTablesNeeded orgUnit={currentContract.fieldValues.orgUnit} />
@@ -232,6 +223,7 @@ const ContractsDialog = ({
                     onChange={(orgUnit) => handleChange("fieldValues", orgUnit, "contract_main_orgunit")}
                     label={t("contracts.contract_main_orgunit")}
                     orgUnit={mainOrgUnit}
+                    disabled={isContractViewPage}
                   />
                 )}
               </Grid>

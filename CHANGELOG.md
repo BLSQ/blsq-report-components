@@ -1,6 +1,12 @@
+# @blsq/blsq-report-components@1.0.110
+
+- [contracts] displays disabled orgunit name in dialog from contract show page
+- [contracts] displays column with invalid contracts warnings, creates filter for invalid contracts, sorts invalid contracts first by default
+
 # @blsq/blsq-report-components@1.0.109
 
 - [invoice] allow to calculate simple indicators in the mapper
+- [approvals] creates module for managing data approvals
 
 # @blsq/blsq-report-components@1.0.108
 

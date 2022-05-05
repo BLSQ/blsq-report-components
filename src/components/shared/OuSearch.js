@@ -36,7 +36,7 @@ const styles = (theme) => ({
 });
 const useStyles = makeStyles((theme) => styles(theme));
 
-const OuSearch = ({ t, orgUnit, onChange, label, defaultValue }) => {
+const OuSearch = ({ t, orgUnit, onChange, label, defaultValue, disabled }) => {
   const classes = useStyles();
   const currentUser = useSelector((state) => state.currentUser.profile);
   const dhis2 = useSelector((state) => state.dhis2.support);
@@ -113,6 +113,7 @@ const OuSearch = ({ t, orgUnit, onChange, label, defaultValue }) => {
     <ClickAwayListener onClickAway={() => setSearchTriggered(false)}>
       <FormControl className={classes.formControl}>
         <Autocomplete
+          disabled={disabled}
           clearOnEscape
           noOptionsText={t("noResult")}
           multiple={false}

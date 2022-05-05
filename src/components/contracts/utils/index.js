@@ -61,19 +61,20 @@ export const getNonStandartContractFieldValue = (contract, field) =>
 
 export const getContractByOrgUnit = (contracts = [], orgUnitId) => contracts.find((c) => c.orgUnit.id === orgUnitId);
 
-export const getContractTableProps = (
+export const getContractTableProps = ({
   t,
   classes,
   contractsData,
   allContracts,
   fetchContracts,
+  isContractViewPage,
   location,
   contractFields,
   columnsFilterArray,
   displayOrgUnit,
   displayMainOrgUnit,
   withIndex,
-) => {
+}) => {
   const options = orgUnitContractTableOptions(t);
   const overlapsTotal = Object.keys(contractsData.contractsOverlaps).length;
   const columns = contractsTableColumns(
@@ -83,6 +84,7 @@ export const getContractTableProps = (
     contractFields,
     location,
     () => fetchContracts.refetch(),
+    isContractViewPage,
     true,
     allContracts,
     displayOrgUnit,

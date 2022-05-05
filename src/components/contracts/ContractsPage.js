@@ -113,6 +113,7 @@ const ContractsPage = ({ t, location, history, currentUser }) => {
                 fetchContractsQuery.refetch();
               },
               false,
+              false,
               contracts,
             )}
             options={contractsTableOptions(

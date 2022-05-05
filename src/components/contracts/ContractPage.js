@@ -81,33 +81,34 @@ const ContractPage = ({ match, location, t, history, currentUser }) => {
 
   const { allContracts, subContracts, mainContracts, contractFields } = contractsDatas;
   const subcontractField = contractFields.find((f) => f.code === "contract_main_orgunit");
-  const mainContractProps = getContractTableProps(
+  const mainContractProps = getContractTableProps({
     t,
     classes,
-    mainContracts,
-    allContracts,
-    fetchContractsQuery,
-    true,
+    contractsData: mainContracts,
+    allContracts: allContracts,
+    fetchContracts: fetchContractsQuery,
+    isContractViewPage: true,
     location,
     contractFields,
-    ["orgUnit.name", "fieldValues.contract_main_orgunit"],
-    false,
-    false,
-  );
-  const subContractProps = getContractTableProps(
+    columnsFilterArray: ["orgUnit.name", "fieldValues.contract_main_orgunit"],
+    displayOrgUnit: false,
+    displayMainOrgUnit: false,
+    withIndex: false,
+  });
+  const subContractProps = getContractTableProps({
     t,
     classes,
-    subContracts,
-    allContracts,
-    fetchContractsQuery,
-    true,
+    contractsData: subContracts,
+    allContracts: allContracts,
+    fetchContracts: fetchContractsQuery,
+    isContractViewPage: true,
     location,
     contractFields,
-    ["fieldValues.contract_main_orgunit"],
-    true,
-    false,
-    true,
-  );
+    columnsFilterArray: ["fieldValues.contract_main_orgunit"],
+    displayOrgUnit: true,
+    displayMainOrgUnit: false,
+    withIndex: true,
+  });
   const mainOrgUnit = getMainOrgUnit(allContracts, match.params.orgUnitId);
 
   useEffect(() => {
@@ -163,7 +164,9 @@ const ContractPage = ({ match, location, t, history, currentUser }) => {
               {t("contracts.title")}
             </Link>
 
-            <Typography color="textPrimary" variant="h5" component="h5" gutterBottom>{orgUnit ? orgUnit.name : "..."}</Typography>
+            <Typography color="textPrimary" variant="h5" component="h5" gutterBottom>
+              {orgUnit ? orgUnit.name : "..."}
+            </Typography>
           </Breadcrumbs>
         </Grid>
       </Grid>
@@ -237,7 +240,7 @@ const ContractPage = ({ match, location, t, history, currentUser }) => {
         )}
       </Box>
       {/* show the sub contract create button if orgunit has at least one contract */}
-      {subcontractField  && (
+      {subcontractField && (
         <>
           <Divider />
           <Box mb={4} mt={2}>
@@ -267,7 +270,13 @@ const ContractPage = ({ match, location, t, history, currentUser }) => {
                 onSavedSuccessfull={() => fetchContractsQuery.refetch()}
                 displayMainOrgUnit={false}
               >
-                <Button disabled={mainContracts.contracts.length === 0} color="primary" variant="contained" startIcon={<Add />} className={classes.createButton}>
+                <Button
+                  disabled={mainContracts.contracts.length === 0}
+                  color="primary"
+                  variant="contained"
+                  startIcon={<Add />}
+                  className={classes.createButton}
+                >
                   {t("create")}
                 </Button>
               </ContractsDialog>

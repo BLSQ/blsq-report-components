@@ -11,6 +11,8 @@ import searchOrgunit from "./searchOrgunit";
 import SelectionResultsContainer from "./SelectionResultsContainer";
 
 import useDebounce from "../shared/useDebounce";
+import OrgUnitTreePicker from "../shared/orgunit_picker/OrgUnitTreePicker";
+import InvoiceLinks from "./InvoiceLinks";
 
 const styles = (theme) => ({
   paper: theme.mixins.gutters({
@@ -101,16 +103,47 @@ const InvoiceSelectionContainer = (props) => {
   const onParentOrganisationUnit = (orgUnitId) => {
     updateHistory(history, orgUnitId, period, debouncedSearchValue, defaultPathName);
   };
+
+  const [selectedOrgUnits, setSelectedOrgUnits] = useState([]);
   const classes = useStyles();
   const { t } = useTranslation();
   const SelectionResults = resultsElements || SelectionResultsContainer;
-
+  const onOrgUnitChange = (orgunits) => {
+    setSelectedOrgUnits(orgunits);
+  };
   return (
     <Paper className={classes.paper} square>
       <Typography variant="h6" component="h6" gutterBottom>
         {t("invoices.search.title")}
       </Typography>
       <div className={classes.filters}>
+        <div style={{ display: "flex" }}>
+          <div style={{ margin: "10px", width: "500px" }}>
+            <OrgUnitTreePicker onChange={onOrgUnitChange}></OrgUnitTreePicker>
+          </div>
+          <div>
+            {selectedOrgUnits &&
+              selectedOrgUnits.map((ou) => (
+                <div>
+                  <h2>{ou.name}</h2>
+                  <h3>Contrats</h3>
+                  {ou.activeContracts &&
+                    ou.activeContracts
+                      .filter((c) => c.matchPeriod(searchPeriod))
+                      .map((c) => (
+                        <div>
+                          {c.startPeriod} {c.endPeriod} {c.codes} {c.codes}
+                        </div>
+                      ))}
+                </div>
+              ))}
+            <h3>Factures</h3>
+
+            {selectedOrgUnits && selectedOrgUnits[0] && (
+              <InvoiceLinks {...props} t={t} orgUnit={selectedOrgUnits[0]} period={searchPeriod}></InvoiceLinks>
+            )}
+          </div>
+        </div>
         <OrgUnitAutoComplete
           organisationUnits={topLevelsOrgUnits}
           onChange={onParentOrganisationUnit}
@@ -127,7 +160,7 @@ const InvoiceSelectionContainer = (props) => {
       <br />
       <br />
       <br />
-      <SelectionResults {...props} orgUnits={orgUnits?.organisationUnits} pager={orgUnits?.pager}/>
+      <SelectionResults {...props} orgUnits={orgUnits?.organisationUnits} pager={orgUnits?.pager} />
     </Paper>
   );
 };

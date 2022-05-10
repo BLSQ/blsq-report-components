@@ -169,28 +169,29 @@ export const buildFormData = async ({ dhis2, api, dataEntryCode, activeContract,
     error(de) {
       return this.errors[this.getKey(de)];
     },
-    getKey(de) {
+    getKey(de, givenPeriod) {
       const deCoc = de.split(".");
-      return [activeContract.orgUnit.id, period, deCoc[0], deCoc[1] || defaultCoc].join("-");
+      return [activeContract.orgUnit.id, givenPeriod || period, deCoc[0], deCoc[1] || defaultCoc].join("-");
     },
-    getError(de) {
-      const key = this.getKey(de);
+    getError(de, givenPeriod) {
+      const key = this.getKey(de, givenPeriod);
       return this.errors[key];
     },
-    isModified(de) {
-      const key = this.getKey(de);
+    isModified(de, givenPeriod) {
+      const key = this.getKey(de, givenPeriod);
       return this.valids[key] == true;
     },
-    isUpdating(de) {
-      const key = this.getKey(de);
+    isUpdating(de, givenPeriod) {
+      const key = this.getKey(de, givenPeriod);
       return this.updating[key] == true;
     },
-    isInvalid(de) {
-      const key = this.getKey(de);
+    isInvalid(de, givenPeriod) {
+      const key = this.getKey(de, givenPeriod);
       return this.valids[key] == false;
     },
-    getValue(de) {
-      const key = this.getKey(de);
+    getValue(de, givenPeriod) {
+      const key = this.getKey(de, givenPeriod);
+      debugger;
       const ourValues = this.indexedValues[key];
       return ourValues ? ourValues[0] : undefined;
     },
@@ -203,9 +204,10 @@ export const buildFormData = async ({ dhis2, api, dataEntryCode, activeContract,
         return this.calculator[calculatorFunction]();
       }
     },
-    async updateValue(de, value) {
+    async updateValue({ dataElement, value, givenPeriod, givenDataSetId}) {
+      const de = dataElement
       const deCoc = de.split(".");
-      const key = this.getKey(de);
+      const key = this.getKey(de, givenPeriod);
       if (this.updating[key]) {
         return;
       } else {
@@ -214,9 +216,9 @@ export const buildFormData = async ({ dhis2, api, dataEntryCode, activeContract,
       const newValue = {
         de: deCoc[0],
         co: deCoc[1] || defaultCoc,
-        ds: dataSet.id,
+        ds: givenDataSetId || dataSet.id,
         ou: activeContract.orgUnit.id,
-        pe: period,
+        pe: givenPeriod || period,
         value: value,
       };
       try {

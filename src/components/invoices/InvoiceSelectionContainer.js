@@ -144,6 +144,7 @@ const InvoiceSelectionContainer = (props) => {
             )}
           </div>
         </div>
+        {/*
         <OrgUnitAutoComplete
           organisationUnits={topLevelsOrgUnits}
           onChange={onParentOrganisationUnit}
@@ -156,11 +157,14 @@ const InvoiceSelectionContainer = (props) => {
         </FormControl>
         <br />
         {loading ? <LinearProgress variant="query" /> : ""}
+            */}
       </div>
       <br />
       <br />
       <br />
+      {/*
       <SelectionResults {...props} orgUnits={orgUnits?.organisationUnits} pager={orgUnits?.pager} />
+          */}
     </Paper>
   );
 };

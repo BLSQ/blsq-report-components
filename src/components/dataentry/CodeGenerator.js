@@ -1,4 +1,5 @@
 import PapaParse from "papaparse";
+import DatePeriods from "../../support/DatePeriods";
 import DecisionTable from "./DecisionTable";
 
 export const tokenize = (expression) => expression.split(/([\w]+)|\"[\w\s]+\"/g);
@@ -6,15 +7,14 @@ export const tokenize = (expression) => expression.split(/([\w]+)|\"[\w\s]+\"/g)
 export const valuesDependencies = (expression) => expression.split(/(\%\{\w+\})/g).filter((t) => t.startsWith("%{"));
 
 export const defaultSubstitutions = () => {
-  return { IF: "IFF", sum: "SUM", " =": "==", "=": "==" };
+  return { IF: "IFF", sum: "SUM", " =": "==", "=": "==", AND: "&&" };
 };
 
-
 export const fixIfStatement = (expression) => {
-  expression = expression.replace("if (", 'IF(')
-  expression = expression.replace("if(", 'IF(')
-  return expression
-}
+  expression = expression.replace("if (", "IF(");
+  expression = expression.replace("if(", "IF(");
+  return expression;
+};
 export const generateGetterSetterForState = (hesabuPackage, activity, state, orgunitid, period) => {
   const codes = [];
   const field_name = `${hesabuPackage.code}_${activity.code}_${state}_${orgunitid}_${period}`;
@@ -60,9 +60,17 @@ export const generateIsNullForState = (hesabuPackage, activity, state, orgunitid
   return codes.join("\n");
 };
 
-export const generateActivityFormula = (hesabuPackage, activity, formula, orgunitid, period, stateOrFormulaCodes) => {
+export const generateActivityFormula = (
+  hesabuPackage,
+  activity,
+  formula,
+  orgunitid,
+  period,
+  invoicePeriod,
+  stateOrFormulaCodes,
+) => {
   let expandedformula = "" + formula.expression;
-  expandedformula = fixIfStatement(expandedformula)
+  expandedformula = fixIfStatement(expandedformula);
   const substitutions = defaultSubstitutions();
   for (let substit of stateOrFormulaCodes) {
     substitutions[substit] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`;
@@ -83,6 +91,25 @@ export const generateActivityFormula = (hesabuPackage, activity, formula, orguni
   const tokens = tokenize(formula.expression);
 
   expandedformula = tokens.map((token) => substitutions[token] || token).join("");
+
+  for (let activityFormulaCode of Object.keys(hesabuPackage.activity_formulas)) {
+    substitutions["%{" + activityFormulaCode + "_current_quarter_values}"] = DatePeriods.split(
+      invoicePeriod,
+      "monthly",
+    )
+      .map(
+        (monthPeriod) =>
+          `calculator.${hesabuPackage.code}_${activity.code}_${activityFormulaCode}_${orgunitid}_${monthPeriod}()`,
+      )
+      .join(" , ");
+  }
+  // handle %{..._values} to for all activities
+  const valuesTokens = valuesDependencies(expandedformula);
+
+  for (let token of valuesTokens) {
+    expandedformula = expandedformula.replace(token, substitutions[token] || token);
+  }
+
   if (expandedformula.includes("%{")) {
     throw new Error(
       `Unsupported feature for ${formula.code} : ${expandedformula}, probably need to ignore the formula`,
@@ -106,7 +133,7 @@ export const generatePackageFormula = (hesabuPackage, formulaCode, orgunitid, pe
   }
 
   let expression = hesabuPackage.formulas[formulaCode].expression + "";
-  expression = fixIfStatement(expression)
+  expression = fixIfStatement(expression);
 
   const tokens = tokenize(expression);
   // references between package formulas
@@ -176,19 +203,26 @@ export const generateDecisionTable = (hesabuPackage, activity, decisionTable, or
     for (let outHeader of decisionTable.outHeaders) {
       codes.push("/* decision table" + JSON.stringify(matchedRule) + " */");
       codes.push(`${hesabuPackage.code}_${activity.code}_${outHeader}_${orgunitid}_${period}: () => {`);
-      const value = matchedRule[outHeader]
+      const value = matchedRule[outHeader];
       if (hasSomeLettersRegExp.test(value)) {
-        codes.push("  return \"" + value+"\"");
+        codes.push('  return "' + value + '"');
       } else {
         codes.push("  return " + value);
       }
-      codes.push("},");   
+      codes.push("},");
     }
-  } 
+  }
   return codes.join("\n");
 };
 
-export const generateCode = (hesabuPackage, orgunitid, period, activityFormulaCodes, packageFormulaCodes, orgUnit) => {
+export const generateCode = (
+  hesabuPackage,
+  orgunitid,
+  invoicePeriod,
+  activityFormulaCodes,
+  packageFormulaCodes,
+  orgUnit,
+) => {
   let codes = ["calculator = { "];
 
   codes.push("setIndexedValues: function (val) { calculator.field_indexedValues = val}, ");
@@ -215,37 +249,38 @@ export const generateCode = (hesabuPackage, orgunitid, period, activityFormulaCo
 
   const states = stateOrFormulaCodes.filter((k) => !allFormulaCodes.includes(k));
 
-  for (let activity of hesabuPackage.activities) {
-    // states getter/setter
-    for (let state of states) {
-      codes.push(generateGetterSetterForState(hesabuPackage, activity, state, orgunitid, period));
-    }
+  for (let period of DatePeriods.split(invoicePeriod, hesabuPackage.frequency)) {
+    for (let activity of hesabuPackage.activities) {
+      // states getter/setter
+      for (let state of states) {
+        codes.push(generateGetterSetterForState(hesabuPackage, activity, state, orgunitid, period));
+      }
 
-    // state is_null
-    for (let state of states) {
-      codes.push(generateIsNullForState(hesabuPackage, activity, state, orgunitid, period));
-    }
+      // state is_null
+      for (let state of states) {
+        codes.push(generateIsNullForState(hesabuPackage, activity, state, orgunitid, period));
+      }
 
-    // activityFormulas
-    for (let formula of activityFormulas) {
-      codes.push(generateActivityFormula(hesabuPackage, activity, formula, orgunitid, period, stateOrFormulaCodes));
-    }
-    // decision tables
-    if (hesabuPackage.activity_decision_tables) {
-      for (let rawDecisionTable of hesabuPackage.activity_decision_tables) {
-        const decisionTable = new DecisionTable(rawDecisionTable);
-        if (decisionTable.matchPeriod(period)) {
-          codes.push(generateDecisionTable(hesabuPackage, activity, decisionTable, orgUnit, period));
+      // activityFormulas
+      for (let formula of activityFormulas) {
+        codes.push(generateActivityFormula(hesabuPackage, activity, formula, orgunitid, period, invoicePeriod, stateOrFormulaCodes));
+      }
+      // decision tables
+      if (hesabuPackage.activity_decision_tables) {
+        for (let rawDecisionTable of hesabuPackage.activity_decision_tables) {
+          const decisionTable = new DecisionTable(rawDecisionTable);
+          if (decisionTable.matchPeriod(period)) {
+            codes.push(generateDecisionTable(hesabuPackage, activity, decisionTable, orgUnit, period));
+          }
         }
       }
     }
-  }
 
-  // package formulas
-  for (let formulaCode of Object.keys(hesabuPackage.formulas).filter((k) => packageFormulaCodes.includes(k))) {
-    codes.push(generatePackageFormula(hesabuPackage, formulaCode, orgunitid, period, stateOrFormulaCodes));
+    // package formulas
+    for (let formulaCode of Object.keys(hesabuPackage.formulas).filter((k) => packageFormulaCodes.includes(k))) {
+      codes.push(generatePackageFormula(hesabuPackage, formulaCode, orgunitid, period, stateOrFormulaCodes));
+    }
   }
-
   codes.push("}");
   codes.push("return calculator");
   const fullCode = codes.join("\n");

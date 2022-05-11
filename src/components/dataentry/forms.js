@@ -191,7 +191,7 @@ export const buildFormData = async ({ dhis2, api, dataEntryCode, activeContract,
     },
     getValue(de, givenPeriod) {
       const key = this.getKey(de, givenPeriod);
-      debugger;
+      
       const ourValues = this.indexedValues[key];
       return ourValues ? ourValues[0] : undefined;
     },

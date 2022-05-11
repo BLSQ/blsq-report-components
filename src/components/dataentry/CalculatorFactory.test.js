@@ -66,6 +66,14 @@ describe("CalculatorFactory", () => {
                     "expression": "bareme_unitaire",
                     "frequency": "monthly",
                     "exportable_formula_code": null
+                },
+                "quarterly_subsides": {
+                    "short_name": "quarterly_subsides",
+                    "description": "quarterly_subsides",
+                    "expression": "sum(%{subsides_current_quarter_values})",
+                    "frequency": "monthly",
+                    "exportable_formula_code": null
+                    
                 }
             },
             "activity_decision_tables": [
@@ -369,5 +377,41 @@ describe("CalculatorFactory", () => {
         }).toThrow ("Unsupported feature for total_subsides_trimestre_passe_pma : SUM(%{subsides_trimestriels_last_1_quarters_exclusive_window_values}), probably need to ignore the formula")
     })
 
-    
+    it("it's calculating quantity on a quaterly period: decision table, activity and package formulas + ROUND SUM %{_values}", () => {
+        const quantityPackage = packages.quantite_pma
+        const period = "2020Q1"
+        const rawValues = [
+            newDataValue("202001", quantityPackage.activities[0].validee, "4"),
+            newDataValue("202001", quantityPackage.activities[1].validee, "8"),
+            newDataValue("202001", quantityPackage.activities[2].validee, "10"),
+            newDataValue("202002", quantityPackage.activities[0].validee, "1"),
+            newDataValue("202003", quantityPackage.activities[1].validee, "2"),
+            newDataValue("202002", quantityPackage.activities[2].validee, "3"),
+        ]
+
+        const calculator = generateCalculator(
+            quantityPackage,
+            orgUnit.id,
+            period,
+            Object.keys(quantityPackage.activity_formulas),
+            Object.keys(quantityPackage.formulas),
+            orgUnit)
+
+        const indexedValues = _.groupBy(rawValues, (v) =>
+            [v.orgUnit, v.period, v.dataElement, v.categoryOptionCombo].join("-"),
+        );
+
+        calculator.setIndexedValues(indexedValues)
+        calculator.setDefaultCoc(defaultCoc)
+
+        expect(calculator.quantite_pma_quant03_subsides_zaerz654_202001()).toEqual(43)
+        expect(calculator.quantite_pma_quant03_subsides_zaerz654_202002()).toEqual(12.9)
+        expect(calculator.quantite_pma_quant03_subsides_zaerz654_202003()).toEqual(0)
+
+        const expectedTotal = 43 + 12.9 + 0
+        expect(calculator.quantite_pma_quant03_quarterly_subsides_zaerz654_202001()).toEqual(expectedTotal)
+        expect(calculator.quantite_pma_quant03_quarterly_subsides_zaerz654_202002()).toEqual(expectedTotal)
+        expect(calculator.quantite_pma_quant03_quarterly_subsides_zaerz654_202003()).toEqual(expectedTotal)
+
+    });
 })

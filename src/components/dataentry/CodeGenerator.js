@@ -40,6 +40,33 @@ export const generateGetterSetterForState = (hesabuPackage, activity, state, org
   return codes.join("\n");
 };
 
+export const generateGetterSetterForStateLevel1Quarterly = (hesabuPackage, activity, state, orgUnit, period) => {
+  const quarterPeriod = DatePeriods.split(period, "quarterly")[0];
+  const codes = [];
+  const parentId = orgUnit.path.split("/")[1];
+  const field_name = `${hesabuPackage.code}_${activity.code}_${state}_level_1_quarterly_${orgUnit.id}_${period}`;
+  // getter
+  codes.push(`${field_name}: function(){`);
+  codes.push("    if (calculator.indexedValues()) {");
+  codes.push('         const deCoc = "' + activity[state] + "\".split('.');");
+  codes.push(
+    `         const k = [\"${parentId}\", \"${quarterPeriod}\", deCoc[0], deCoc[1] || calculator.defaultCoc()].join("-");`,
+  );
+  codes.push("         const v = calculator.indexedValues()[k]");
+  codes.push('         if(v && v[0].value == "") { return 0 }');
+  codes.push("         if(v) { return parseFloat(v[0].value) }");
+  codes.push("    }");
+  codes.push(`   return calculator.field_${field_name} == undefined ? 0 : this.field_${field_name}`);
+  codes.push("},");
+
+  // setter
+  codes.push(`set_${field_name}: function(val){`);
+  codes.push(`   calculator.field_${field_name} = val`);
+  codes.push("},");
+
+  return codes.join("\n");
+};
+
 export const generateIsNullForState = (hesabuPackage, activity, state, orgunitid, period) => {
   const codes = [];
   const field_name = `${hesabuPackage.code}_${activity.code}_${state}_${orgunitid}_${period}`;
@@ -68,6 +95,7 @@ export const generateActivityFormula = (
   period,
   invoicePeriod,
   stateOrFormulaCodes,
+  states,
 ) => {
   let expandedformula = "" + formula.expression;
   expandedformula = fixIfStatement(expandedformula);
@@ -77,6 +105,9 @@ export const generateActivityFormula = (
     substitutions[
       substit + "_is_null"
     ] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_is_null_${orgunitid}_${period}()`;
+    substitutions[
+      substit + "_level_1_quarterly"
+    ] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_level_1_quarterly_${orgunitid}_${period}()`;
   }
   if (hesabuPackage.activity_decision_tables) {
     for (let rawDecisionTable of hesabuPackage.activity_decision_tables) {
@@ -87,23 +118,33 @@ export const generateActivityFormula = (
       }
     }
   }
+  // allow activity formulas to reference package formulas
+  for (let packageFormulaCode of Object.keys(hesabuPackage.formulas)) {
+    substitutions[
+      packageFormulaCode
+    ] = `calculator.${hesabuPackage.code}_${packageFormulaCode}_${orgunitid}_${period}()`;
+  }
+
+  // ex taux_de_change_level_1_quarterly
+  for (let substit of states) {
+    substit = substit + "_level_1_quarterly";
+    substitutions[substit] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`;
+
+  }
 
   const tokens = tokenize(formula.expression);
 
   expandedformula = tokens.map((token) => substitutions[token] || token).join("");
 
   for (let activityFormulaCode of Object.keys(hesabuPackage.activity_formulas)) {
-    substitutions["%{" + activityFormulaCode + "_current_quarter_values}"] = DatePeriods.split(
-      invoicePeriod,
-      "monthly",
-    )
+    substitutions["%{" + activityFormulaCode + "_current_quarter_values}"] = DatePeriods.split(invoicePeriod, "monthly")
       .map(
         (monthPeriod) =>
           `calculator.${hesabuPackage.code}_${activity.code}_${activityFormulaCode}_${orgunitid}_${monthPeriod}()`,
       )
       .join(" , ");
   }
-  // handle %{..._values} to for all activities
+  // handle %{..._values} to for all activities (only _current_quarter_values for the moment)
   const valuesTokens = valuesDependencies(expandedformula);
 
   for (let token of valuesTokens) {
@@ -241,19 +282,23 @@ export const generateCode = (
 
   const stateOrFormulaCodes = Array.from(
     new Set(
-      Object.keys(hesabuPackage.activities[0])
-        .filter((k) => k !== "name" && k !== "code")
+      hesabuPackage.activities
+        .flatMap((activity) => {
+          return Object.keys(activity).filter((k) => k !== "name" && k !== "code");
+        })
         .concat(allFormulaCodes),
     ),
   );
 
+  
   const states = stateOrFormulaCodes.filter((k) => !allFormulaCodes.includes(k));
-
+ 
   for (let period of DatePeriods.split(invoicePeriod, hesabuPackage.frequency)) {
     for (let activity of hesabuPackage.activities) {
       // states getter/setter
       for (let state of states) {
         codes.push(generateGetterSetterForState(hesabuPackage, activity, state, orgunitid, period));
+        codes.push(generateGetterSetterForStateLevel1Quarterly(hesabuPackage, activity, state, orgUnit, period));
       }
 
       // state is_null
@@ -263,7 +308,18 @@ export const generateCode = (
 
       // activityFormulas
       for (let formula of activityFormulas) {
-        codes.push(generateActivityFormula(hesabuPackage, activity, formula, orgunitid, period, invoicePeriod, stateOrFormulaCodes));
+        codes.push(
+          generateActivityFormula(
+            hesabuPackage,
+            activity,
+            formula,
+            orgunitid,
+            period,
+            invoicePeriod,
+            stateOrFormulaCodes,
+            states,
+          ),
+        );
       }
       // decision tables
       if (hesabuPackage.activity_decision_tables) {

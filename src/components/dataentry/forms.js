@@ -166,8 +166,8 @@ export const buildFormData = async ({ dhis2, api, dataEntryCode, activeContract,
       const dataSet = dataSetId ? this.dataSets.find((d) => d.id == dataSetId) : this.dataSet;
       return dataSet && dataSet.access && dataSet.access.data.write;
     },
-    error(de) {
-      return this.errors[this.getKey(de)];
+    error(de, givenPeriod) {
+      return this.errors[this.getKey(de, givenPeriod)];
     },
     getKey(de, givenPeriod) {
       const deCoc = de.split(".");
@@ -201,7 +201,12 @@ export const buildFormData = async ({ dhis2, api, dataEntryCode, activeContract,
         ? `${hesabuPackage.code}_${activity.code}_${formulaCode}_${orgUnitId}_${period}`
         : `${hesabuPackage.code}_${formulaCode}_${orgUnitId}_${period}`;
       if (this.calculator && this.calculator[calculatorFunction]) {
+        try {
         return this.calculator[calculatorFunction]();
+        } catch (e) {
+          console.log(e)
+          throw e
+        }
       }
     },
     async updateValue({ dataElement, value, givenPeriod, givenDataSetId}) {

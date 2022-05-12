@@ -40,6 +40,33 @@ export const generateGetterSetterForState = (hesabuPackage, activity, state, org
   return codes.join("\n");
 };
 
+export const generateGetterSetterForStateQuarterly = (hesabuPackage, activity, state, orgunitid, period) => {
+  const codes = [];
+  const quarterPeriod = DatePeriods.split(period, "quarterly")[0];
+
+  const field_name = `${hesabuPackage.code}_${activity.code}_${state}_quarterly_${orgunitid}_${period}`;
+  // getter
+  codes.push(`${field_name}: function(){`);
+  codes.push("    if (calculator.indexedValues()) {");
+  codes.push('         const deCoc = "' + activity[state] + "\".split('.');");
+  codes.push(
+    `         const k = [\"${orgunitid}\", \"${quarterPeriod}\", deCoc[0], deCoc[1] || calculator.defaultCoc()].join("-");`,
+  );
+  codes.push("         const v = calculator.indexedValues()[k]");
+  codes.push('         if(v && v[0].value == "") { return 0 }');
+  codes.push("         if(v) { return parseFloat(v[0].value) }");
+  codes.push("    }");
+  codes.push(`   return calculator.field_${field_name} == undefined ? 0 : this.field_${field_name}`);
+  codes.push("},");
+
+  // setter
+  codes.push(`set_${field_name}: function(val){`);
+  codes.push(`   calculator.field_${field_name} = val`);
+  codes.push("},");
+
+  return codes.join("\n");
+};
+
 export const generateGetterSetterForStateLevel1Quarterly = (hesabuPackage, activity, state, orgUnit, period) => {
   const quarterPeriod = DatePeriods.split(period, "quarterly")[0];
   const codes = [];
@@ -108,6 +135,10 @@ export const generateActivityFormula = (
     substitutions[
       substit + "_level_1_quarterly"
     ] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_level_1_quarterly_${orgunitid}_${period}()`;
+    substitutions[
+      substit + "_quarterly"
+    ] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_quarterly_${orgunitid}_${period}()`;
+
   }
   if (hesabuPackage.activity_decision_tables) {
     for (let rawDecisionTable of hesabuPackage.activity_decision_tables) {
@@ -298,6 +329,7 @@ export const generateCode = (
       // states getter/setter
       for (let state of states) {
         codes.push(generateGetterSetterForState(hesabuPackage, activity, state, orgunitid, period));
+        codes.push(generateGetterSetterForStateQuarterly(hesabuPackage, activity, state, orgunitid, period));
         codes.push(generateGetterSetterForStateLevel1Quarterly(hesabuPackage, activity, state, orgUnit, period));
       }
 

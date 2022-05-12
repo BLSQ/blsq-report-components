@@ -44,6 +44,7 @@ const Dhis2Input = ({ element, dataElement, t, fullWidth }) => {
   }
   const isComplete = formDataContext.isDataSetComplete();
   const isDataWritable = formDataContext.isDataWritable();
+  const disabled = isComplete || !isDataWritable;
 
   const onChange = (e) => {
     setRawValue(e.target.value);
@@ -53,7 +54,7 @@ const Dhis2Input = ({ element, dataElement, t, fullWidth }) => {
   const onBooleanChange = (e) => {
     setRawValue(e.target.value);
     setDebouncedState(e.target.value);
-  }
+  };
 
   const handleOpenToolTip = () => {
     setOpen(true);
@@ -61,7 +62,6 @@ const Dhis2Input = ({ element, dataElement, t, fullWidth }) => {
   const handleCloseToolTip = () => {
     setOpen(false);
   };
-
 
   const widget = isBoolean ? (
     <FormControl
@@ -74,17 +74,32 @@ const Dhis2Input = ({ element, dataElement, t, fullWidth }) => {
             : "",
       }}
     >
-      <RadioGroup row value={rawValue} onChange={onBooleanChange} disabled={isComplete || !isDataWritable}>
-        <FormControlLabel value="true" control={<Radio />} label={t("dataEntry.valueType.BOOLEAN.true")} />
-        <FormControlLabel value="false" control={<Radio />} label={t("dataEntry.valueType.BOOLEAN.false")} />
-        <FormControlLabel value="" control={<Radio />} label={t("dataEntry.valueType.BOOLEAN.undefined")} />
+      <RadioGroup row value={rawValue} onChange={onBooleanChange} disabled={disabled}>
+        <FormControlLabel
+          value="true"
+          disabled={disabled}
+          control={<Radio />}
+          label={t("dataEntry.valueType.BOOLEAN.true")}
+        />
+        <FormControlLabel
+          value="false"
+          disabled={disabled}
+          control={<Radio />}
+          label={t("dataEntry.valueType.BOOLEAN.false")}
+        />
+        <FormControlLabel
+          value=""
+          disabled={disabled}
+          control={<Radio />}
+          label={t("dataEntry.valueType.BOOLEAN.undefined")}
+        />
       </RadioGroup>
     </FormControl>
   ) : (
     <TextField
       error={formDataContext.isInvalid(dataElement)}
       type="text"
-      disabled={isComplete || !isDataWritable}
+      disabled={disabled}
       value={rawValue}
       onChange={onChange}
       onDoubleClick={handleOpenToolTip}

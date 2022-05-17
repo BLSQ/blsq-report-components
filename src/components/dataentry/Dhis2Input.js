@@ -47,8 +47,10 @@ const Dhis2Input = ({ element, dataElement, t, fullWidth, period, dataSet, onFoc
   if (formDataContext == undefined) {
     return <></>;
   }
+
   const isComplete = formDataContext.isDataSetComplete(dataSet, period);
   const isDataWritable = formDataContext.isDataWritable(dataSet, period);
+  const disabled = isComplete || !isDataWritable;
 
   const onChange = (e) => {
     setRawValue(e.target.value);
@@ -78,17 +80,32 @@ const Dhis2Input = ({ element, dataElement, t, fullWidth, period, dataSet, onFoc
             : "",
       }}
     >
-      <RadioGroup row value={rawValue} onChange={onBooleanChange} disabled={isComplete || !isDataWritable}>
-        <FormControlLabel value="true" control={<Radio />} label={t("dataEntry.valueType.BOOLEAN.true")} />
-        <FormControlLabel value="false" control={<Radio />} label={t("dataEntry.valueType.BOOLEAN.false")} />
-        <FormControlLabel value="" control={<Radio />} label={t("dataEntry.valueType.BOOLEAN.undefined")} />
+      <RadioGroup row value={rawValue} onChange={onBooleanChange} disabled={disabled}>
+        <FormControlLabel
+          value="true"
+          disabled={disabled}
+          control={<Radio />}
+          label={t("dataEntry.valueType.BOOLEAN.true")}
+        />
+        <FormControlLabel
+          value="false"
+          disabled={disabled}
+          control={<Radio />}
+          label={t("dataEntry.valueType.BOOLEAN.false")}
+        />
+        <FormControlLabel
+          value=""
+          disabled={disabled}
+          control={<Radio />}
+          label={t("dataEntry.valueType.BOOLEAN.undefined")}
+        />
       </RadioGroup>
     </FormControl>
   ) : (
     <TextField
       error={formDataContext.isInvalid(dataElement, period)}
       type="text"
-      disabled={isComplete || !isDataWritable}
+      disabled={disabled}
       value={rawValue}
       onChange={onChange}
       onDoubleClick={handleOpenToolTip}

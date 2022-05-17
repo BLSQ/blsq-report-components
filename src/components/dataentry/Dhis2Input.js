@@ -47,8 +47,8 @@ const Dhis2Input = ({ element, dataElement, t, fullWidth, period, dataSet, onFoc
   if (formDataContext == undefined) {
     return <></>;
   }
-  const isComplete = formDataContext.isDataSetComplete(dataSet);
-  const isDataWritable = formDataContext.isDataWritable(dataSet);
+  const isComplete = formDataContext.isDataSetComplete(dataSet, period);
+  const isDataWritable = formDataContext.isDataWritable(dataSet, period);
 
   const onChange = (e) => {
     setRawValue(e.target.value);

@@ -12,7 +12,7 @@ import {
 import FormDataContext from "./FormDataContext";
 import useDebounce from "../shared/useDebounce";
 
-const Dhis2Input = ({ element, dataElement, t, fullWidth }) => {
+const Dhis2Input = ({ element, dataElement, t, fullWidth, period, dataSet, onFocus, onBlur }) => {
   const formDataContext = useContext(FormDataContext);
   const [rawValue, setRawValue] = useState("");
   const [dataValue, setDataValue] = useState("");
@@ -26,7 +26,7 @@ const Dhis2Input = ({ element, dataElement, t, fullWidth }) => {
   const isBoolean = dataElementDescriptor && dataElementDescriptor.valueType == "BOOLEAN";
 
   useEffect(() => {
-    const value = formDataContext && formDataContext.getValue && formDataContext.getValue(dataElement);
+    const value = formDataContext && formDataContext.getValue && formDataContext.getValue(dataElement, period);
     const dataValue = value !== undefined ? value : { dataElement: dataElement, value: "" };
     setDataValue(dataValue);
     const defaultRawValue = dataValue !== undefined ? dataValue.value : "";
@@ -35,15 +35,20 @@ const Dhis2Input = ({ element, dataElement, t, fullWidth }) => {
 
   useEffect(() => {
     if (formDataContext && debouncedState !== undefined && formDataContext.updateValue) {
-      formDataContext.updateValue(dataElement, debouncedState);
+      formDataContext.updateValue({
+        dataElement: dataElement,
+        value: debouncedState,
+        givenPeriod: period,
+        givenDataSetId: dataSet,
+      });
     }
   }, [debouncedState]);
 
   if (formDataContext == undefined) {
     return <></>;
   }
-  const isComplete = formDataContext.isDataSetComplete();
-  const isDataWritable = formDataContext.isDataWritable();
+  const isComplete = formDataContext.isDataSetComplete(dataSet, period);
+  const isDataWritable = formDataContext.isDataWritable(dataSet, period);
 
   const onChange = (e) => {
     setRawValue(e.target.value);
@@ -53,7 +58,7 @@ const Dhis2Input = ({ element, dataElement, t, fullWidth }) => {
   const onBooleanChange = (e) => {
     setRawValue(e.target.value);
     setDebouncedState(e.target.value);
-  }
+  };
 
   const handleOpenToolTip = () => {
     setOpen(true);
@@ -62,14 +67,13 @@ const Dhis2Input = ({ element, dataElement, t, fullWidth }) => {
     setOpen(false);
   };
 
-
   const widget = isBoolean ? (
     <FormControl
       style={{
         backgroundColor:
-          formDataContext && formDataContext.isModified(dataElement)
+          formDataContext && formDataContext.isModified(dataElement, period)
             ? "#badbad"
-            : formDataContext.isUpdating(dataElement)
+            : formDataContext.isUpdating(dataElement, period)
             ? "orange"
             : "",
       }}
@@ -82,26 +86,28 @@ const Dhis2Input = ({ element, dataElement, t, fullWidth }) => {
     </FormControl>
   ) : (
     <TextField
-      error={formDataContext.isInvalid(dataElement)}
+      error={formDataContext.isInvalid(dataElement, period)}
       type="text"
       disabled={isComplete || !isDataWritable}
       value={rawValue}
       onChange={onChange}
       onDoubleClick={handleOpenToolTip}
       onClick={handleCloseToolTip}
+      onFocus={onFocus}
+      onBlur={onBlur}
       fullWidth={fullWidth}
       inputProps={{
         style: {
           textAlign: "right",
           backgroundColor:
-            formDataContext && formDataContext.isModified(dataElement)
+            formDataContext && formDataContext.isModified(dataElement, period)
               ? "#badbad"
-              : formDataContext.isUpdating(dataElement)
+              : formDataContext.isUpdating(dataElement, period)
               ? "orange"
               : "",
         },
       }}
-      helperText={formDataContext && formDataContext.error(dataElement)}
+      helperText={formDataContext && formDataContext.error(dataElement, period)}
     />
   );
 
@@ -120,7 +126,7 @@ const Dhis2Input = ({ element, dataElement, t, fullWidth }) => {
           onClose={handleCloseToolTip}
           title={
             <div>
-              <pre>{JSON.stringify({ dataValue, isComplete, isDataWritable }, undefined, 2)}</pre>
+              <pre>{JSON.stringify({ period, dataValue, isComplete, isDataWritable }, undefined, 2)}</pre>
             </div>
           }
         >

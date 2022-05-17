@@ -12,14 +12,12 @@ import { Paper } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import { fetchCompleteDataSetRegistrations } from "./fetchCompleteDataSetRegistrations";
 
-
 const styles = (theme) => ({
   root: {
-    paddingLeft:theme.spacing(1), 
+    paddingLeft: theme.spacing(1),
     paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1)
-  }
-  
+    paddingBottom: theme.spacing(1),
+  },
 });
 const useStyles = makeStyles((theme) => styles(theme));
 
@@ -37,7 +35,13 @@ const CompletenessView = (props) => {
     if (zones.length == 0) {
       queryParams.delete("selectedZones");
     } else {
-      queryParams.set("selectedZones", zones.filter(r => r.orgUnit).map((r) => r.orgUnit.id).join(";"));
+      queryParams.set(
+        "selectedZones",
+        zones
+          .filter((r) => r.orgUnit)
+          .map((r) => r.orgUnit.id)
+          .join(";"),
+      );
     }
     const newUrl = urlWith(queryParams);
 
@@ -53,9 +57,9 @@ const CompletenessView = (props) => {
   const currentUser = props.currentUser;
   const contractService = PluginRegistry.extension("contracts.service");
   const accessibleOrgunitIds = new Set(currentUser.organisationUnits.map((ou) => ou.id));
-  const queryParams = anchorQueryParams()
-  const pageName = queryParams.get("pageName")
-  
+  const queryParams = anchorQueryParams();
+  const pageName = queryParams.get("pageName");
+
   const fetchContractsQuery = useQuery(["fetchContracts", quarterPeriod, pageName], async () => {
     const api = await dhis2.api();
     let contracts = (await contractService.findAll()).filter(
@@ -65,8 +69,8 @@ const CompletenessView = (props) => {
     );
 
     if (queryParams.get("ou.contract.codes")) {
-      const codes = queryParams.get("ou.contract.codes").split(",")
-      contracts = contracts.filter(c => c.codes.some(code => codes.includes(code)))
+      const codes = queryParams.get("ou.contract.codes").split(",");
+      contracts = contracts.filter((c) => c.codes.some((code) => codes.includes(code)));
     }
     const completeDataSetRegistrations = await fetchCompleteDataSetRegistrations(
       api,
@@ -74,12 +78,14 @@ const CompletenessView = (props) => {
       DataEntries,
       currentUser.organisationUnits,
     );
+    const dataSets = (await api.get("dataSets", { fields: "id,name,periodType", paging: false })).dataSets;
     const { distinctDataEntries, results } = toCompleteness(
       contracts,
       completeDataSetRegistrations,
       DataEntries,
       quarterPeriod,
       window.location.href.split("#")[0],
+      dataSets,
     );
     setDistinctDataEntries(distinctDataEntries);
 
@@ -89,21 +95,21 @@ const CompletenessView = (props) => {
 
     const selectedZones = queryParams.get("selectedZones");
     if (statsByZone && selectedZones) {
-      const selectOrgUnits = []
+      const selectOrgUnits = [];
       for (let row of statsByZone) {
         if (row && row.orgUnit && selectedZones.includes(row.orgUnit.id)) {
-          selectOrgUnits.push(row)
+          selectOrgUnits.push(row);
         }
       }
-      setSelectedZones(selectOrgUnits)
+      setSelectedZones(selectOrgUnits);
     }
-  })
+  });
 
   let filteredCompletnessInfos = completnessInfos;
-  const zoneNames = selectedZones.filter(r => r.orgUnit).map((stat) => stat.orgUnit.name);
+  const zoneNames = selectedZones.filter((r) => r.orgUnit).map((stat) => stat.orgUnit.name);
 
   if (selectedZones.length > 0) {
-    const zoneIds = new Set(selectedZones.filter(r=> r.orgUnit).map((stat) => stat.orgUnit.id));
+    const zoneIds = new Set(selectedZones.filter((r) => r.orgUnit).map((stat) => stat.orgUnit.id));
     filteredCompletnessInfos = completnessInfos.filter((info) =>
       info.contract.orgUnit.ancestors.some((ancestor) => zoneIds.has(ancestor.id)),
     );
@@ -115,7 +121,15 @@ const CompletenessView = (props) => {
   return (
     <div>
       <Paper className={classes.root} elevation={3}>
-        <div style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "flex-start", margin: "12px" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignContent: "center",
+            justifyContent: "flex-start",
+            margin: "12px",
+          }}
+        >
           <Typography variant="h6" style={{ marginRight: "20px" }}>
             {t("completeness.header")}
           </Typography>
@@ -138,10 +152,9 @@ const CompletenessView = (props) => {
                 window.history.pushState({}, "", newUrl);
                 window.location.reload();
               }}
-             />
+            />
           </div>
         </div>
-      
       </Paper>
       <br></br>
       <MUIDataTable
@@ -149,7 +162,7 @@ const CompletenessView = (props) => {
         data={statsByZone}
         columns={columnsStats}
         options={statsTableOptions(quarterPeriod, statsByZone, setSelectedZonesAndQueryParams)}
-      />  
+      />
       <br></br>
 
       <MUIDataTable

@@ -297,9 +297,10 @@ export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos, t)
               }
               let details = undefined;
               if (ex && ex.dataEntryType.dataSetIds) {
+                debugger
                 details = (
                   <span>
-                    {ex.completedDataEntries ? ex.completedDataEntries.length : 0}/{ex.dataEntryType.dataSetIds.length}
+                    {ex.completedDataEntries ? ex.completedCount : 0}/{ ""+ex.expectedCount}
                   </span>
                 );
               }

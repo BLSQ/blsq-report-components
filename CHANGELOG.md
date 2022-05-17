@@ -1,5 +1,10 @@
 # @blsq/blsq-report-components@1.0.110
 
+- [dataentry] allow data entries over multiple datasets mixing [multiple](https://github.com/BLSQ/blsq-report-components/pull/186) periodicity
+- [completeness] adapt the completeness logic to match the data entry adaptations
+
+# @blsq/blsq-report-components@1.0.110
+
 - [contracts] displays disabled orgunit name in dialog from contract show page
 - [contracts] displays column with invalid contracts warnings, creates filter for invalid contracts, sorts invalid contracts first by default
 

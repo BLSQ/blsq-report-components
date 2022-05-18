@@ -29,9 +29,6 @@ export const toCompleteness = (
           ? [expectedDataEntry.dataEntryType.dataSetId]
           : expectedDataEntry.dataEntryType.dataSetIds;
 
-        if (contract.orgUnit.id =="S35ZacR66kX") {
-          debugger;
-        }
         const expectedCount = 0;
         const completedCount = 0;
         expectedDataEntry.completedDataEntries = [];

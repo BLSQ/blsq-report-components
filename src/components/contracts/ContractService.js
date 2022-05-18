@@ -248,6 +248,16 @@ class ContractService {
       };
     });
 
+    contracts.forEach((c) => {
+      if (c.orgUnit && c.orgUnit.ancestors) {
+        let index = 0;
+        for (let ancestor of c.orgUnit.ancestors.slice(0, c.orgUnit.ancestors.length - 1)) {
+          c.orgUnit["level" + (index + 1)] = ancestor;
+          index = index + 1;
+        }
+      }
+    });
+  
     return {
       contracts,
       contractsById,

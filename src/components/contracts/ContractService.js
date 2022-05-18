@@ -146,7 +146,9 @@ class ContractService {
     const t = (key, options) => i18n.translator.translate(key, options);
     const validators = this.getValidators();
     const contractFields = this.toContractFields(this.program);
-    return this._validate(validators, contract, { contractFields, t, contracts });
+    const validationContext = { contractFields, t, contracts, cache: {} };
+
+    return this._validate(validators, contract, validationContext);
   }
 
   getValidators() {
@@ -173,6 +175,7 @@ class ContractService {
     const allContractsOverlaps = this.toOverlappings(contracts);
     const contractFields = this.toContractFields(this.program);
     contracts.sort((a, b) => (a.endPeriod < b.endPeriod ? 1 : -1));
+    const validationContext = { contractFields, t, contracts, cache: {} };
     if (orgUnitId) {
       subContracts = contracts.filter(
         (c) => c.fieldValues.contract_main_orgunit && c.fieldValues.contract_main_orgunit === orgUnitId,
@@ -195,7 +198,7 @@ class ContractService {
         );
         const visibleOverlaps = getOverlaps(c.id, subContractsOverlaps, subContractsById);
 
-        const validationErrors = this._validate(validators, c, { contractFields, t, contracts });
+        const validationErrors = this._validate(validators, c, validationContext);
         c.status =
           !coverageIssue && !nonVisibleOverlaps && visibleOverlaps.length === 0 && validationErrors.length === 0;
 
@@ -210,7 +213,7 @@ class ContractService {
       });
       mainContracts.forEach((c, i) => {
         const visibleOverlaps = getOverlaps(c.id, mainContractsOverlaps, mainContractsById);
-        const validationErrors = this._validate(validators, c, { contractFields, t, contracts });
+        const validationErrors = this._validate(validators, c, validationContext);
         c.status = visibleOverlaps.length === 0 && validationErrors.length == 0;
         c.statusDetail = {
           visibleOverlaps,
@@ -238,7 +241,7 @@ class ContractService {
     const contractsOverlaps = this.toOverlappings(contracts);
     const contractsById = this.toContractsById(contracts);
     contracts.forEach((c) => {
-      const validationErrors = this._validate(validators, c, { contractFields, t, contracts });
+      const validationErrors = this._validate(validators, c, validationContext);
       const visibleOverlaps = getOverlaps(c.id, contractsOverlaps, contractsById);
       c.status = visibleOverlaps.length === 0 && validationErrors.length === 0;
       c.statusDetail = {
@@ -257,7 +260,7 @@ class ContractService {
         }
       }
     });
-  
+
     return {
       contracts,
       contractsById,
@@ -313,14 +316,13 @@ class ContractService {
   };
 
   defaultPeriod(contract) {
-    const startDate = getStartDateFromPeriod(getQuarterFromDate(contract.fieldValues.contract_start_date))
-    const endDate =
-         getEndDateFromPeriod(getQuarterFromDate(contract.fieldValues.contract_end_date))
+    const startDate = getStartDateFromPeriod(getQuarterFromDate(contract.fieldValues.contract_start_date));
+    const endDate = getEndDateFromPeriod(getQuarterFromDate(contract.fieldValues.contract_end_date));
 
     contract.fieldValues.contract_start_date = startDate;
     contract.fieldValues.contract_end_date = endDate;
 
-    const tempContract = { fieldValues: {},...contract };
+    const tempContract = { fieldValues: {}, ...contract };
 
     const startPeriod = startDate.split("-");
     const endPeriod = endDate.split("-");

@@ -1,6 +1,7 @@
 import React from "react";
 import InvoiceSelectionContainer from "./InvoiceSelectionContainer";
 import InvoicePage from "./InvoicePage";
+import OrgUnitInvoiceSelectionPage from "./OrgUnitInvoiceSelectionPage";
 import { Route } from "react-router-dom";
 import PluginRegistry from "../core/PluginRegistry";
 import Approvals from "../approvals/Approvals";
@@ -20,6 +21,23 @@ const invoiceRoutes = (props) => {
             onPeriodChange={props.onPeriodChange}
             {...props.config.global}
             dhis2={props.dhis2}
+          />
+        );
+      }}
+    />,
+    <Route
+      key="orgUnitRoute"
+      path="/reports/:period/:orgUnitId"
+      exact
+      component={(routerProps) => {
+        const invoices = PluginRegistry.extension("invoices.invoices");
+        return (
+          <OrgUnitInvoiceSelectionPage
+            currentUser={props.currentUser}
+            invoices={invoices}
+            dhis2={props.dhis2}
+            {...routerProps}
+            {...props.config.global}
           />
         );
       }}

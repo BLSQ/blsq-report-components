@@ -3,7 +3,7 @@ import PluginRegistry from "../core/PluginRegistry";
 import DatePeriods from "../../support/DatePeriods";
 import { List } from "@material-ui/core";
 import InvoiceButton from "./InvoiceButton";
-import Anchors from "./InvoiceAnchors";
+import InvoiceAnchors from "./InvoiceAnchors";
 
 const buildInvoiceTypes = (invoices, orgUnit, period, hideCurrentInvoice, invoiceCode) => {
   let codes = invoices.getInvoiceTypeCodes(orgUnit, period);
@@ -53,13 +53,13 @@ const InvoiceLinks = ({ t, orgUnit, period, hideCurrentInvoice, invoiceCode, max
 
   return (
     <>
-      {!showAll && <InvoiceButton invoiceDataLinks={invoiceDataLinks} />}
+      {!showAll && <InvoiceButton invoiceDataLinks={invoiceDataLinks} orgUnit={orgUnit}/>}
 
       {showAll &&
         invoiceDataLinks.map((link, linkIndex) => (
           <List>
             <li key={link.invoiceName + "-" + linkIndex}>
-              <Anchors invoiceDataLink={link} />
+              <InvoiceAnchors invoiceDataLink={link} />
             </li>
           </List>
         ))}

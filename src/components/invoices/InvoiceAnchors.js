@@ -2,7 +2,7 @@ import React from "react";
 import { Typography, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
-const Anchors = ({ invoiceDataLink }) => {
+const InvoiceAnchors = ({ invoiceDataLink }) => {
   return (
     <>
       <Typography variant="overline" gutterBottom>
@@ -25,4 +25,4 @@ const Anchors = ({ invoiceDataLink }) => {
   );
 };
 
-export default Anchors;
+export default InvoiceAnchors;

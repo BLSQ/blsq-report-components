@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
-import { List, DialogContent } from "@material-ui/core";
+import { List, DialogContent, DialogTitle, Divider } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import Anchors from "./InvoiceAnchors";
+import InvoiceAnchors from "./InvoiceAnchors";
 
-const InvoiceButton = ({ invoiceDataLinks }) => {
+const InvoiceButton = ({ orgUnit, invoiceDataLinks }) => {
   const { t } = useTranslation();
   const [invoiceSelectionOpen, setInvoiceSelectionOpen] = useState(false);
 
@@ -19,11 +19,13 @@ const InvoiceButton = ({ invoiceDataLinks }) => {
         onClose={() => setInvoiceSelectionOpen(false)}
         aria-labelledby="invoice-selection-dialog"
       >
+        <DialogTitle>{orgUnit && orgUnit.name}</DialogTitle>
         <DialogContent>
           {invoiceDataLinks.map((link, linkIndex) => (
             <List>
               <li key={link.invoiceName + "-" + linkIndex}>
-                <Anchors invoiceDataLink={link} />
+                <InvoiceAnchors invoiceDataLink={link} />
+                {invoiceDataLinks.length - 1 !== linkIndex && <Divider />}
               </li>
             </List>
           ))}

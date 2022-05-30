@@ -1,43 +1,71 @@
-export const toCompleteness = (contracts, completeDataSetRegistrations, DataEntries, quarterPeriod, invoiceAppUrl) => {
+import DatePeriods from "../../support/DatePeriods";
+
+export const dsRegistrationPeriods = (dataSet, period) => {
+  const periods = DatePeriods.split(period, dataSet.periodType.toLowerCase());
+  return periods;
+};
+
+export const toCompleteness = (
+  contracts,
+  completeDataSetRegistrations,
+  DataEntries,
+  quarterPeriod,
+  invoiceAppUrl,
+  dataSets,
+) => {
   const completeDataSetRegistrationsByOrgUnitId = _.groupBy(
     completeDataSetRegistrations,
     (cdsr) => cdsr.organisationUnit,
   );
+  const dataSetsById = _.keyBy(dataSets, (dataSet) => dataSet.id);
   const results = [];
   for (let contract of contracts) {
     const expectedDataEntries = DataEntries.getExpectedDataEntries(contract, quarterPeriod);
     if (expectedDataEntries.length > 0) {
       const completedDataEntries = completeDataSetRegistrationsByOrgUnitId[contract.orgUnit.id] || [];
 
-      if (completedDataEntries.length > 0) {
-        for (let expectedDataEntry of expectedDataEntries) {
-          if (expectedDataEntry.dataEntryType.dataSetId) {
-            expectedDataEntry.completedDataEntries = completedDataEntries.filter(
-              (c) => c.dataSet == expectedDataEntry.dataEntryType.dataSetId && c.period == expectedDataEntry.period,
-            );
-            expectedDataEntry.completed = expectedDataEntry.completedDataEntries.length > 0 ? 1 : 0;
-          } else if (expectedDataEntry.dataEntryType.dataSetIds) {
-            expectedDataEntry.completedDataEntries = completedDataEntries.filter(
-              (c) =>
-                expectedDataEntry.dataEntryType.dataSetIds.includes(c.dataSet) && c.period == expectedDataEntry.period,
-            );
-            expectedDataEntry.completed =
-              expectedDataEntry.completedDataEntries.length == expectedDataEntry.dataEntryType.dataSetIds.length
-                ? 1
-                : 0;
+      for (let expectedDataEntry of expectedDataEntries) {
+        const expectedDataSets = expectedDataEntry.dataEntryType.dataSetId
+          ? [expectedDataEntry.dataEntryType.dataSetId]
+          : expectedDataEntry.dataEntryType.dataSetIds;
+
+        const expectedCount = 0;
+        const completedCount = 0;
+        expectedDataEntry.completedDataEntries = [];
+        for (const expectedDataSetId of expectedDataSets) {
+          const dataSet = dataSetsById[expectedDataSetId];
+          const periods = dsRegistrationPeriods(dataSet, expectedDataEntry.period);
+          for (const period of periods) {
+            expectedCount += 1;
+            const completeForPeriod = completedDataEntries.filter((c) => c.dataSet == dataSet.id && c.period == period);
+            completedCount += completeForPeriod.length;
+            for (const c of completeForPeriod) {
+              expectedDataEntry.completedDataEntries.push(c);
+            }
           }
         }
+
+        expectedDataEntry.completed = expectedCount == completedCount;
+        expectedDataEntry.expectedCount = expectedCount;
+        expectedDataEntry.completedCount = completedCount;
       }
 
-      const completedCount = expectedDataEntries.filter((c) => c.completed).length;
+      const completedCount = expectedDataEntries
+        .filter((c) => c.completedCount)
+        .map((c) => c.completedCount)
+        .reduce((a, b) => a + b, 0);
+      const expectedCount = expectedDataEntries
+        .filter((c) => c.expectedCount)
+        .map((c) => c.expectedCount)
+        .reduce((a, b) => a + b, 0);
       const record = {
         contract,
         expectedDataEntries,
         completedDataEntries,
         completedCount: completedCount,
-        expectedCount: expectedDataEntries.length,
+        expectedCount: expectedCount,
         completionRatio:
-          expectedDataEntries.length > 0 ? ((completedCount / expectedDataEntries.length) * 100).toFixed(2) : undefined,
+          expectedDataEntries.length > 0 ? ((completedCount / expectedCount) * 100).toFixed(2) : undefined,
       };
 
       if (record.completionRatio) {
@@ -49,6 +77,7 @@ export const toCompleteness = (contracts, completeDataSetRegistrations, DataEntr
           record["orgUnitLevel" + index] = ancestor;
         });
       }
+
       results.push(record);
     }
   }
@@ -82,9 +111,9 @@ export const toCompleteness = (contracts, completeDataSetRegistrations, DataEntr
           ex.dataEntryType.code
         : undefined;
 
-      if (ex && ex.completed) {
-        info[prefix + "-users"] = ex.completedDataEntries.map((e) => e.storedBy).join("\n");
-        info[prefix + "-dates"] = ex.completedDataEntries.map((e) => e.date).join("\n");
+      if (ex && ex.completedDataEntries) {
+        info[prefix + "-users"] = Array.from(new Set(ex.completedDataEntries.map((e) => e.storedBy))).join("\n");
+        info[prefix + "-dates"] = Array.from(new Set(ex.completedDataEntries.map((e) => e.date))).join("\n");
       }
 
       info[prefix + "-completed"] = ex ? (ex.completed ? 1 : 0) : 0;

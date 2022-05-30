@@ -4,6 +4,7 @@ import InvoicePage from "./InvoicePage";
 import OrgUnitInvoiceSelectionPage from "./OrgUnitInvoiceSelectionPage";
 import { Route } from "react-router-dom";
 import PluginRegistry from "../core/PluginRegistry";
+import Approvals from "../approvals/Approvals";
 
 const invoiceRoutes = (props) => {
   return [
@@ -72,6 +73,7 @@ const invoiceRoutes = (props) => {
         );
       }}
     />,
+    <Route key="approvalsRoute" path="/approvals/:workflowids/:period" exact component={Approvals} />,
   ];
 };
 

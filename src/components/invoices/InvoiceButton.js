@@ -22,8 +22,8 @@ const InvoiceButton = ({ orgUnit, invoiceDataLinks }) => {
         <DialogTitle>{orgUnit && orgUnit.name}</DialogTitle>
         <DialogContent>
           {invoiceDataLinks.map((link, linkIndex) => (
-            <List>
-              <li key={link.invoiceName + "-" + linkIndex}>
+            <List key={link.invoiceName + "-" + linkIndex}>
+              <li >
                 <InvoiceAnchors invoiceDataLink={link} />
                 {invoiceDataLinks.length - 1 !== linkIndex && <Divider />}
               </li>

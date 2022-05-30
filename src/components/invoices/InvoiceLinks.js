@@ -57,8 +57,8 @@ const InvoiceLinks = ({ t, orgUnit, period, hideCurrentInvoice, invoiceCode, max
 
       {showAll &&
         invoiceDataLinks.map((link, linkIndex) => (
-          <List>
-            <li key={link.invoiceName + "-" + linkIndex}>
+          <List key={link.invoiceName + "-" + linkIndex}>
+            <li >
               <InvoiceAnchors invoiceDataLink={link} />
             </li>
           </List>

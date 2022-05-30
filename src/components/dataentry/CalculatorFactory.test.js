@@ -18,7 +18,8 @@ describe("CalculatorFactory", () => {
                     "declaree": "roUjqa7stCo",
                     "validee": "YAMlbdR0wVt",
                     "subsides": "Ey3nvMokVVf",
-                    "prix_unitaire": "kqjh11e8gXt"
+                    "prix_unitaire": "kqjh11e8gXt",
+                    "taux_de_change" : "dksfmlekfff"
                 },
                 {
                     "name": "Nouvelle consult curative pour des pers indigents (max 5%)",
@@ -66,7 +67,21 @@ describe("CalculatorFactory", () => {
                     "expression": "bareme_unitaire",
                     "frequency": "monthly",
                     "exportable_formula_code": null
-                }
+                },
+                "quarterly_subsides": {
+                    "short_name": "quarterly_subsides",
+                    "description": "quarterly_subsides",
+                    "expression": "sum(%{subsides_current_quarter_values})",
+                    "frequency": "monthly",
+                    "exportable_formula_code": null                    
+                },
+                "taux_de_change_pays": {
+                    "short_name": "Prix unitaire",
+                    "description": "Prix unitaire prenant en compte la categorie d'équité",
+                    "expression": "taux_de_change_level_1_quarterly",
+                    "frequency": "monthly",
+                    "exportable_formula_code": null
+                },
             },
             "activity_decision_tables": [
                 {
@@ -218,6 +233,7 @@ describe("CalculatorFactory", () => {
     const orgUnit = {
         id: "zaerz654",
         name: "Orgunit name",
+        path: "/bleALGLG/DFSFEZ/zaerz654",
         activeContracts: [{
             startPeriod: "2019Q1",
             endPerio: "2020Q2",
@@ -228,8 +244,8 @@ describe("CalculatorFactory", () => {
     }
 
     const defaultCoc = "defaultcocid"
-    const newDataValue = (period, de, value) => {
-        return { orgUnit: orgUnit.id, period: period, dataElement: de, value: value, categoryOptionCombo: defaultCoc }
+    const newDataValue = (period, de, value, orgUnitId) => {
+        return { orgUnit: orgUnitId || orgUnit.id, period: period, dataElement: de, value: value, categoryOptionCombo: defaultCoc }
     }
 
     it("it's calculating quantity: decision table, activity and package formulas + ROUND SUM %{_values}", () => {
@@ -369,5 +385,73 @@ describe("CalculatorFactory", () => {
         }).toThrow ("Unsupported feature for total_subsides_trimestre_passe_pma : SUM(%{subsides_trimestriels_last_1_quarters_exclusive_window_values}), probably need to ignore the formula")
     })
 
-    
+    it("it's calculating quantity on a quaterly period: decision table, activity and package formulas + ROUND SUM %{_values}", () => {
+        const quantityPackage = packages.quantite_pma
+        const period = "2020Q1"
+        const rawValues = [
+            newDataValue("202001", quantityPackage.activities[0].validee, "4"),
+            newDataValue("202001", quantityPackage.activities[1].validee, "8"),
+            newDataValue("202001", quantityPackage.activities[2].validee, "10"),
+            newDataValue("202002", quantityPackage.activities[0].validee, "1"),
+            newDataValue("202003", quantityPackage.activities[1].validee, "2"),
+            newDataValue("202002", quantityPackage.activities[2].validee, "3"),
+        ]
+
+        const calculator = generateCalculator(
+            quantityPackage,
+            orgUnit.id,
+            period,
+            Object.keys(quantityPackage.activity_formulas),
+            Object.keys(quantityPackage.formulas),
+            orgUnit)
+
+        const indexedValues = _.groupBy(rawValues, (v) =>
+            [v.orgUnit, v.period, v.dataElement, v.categoryOptionCombo].join("-"),
+        );
+
+        calculator.setIndexedValues(indexedValues)
+        calculator.setDefaultCoc(defaultCoc)
+
+        expect(calculator.quantite_pma_quant03_subsides_zaerz654_202001()).toEqual(43)
+        expect(calculator.quantite_pma_quant03_subsides_zaerz654_202002()).toEqual(12.9)
+        expect(calculator.quantite_pma_quant03_subsides_zaerz654_202003()).toEqual(0)
+
+        const expectedTotal = 43 + 12.9 + 0
+        expect(calculator.quantite_pma_quant03_quarterly_subsides_zaerz654_202001()).toEqual(expectedTotal)
+        expect(calculator.quantite_pma_quant03_quarterly_subsides_zaerz654_202002()).toEqual(expectedTotal)
+        expect(calculator.quantite_pma_quant03_quarterly_subsides_zaerz654_202003()).toEqual(expectedTotal)
+
+    });
+
+    it("it's calculating quantity on a quaterly period: _level_1_quarterly", () => {
+        const quantityPackage = packages.quantite_pma
+        const period = "2020Q1"
+        const rawValues = [
+            newDataValue("202001", quantityPackage.activities[0].validee, "4"),
+            newDataValue("202001", quantityPackage.activities[1].validee, "8"),
+            newDataValue("202001", quantityPackage.activities[2].validee, "10"),
+            newDataValue("202002", quantityPackage.activities[0].validee, "1"),
+            newDataValue("202003", quantityPackage.activities[1].validee, "2"),
+            newDataValue("202002", quantityPackage.activities[2].validee, "3"),
+            newDataValue("2020Q1", quantityPackage.activities[0].taux_de_change, "95","bleALGLG"),
+            
+        ]
+
+        const calculator = generateCalculator(
+            quantityPackage,
+            orgUnit.id,
+            period,
+            Object.keys(quantityPackage.activity_formulas),
+            Object.keys(quantityPackage.formulas),
+            orgUnit)
+
+        const indexedValues = _.groupBy(rawValues, (v) =>
+            [v.orgUnit, v.period, v.dataElement, v.categoryOptionCombo].join("-"),
+        );
+
+        calculator.setIndexedValues(indexedValues)
+        calculator.setDefaultCoc(defaultCoc)
+
+        expect(calculator.quantite_pma_quant01_taux_de_change_pays_zaerz654_202001()).toEqual(95)
+    });    
 })

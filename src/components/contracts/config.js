@@ -17,6 +17,7 @@ export const contractsTableColumns = (
   contractFields,
   location,
   fetchContracts,
+  isContractViewPage,
   isDetail = false,
   contracts,
   displayOrgUnit,
@@ -24,15 +25,6 @@ export const contractsTableColumns = (
   withIndex,
 ) => {
   const hasSubContractEnabled = !!contractFields.find((c) => c.code == "contract_main_orgunit");
-  contracts.forEach((c) => {
-    if (c.orgUnit && c.orgUnit.ancestors) {
-      let index = 0;
-      for (let ancestor of c.orgUnit.ancestors.slice(0, c.orgUnit.ancestors.length - 1)) {
-        c.orgUnit["level" + (index + 1)] = ancestor;
-        index = index + 1;
-      }
-    }
-  });
 
   const columns = [
     {
@@ -72,8 +64,8 @@ export const contractsTableColumns = (
       label: t("contracts.warnings"),
       options: {
         filter: false,
-        display: false,
         sort: true,
+        sortDescFirst: true,
         setCellHeaderProps: () => ({
           className: classNames(classes.cellCentered, classes.headerCell),
         }),
@@ -280,7 +272,6 @@ export const contractsTableColumns = (
       customBodyRender: (contractId) => {
         const contract = filteredContracts.find((c) => c.id === contractId);
         if (!contract) return null;
-
         return (
           <>
             <ContractsDialog
@@ -290,6 +281,7 @@ export const contractsTableColumns = (
               onSavedSuccessfull={fetchContracts}
               displayOrgUnit={displayOrgUnit}
               displayMainOrgUnit={displayMainOrgUnit}
+              isContractViewPage={isContractViewPage}
             />
             {isDetail && <DeleteContractDialog contract={contract} onSavedSuccessfull={fetchContracts} />}
 
@@ -344,7 +336,7 @@ export const contractsTableOptions = (t, contracts, onTableChange, tableParams) 
     rowsPerPage: tableParams.rowsPerPage,
     page,
     sortOrder: {
-      name: tableParams.sort.column || "fieldValues.contract_end_date",
+      name: tableParams.sort.column || "statusDetail.warnings",
       direction: tableParams.sort.direction || "desc",
     },
     selectableRowsHideCheckboxes: false,

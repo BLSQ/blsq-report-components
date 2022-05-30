@@ -1,6 +1,7 @@
 import InvoiceSelectionContainer from "./components/invoices/InvoiceSelectionContainer";
 import PeriodPicker from "./components/shared/PeriodPicker";
 import Values from "./components/invoices/support/Values";
+import IndicatorEvaluator from "./components/shared/IndicatorEvaluator";
 
 import GenericInvoices from "./components/generic_invoice/GenericInvoices";
 import CompositeInvoices from "./components/generic_invoice/CompositeInvoices";
@@ -47,6 +48,7 @@ export {
   Dhis2,
   Orbf2,
   Values,
+  IndicatorEvaluator,
   DatePeriods,
   PeriodPicker,
   indexBy,

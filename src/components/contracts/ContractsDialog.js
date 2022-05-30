@@ -64,6 +64,7 @@ const ContractsDialog = ({
   contracts,
   displayOrgUnit,
   displayMainOrgUnit,
+  isContractViewPage,
 }) => {
   const [open, setOpen] = React.useState(false);
   const contractService = PluginRegistry.extension("contracts.service");
@@ -76,12 +77,14 @@ const ContractsDialog = ({
   const hasSubContractEnabled = !!contractFields.find((c) => c.code == "contract_main_orgunit");
 
   useEffect(() => {
-    const newCurrentContract = contract.id ? contract : currentContract;
-    const errors = contractService.validateContract(newCurrentContract, contracts);
+    if (open) {
+      const newCurrentContract = contract.id ? contract : currentContract;
+      const errors = contractService.validateContract(newCurrentContract, contracts);
 
-    setCurrentContract(newCurrentContract);
-    setValidationErrors(errors);
-  }, [contract]);
+      setCurrentContract(newCurrentContract);
+      setValidationErrors(errors);
+    }
+  }, [contract, open]);
 
   const handleClickOpen = (previousContractInfo = null, isNewContract) => {
     if (isNewContract || previousContractInfo === undefined || previousContractInfo === null) {
@@ -156,7 +159,6 @@ const ContractsDialog = ({
       mainOrgUnit = mainContract.orgUnit;
     }
   }
-
   return (
     <>
       {!children && (
@@ -208,12 +210,13 @@ const ContractsDialog = ({
         </DialogTitle>
         <DialogContent dividers>
           <Grid container spacing={2}>
-            {(displayOrgUnit || displayMainOrgUnit) && (
+            {(displayOrgUnit || displayMainOrgUnit || isContractViewPage) && (
               <Grid container item xs={12}>
-                {displayOrgUnit && (
+                {(displayOrgUnit || isContractViewPage) && (
                   <OuSearch
                     onChange={(orgUnit) => handleChange("fieldValues", orgUnit, "orgUnit")}
                     orgUnit={currentContract.fieldValues.orgUnit}
+                    disabled={isContractViewPage}
                   />
                 )}
                 <GenerateTablesNeeded orgUnit={currentContract.fieldValues.orgUnit} />
@@ -222,11 +225,12 @@ const ContractsDialog = ({
                     onChange={(orgUnit) => handleChange("fieldValues", orgUnit, "contract_main_orgunit")}
                     label={t("contracts.contract_main_orgunit")}
                     orgUnit={mainOrgUnit}
+                    disabled={isContractViewPage}
                   />
                 )}
               </Grid>
             )}
-  
+
             <Grid container item xs={6}>
               <PeriodPicker
                 contract={currentContract}
@@ -234,9 +238,8 @@ const ContractsDialog = ({
                 max={currentContract.endPeriod}
                 mode="beginning"
                 fieldName={t("start_period")}
-                onPeriodChange={
-                  (startPeriod) =>
-                    handleChange("fieldValues", getStartDateFromPeriod(startPeriod), "contract_start_date")
+                onPeriodChange={(startPeriod) =>
+                  handleChange("fieldValues", getStartDateFromPeriod(startPeriod), "contract_start_date")
                 }
               />
             </Grid>
@@ -247,8 +250,8 @@ const ContractsDialog = ({
                 min={currentContract.startPeriod}
                 fieldName={t("end_period")}
                 mode="end"
-                onPeriodChange={
-                  (endPeriod) => handleChange("fieldValues", getEndDateFromPeriod(endPeriod), "contract_end_date")
+                onPeriodChange={(endPeriod) =>
+                  handleChange("fieldValues", getEndDateFromPeriod(endPeriod), "contract_end_date")
                 }
               />
             </Grid>

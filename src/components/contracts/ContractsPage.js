@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import MassContractUpdate from "./MassContractUpdate";
 import { Typography, Breadcrumbs, Paper, Divider, Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -38,7 +38,6 @@ const ContractsPage = ({ t, location, history, currentUser }) => {
   const [contractFields, setContractFields] = useState([]);
   const [mode, setMode] = useState("list");
 
-
   const computeOverlapsTotal = () => {
     if (contractsOverlaps) {
       return Object.keys(contractsOverlaps).filter((ouId) => contracts.find((fc) => fc.id === ouId)).length;
@@ -67,7 +66,32 @@ const ContractsPage = ({ t, location, history, currentUser }) => {
   };
 
   const isLoading = fetchContractsQuery.isLoading;
-
+  console.log("render", contracts && contracts.length);
+  const tableOptions = useMemo(() => {
+    console.log("contractsTableOptions")
+    return contractsTableOptions(
+      t,
+      finalFilteredContracts,
+      (key, value) => onTableChange(key, value),
+      decodeTableQueryParams(location),
+    );
+  }, [finalFilteredContracts]);
+  const cols = useMemo(() => {
+    console.log("contractsTableColumns")
+    return contractsTableColumns(
+      t,
+      classes,
+      finalFilteredContracts,
+      contractFields,
+      location,
+      () => {
+        fetchContractsQuery.refetch();
+      },
+      false,
+      false,
+      contracts,
+    );
+  }, [contracts, finalFilteredContracts, contractFields]);
   return (
     <>
       <Paper square className={classes.rootContainer}>
@@ -91,6 +115,7 @@ const ContractsPage = ({ t, location, history, currentUser }) => {
           currentUser={currentUser}
           automaticSearch={true}
         />
+        {isLoading && "Loading..."}
         <Divider />
         {mode === "list" && (
           <Table
@@ -103,25 +128,8 @@ const ContractsPage = ({ t, location, history, currentUser }) => {
               />
             }
             data={finalFilteredContracts}
-            columns={contractsTableColumns(
-              t,
-              classes,
-              finalFilteredContracts,
-              contractFields,
-              location,
-              () => {
-                fetchContractsQuery.refetch();
-              },
-              false,
-              false,
-              contracts,
-            )}
-            options={contractsTableOptions(
-              t,
-              finalFilteredContracts,
-              (key, value) => onTableChange(key, value),
-              decodeTableQueryParams(location),
-            )}
+            columns={cols}
+            options={tableOptions}
           />
         )}
 

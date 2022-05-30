@@ -10,8 +10,8 @@ const InvoiceButton = ({ orgUnit, invoiceDataLinks }) => {
   const [invoiceSelectionOpen, setInvoiceSelectionOpen] = useState(false);
 
   return (
-    <div>
-      <Button onClick={() => setInvoiceSelectionOpen(true)} color="primary">
+    <>
+      <Button onClick={() => setInvoiceSelectionOpen(true)} color="primary" size='small'>
         {t("show_avalaible_invoices")}
       </Button>
       <Dialog
@@ -31,7 +31,7 @@ const InvoiceButton = ({ orgUnit, invoiceDataLinks }) => {
           ))}
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 };
 export default InvoiceButton;

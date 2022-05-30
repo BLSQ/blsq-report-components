@@ -1,3 +1,8 @@
+# @blsq/blsq-report-components@1.0.111
+
+- [contracts] add possibility to cache calculations during contract validations
+- [invoices] add a page /reports/:period/:orgUnitId to allow a fixed point link with other apps (iaso, hesabu manager, orbf2)
+
 # @blsq/blsq-report-components@1.0.110
 
 - [dataentry] allow data entries over multiple datasets mixing [multiple](https://github.com/BLSQ/blsq-report-components/pull/186) periodicity

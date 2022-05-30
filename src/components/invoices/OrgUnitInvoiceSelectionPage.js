@@ -66,7 +66,7 @@ const OrgUnitInvoiceSelectionPage = ({ history, match, periodFormat, dhis2, curr
                   after: 5,
                 }}
                 onPeriodChange={(newPeriod) => {
-                  history.push("/reports/" + match.params.orgUnitId + "/" + newPeriod);
+                  history.push("/reports/" + newPeriod + "/" + match.params.orgUnitId);
                 }}
               />
             </div>
@@ -88,7 +88,7 @@ const OrgUnitInvoiceSelectionPage = ({ history, match, periodFormat, dhis2, curr
 
       <Grid container>
         <Grid item>
-          <h2>Invoices</h2>
+          <h2>{t("dataEntry.invoices")}</h2>
           {orgUnit && <InvoiceLinks t={t} orgUnit={orgUnit} period={period} maxInvoiceLength={100} />}
         </Grid>
       </Grid>

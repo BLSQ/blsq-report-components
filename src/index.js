@@ -37,7 +37,9 @@ import { toOrgUnitFacts } from "./components/dataentry/CodeGenerator";
 import DecisionTable from "./components/dataentry/DecisionTable";
 import { getVisibleAndOrderedActivities } from "./components/dataentry/getVisibleAndOrderedActivities"
 
+import HesabuIcon from "./components/shared/icons/HesabuIcon";
 import IasoIcon from "./components/shared/icons/IasoIcon";
+import Orbf2Icon from "./components/shared/icons/Orbf2Icon";
 
 const App = AppDrawer;
 
@@ -78,5 +80,7 @@ export {
   toOrgUnitFacts,
   getVisibleAndOrderedActivities,
   // icons
+  HesabuIcon,
   IasoIcon,
+  Orbf2Icon,
 };

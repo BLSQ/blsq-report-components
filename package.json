@@ -37,8 +37,6 @@
     "@babel/preset-react": "^7.9.4",
     "@babel/runtime": "^7.9.6",
     "@date-io/moment": "2.13.1",
-    "@material-ui/core": "4.11.0",
-    "@material-ui/icons": "4.9.1",
     "@rollup/plugin-babel": "^5.0.0",
     "@rollup/plugin-commonjs": "^11.1.0",
     "@rollup/plugin-json": "^4.0.3",
@@ -81,8 +79,12 @@
     "dist"
   ],
   "dependencies": {
-    "@material-ui/lab": "^4.0.0-alpha.56",
+    "react-intl": "^5.10.16",
+    "@material-ui/core": "^4.11.4",
+    "@material-ui/icons": "^4.2.1",
+    "@material-ui/lab": "^4.0.0-alpha.48",
     "@material-ui/pickers": "^3.2.10",
+    "bluesquare-components": "link:../bluesquare-components",    
     "history": "^5.0.0",
     "moment": "^2.27.0",
     "notistack": "^0.9.17",

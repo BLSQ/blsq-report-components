@@ -11,6 +11,7 @@ import { I18nextProvider } from "react-i18next";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { store } from "./redux/store";
+import { IntlProvider } from "react-intl";
 
 import AppDrawer from "./shared/RawAppDrawer";
 import AppToolBar from "./shared/RawAppToolBar";
@@ -42,18 +43,58 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = ({ classes, incentivesDescriptors, dataElementGroups, drawerLinks, defaultPathName }) => {
+const rawTheme = {
+  typography: {
+      useNextVariants: true,
+  },
+  textColor: '#333',
+  palette: {
+      primary: {
+          main: '#006699',
+          secondary: '#0066cc',
+          background: '#F5F5F5',
+      },
+      gray: {
+          main: '#666',
+          border: 'rgba(0,0,0,0.02)',
+          background: 'rgba(0,0,0,0.03)',
+      },
+      mediumGray: {
+          main: '#A2A2A2',
+      },
+      ligthGray: {
+          main: '#F7F7F7',
+          border: 'rgba(0, 0, 0, 0.12)',
+          background: 'rgba(0, 0, 0, 0.012)',
+      },
+      error: {
+          main: 'rgb(215, 25, 28)',
+          background: 'rgba(215, 25, 28, 0.2)',
+          backgroundHard: 'rgba(215, 25, 28, 0.7)',
+      },
+      success: {
+          main: '#4caf50',
+          background: 'rgba(#4caf50, 0.2)',
+      },
+  },
+};
+
+const defaultTheme = createMuiTheme(rawTheme);
+
+const App = ({ classes, incentivesDescriptors, dataElementGroups, drawerLinks, defaultPathName, children }) => {
   const registry = PluginRegistry;
 
   const invoices = registry.extension("invoices.invoices");
   const dhis2 = registry.extension("core.dhis2");
   const config = registry.extension("core.config");
   const i18n = registry.extension("core.i18n");
-  const theme = registry.extension("core.theme") || createMuiTheme();
+  const theme = registry.extension("core.theme")
+
 
   return (
+    <IntlProvider messages={{}} locale="en" defaultLocale="en">
     <MuiPickersUtilsProvider utils={MomentUtils}>
-      <MuiThemeProvider theme={theme}>
+      <MuiThemeProvider theme={defaultTheme}>
         <I18nextProvider i18n={i18n}>
           <QueryClientProvider client={queryClient}>
             <SnackbarProvider
@@ -76,7 +117,8 @@ const App = ({ classes, incentivesDescriptors, dataElementGroups, drawerLinks, d
                         invoices={invoices}
                         incentivesDescriptors={incentivesDescriptors}
                         dataElementGroups={dataElementGroups}
-                      />
+                      >{children}</AppContent>
+                      
                     </div>
                   </div>
                 </Router>
@@ -88,6 +130,7 @@ const App = ({ classes, incentivesDescriptors, dataElementGroups, drawerLinks, d
         </I18nextProvider>
       </MuiThemeProvider>
     </MuiPickersUtilsProvider>
+    </IntlProvider>
   );
 };
 

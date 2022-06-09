@@ -107,6 +107,7 @@ class AppContent extends React.Component {
       dispatch,
       drawerOpen,
       period,
+      children
     } = this.props;
 
     const frequency = period.includes("S") ? "sixMonthly" : "quarterly";
@@ -130,6 +131,7 @@ class AppContent extends React.Component {
         })}
       >
         {(!currentUser || isLoading) && <LoadingSpinner fixed />}
+        {children}
         <div className={classes.drawerHeader + " no-print"} />
         {currentUser && (
           <Switch>

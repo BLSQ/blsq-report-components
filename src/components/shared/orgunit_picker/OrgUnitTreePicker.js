@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { getInstance } from "d2/lib/d2";
-import { TreeViewWithSearch } from "bluesquare-components";
+import { TreeViewWithSearch }  from "bluesquare-components";
 import PluginRegistry from "../../core/PluginRegistry";
 
 // act as a cache to speed up first levels click
@@ -139,7 +139,7 @@ const OrgUnitTreePicker = ({ initialSelection, onChange }) => {
     toggleOnLabelClick: false,
     isSelectable: () => true,
   };
-
+  debugger;
   return (
     <div>
       <TreeViewWithSearch

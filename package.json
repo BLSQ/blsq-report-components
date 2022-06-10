@@ -9,8 +9,8 @@
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
   "engines": {
-    "node": ">=12",
-    "npm": ">=6"
+    "node": ">=14.17.0",
+    "npm": ">=7"
   },
   "jest": {
     "collectCoverageFrom": [

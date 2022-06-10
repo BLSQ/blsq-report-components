@@ -77,12 +77,14 @@ const ContractsDialog = ({
   const hasSubContractEnabled = !!contractFields.find((c) => c.code == "contract_main_orgunit");
 
   useEffect(() => {
-    const newCurrentContract = contract.id ? contract : currentContract;
-    const errors = contractService.validateContract(newCurrentContract, contracts);
+    if (open) {
+      const newCurrentContract = contract.id ? contract : currentContract;
+      const errors = contractService.validateContract(newCurrentContract, contracts);
 
-    setCurrentContract(newCurrentContract);
-    setValidationErrors(errors);
-  }, [contract]);
+      setCurrentContract(newCurrentContract);
+      setValidationErrors(errors);
+    }
+  }, [contract, open]);
 
   const handleClickOpen = (previousContractInfo = null, isNewContract) => {
     if (isNewContract || previousContractInfo === undefined || previousContractInfo === null) {

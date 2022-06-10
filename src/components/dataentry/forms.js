@@ -1,5 +1,6 @@
 import _ from "lodash";
 import PluginRegistry from "../core/PluginRegistry";
+import DatePeriods from "../../support/DatePeriods";
 
 export const isDataSetComplete = (completeDataSetRegistration) => {
   if (completeDataSetRegistration == undefined) {
@@ -12,14 +13,19 @@ export const isDataSetComplete = (completeDataSetRegistration) => {
 };
 
 const asDataSetIds = (dataEntry) => {
-  const d = dataEntry.dataSetId ? [dataEntry.dataSetId] : dataEntry.dataSetIds  
-  return d ? d : []
+  const d = dataEntry.dataSetId ? [dataEntry.dataSetId] : dataEntry.dataSetIds;
+  return d ? d : [];
 };
 
-const fetchCompleteDataSetRegistrations = async (api, dataEntry, period, activeContract) => {
+export const dsRegistrationPeriods = (dataSet, period) => {
+  const periods = DatePeriods.split(period, dataSet.periodType.toLowerCase());
+  return periods;
+};
+
+const fetchCompleteDataSetRegistrations = async (api, dataEntry, dataSets, period, activeContract) => {
   const dsc = await api.get("completeDataSetRegistrations", {
-    dataSet: asDataSetIds(dataEntry),
-    period: period,
+    dataSet: dataSets.map((d) => d.id),
+    period: dataSets.flatMap((dataSet) => dsRegistrationPeriods(dataSet, period)),
     orgUnit: activeContract.orgUnit.id,
   });
 
@@ -95,7 +101,15 @@ const toggleDataSetCompletion = async (api, dataSetId, period, orgUnitId, comple
   }
 };
 
-export const buildFormData = async ({ dhis2, api, dataEntryCode, activeContract, dataEntryRegistry, period, setFormData }) => {
+export const buildFormData = async ({
+  dhis2,
+  api,
+  dataEntryCode,
+  activeContract,
+  dataEntryRegistry,
+  period,
+  setFormData,
+}) => {
   const dataEntry = dataEntryRegistry.getDataEntry(dataEntryCode);
   const dataSets = await fetchDataSets(api, dataEntry);
   const dataSet = dataSets[0];
@@ -104,7 +118,13 @@ export const buildFormData = async ({ dhis2, api, dataEntryCode, activeContract,
     dataSets.flatMap((dataset) => dataset.dataSetElements.map((dse) => dse.dataElement)),
     (de) => de.id,
   );
-  const completeDataSetRegistrations = await fetchCompleteDataSetRegistrations(api, dataEntry, period, activeContract);
+  const completeDataSetRegistrations = await fetchCompleteDataSetRegistrations(
+    api,
+    dataEntry,
+    dataSets,
+    period,
+    activeContract,
+  );
   let completeDataSetRegistration = completeDataSetRegistrations[0];
 
   let rawValues = await fetchDataValues(api, dataEntry, activeContract, dataEntryRegistry, period);
@@ -151,46 +171,80 @@ export const buildFormData = async ({ dhis2, api, dataEntryCode, activeContract,
     errors: {},
     updating: {},
 
-    isDataSetComplete(dataSetId) {
+    isDataSetComplete(dataSetId, givenPeriod) {
+      if (givenPeriod == undefined) {
+        givenPeriod = period;
+      }
       if (dataSetId == undefined) {
-        const reg = this.completeDataSetRegistrations.find((registration) => registration.dataSet == this.dataSet.id);
+        const reg = this.completeDataSetRegistrations.find(
+          (registration) => registration.dataSet == this.dataSet.id && registration.period == givenPeriod,
+        );
         const completed = isDataSetComplete(reg);
-        return completed
+        return completed;
       } else {
-        const reg = this.completeDataSetRegistrations.find((registration) => registration.dataSet == dataSetId);
+        const reg = this.completeDataSetRegistrations.find(
+          (registration) => registration.dataSet == dataSetId && registration.period == givenPeriod,
+        );
         const completed = isDataSetComplete(reg);
         return completed;
       }
+    },
+    areDataSetsComplete(datasetIds, givenPeriod) {
+      const regs = this.completeDataSetRegistrations.filter((registration) =>
+        datasetIds.includes(registration.dataSet),
+      );
+
+      const dataSets = this.dataSets.filter((d) => datasetIds.includes(d.id));
+
+      for (const dataSet of dataSets) {
+        const periods = dsRegistrationPeriods(dataSet, givenPeriod || period);
+
+        for (const regPeriod of periods) {
+          const isDsComplete = this.isDataSetComplete(dataSet.id, regPeriod);
+          console.log(regPeriod, dataSet.name, dataSet.id, isDsComplete);
+          if (isDsComplete == false) {
+            return false;
+          }
+        }
+      }
+      return true;
     },
     isDataWritable(dataSetId) {
       const dataSet = dataSetId ? this.dataSets.find((d) => d.id == dataSetId) : this.dataSet;
       return dataSet && dataSet.access && dataSet.access.data.write;
     },
-    error(de) {
-      return this.errors[this.getKey(de)];
+
+    areDataWritable(datasetIds) {
+      const dataSets = this.dataSets.filter((d) => datasetIds.includes(d));
+      const allWritable = dataSets.every((dataSet) => dataSet && dataSet.access && dataSet.access.data.write);
+      return allWritable;
     },
-    getKey(de) {
+    error(de, givenPeriod) {
+      return this.errors[this.getKey(de, givenPeriod)];
+    },
+    getKey(de, givenPeriod) {
       const deCoc = de.split(".");
-      return [activeContract.orgUnit.id, period, deCoc[0], deCoc[1] || defaultCoc].join("-");
+      return [activeContract.orgUnit.id, givenPeriod || period, deCoc[0], deCoc[1] || defaultCoc].join("-");
     },
-    getError(de) {
-      const key = this.getKey(de);
+    getError(de, givenPeriod) {
+      const key = this.getKey(de, givenPeriod);
       return this.errors[key];
     },
-    isModified(de) {
-      const key = this.getKey(de);
+    isModified(de, givenPeriod) {
+      const key = this.getKey(de, givenPeriod);
       return this.valids[key] == true;
     },
-    isUpdating(de) {
-      const key = this.getKey(de);
+    isUpdating(de, givenPeriod) {
+      const key = this.getKey(de, givenPeriod);
       return this.updating[key] == true;
     },
-    isInvalid(de) {
-      const key = this.getKey(de);
+    isInvalid(de, givenPeriod) {
+      const key = this.getKey(de, givenPeriod);
       return this.valids[key] == false;
     },
-    getValue(de) {
-      const key = this.getKey(de);
+    getValue(de, givenPeriod) {
+      const key = this.getKey(de, givenPeriod);
+
       const ourValues = this.indexedValues[key];
       return ourValues ? ourValues[0] : undefined;
     },
@@ -200,12 +254,18 @@ export const buildFormData = async ({ dhis2, api, dataEntryCode, activeContract,
         ? `${hesabuPackage.code}_${activity.code}_${formulaCode}_${orgUnitId}_${period}`
         : `${hesabuPackage.code}_${formulaCode}_${orgUnitId}_${period}`;
       if (this.calculator && this.calculator[calculatorFunction]) {
-        return this.calculator[calculatorFunction]();
+        try {
+          return this.calculator[calculatorFunction]();
+        } catch (e) {
+          console.log(e);
+          throw e;
+        }
       }
     },
-    async updateValue(de, value) {
+    async updateValue({ dataElement, value, givenPeriod, givenDataSetId }) {
+      const de = dataElement;
       const deCoc = de.split(".");
-      const key = this.getKey(de);
+      const key = this.getKey(de, givenPeriod);
       if (this.updating[key]) {
         return;
       } else {
@@ -214,9 +274,9 @@ export const buildFormData = async ({ dhis2, api, dataEntryCode, activeContract,
       const newValue = {
         de: deCoc[0],
         co: deCoc[1] || defaultCoc,
-        ds: dataSet.id,
+        ds: givenDataSetId || dataSet.id,
         ou: activeContract.orgUnit.id,
-        pe: period,
+        pe: givenPeriod || period,
         value: value,
       };
       try {
@@ -243,23 +303,22 @@ export const buildFormData = async ({ dhis2, api, dataEntryCode, activeContract,
         setFormData({ ...this });
       }
     },
-    async toggleComplete(calculations, dataSetId) {
+    async toggleComplete(calculations, dataSetId, givenPeriod) {
       if (dataSetId == undefined) {
         dataSetId = this.dataSet.id;
       }
-      const completed = this.isDataSetComplete(dataSetId);
+      const completed = this.isDataSetComplete(dataSetId, givenPeriod);
       const completeDataSetRegistration = this.completeDataSetRegistrations.find(
-        (registration) => registration.dataSet == dataSetId,
+        (registration) => registration.dataSet == dataSetId && registration.period == givenPeriod,
       );
       await toggleDataSetCompletion(
         api,
         dataSetId,
-        period,
+        givenPeriod,
         activeContract.orgUnit.id,
         completeDataSetRegistration,
         completed,
       );
-
       if (calculations && !completed) {
         const orbf2 = PluginRegistry.extension("invoices.hesabu");
         calculations.forEach((calculation) => orbf2.calculate(calculation));
@@ -267,6 +326,7 @@ export const buildFormData = async ({ dhis2, api, dataEntryCode, activeContract,
       const completeDataSetRegistrations = await fetchCompleteDataSetRegistrations(
         api,
         dataEntry,
+        dataSets,
         period,
         activeContract,
       );

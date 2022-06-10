@@ -23,6 +23,7 @@
     "generateTables": "Generate Tables",
     "mainContracts": "Main contract(s)",
     "onlyOverlaps": "Only with overlaps",
+    "onlyInvalids": "Only invalid contracts",
     "onlySubContracts": "Only sub contracts",
     "overlappingWith": "Overlaps with",
     "overlaps": ", {{overlap}} overlapping globaly",

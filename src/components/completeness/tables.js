@@ -299,7 +299,7 @@ export const orgUnitColumns = (distinctDataEntries, filteredCompletnessInfos, t)
               if (ex && ex.dataEntryType.dataSetIds) {
                 details = (
                   <span>
-                    {ex.completedDataEntries ? ex.completedDataEntries.length : 0}/{ex.dataEntryType.dataSetIds.length}
+                    {ex.completedDataEntries ? ex.completedCount : 0}/{ ""+ex.expectedCount}
                   </span>
                 );
               }

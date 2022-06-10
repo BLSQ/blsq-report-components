@@ -5,6 +5,7 @@ class Orbf2 {
   constructor(config) {
     this.url = ORBF2_URL || config.url || "https://orbf2.bluesquare.org/";
     this.token = ORBF2_TOKEN || config.token;
+    this.config = config;
   }
 
   headers() {

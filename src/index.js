@@ -1,6 +1,7 @@
 import InvoiceSelectionContainer from "./components/invoices/InvoiceSelectionContainer";
 import PeriodPicker from "./components/shared/PeriodPicker";
 import Values from "./components/invoices/support/Values";
+import IndicatorEvaluator from "./components/shared/IndicatorEvaluator";
 
 import GenericInvoices from "./components/generic_invoice/GenericInvoices";
 import CompositeInvoices from "./components/generic_invoice/CompositeInvoices";
@@ -32,13 +33,15 @@ import CompleteDataSetButton from "./components/dataentry/CompleteDataSetButton"
 import { generateCalculator } from "./components/dataentry/CalculatorFactory";
 import HesabuFormula from "./components/dataentry/HesabuFormula";
 import EditIasoFormButton from "./components/dataentry/EditIasoFormButton";
-import { toOrgUnitFacts } from "./components/dataentry/CodeGenerator"
-import DecisionTable from "./components/dataentry/DecisionTable"
+import { toOrgUnitFacts } from "./components/dataentry/CodeGenerator";
+import DecisionTable from "./components/dataentry/DecisionTable";
 import { getVisibleAndOrderedActivities } from "./components/dataentry/getVisibleAndOrderedActivities"
 
+import HesabuIcon from "./components/shared/icons/HesabuIcon";
 import IasoIcon from "./components/shared/icons/IasoIcon";
+import Orbf2Icon from "./components/shared/icons/Orbf2Icon";
 
-const App = AppDrawer
+const App = AppDrawer;
 
 export {
   AppDrawer,
@@ -47,6 +50,7 @@ export {
   Dhis2,
   Orbf2,
   Values,
+  IndicatorEvaluator,
   DatePeriods,
   PeriodPicker,
   indexBy,
@@ -76,5 +80,7 @@ export {
   toOrgUnitFacts,
   getVisibleAndOrderedActivities,
   // icons
+  HesabuIcon,
   IasoIcon,
+  Orbf2Icon,
 };

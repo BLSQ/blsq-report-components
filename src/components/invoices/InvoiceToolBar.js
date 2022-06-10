@@ -19,6 +19,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import ReportProblemIcon from "@material-ui/icons/ReportProblem";
 import ExtensionsComponent from "../core/ExtensionsComponent";
 import ErrorsTable from "./ErrorsTable";
+import { isPrintable } from "./support/isPrintable";
 
 const styles = {
   center: {
@@ -153,6 +154,7 @@ const InvoiceAlert = ({ errors, indexedOrgUnits, onToggleErrors }) => {
   );
 };
 
+
 class InvoiceToolBar extends Component {
   constructor(props) {
     super(props);
@@ -271,6 +273,7 @@ class InvoiceToolBar extends Component {
     if (this.props.invoice.orgUnits) {
       this.props.invoice.orgUnits.forEach((ou) => (indexedOrgUnits[ou.id] = ou));
     }
+    const invoiceType = this.props.invoice.invoiceType;
     return (
       <div className={classes.center + " no-print"}>
         <Button component={Link} to={previous}>
@@ -292,7 +295,7 @@ class InvoiceToolBar extends Component {
             {...this.props}
           />
         )}
-        <Button onClick={() => window.print()}>{this.props.t("print")}</Button>
+        {isPrintable(invoiceType) && <Button onClick={() => window.print()}>{this.props.t("print")}</Button>}
         {recalculateButton}
         {this.props.calculateState &&
           this.props.calculateState.errors &&

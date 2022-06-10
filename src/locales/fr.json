@@ -23,6 +23,7 @@
     "generateTables": "Générer des tableaux",
     "mainContracts": "Contrat(s) direct(s)",
     "onlyOverlaps": "Seulement les contracts se chevauchant",
+    "onlyInvalids": "Seulement les contracts invalides",
     "onlySubContracts": "Seulement les sous contrats",
     "overlappingWith": "Se chevauchant avec",
     "overlaps": ", dont {{overlap}} se chevauchant",

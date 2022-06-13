@@ -7,6 +7,12 @@ import PluginRegistry from "../../core/PluginRegistry";
 const loadedOrgUnitsById = {};
 let contractsByOrgUnitId = {};
 
+let currentPeriod = undefined
+
+const setPeriod = (argPeriod) => {
+  currentPeriod = argPeriod
+}
+
 const defaultOrgUnitFields =
   "id,name,ancestors[id,name],children[id,name,ancestors[id,name],children[id,name,ancestors[id,name],children]]";
 
@@ -14,9 +20,7 @@ const withHasChildren = (organisationUnits) => {
   for (let ou of organisationUnits) {
     ou.has_children = ou.children && ou.children.length > 0;
     ou.activeContracts = contractsByOrgUnitId[ou.id];
-    if (ou.activeContracts) {
-      debugger;
-    }
+    
     loadedOrgUnitsById[ou.id] = ou;
   }
   organisationUnits.sort((a, b) => a.name.localeCompare(b.name));
@@ -62,7 +66,6 @@ export const getChildrenData = async (id) => {
 };
 
 const search = (input1, input2, type) => {
-  debugger;
   console.log(input1, input2, type);
   return [];
 };
@@ -94,21 +97,22 @@ const makeDropDownText = (orgUnit) => {
   );
 };
 const onOrgUnitSelect = (orgUnit) => {
-  debugger;
   alert("Selected " + orgUnit.name);
   return [];
 };
 
 const parseNodeIds = (orgUnit) => {
   const parsed = orgUnit.ancestors.map((a) => [a.id, a]).concat([[orgUnit.id, orgUnit]]);
-  debugger;
   return new Map(parsed);
 };
 
 const formatInitialSelectedIds = (selection) => [];
 const formatInitialSelectedParents = (selection) => new Map();
 
-const OrgUnitTreePicker = ({ initialSelection, onChange }) => {
+const OrgUnitTreePicker = ({ initialSelection, onChange, period }) => {
+
+  setPeriod(period)
+
   const [selectedOrgUnits, setSelectedOrgUnits] = useState(initialSelection);
 
   const [selectedOrgUnitsIds, setSelectedOrgUnitsIds] = useState(formatInitialSelectedIds(initialSelection));
@@ -139,7 +143,6 @@ const OrgUnitTreePicker = ({ initialSelection, onChange }) => {
     toggleOnLabelClick: false,
     isSelectable: () => true,
   };
-  debugger;
   return (
     <div>
       <TreeViewWithSearch

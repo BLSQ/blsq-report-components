@@ -37,10 +37,10 @@ const useStyles = makeStyles(styles);
 
 const updateHistory = (history, parent, period, searchValue, defaultPathName, viewType) => {
   const parentParam = parent ? "&parent=" + parent : "";
-  const path = defaultPathName || `/select/${viewType}`;
+  const path = defaultPathName
   history.replace({
     pathname: path,
-    search: "?q=" + searchValue + "&period=" + period + parentParam,
+    search: "?q=" + searchValue + "&period=" + period + parentParam+"&mode="+viewType,
   });
 };
 
@@ -57,7 +57,6 @@ const InvoiceSelectionContainer = (props) => {
     topLevelsOrgUnits,
     periodFormat,
     resultsElements,
-    match,
   } = props;
   const [orgUnits, setOrgUnits] = useState();
   const [loading, setLoading] = useState(false);
@@ -65,8 +64,7 @@ const InvoiceSelectionContainer = (props) => {
   const [searchPeriod, setSearchPeriod] = useState(period);
   const [debouncedSearchValue, setDebouncedSearchValue] = useDebounce(ouSearchValue);
 
-  const [viewType, setViewType] = useState(match.params.viewType);
-  const [useTraditionalView, setUseTraditionalView] = useState(viewType === "traditional");
+  const [viewType, setViewType] = useState(props.viewType);
 
   useEffect(() => {
     const search = async () => {
@@ -122,25 +120,23 @@ const InvoiceSelectionContainer = (props) => {
 
   const classes = useStyles();
   const { t } = useTranslation();
-  const toggleView = (useTraditionalView) => {
-    setUseTraditionalView(useTraditionalView);
-    const viewToUse = useTraditionalView ? "traditional" : "tree";
+  const toggleView = () => {
+    const viewToUse = viewType === "tree" ? "table" : "tree";
     setViewType(viewToUse);
-    const newUrl = window.location.href.replace(`/${viewType}`, `/${viewToUse}`);
-    window.history.replaceState({}, "", newUrl);
+    updateHistory(history, parent, period, debouncedSearchValue, defaultPathName, viewToUse)
   };
 
   const switchToTreeView = "Switch to orgunit tree view";
   const switchToTraditionalView = "Switch to traditional view";
-  const viewLabel = useTraditionalView ? switchToTreeView : switchToTraditionalView;
-
+  const viewLabel = viewType === "table" ? switchToTreeView : switchToTraditionalView;
+  debugger;
   return (
     <Paper className={classes.paper} square>
       <div className={classes.headerButtons}>
         <Typography variant="h6" component="h6" gutterBottom>
           {t("invoices.search.title")}
         </Typography>
-        <Button onClick={() => toggleView(!useTraditionalView)} startIcon={<CachedIcon />}>
+        <Button onClick={() => toggleView()} startIcon={<CachedIcon />}>
           {viewLabel}
         </Button>
       </div>
@@ -148,7 +144,7 @@ const InvoiceSelectionContainer = (props) => {
       <br />
       <br />
       <div className={classes.filters}>
-        {!useTraditionalView && (
+        {viewType === "tree" && (
           <InvoiceTreeView
             invoiceLinksProps={props}
             searchPeriod={searchPeriod}
@@ -158,7 +154,7 @@ const InvoiceSelectionContainer = (props) => {
             periodFormat={periodFormat}
           />
         )}
-        {useTraditionalView && (
+        {viewType === "table" && (
           <InvoiceTraditionalView
             topLevelsOrgUnits={topLevelsOrgUnits}
             onParentOrganisationUnit={onParentOrganisationUnit}

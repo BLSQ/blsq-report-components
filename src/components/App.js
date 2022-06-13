@@ -8,7 +8,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { Provider } from "react-redux";
 import { SnackbarProvider } from "notistack";
 import { I18nextProvider } from "react-i18next";
-import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
+import { createTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { store } from "./redux/store";
 import { IntlProvider } from "react-intl";
@@ -79,7 +79,7 @@ const rawTheme = {
   },
 };
 
-const defaultTheme = createMuiTheme(rawTheme);
+const defaultTheme = createTheme(rawTheme);
 
 const App = ({ classes, incentivesDescriptors, dataElementGroups, drawerLinks, defaultPathName, children }) => {
   const registry = PluginRegistry;

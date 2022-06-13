@@ -148,7 +148,16 @@ const InvoiceSelectionContainer = (props) => {
       <br />
       <br />
       <div className={classes.filters}>
-        {!useTraditionalView && <InvoiceTreeView invoiceLinksProps={props} searchPeriod={searchPeriod} t={t} />}
+        {!useTraditionalView && (
+          <InvoiceTreeView
+            invoiceLinksProps={props}
+            searchPeriod={searchPeriod}
+            t={t}
+            classes={classes}
+            onPeriodChange={onPeriodChange}
+            periodFormat={periodFormat}
+          />
+        )}
         {useTraditionalView && (
           <InvoiceTraditionalView
             topLevelsOrgUnits={topLevelsOrgUnits}

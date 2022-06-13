@@ -5,8 +5,6 @@ import OuPicker from "./OuPicker";
 import PeriodPicker from "../shared/PeriodPicker";
 import SelectionResultsContainer from "./SelectionResultsContainer";
 
-
-
 const InvoiceTraditionalView = ({
   topLevelsOrgUnits,
   onParentOrganisationUnit,

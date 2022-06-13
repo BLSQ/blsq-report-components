@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, FormControl, LinearProgress, Paper, Typography } from "@material-ui/core";
+import { Button, Paper, Typography } from "@material-ui/core";
 import CachedIcon from "@material-ui/icons/Cached";
 
 import { makeStyles } from "@material-ui/styles";
-import OrgUnitAutoComplete from "./OrgUnitAutoComplete";
-import OuPicker from "./OuPicker";
-
-import PeriodPicker from "../shared/PeriodPicker";
 import searchOrgunit from "./searchOrgunit";
 import SelectionResultsContainer from "./SelectionResultsContainer";
 
@@ -30,6 +26,10 @@ const styles = (theme) => ({
   periodContainer: {
     margin: theme.spacing(2, 1, 1, 1),
     width: 300,
+  },
+  headerButtons: {
+    display: "flex",
+    justifyContent: "space-between",
   },
 });
 
@@ -118,8 +118,6 @@ const InvoiceSelectionContainer = (props) => {
 
   const classes = useStyles();
   const { t } = useTranslation();
-  const SelectionResults = resultsElements || SelectionResultsContainer;
-
   const toggleView = (useTraditionalView) => {
     setTraditionalView(useTraditionalView);
   };
@@ -130,31 +128,20 @@ const InvoiceSelectionContainer = (props) => {
 
   return (
     <Paper className={classes.paper} square>
-      <Typography variant="h6" component="h6" gutterBottom>
-        {t("invoices.search.title")}
-      </Typography>
-      <Button onClick={() => toggleView(!traditionalView)} startIcon={<CachedIcon />}>
-        {viewLabel}
-      </Button>
+      <div className={classes.headerButtons}>
+        <Typography variant="h6" component="h6" gutterBottom>
+          {t("invoices.search.title")}
+        </Typography>
+        <Button onClick={() => toggleView(!traditionalView)} startIcon={<CachedIcon />}>
+          {viewLabel}
+        </Button>
+      </div>
       <br />
       <br />
       <br />
       <div className={classes.filters}>
         {!traditionalView && <InvoiceTreeView invoiceLinksProps={props} searchPeriod={searchPeriod} t={t} />}
         {traditionalView && (
-          // topLevelsOrgUnits,
-          // onParentOrganisationUnit,
-          // parent,
-          // onOuSearchChange,
-          // searchValue,
-          // classes,
-          // searchPeriod,
-          // onPeriodChange,
-          // periodFormat,
-          // loading,
-          // orgUnits,
-          // selectionResultsProps,
-
           <InvoiceTraditionalView
             topLevelsOrgUnits={topLevelsOrgUnits}
             onParentOrganisationUnit={onParentOrganisationUnit}

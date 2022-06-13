@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { FormControl, LinearProgress, Paper, Typography } from "@material-ui/core";
+import { Button, FormControl, LinearProgress, Paper, Typography } from "@material-ui/core";
+import CachedIcon from "@material-ui/icons/Cached";
 
 import { makeStyles } from "@material-ui/styles";
 import OrgUnitAutoComplete from "./OrgUnitAutoComplete";
@@ -11,8 +12,8 @@ import searchOrgunit from "./searchOrgunit";
 import SelectionResultsContainer from "./SelectionResultsContainer";
 
 import useDebounce from "../shared/useDebounce";
-import OrgUnitTreePicker from "../shared/orgunit_picker/OrgUnitTreePicker";
-import InvoiceLinks from "./InvoiceLinks";
+import InvoiceTreeView from "./InvoiceTreeView";
+import InvoiceTraditionalView from "./InvoiceTraditionalView";
 
 const styles = (theme) => ({
   paper: theme.mixins.gutters({
@@ -61,6 +62,7 @@ const InvoiceSelectionContainer = (props) => {
   const [searchValue, setSearchValue] = useState(ouSearchValue);
   const [searchPeriod, setSearchPeriod] = useState(period);
   const [debouncedSearchValue, setDebouncedSearchValue] = useDebounce(ouSearchValue);
+  const [traditionalView, setTraditionalView] = useState(true);
 
   useEffect(() => {
     const search = async () => {
@@ -88,7 +90,17 @@ const InvoiceSelectionContainer = (props) => {
     };
 
     search();
-  }, [debouncedSearchValue, currentUser, period, parent, contractedOrgUnitGroupId, dhis2, defaultPathName, history]);
+  }, [
+    debouncedSearchValue,
+    currentUser,
+    period,
+    parent,
+    contractedOrgUnitGroupId,
+    dhis2,
+    defaultPathName,
+    history,
+    traditionalView,
+  ]);
 
   const onOuSearchChange = async (event) => {
     setDebouncedSearchValue(event.target.value);
@@ -104,67 +116,62 @@ const InvoiceSelectionContainer = (props) => {
     updateHistory(history, orgUnitId, period, debouncedSearchValue, defaultPathName);
   };
 
-  const [selectedOrgUnits, setSelectedOrgUnits] = useState([]);
   const classes = useStyles();
   const { t } = useTranslation();
   const SelectionResults = resultsElements || SelectionResultsContainer;
-  const onOrgUnitChange = (orgunits) => {
-    setSelectedOrgUnits(orgunits);
+
+  const toggleView = (useTraditionalView) => {
+    setTraditionalView(useTraditionalView);
   };
+
+  const switchToTreeView = "Switch to orgunit tree view";
+  const switchToTraditionalView = "Switch to traditional view";
+  const viewLabel = traditionalView ? switchToTreeView : switchToTraditionalView;
+
   return (
     <Paper className={classes.paper} square>
       <Typography variant="h6" component="h6" gutterBottom>
         {t("invoices.search.title")}
       </Typography>
+      <Button onClick={() => toggleView(!traditionalView)} startIcon={<CachedIcon />}>
+        {viewLabel}
+      </Button>
+      <br />
+      <br />
+      <br />
       <div className={classes.filters}>
-        <div style={{ display: "flex" }}>
-          <div style={{ margin: "10px", width: "500px" }}>
-            <OrgUnitTreePicker onChange={onOrgUnitChange}></OrgUnitTreePicker>
-          </div>
-          <div>
-            {selectedOrgUnits &&
-              selectedOrgUnits.map((ou) => (
-                <div>
-                  <h2>{ou.name}</h2>
-                  <h3>Contrats</h3>
-                  {ou.activeContracts &&
-                    ou.activeContracts
-                      .filter((c) => c.matchPeriod(searchPeriod))
-                      .map((c) => (
-                        <div>
-                          {c.startPeriod} {c.endPeriod} {c.codes} {c.codes}
-                        </div>
-                      ))}
-                </div>
-              ))}
-            <h3>Factures</h3>
+        {!traditionalView && <InvoiceTreeView invoiceLinksProps={props} searchPeriod={searchPeriod} t={t} />}
+        {traditionalView && (
+          // topLevelsOrgUnits,
+          // onParentOrganisationUnit,
+          // parent,
+          // onOuSearchChange,
+          // searchValue,
+          // classes,
+          // searchPeriod,
+          // onPeriodChange,
+          // periodFormat,
+          // loading,
+          // orgUnits,
+          // selectionResultsProps,
 
-            {selectedOrgUnits && selectedOrgUnits[0] && (
-              <InvoiceLinks {...props} t={t} orgUnit={selectedOrgUnits[0]} period={searchPeriod}></InvoiceLinks>
-            )}
-          </div>
-        </div>
-        {/*
-        <OrgUnitAutoComplete
-          organisationUnits={topLevelsOrgUnits}
-          onChange={onParentOrganisationUnit}
-          selected={parent}
-        />
-        <br />
-        <OuPicker onOuSearchChange={onOuSearchChange} ouSearchValue={searchValue} />{" "}
-        <FormControl className={classes.periodContainer}>
-          <PeriodPicker period={searchPeriod} onPeriodChange={onPeriodChange} periodFormat={periodFormat} />
-        </FormControl>
-        <br />
-        {loading ? <LinearProgress variant="query" /> : ""}
-            */}
+          <InvoiceTraditionalView
+            topLevelsOrgUnits={topLevelsOrgUnits}
+            onParentOrganisationUnit={onParentOrganisationUnit}
+            parent={parent}
+            onOuSearchChange={onOuSearchChange}
+            searchValue={searchValue}
+            classes={classes}
+            searchPeriod={searchPeriod}
+            onPeriodChange={onPeriodChange}
+            periodFormat={periodFormat}
+            loading={loading}
+            orgUnits={orgUnits}
+            selectionResultsProps={props}
+            resultsElements={resultsElements}
+          />
+        )}
       </div>
-      <br />
-      <br />
-      <br />
-      {/*
-      <SelectionResults {...props} orgUnits={orgUnits?.organisationUnits} pager={orgUnits?.pager} />
-          */}
     </Paper>
   );
 };

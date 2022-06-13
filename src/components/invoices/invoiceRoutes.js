@@ -44,7 +44,7 @@ const invoiceRoutes = (props) => {
     />,
     <Route
       key="invoiceSelectionRoute"
-      path="/select"
+      path="/select/:viewType"
       exact
       component={(routerProps) => {
         const params = new URLSearchParams(routerProps.location.search.substring(1));

@@ -35,10 +35,11 @@ const styles = (theme) => ({
 
 const useStyles = makeStyles(styles);
 
-const updateHistory = (history, parent, period, searchValue, defaultPathName) => {
+const updateHistory = (history, parent, period, searchValue, defaultPathName, viewType) => {
   const parentParam = parent ? "&parent=" + parent : "";
+  const path = defaultPathName || `/select/${viewType}`;
   history.replace({
-    pathname: defaultPathName,
+    pathname: path,
     search: "?q=" + searchValue + "&period=" + period + parentParam,
   });
 };
@@ -56,13 +57,16 @@ const InvoiceSelectionContainer = (props) => {
     topLevelsOrgUnits,
     periodFormat,
     resultsElements,
+    match,
   } = props;
   const [orgUnits, setOrgUnits] = useState();
   const [loading, setLoading] = useState(false);
   const [searchValue, setSearchValue] = useState(ouSearchValue);
   const [searchPeriod, setSearchPeriod] = useState(period);
   const [debouncedSearchValue, setDebouncedSearchValue] = useDebounce(ouSearchValue);
-  const [traditionalView, setTraditionalView] = useState(true);
+
+  const [viewType, setViewType] = useState(match.params.viewType);
+  const [useTraditionalView, setUseTraditionalView] = useState(viewType === "traditional");
 
   useEffect(() => {
     const search = async () => {
@@ -82,7 +86,7 @@ const InvoiceSelectionContainer = (props) => {
 
         setOrgUnits(newOrgUnits);
         if (debouncedSearchValue !== ouSearchValue) {
-          updateHistory(history, parent, period, debouncedSearchValue, defaultPathName);
+          updateHistory(history, parent, period, debouncedSearchValue, defaultPathName, viewType);
         }
       } finally {
         setLoading(false);
@@ -99,7 +103,7 @@ const InvoiceSelectionContainer = (props) => {
     dhis2,
     defaultPathName,
     history,
-    traditionalView,
+    viewType,
   ]);
 
   const onOuSearchChange = async (event) => {
@@ -109,22 +113,26 @@ const InvoiceSelectionContainer = (props) => {
 
   const onPeriodChange = (newPeriod) => {
     setSearchPeriod(newPeriod);
-    updateHistory(history, parent, newPeriod, debouncedSearchValue, defaultPathName);
+    updateHistory(history, parent, newPeriod, debouncedSearchValue, defaultPathName, viewType);
   };
 
   const onParentOrganisationUnit = (orgUnitId) => {
-    updateHistory(history, orgUnitId, period, debouncedSearchValue, defaultPathName);
+    updateHistory(history, orgUnitId, period, debouncedSearchValue, defaultPathName, viewType);
   };
 
   const classes = useStyles();
   const { t } = useTranslation();
   const toggleView = (useTraditionalView) => {
-    setTraditionalView(useTraditionalView);
+    setUseTraditionalView(useTraditionalView);
+    const viewToUse = useTraditionalView ? "traditional" : "tree";
+    setViewType(viewToUse);
+    const newUrl = window.location.href.replace(`/${viewType}`, `/${viewToUse}`);
+    window.history.replaceState({}, "", newUrl);
   };
 
   const switchToTreeView = "Switch to orgunit tree view";
   const switchToTraditionalView = "Switch to traditional view";
-  const viewLabel = traditionalView ? switchToTreeView : switchToTraditionalView;
+  const viewLabel = useTraditionalView ? switchToTreeView : switchToTraditionalView;
 
   return (
     <Paper className={classes.paper} square>
@@ -132,7 +140,7 @@ const InvoiceSelectionContainer = (props) => {
         <Typography variant="h6" component="h6" gutterBottom>
           {t("invoices.search.title")}
         </Typography>
-        <Button onClick={() => toggleView(!traditionalView)} startIcon={<CachedIcon />}>
+        <Button onClick={() => toggleView(!useTraditionalView)} startIcon={<CachedIcon />}>
           {viewLabel}
         </Button>
       </div>
@@ -140,8 +148,8 @@ const InvoiceSelectionContainer = (props) => {
       <br />
       <br />
       <div className={classes.filters}>
-        {!traditionalView && <InvoiceTreeView invoiceLinksProps={props} searchPeriod={searchPeriod} t={t} />}
-        {traditionalView && (
+        {!useTraditionalView && <InvoiceTreeView invoiceLinksProps={props} searchPeriod={searchPeriod} t={t} />}
+        {useTraditionalView && (
           <InvoiceTraditionalView
             topLevelsOrgUnits={topLevelsOrgUnits}
             onParentOrganisationUnit={onParentOrganisationUnit}

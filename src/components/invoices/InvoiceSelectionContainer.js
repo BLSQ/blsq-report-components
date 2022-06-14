@@ -5,8 +5,6 @@ import CachedIcon from "@material-ui/icons/Cached";
 
 import { makeStyles } from "@material-ui/styles";
 import searchOrgunit from "./searchOrgunit";
-import SelectionResultsContainer from "./SelectionResultsContainer";
-
 import useDebounce from "../shared/useDebounce";
 import InvoiceTreeView from "./InvoiceTreeView";
 import InvoiceTraditionalView from "./InvoiceTraditionalView";
@@ -123,13 +121,13 @@ const InvoiceSelectionContainer = (props) => {
   const toggleView = () => {
     const viewToUse = viewType === "tree" ? "table" : "tree";
     setViewType(viewToUse);
-    updateHistory(history, parent, period, debouncedSearchValue, defaultPathName, viewToUse)
+    updateHistory(history, parent, period, debouncedSearchValue, defaultPathName, viewToUse);
   };
 
   const switchToTreeView = "Switch to orgunit tree view";
   const switchToTraditionalView = "Switch to traditional view";
   const viewLabel = viewType === "table" ? switchToTreeView : switchToTraditionalView;
-  debugger;
+
   return (
     <Paper className={classes.paper} square>
       <div className={classes.headerButtons}>

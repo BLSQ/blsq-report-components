@@ -1,49 +1,10 @@
 import React, { useState } from "react";
 import { TreeViewWithSearch } from "bluesquare-components";
-import { getRootData, getChildrenData, request } from "./orgUnitTreeBackend";
-
-// act as a cache to speed up first levels click
-
-let currentPeriod = undefined;
-
-const setPeriod = (argPeriod) => {
-  currentPeriod = argPeriod;
-};
-
-export const label = (data) => {
-  return data.name;
-};
-
-const search = (input1, input2, type) => {
-  console.log(input1, input2, type);
-  return [];
-};
-
-const makeDropDownText = (orgUnit) => {
-  return (
-    <div>
-      <span display="block">
-        {orgUnit.name} <code style={{ color: "lightgrey" }}>{orgUnit.id}</code>
-      </span>
-      <pre style={{ fontSize: "8px" }}>
-        {orgUnit.ancestors
-          .slice(1)
-          .map((o) => o.name)
-          .join(" > ")}
-      </pre>
-      <hr />
-    </div>
-  );
-};
+import { setPeriod, treeProps } from "./orgUnitTreeBackend";
 
 const onOrgUnitSelect = (orgUnit) => {
   alert("Selected " + orgUnit.name);
   return [];
-};
-
-const parseNodeIds = (orgUnit) => {
-  const parsed = orgUnit.ancestors.map((a) => [a.id, a]).concat([[orgUnit.id, orgUnit]]);
-  return new Map(parsed);
 };
 
 const formatInitialSelectedIds = (selection) => [];
@@ -69,19 +30,6 @@ const OrgUnitTreePicker = ({ initialSelection, onChange, period }) => {
     }
   };
 
-  const treeProps = {
-    getRootData,
-    label,
-    getChildrenData,
-    search,
-    request,
-    makeDropDownText,
-    onSelect: onOrgUnitSelect,
-    onUpdate: onUpdate,
-    parseNodeIds: parseNodeIds,
-    toggleOnLabelClick: false,
-    isSelectable: () => true,
-  };
   return (
     <div>
       <TreeViewWithSearch
@@ -89,6 +37,7 @@ const OrgUnitTreePicker = ({ initialSelection, onChange, period }) => {
         preselected={selectedOrgUnitsIds}
         preexpanded={selectedOrgUnitParents}
         selectedData={selectedOrgUnits}
+        onUpdate={onUpdate}
       />
     </div>
   );

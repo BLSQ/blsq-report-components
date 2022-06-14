@@ -18,7 +18,7 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriod
       <br />
       <div style={{ display: "flex" }}>
         <div style={{ margin: "10px", width: "500px" }}>
-          <OrgUnitTreePicker onChange={onOrgUnitChange} />
+          <OrgUnitTreePicker onChange={onOrgUnitChange} period={searchPeriod} />
         </div>
         <div>
           {selectedOrgUnits &&
@@ -27,13 +27,11 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriod
                 <h2>{ou.name}</h2>
                 <h3>Contrats</h3>
                 {ou.activeContracts &&
-                  ou.activeContracts
-                    .filter((c) => c.matchPeriod(searchPeriod))
-                    .map((c) => (
-                      <div>
-                        {c.startPeriod} {c.endPeriod} {c.codes} {c.codes}
-                      </div>
-                    ))}
+                  ou.activeContracts.map((c) => (
+                    <div>
+                      {c.startPeriod} {c.endPeriod} {c.codes} {c.codes}
+                    </div>
+                  ))}
               </div>
             ))}
           <h3>Factures</h3>

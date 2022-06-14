@@ -3,10 +3,17 @@ import OrgUnitTreePicker from "../shared/orgunit_picker/OrgUnitTreePicker";
 import InvoiceLinks from "./InvoiceLinks";
 import PeriodPicker from "../shared/PeriodPicker";
 import { FormControl } from "@material-ui/core";
+import { anchorQueryParams, urlWith } from "../shared/tables/urlParams";
 
 const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriodChange, periodFormat }) => {
   const [selectedOrgUnits, setSelectedOrgUnits] = useState([]);
   const onOrgUnitChange = (orgunits) => {
+    const queryParams = anchorQueryParams();
+    queryParams.set("ou", orgunits[0].id);
+    const newUrl = urlWith(queryParams);
+    if (newUrl !== window.location.toString()) {
+      window.history.replaceState({}, "", urlWith(queryParams));
+    }
     setSelectedOrgUnits(orgunits);
   };
   return (

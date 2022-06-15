@@ -1,4 +1,5 @@
 import { getInstance } from "d2/lib/d2";
+import React from "react";
 import PluginRegistry from "../../core/PluginRegistry";
 
 let currentPeriod = undefined;

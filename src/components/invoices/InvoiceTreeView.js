@@ -10,13 +10,13 @@ import { Link } from "react-router-dom";
 const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriodChange, periodFormat }) => {
   const [selectedOrgUnits, setSelectedOrgUnits] = useState([]);
   const onOrgUnitChange = (orgunits) => {
-    const queryParams = anchorQueryParams();
-    queryParams.set("ou", orgunits[0].id);
-    const newUrl = urlWith(queryParams);
-    if (newUrl !== window.location.toString()) {
-      window.history.replaceState({}, "", urlWith(queryParams));
+    if (orgunits.length) {
+      const queryParams = anchorQueryParams();
+      queryParams.set("ou", orgunits[0].id);
+      const newUrl = urlWith(queryParams);
+      window.history.replaceState({}, "", newUrl);
+      setSelectedOrgUnits(orgunits);
     }
-    setSelectedOrgUnits(orgunits);
   };
 
   return (

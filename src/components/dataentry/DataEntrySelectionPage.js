@@ -14,6 +14,7 @@ import { withRouter } from "react-router";
 import PeriodPicker from "../shared/PeriodPicker";
 import LinkedContract from "./LinkedContract";
 import { buildFormData } from "./forms";
+import ContractSummary from "../shared/contracts/ContractSummary";
 
 const checkOverlaps = (contracts) => {
   for (let contract1 of contracts) {
@@ -192,22 +193,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
           <div>
             {t("dataEntry.contractFrom")} <code>{orgUnit.activeContracts[0].startPeriod}</code>{" "}
             {t("dataEntry.contractTo")} <code>{orgUnit.activeContracts[0].endPeriod}</code>{" "}
-            <Link
-              to={
-                "/contracts/" +
-                ((orgUnit.activeContracts[0] &&
-                  orgUnit.activeContracts[0].fieldValues &&
-                  orgUnit.activeContracts[0].fieldValues.contract_main_orgunit) ||
-                  orgUnit.id)
-              }
-            >
-              <IconButton>
-                <InfoIcon color="action" />
-              </IconButton>
-            </Link>{" "}
-            {orgUnit.activeContracts[0].codes.map((c, index) => (
-              <Chip key={c + "_" + index} label={c} style={{ margin: "5px" }} />
-            ))}
+            <ContractSummary orgUnit={orgUnit} contract={orgUnit.activeContracts[0]} t={t} />
           </div>
           {linkedContracts && linkedContracts.length > 1 && (
             <div>

@@ -27,12 +27,13 @@ const checkOverlaps = (contracts) => {
 };
 
 const ErrorTogglable = ({ generalError }) => {
-  const lines = generalError.message.split("\n");
+  const message = generalError.message ? generalError.message : "Sorry something went wrong : \n"+JSON.stringify(generalError)
+  const lines = message.split("\n");
   const [fullDisplay, setFullDisplay] = useState(false);
   return (
     <div>
       <pre style={{ color: "red" }} title={generalError.stack}>
-        {fullDisplay ? generalError.message : lines[0]}
+        {fullDisplay ? message : lines[0]}
       </pre>{" "}
       {lines.length > 1 && <Button onClick={() => setFullDisplay(!fullDisplay)}>...</Button>}
     </div>

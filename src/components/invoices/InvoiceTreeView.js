@@ -4,7 +4,7 @@ import InvoiceLinks from "./InvoiceLinks";
 import PeriodPicker from "../shared/PeriodPicker";
 import { FormControl } from "@material-ui/core";
 import { anchorQueryParams, urlWith } from "../shared/tables/urlParams";
-import ActiveContractContainer from "../shared/contracts/ActiveContractContainer";
+import ContractSummary from "../shared/contracts/ContractSummary";
 import { Link } from "react-router-dom";
 
 const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriodChange, periodFormat }) => {
@@ -18,8 +18,6 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriod
     }
     setSelectedOrgUnits(orgunits);
   };
-
-  const generateLink = (ancestorId) => {};
 
   return (
     <>
@@ -55,7 +53,7 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriod
                   {ou.activeContracts &&
                     ou.activeContracts.map((c) => (
                       <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
-                        <ActiveContractContainer orgUnit={ou} contract={c} t={t} />
+                        <ContractSummary orgUnit={ou} contract={c} t={t} />
                       </div>
                     ))}
                   {(ou.activeContracts == undefined || ou.activeContracts.length == 0) && (

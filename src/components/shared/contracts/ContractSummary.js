@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Chip, IconButton } from "@material-ui/core";
 import InfoIcon from "@material-ui/icons/Info";
 
-const ActiveContractContainer = ({ orgUnit, contract, t }) => {
+const ContractSummary = ({ orgUnit, contract, t }) => {
   return (
     <div>
       {t("dataEntry.contractFrom")} <code>{contract.startPeriod}</code> {t("dataEntry.contractTo")}{" "}
@@ -25,4 +25,4 @@ const ActiveContractContainer = ({ orgUnit, contract, t }) => {
   );
 };
 
-export default ActiveContractContainer;
+export default ContractSummary;

@@ -20,10 +20,58 @@ const OrgunitRelatedSection = ({ messageKey, children }) => {
   );
 };
 
+const DataEntriesSection = ({ orgUnit, period, periodFormat }) => {
+  const dataEntryRegistry = PluginRegistry.extension("dataentry.dataEntries");
+  let dataEntries = [];
+  if (orgUnit.activeContracts && orgUnit.activeContracts[0]) {
+    const expectedDataEntries = dataEntryRegistry.getExpectedDataEntries(orgUnit.activeContracts[0], period);
+    dataEntries = expectedDataEntries;
+  }
+  return (
+    <OrgunitRelatedSection messageKey={"Saisie de données"}>
+      <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
+        {dataEntries && (
+          <DataEntryLinks
+            dataEntries={dataEntries}
+            dataEntryCode={undefined}
+            period={period}
+            orgUnit={orgUnit}
+            periodFormat={periodFormat}
+          />
+        )}
+      </div>
+    </OrgunitRelatedSection>
+  );
+};
+
+const InvoiceLinksSection = ({ invoiceLinksProps, t, orgUnit, period }) => {
+  return (
+    <OrgunitRelatedSection messageKey={"Factures"}>
+      <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
+        <InvoiceLinks {...invoiceLinksProps} t={t} orgUnit={orgUnit} period={period} />
+      </div>
+    </OrgunitRelatedSection>
+  );
+};
+
+const ContractsSection = ({orgUnit, t}) => {
+  return (
+    <OrgunitRelatedSection messageKey={"Contrats"}>
+      {orgUnit.activeContracts &&
+        orgUnit.activeContracts.map((c) => (
+          <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
+            <ContractSummary orgUnit={orgUnit} contract={c} t={t} />
+          </div>
+        ))}
+      {(orgUnit.activeContracts === undefined || orgUnit.activeContracts.length === 0) && (
+        <div style={{ marginLeft: "20px" }}>Pas de contrats pour cette période </div>
+      )}
+    </OrgunitRelatedSection>
+  );
+};
+
 const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriodChange, periodFormat }) => {
   const [selectedOrgUnits, setSelectedOrgUnits] = useState([]);
-  const [dataEntries, setDataEntries] = useState([]);
-  const dataEntryRegistry = PluginRegistry.extension("dataentry.dataEntries");
 
   const onOrgUnitChange = (orgunits) => {
     if (orgunits.length) {
@@ -31,13 +79,6 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriod
       queryParams.set("ou", orgunits[0].id);
       const newUrl = urlWith(queryParams);
       window.history.replaceState({}, "", newUrl);
-      const activeContracts = orgunits[0].activeContracts;
-      if (activeContracts.length) {
-        const expectedDataEntries = dataEntryRegistry.getExpectedDataEntries(activeContracts[0], searchPeriod);
-        setDataEntries(expectedDataEntries);
-      } else {
-        setDataEntries([]);
-      }
       setSelectedOrgUnits(orgunits);
     }
   };
@@ -72,39 +113,18 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriod
                     })}
                 </div>
 
-                <OrgunitRelatedSection messageKey={"Contrats"}>
-                  {ou.activeContracts &&
-                    ou.activeContracts.map((c) => (
-                      <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
-                        <ContractSummary orgUnit={ou} contract={c} t={t} />
-                      </div>
-                    ))}
-                  {(ou.activeContracts == undefined || ou.activeContracts.length == 0) && (
-                    <div style={{ marginLeft: "20px" }}>Pas de contrats pour cette période </div>
-                  )}
-                </OrgunitRelatedSection>
+                <ContractsSection orgUnit={ou} t={t} />
               </div>
             ))}
 
-            <OrgunitRelatedSection messageKey={"Factures"}>
-              <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
-                <InvoiceLinks {...invoiceLinksProps} t={t} orgUnit={selectedOrgUnits[0]} period={searchPeriod} />
-              </div>
-            </OrgunitRelatedSection>
+            <InvoiceLinksSection
+              invoiceLinksProps={invoiceLinksProps}
+              t={t}
+              orgUnit={selectedOrgUnits[0]}
+              period={searchPeriod}
+            />
 
-            <OrgunitRelatedSection messageKey={"Saisie de données"}>
-              <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
-                {dataEntries && (
-                  <DataEntryLinks
-                    dataEntries={dataEntries}
-                    dataEntryCode={undefined}
-                    period={searchPeriod}
-                    orgUnit={selectedOrgUnits[0] || []}
-                    periodFormat={periodFormat}
-                  />
-                )}
-              </div>
-            </OrgunitRelatedSection>
+            <DataEntriesSection orgUnit={selectedOrgUnits[0]} period={searchPeriod} periodFormat={periodFormat} />
           </div>
         )}
       </div>

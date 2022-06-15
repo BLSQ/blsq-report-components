@@ -19,9 +19,7 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriod
     setSelectedOrgUnits(orgunits);
   };
 
-  const generateLink = (ancestorId) => {
-
-  };
+  const generateLink = (ancestorId) => {};
 
   return (
     <>
@@ -38,7 +36,8 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriod
           {selectedOrgUnits &&
             selectedOrgUnits.map((ou) => (
               <div>
-                <div style={{ fontFamily: "monospace" }}>
+                <h2>{ou.name}</h2>
+                <div style={{ fontFamily: "monospace", marginLeft: "20px" }}>
                   {ou &&
                     ou.ancestors.slice(1, ou.ancestors.length - 1).map((ancestor, index) => {
                       return (
@@ -51,21 +50,30 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriod
                       );
                     })}
                 </div>
-                <h2>{ou.name}</h2>
-                <h3>Contrats</h3>
-                {ou.activeContracts &&
-                  ou.activeContracts.map((c) => (
-                    <div>
-                      <ActiveContractContainer orgUnit={ou} contract={c} t={t} />
-                    </div>
-                  ))}
+                <div style={{ marginLeft: "20px" }}>
+                  <h3>Contrats</h3>
+                  {ou.activeContracts &&
+                    ou.activeContracts.map((c) => (
+                      <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
+                        <ActiveContractContainer orgUnit={ou} contract={c} t={t} />
+                      </div>
+                    ))}
+                  {(ou.activeContracts == undefined || ou.activeContracts.length == 0) && (
+                    <div style={{ marginLeft: "20px"}}>Pas de contrats pour cette période </div>
+                  )}
+                </div>
               </div>
             ))}
-          <h3>Factures</h3>
 
-          {selectedOrgUnits && selectedOrgUnits[0] && (
-            <InvoiceLinks {...invoiceLinksProps} t={t} orgUnit={selectedOrgUnits[0]} period={searchPeriod} />
-          )}
+          <div style={{ marginLeft: "20px" }}>
+            <h3>Factures</h3>
+
+            <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
+              {selectedOrgUnits && selectedOrgUnits[0] && (
+                <InvoiceLinks {...invoiceLinksProps} t={t} orgUnit={selectedOrgUnits[0]} period={searchPeriod} />
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </>

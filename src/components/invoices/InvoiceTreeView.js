@@ -8,6 +8,17 @@ import ContractSummary from "../shared/contracts/ContractSummary";
 import { Link } from "react-router-dom";
 import PluginRegistry from "../core/PluginRegistry";
 import DataEntryLinks from "../shared/data_entries/DataEntryLinks";
+import { useTranslation } from "react-i18next";
+
+const OrgunitRelatedSection = ({ messageKey, children }) => {
+  const { t } = useTranslation();
+  return (
+    <div style={{ marginLeft: "20px" }}>
+      <h3>{t(messageKey)}</h3>
+      {children}
+    </div>
+  );
+};
 
 const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriodChange, periodFormat }) => {
   const [selectedOrgUnits, setSelectedOrgUnits] = useState([]);
@@ -24,6 +35,8 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriod
       if (activeContracts.length) {
         const expectedDataEntries = dataEntryRegistry.getExpectedDataEntries(activeContracts[0], searchPeriod);
         setDataEntries(expectedDataEntries);
+      } else {
+        setDataEntries([]);
       }
       setSelectedOrgUnits(orgunits);
     }
@@ -40,9 +53,9 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriod
         <div style={{ margin: "10px", width: "500px" }}>
           <OrgUnitTreePicker onChange={onOrgUnitChange} period={searchPeriod} />
         </div>
-        <div>
-          {selectedOrgUnits &&
-            selectedOrgUnits.map((ou) => (
+        {selectedOrgUnits && selectedOrgUnits.length > 0 && (
+          <div>
+            {selectedOrgUnits.map((ou) => (
               <div>
                 <h2>{ou.name}</h2>
                 <div style={{ fontFamily: "monospace", marginLeft: "20px" }}>
@@ -58,8 +71,8 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriod
                       );
                     })}
                 </div>
-                <div style={{ marginLeft: "20px" }}>
-                  <h3>Contrats</h3>
+
+                <OrgunitRelatedSection messageKey={"Contrats"}>
                   {ou.activeContracts &&
                     ou.activeContracts.map((c) => (
                       <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
@@ -69,36 +82,31 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriod
                   {(ou.activeContracts == undefined || ou.activeContracts.length == 0) && (
                     <div style={{ marginLeft: "20px" }}>Pas de contrats pour cette période </div>
                   )}
-                </div>
+                </OrgunitRelatedSection>
               </div>
             ))}
 
-          <div style={{ marginLeft: "20px" }}>
-            <h3>Factures</h3>
-
-            <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
-              {selectedOrgUnits && selectedOrgUnits[0] && (
+            <OrgunitRelatedSection messageKey={"Factures"}>
+              <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
                 <InvoiceLinks {...invoiceLinksProps} t={t} orgUnit={selectedOrgUnits[0]} period={searchPeriod} />
-              )}
-            </div>
-          </div>
+              </div>
+            </OrgunitRelatedSection>
 
-          <div style={{ marginLeft: "20px" }}>
-            <h3>Saisie de données</h3>
-
-            <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
-              {dataEntries && (
-                <DataEntryLinks
-                  dataEntries={dataEntries}
-                  dataEntryCode={undefined}
-                  period={searchPeriod}
-                  orgUnit={selectedOrgUnits[0] || []}
-                  periodFormat={periodFormat}
-                />
-              )}
-            </div>
+            <OrgunitRelatedSection messageKey={"Saisie de données"}>
+              <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
+                {dataEntries && (
+                  <DataEntryLinks
+                    dataEntries={dataEntries}
+                    dataEntryCode={undefined}
+                    period={searchPeriod}
+                    orgUnit={selectedOrgUnits[0] || []}
+                    periodFormat={periodFormat}
+                  />
+                )}
+              </div>
+            </OrgunitRelatedSection>
           </div>
-        </div>
+        )}
       </div>
     </>
   );

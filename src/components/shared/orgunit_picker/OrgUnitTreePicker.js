@@ -10,6 +10,23 @@ const onOrgUnitSelect = (orgUnit) => {
 const formatInitialSelectedIds = (selection) => [];
 const formatInitialSelectedParents = (selection) => new Map();
 
+const makeDropDownText = (orgUnit) => {
+  return (
+    <div>
+      <span display="block">
+        {orgUnit.name} <code style={{ color: "lightgrey" }}>{orgUnit.id}</code>
+      </span>
+      <pre style={{ fontSize: "8px" }}>
+        {orgUnit.ancestors
+          .slice(1)
+          .map((o) => o.name)
+          .join(" > ")}
+      </pre>
+      <hr />
+    </div>
+  );
+};
+
 const OrgUnitTreePicker = ({ initialSelection, onChange, period }) => {
   setPeriod(period);
 
@@ -34,6 +51,7 @@ const OrgUnitTreePicker = ({ initialSelection, onChange, period }) => {
     <div>
       <TreeViewWithSearch
         {...treeProps}
+        makeDropDownText={makeDropDownText}
         preselected={selectedOrgUnitsIds}
         preexpanded={selectedOrgUnitParents}
         selectedData={selectedOrgUnits}

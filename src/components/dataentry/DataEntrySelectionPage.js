@@ -15,6 +15,7 @@ import PeriodPicker from "../shared/PeriodPicker";
 import LinkedContract from "./LinkedContract";
 import { buildFormData } from "./forms";
 import ContractSummary from "../shared/contracts/ContractSummary";
+import DataEntryLinks from "../shared/data_entries/DataEntryLinks";
 
 const checkOverlaps = (contracts) => {
   for (let contract1 of contracts) {
@@ -208,39 +209,15 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
           <h2>{t("dataEntry.dataEntries")}</h2>
           <table>
             <tbody>
-              {dataEntries &&
-                dataEntries.map((dataEntry) => {
-                  const isCurrent =
-                    dataEntry.dataEntryType.code == match.params.dataEntryCode &&
-                    dataEntry.period == match.params.period;
-                  return (
-                    <tr>
-                      <td>
-                        {" "}
-                        <Typography variant="overline" gutterBottom>
-                          {dataEntry.dataEntryType.name}
-                        </Typography>
-                      </td>
-                      <td>
-                        <Button
-                          key={dataEntry.dataEntryType.code + "-" + dataEntry.period + "-" + orgUnit.id}
-                          variant="text"
-                          color="primary"
-                          size="small"
-                          component={Link}
-                          style={isCurrent ? { backgroundColor: "lightyellow" } : {}}
-                          to={"/dataEntry/" + orgUnit.id + "/" + dataEntry.period + "/" + dataEntry.dataEntryType.code}
-                          title={dataEntry.period}
-                        >
-                          {DatePeriods.displayName(
-                            dataEntry.period,
-                            periodFormat[DatePeriods.detect(dataEntry.period)],
-                          )}
-                        </Button>
-                      </td>
-                    </tr>
-                  );
-                })}
+              {dataEntries && (
+                <DataEntryLinks
+                  dataEntries={dataEntries}
+                  dataEntryCode={match.params.dataEntryCode}
+                  period={match.params.period}
+                  orgUnit={orgUnit}
+                  periodFormat={periodFormat}
+                />
+              )}
             </tbody>
           </table>
         </Grid>

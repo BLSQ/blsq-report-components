@@ -44,7 +44,7 @@ const DataEntriesSection = ({ orgUnit, period, periodFormat }) => {
     dataEntries = expectedDataEntries;
   }
   return (
-    <OrgunitRelatedSection messageKey={"Saisie de données"}>
+    <OrgunitRelatedSection messageKey="dataEntry.dataEntries">
       <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
         {dataEntries && (
           <DataEntryLinks
@@ -63,7 +63,7 @@ const DataEntriesSection = ({ orgUnit, period, periodFormat }) => {
 const InvoiceLinksSection = ({ invoiceLinksProps, orgUnit, period }) => {
   const { t } = useTranslation();
   return (
-    <OrgunitRelatedSection messageKey={"Factures"}>
+    <OrgunitRelatedSection messageKey="dataEntry.invoices">
       <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
         <InvoiceLinks {...invoiceLinksProps} t={t} orgUnit={orgUnit} period={period} maxInvoiceLength={100} />
       </div>

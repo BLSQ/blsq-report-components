@@ -2,8 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Chip, IconButton } from "@material-ui/core";
 import InfoIcon from "@material-ui/icons/Info";
+import { useTranslation } from "react-i18next";
 
-const ContractSummary = ({ orgUnit, contract, t }) => {
+const ContractSummary = ({ orgUnit, contract }) => {
+  const { t } = useTranslation();
   return (
     <div>
       {t("dataEntry.contractFrom")} <code>{contract.startPeriod}</code> {t("dataEntry.contractTo")}{" "}

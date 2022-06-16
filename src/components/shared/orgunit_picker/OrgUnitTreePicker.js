@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TreeViewWithSearch } from "bluesquare-components";
 import { setPeriod, treeProps } from "./orgUnitTreeBackend";
+import ContractSummary from "../contracts/ContractSummary";
 
 const onOrgUnitSelect = (orgUnit) => {
   alert("Selected " + orgUnit.name);
@@ -12,7 +13,7 @@ const formatInitialSelectedParents = (selection) => new Map();
 
 const makeDropDownText = (orgUnit) => {
   return (
-    <div>
+    <div key={orgUnit.id}>
       <span display="block">
         {orgUnit.name} <code style={{ color: "lightgrey" }}>{orgUnit.id}</code>
       </span>
@@ -22,6 +23,7 @@ const makeDropDownText = (orgUnit) => {
           .map((o) => o.name)
           .join(" > ")}
       </pre>
+      {orgUnit.activeContracts && orgUnit.activeContracts[0] && <ContractSummary orgUnit={orgUnit} contract={orgUnit.activeContracts[0]} />}
       <hr />
     </div>
   );

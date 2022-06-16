@@ -2,20 +2,19 @@ import React, { useEffect, useState } from "react";
 import DatePeriods from "../../support/DatePeriods";
 import PluginRegistry from "../core/PluginRegistry";
 import { Link } from "react-router-dom";
-import { Button, Paper, Typography, Chip, Grid, IconButton } from "@material-ui/core";
+import { Button, Paper, Grid } from "@material-ui/core";
 import AssignmentIcon from "@material-ui/icons/Assignment";
-import InfoIcon from "@material-ui/icons/Info";
 import { Alert } from "@material-ui/lab";
 
 import FormDataContext from "./FormDataContext";
-import InvoiceLinks from "../invoices/InvoiceLinks";
 import { useTranslation } from "react-i18next";
 import { withRouter } from "react-router";
 import PeriodPicker from "../shared/PeriodPicker";
 import LinkedContract from "./LinkedContract";
 import { buildFormData } from "./forms";
-import ContractSummary from "../shared/contracts/ContractSummary";
-import DataEntryLinks from "../shared/data_entries/DataEntryLinks";
+import ContractsSection from "../contracts/ContractsSection";
+import DataEntriesSection from "./DataEntriesSection";
+import InvoiceLinksSection from "../invoices/InvoiceLinksSection";
 
 const checkOverlaps = (contracts) => {
   for (let contract1 of contracts) {
@@ -29,7 +28,9 @@ const checkOverlaps = (contracts) => {
 };
 
 const ErrorTogglable = ({ generalError }) => {
-  const message = generalError.message ? generalError.message : "Sorry something went wrong : \n"+JSON.stringify(generalError)
+  const message = generalError.message
+    ? generalError.message
+    : "Sorry something went wrong : \n" + JSON.stringify(generalError);
   const lines = message.split("\n");
   const [fullDisplay, setFullDisplay] = useState(false);
   return (
@@ -42,7 +43,7 @@ const ErrorTogglable = ({ generalError }) => {
   );
 };
 const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const dataEntryRegistry = PluginRegistry.extension("dataentry.dataEntries");
   const [orgUnit, setOrgUnit] = useState(undefined);
   const [dataEntries, setDataEntries] = useState(undefined);
@@ -151,7 +152,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
 
   return (
     <Paper style={{ minHeight: "90vh", paddingLeft: "14px", paddingTop: "1px" }}>
-      {generalError && <ErrorTogglable generalError={generalError}></ErrorTogglable>}
+      {generalError && <ErrorTogglable generalError={generalError} />}
       {error && (
         <div>
           <Link to={error.link}>{error.message}</Link>
@@ -189,13 +190,9 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
           })}
       </div>
 
-      {orgUnit && orgUnit.activeContracts && (
+      {orgUnit && (
         <React.Fragment>
-          <div>
-            {t("dataEntry.contractFrom")} <code>{orgUnit.activeContracts[0].startPeriod}</code>{" "}
-            {t("dataEntry.contractTo")} <code>{orgUnit.activeContracts[0].endPeriod}</code>{" "}
-            <ContractSummary orgUnit={orgUnit} contract={orgUnit.activeContracts[0]} t={t} />
-          </div>
+          <ContractsSection orgUnit={orgUnit} />
           {linkedContracts && linkedContracts.length > 1 && (
             <div>
               <LinkedContract period={quarterPeriod} orgUnit={orgUnit} linkedContracts={linkedContracts} />
@@ -209,28 +206,18 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
           <h2>{t("dataEntry.dataEntries")}</h2>
           <table>
             <tbody>
-              {dataEntries && (
-                <DataEntryLinks
-                  dataEntries={dataEntries}
-                  dataEntryCode={match.params.dataEntryCode}
-                  period={match.params.period}
-                  orgUnit={orgUnit}
-                  periodFormat={periodFormat}
-                />
-              )}
+              <DataEntriesSection
+                dataEntryCode={match.params.dataEntryCode}
+                period={match.params.period}
+                orgUnit={orgUnit}
+                periodFormat={periodFormat}
+              />
             </tbody>
           </table>
         </Grid>
         <Grid item>
           <h2>{t("dataEntry.invoices")}</h2>
-          {orgUnit && (
-            <InvoiceLinks
-              t={t}
-              orgUnit={orgUnit}
-              period={period}
-              invoices={PluginRegistry.extension("invoices.invoices")}
-            />
-          )}
+          {orgUnit && <InvoiceLinksSection orgUnit={orgUnit} period={period} />}
         </Grid>
       </Grid>
       <div>

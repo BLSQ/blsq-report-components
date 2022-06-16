@@ -1,24 +1,13 @@
 import React, { useState } from "react";
 import OrgUnitTreePicker from "../shared/orgunit_picker/OrgUnitTreePicker";
-import InvoiceLinks from "./InvoiceLinks";
 import PeriodPicker from "../shared/PeriodPicker";
 import { FormControl } from "@material-ui/core";
 import { anchorQueryParams, urlWith } from "../shared/tables/urlParams";
-import ContractSummary from "../shared/contracts/ContractSummary";
 import { Link } from "react-router-dom";
-import PluginRegistry from "../core/PluginRegistry";
-import DataEntryLinks from "../shared/data_entries/DataEntryLinks";
-import { useTranslation } from "react-i18next";
+import ContractsSection from "../contracts/ContractsSection";
+import DataEntriesSection from "../dataentry/DataEntriesSection";
+import InvoiceLinksSection from "./InvoiceLinksSection";
 
-const OrgunitRelatedSection = ({ messageKey, children }) => {
-  const { t } = useTranslation();
-  return (
-    <div style={{ marginLeft: "20px" }}>
-      <h3>{t(messageKey)}</h3>
-      {children}
-    </div>
-  );
-};
 
 const LocationBreadCrumb = ({ orgUnit, period }) => {
   return (
@@ -33,58 +22,6 @@ const LocationBreadCrumb = ({ orgUnit, period }) => {
           );
         })}
     </div>
-  );
-};
-
-const DataEntriesSection = ({ orgUnit, period, periodFormat }) => {
-  const dataEntryRegistry = PluginRegistry.extension("dataentry.dataEntries");
-  let dataEntries = [];
-  if (orgUnit.activeContracts && orgUnit.activeContracts[0]) {
-    const expectedDataEntries = dataEntryRegistry.getExpectedDataEntries(orgUnit.activeContracts[0], period);
-    dataEntries = expectedDataEntries;
-  }
-  return (
-    <OrgunitRelatedSection messageKey="dataEntry.dataEntries">
-      <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
-        {dataEntries && (
-          <DataEntryLinks
-            dataEntries={dataEntries}
-            dataEntryCode={undefined}
-            period={period}
-            orgUnit={orgUnit}
-            periodFormat={periodFormat}
-          />
-        )}
-      </div>
-    </OrgunitRelatedSection>
-  );
-};
-
-const InvoiceLinksSection = ({ invoiceLinksProps, orgUnit, period }) => {
-  const { t } = useTranslation();
-  return (
-    <OrgunitRelatedSection messageKey="dataEntry.invoices">
-      <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
-        <InvoiceLinks {...invoiceLinksProps} t={t} orgUnit={orgUnit} period={period} maxInvoiceLength={100} />
-      </div>
-    </OrgunitRelatedSection>
-  );
-};
-
-const ContractsSection = ({ orgUnit }) => {
-  const { t } = useTranslation();
-  return (
-    <OrgunitRelatedSection messageKey={"dataEntry.activeContracts"}>
-      {orgUnit.activeContracts &&
-        orgUnit.activeContracts.map((c) => (
-          <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
-            <ContractSummary orgUnit={orgUnit} contract={c} />
-          </div>
-        ))}
-      {(orgUnit.activeContracts === undefined || orgUnit.activeContracts.length === 0) && (
-        <div style={{ marginLeft: "20px" }}>{t("noActiveContracts")}</div>
-      )}
-    </OrgunitRelatedSection>
   );
 };
 

@@ -8,7 +8,6 @@ import ContractsSection from "../contracts/ContractsSection";
 import DataEntriesSection from "../dataentry/DataEntriesSection";
 import InvoiceLinksSection from "./InvoiceLinksSection";
 
-
 const LocationBreadCrumb = ({ orgUnit, period }) => {
   return (
     <div style={{ fontFamily: "monospace", marginLeft: "20px" }}>
@@ -26,6 +25,8 @@ const LocationBreadCrumb = ({ orgUnit, period }) => {
 };
 
 const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, classes, onPeriodChange, periodFormat }) => {
+  const queryParams = anchorQueryParams();
+  const ou = queryParams.get("ou");
   const [selectedOrgUnits, setSelectedOrgUnits] = useState([]);
 
   const onOrgUnitChange = (orgunits) => {
@@ -47,19 +48,37 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, classes, onPeriodCha
       <br />
       <div style={{ display: "flex" }}>
         <div style={{ margin: "10px", width: "500px" }}>
-          <OrgUnitTreePicker onChange={onOrgUnitChange} period={searchPeriod} />
+          <OrgUnitTreePicker onChange={onOrgUnitChange} initialSelection={ou} period={searchPeriod} />
         </div>
         {selectedOrgUnits && selectedOrgUnits.length > 0 && (
           <div>
             <h2>{selectedOrgUnits[0].name}</h2>
             <LocationBreadCrumb orgUnit={selectedOrgUnits[0]} period={searchPeriod} />
-            <ContractsSection orgUnit={selectedOrgUnits[0]} />
+            <ContractsSection
+              orgUnit={selectedOrgUnits[0]}
+              orgUnitSectionStyle={{
+                marginLeft: "20px",
+                marginTop: "-10px",
+              }}
+            />
             <InvoiceLinksSection
               orgUnit={selectedOrgUnits[0]}
               period={searchPeriod}
               invoiceLinksProps={invoiceLinksProps}
+              orgUnitSectionStyle={{
+                marginLeft: "20px",
+                marginTop: "-10px",
+              }}
             />
-            <DataEntriesSection orgUnit={selectedOrgUnits[0]} period={searchPeriod} periodFormat={periodFormat} />
+            <DataEntriesSection
+              orgUnit={selectedOrgUnits[0]}
+              period={searchPeriod}
+              periodFormat={periodFormat}
+              orgUnitSectionStyle={{
+                marginLeft: "20px",
+                marginTop: "-10px",
+              }}
+            />
           </div>
         )}
       </div>

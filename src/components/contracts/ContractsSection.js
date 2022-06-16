@@ -3,13 +3,13 @@ import { useTranslation } from "react-i18next";
 import OrgunitRelatedSection from "../shared/OrgunitRelatedSection";
 import ContractSummary from "../shared/contracts/ContractSummary";
 
-const ContractsSection = ({ orgUnit }) => {
+const ContractsSection = ({ orgUnit, orgUnitSectionStyle }) => {
   const { t } = useTranslation();
   return (
-    <OrgunitRelatedSection messageKey={"dataEntry.activeContracts"}>
+    <OrgunitRelatedSection messageKey={"dataEntry.activeContracts"} orgUnitSectionStyle={orgUnitSectionStyle}>
       {orgUnit.activeContracts &&
         orgUnit.activeContracts.map((c) => (
-          <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
+          <div>
             <ContractSummary orgUnit={orgUnit} contract={c} />
           </div>
         ))}

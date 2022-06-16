@@ -65,7 +65,7 @@ const InvoiceLinksSection = ({ invoiceLinksProps, orgUnit, period }) => {
   return (
     <OrgunitRelatedSection messageKey={"Factures"}>
       <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
-        <InvoiceLinks {...invoiceLinksProps} t={t} orgUnit={orgUnit} period={period} />
+        <InvoiceLinks {...invoiceLinksProps} t={t} orgUnit={orgUnit} period={period} maxInvoiceLength={100} />
       </div>
     </OrgunitRelatedSection>
   );

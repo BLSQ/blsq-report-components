@@ -10,7 +10,7 @@ const makeDropDownText = (orgUnit) => {
   return (
     <div key={orgUnit.id}>
       <span display="block">
-        {orgUnit.name} <code style={{ color: "lightgrey" }}>{orgUnit.id}</code>
+        <b>{orgUnit.name}</b> <code style={{ color: "lightgrey" }}>{orgUnit.id}</code>
       </span>
       <pre style={{ fontSize: "8px" }}>
         {orgUnit.ancestors

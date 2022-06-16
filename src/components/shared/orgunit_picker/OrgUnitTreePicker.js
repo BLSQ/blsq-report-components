@@ -3,11 +3,6 @@ import { TreeViewWithSearch } from "bluesquare-components";
 import { setPeriod, treeProps } from "./orgUnitTreeBackend";
 import ContractSummary from "../contracts/ContractSummary";
 
-const onOrgUnitSelect = (orgUnit) => {
-  alert("Selected " + orgUnit.name);
-  return [];
-};
-
 const formatInitialSelectedIds = (selection) => [];
 const formatInitialSelectedParents = (selection) => new Map();
 

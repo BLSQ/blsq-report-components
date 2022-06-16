@@ -20,6 +20,22 @@ const OrgunitRelatedSection = ({ messageKey, children }) => {
   );
 };
 
+const LocationBreadCrumb = ({ orgUnit, period }) => {
+  return (
+    <div style={{ fontFamily: "monospace", marginLeft: "20px" }}>
+      {orgUnit &&
+        orgUnit.ancestors.slice(1, orgUnit.ancestors.length - 1).map((ancestor, index) => {
+          return (
+            <span key={"ancestor" + index}>
+              <Link to={"/select/?q=&period=" + period + "&ou=" + ancestor.id + "&mode=tree"}>{ancestor.name}</Link>
+              {index < orgUnit.ancestors.length - 3 && "  >  "}
+            </span>
+          );
+        })}
+    </div>
+  );
+};
+
 const DataEntriesSection = ({ orgUnit, period, periodFormat }) => {
   const dataEntryRegistry = PluginRegistry.extension("dataentry.dataEntries");
   let dataEntries = [];
@@ -44,7 +60,8 @@ const DataEntriesSection = ({ orgUnit, period, periodFormat }) => {
   );
 };
 
-const InvoiceLinksSection = ({ invoiceLinksProps, t, orgUnit, period }) => {
+const InvoiceLinksSection = ({ invoiceLinksProps, orgUnit, period }) => {
+  const { t } = useTranslation();
   return (
     <OrgunitRelatedSection messageKey={"Factures"}>
       <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
@@ -54,7 +71,9 @@ const InvoiceLinksSection = ({ invoiceLinksProps, t, orgUnit, period }) => {
   );
 };
 
-const ContractsSection = ({orgUnit, t}) => {
+const ContractsSection = ({ orgUnit }) => {
+  const { t } = useTranslation();
+
   return (
     <OrgunitRelatedSection messageKey={"Contrats"}>
       {orgUnit.activeContracts &&
@@ -70,7 +89,7 @@ const ContractsSection = ({orgUnit, t}) => {
   );
 };
 
-const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriodChange, periodFormat }) => {
+const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, classes, onPeriodChange, periodFormat }) => {
   const [selectedOrgUnits, setSelectedOrgUnits] = useState([]);
 
   const onOrgUnitChange = (orgunits) => {
@@ -96,34 +115,14 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, t, classes, onPeriod
         </div>
         {selectedOrgUnits && selectedOrgUnits.length > 0 && (
           <div>
-            {selectedOrgUnits.map((ou) => (
-              <div>
-                <h2>{ou.name}</h2>
-                <div style={{ fontFamily: "monospace", marginLeft: "20px" }}>
-                  {ou &&
-                    ou.ancestors.slice(1, ou.ancestors.length - 1).map((ancestor, index) => {
-                      return (
-                        <span key={"ancestor" + index}>
-                          <Link to={"/select/?q=&period=" + searchPeriod + "&parent=" + ancestor.id}>
-                            {ancestor.name}
-                          </Link>
-                          {index < ou.ancestors.length - 3 && "  >  "}
-                        </span>
-                      );
-                    })}
-                </div>
-
-                <ContractsSection orgUnit={ou} t={t} />
-              </div>
-            ))}
-
+            <h2>{selectedOrgUnits[0].name}</h2>
+            <LocationBreadCrumb orgUnit={selectedOrgUnits[0]} period={searchPeriod} />
+            <ContractsSection orgUnit={selectedOrgUnits[0]} />
             <InvoiceLinksSection
-              invoiceLinksProps={invoiceLinksProps}
-              t={t}
               orgUnit={selectedOrgUnits[0]}
               period={searchPeriod}
+              invoiceLinksProps={invoiceLinksProps}
             />
-
             <DataEntriesSection orgUnit={selectedOrgUnits[0]} period={searchPeriod} periodFormat={periodFormat} />
           </div>
         )}

@@ -126,7 +126,9 @@
       "title": "Search reports & invoices"
     },
     "refineYourQuery": "There are more results, refine your query to find the orgunit you are looking for.",
-    "displayStatus": "{{displayCount}} orgunits displayed, {{omitedCount}} without invoices."
+    "displayStatus": "{{displayCount}} orgunits displayed, {{omitedCount}} without invoices.",
+    "toggleTreeView": "Switch to tree view",
+    "toggleTableView": "Switch to table view"
   },  
   "invoicing": {
     "job": {
@@ -141,6 +143,7 @@
   "limit_org_unit_under": "Limit to the children organisation units of ...",
   "missing_invoice_types": "Missing invoice...",
   "name": "Name",
+  "noActiveContracts": "There are no active contracts for this period.",
   "noResult": "No result",
   "orgUnit": "Organisation Unit",
   "orgUnit_name": "Organisation Unit name",

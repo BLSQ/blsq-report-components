@@ -124,8 +124,8 @@ const InvoiceSelectionContainer = (props) => {
     updateHistory(history, parent, period, debouncedSearchValue, defaultPathName, viewToUse);
   };
 
-  const switchToTreeView = "Switch to orgunit tree view";
-  const switchToTraditionalView = "Switch to traditional view";
+  const switchToTreeView = t("invoices.toggleTreeView");
+  const switchToTraditionalView = t("invoices.toggleTableView");
   const viewLabel = viewType === "table" ? switchToTreeView : switchToTraditionalView;
 
   return (

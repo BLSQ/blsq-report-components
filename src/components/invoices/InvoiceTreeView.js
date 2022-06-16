@@ -73,17 +73,16 @@ const InvoiceLinksSection = ({ invoiceLinksProps, orgUnit, period }) => {
 
 const ContractsSection = ({ orgUnit }) => {
   const { t } = useTranslation();
-
   return (
-    <OrgunitRelatedSection messageKey={"Contrats"}>
+    <OrgunitRelatedSection messageKey={"dataEntry.activeContracts"}>
       {orgUnit.activeContracts &&
         orgUnit.activeContracts.map((c) => (
           <div style={{ marginLeft: "20px", marginTop: "-10px" }}>
-            <ContractSummary orgUnit={orgUnit} contract={c} t={t} />
+            <ContractSummary orgUnit={orgUnit} contract={c} />
           </div>
         ))}
       {(orgUnit.activeContracts === undefined || orgUnit.activeContracts.length === 0) && (
-        <div style={{ marginLeft: "20px" }}>Pas de contrats pour cette période </div>
+        <div style={{ marginLeft: "20px" }}>{t("noActiveContracts")}</div>
       )}
     </OrgunitRelatedSection>
   );

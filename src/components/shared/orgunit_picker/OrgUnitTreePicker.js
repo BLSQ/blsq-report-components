@@ -3,8 +3,15 @@ import { TreeViewWithSearch } from "bluesquare-components";
 import { setPeriod, treeProps } from "./orgUnitTreeBackend";
 import ContractSummary from "../contracts/ContractSummary";
 
-const formatInitialSelectedIds = (selection) => [];
-const formatInitialSelectedParents = (selection) => new Map();
+const formatInitialSelectedIds = (selection) => {
+  if (!selection) return [];
+  if (!Array.isArray(selection)) return [selection];
+  return selection;
+};
+
+const formatInitialSelectedParents = (selection) => {
+  return new Map();
+};
 
 const makeDropDownText = (orgUnit) => {
   return (
@@ -18,7 +25,9 @@ const makeDropDownText = (orgUnit) => {
           .map((o) => o.name)
           .join(" > ")}
       </pre>
-      {orgUnit.activeContracts && orgUnit.activeContracts[0] && <ContractSummary orgUnit={orgUnit} contract={orgUnit.activeContracts[0]} />}
+      {orgUnit.activeContracts && orgUnit.activeContracts[0] && (
+        <ContractSummary orgUnit={orgUnit} contract={orgUnit.activeContracts[0]} />
+      )}
       <hr />
     </div>
   );

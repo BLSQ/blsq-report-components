@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import DatePeriods from "../../support/DatePeriods";
@@ -7,10 +6,10 @@ import PeriodPicker from "../shared/PeriodPicker";
 import { Link } from "react-router-dom";
 import { Paper, Grid } from "@material-ui/core";
 import PluginRegistry from "../core/PluginRegistry";
-import InvoiceLinks from "./InvoiceLinks";
+import InvoiceLinksSection from "./InvoiceLinksSection";
+import DataEntriesSection from "../dataentry/DataEntriesSection";
 
 const OrgUnitInvoiceSelectionPage = ({ history, match, periodFormat, dhis2, currentUser, invoices }) => {
-  const { t, i18n } = useTranslation();
   const [error, setError] = useState(undefined);
 
   const period = match.params.period;
@@ -87,9 +86,9 @@ const OrgUnitInvoiceSelectionPage = ({ history, match, periodFormat, dhis2, curr
       </div>
 
       <Grid container>
-        <Grid item>
-          <h2>{t("dataEntry.invoices")}</h2>
-          {orgUnit && <InvoiceLinks t={t} orgUnit={orgUnit} period={period} maxInvoiceLength={100} />}
+        <Grid item>{orgUnit && <InvoiceLinksSection orgUnit={orgUnit} period={period} />}</Grid>
+        <Grid item style={{ marginLeft: "20px" }}>
+          <DataEntriesSection period={period} orgUnit={orgUnit} periodFormat={periodFormat} />
         </Grid>
       </Grid>
     </Paper>

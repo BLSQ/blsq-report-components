@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { TreeViewWithSearch } from "bluesquare-components";
 import { setPeriod, treeProps } from "./orgUnitTreeBackend";
 import ContractSummary from "../contracts/ContractSummary";
+import { useQuery, useMutation, useQueryClient } from "react-query";
+
+
 
 const formatInitialSelectedIds = (selection) => {
   if (!selection) return [];
@@ -10,14 +13,14 @@ const formatInitialSelectedIds = (selection) => {
 };
 
 const formatInitialSelectedParents = (selection) => {
-  // return new Map();
-  const selectedParents = new Map();
+  return new Map();
+  /*const selectedParents = new Map();
   const parentsMap = new Map();
   selectedParents.set(selection.id, parentsMap);
   for (const ancestor of selection.ancestors) {
     parentsMap.set(ancestor.id, ancestor);
   }
-  return selectedParents;
+  return selectedParents;*/
 };
 
 const makeDropDownText = (orgUnit) => {
@@ -50,6 +53,16 @@ const OrgUnitTreePicker = ({ initialSelection, onChange, period }) => {
   const formattedSelection = formatInitialSelectedParents(initialSelection);
   const [selectedOrgUnitParents, setSelectedOrgUnitParents] = useState(formattedSelection);
 
+  const fetchSelectionQuery = useQuery(["fetchSelectionQuery",initialSelection], async () => {
+    const rootData = await treeProps.getOrgUnitById(initialSelection)
+    debugger;
+    return {
+      preselected: initialSelection,
+      preexpanded: rootData,
+    }
+  });
+  
+
   const onUpdate = (orgUnitIds, parentsData, orgUnits) => {
     console.log(formattedSelection);
     debugger;
@@ -61,7 +74,7 @@ const OrgUnitTreePicker = ({ initialSelection, onChange, period }) => {
     if (onChange) {
       onChange(orgUnits);
     }
-  };
+  };  
 
   return (
     <div>

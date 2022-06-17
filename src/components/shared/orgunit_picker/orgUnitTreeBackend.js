@@ -68,6 +68,16 @@ const getChildrenData = async (id) => {
   return withHasChildren(resp.organisationUnits);
 };
 
+
+const getOrgUnitById = async (id) => {
+  const resp = await api.get("organisationUnits", {
+    filter: "id" + id,
+    fields: defaultOrgUnitFields,
+    paging: false,
+  });
+  return withHasChildren(resp.organisationUnits);
+}
+
 const request = async (value, count, source, version) => {
   const d2 = await getInstance();
   const api = await d2.Api.getApi();
@@ -102,4 +112,5 @@ export const treeProps = {
   parseNodeIds: parseNodeIds,
   toggleOnLabelClick: false,
   isSelectable: () => true,
+  getOrgUnitById
 };

@@ -5,12 +5,19 @@ import ContractSummary from "../contracts/ContractSummary";
 
 const formatInitialSelectedIds = (selection) => {
   if (!selection) return [];
-  if (!Array.isArray(selection)) return [selection];
-  return selection;
+  if (!Array.isArray(selection)) return [selection.id];
+  return selection.map((ou) => ou.id);
 };
 
 const formatInitialSelectedParents = (selection) => {
-  return new Map();
+  // return new Map();
+  const selectedParents = new Map();
+  const parentsMap = new Map();
+  selectedParents.set(selection.id, parentsMap);
+  for (const ancestor of selection.ancestors) {
+    parentsMap.set(ancestor.id, ancestor);
+  }
+  return selectedParents;
 };
 
 const makeDropDownText = (orgUnit) => {
@@ -40,9 +47,12 @@ const OrgUnitTreePicker = ({ initialSelection, onChange, period }) => {
 
   const [selectedOrgUnitsIds, setSelectedOrgUnitsIds] = useState(formatInitialSelectedIds(initialSelection));
   // Using this value to generate TruncatedTree and tell the Treeview which nodes are already expanded
-  const [selectedOrgUnitParents, setSelectedOrgUnitParents] = useState(formatInitialSelectedParents(initialSelection));
+  const formattedSelection = formatInitialSelectedParents(initialSelection);
+  const [selectedOrgUnitParents, setSelectedOrgUnitParents] = useState(formattedSelection);
 
   const onUpdate = (orgUnitIds, parentsData, orgUnits) => {
+    console.log(formattedSelection);
+    debugger;
     setSelectedOrgUnitsIds(orgUnitIds);
     setSelectedOrgUnitParents(parentsData);
     if (orgUnits) {
@@ -58,7 +68,7 @@ const OrgUnitTreePicker = ({ initialSelection, onChange, period }) => {
       <TreeViewWithSearch
         {...treeProps}
         makeDropDownText={makeDropDownText}
-        preselected={selectedOrgUnitsIds}
+        preselected={selectedOrgUnitsIds[0]}
         preexpanded={selectedOrgUnitParents}
         selectedData={selectedOrgUnits}
         onUpdate={onUpdate}

@@ -20,7 +20,6 @@ const getRootData = async (id, type = "source") => {
     contractsByOrgUnitId = _.groupBy(allContracts, (c) => c.orgUnit.id);
 
     for (let contract of allContracts.filter((c) => c.matchPeriod(currentPeriod))) {
-      debugger;
       if (contract.orgUnit && contract.orgUnit.ancestors) {
         for (let ancestor of contract.orgUnit.ancestors) {
           contractsByLevelUid[ancestor.id] ||= 0;

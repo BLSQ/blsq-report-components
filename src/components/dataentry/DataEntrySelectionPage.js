@@ -189,24 +189,24 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
             );
           })}
       </div>
-
-      <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
-        <div>
+      <div>
           {orgUnit && (
-            <React.Fragment>
+            <div>
               <ContractsSection orgUnit={orgUnit} />
               {linkedContracts && linkedContracts.length > 1 && (
                 <div>
                   <LinkedContract period={quarterPeriod} orgUnit={orgUnit} linkedContracts={linkedContracts} />
                 </div>
               )}
-            </React.Fragment>
+            </div>
           )}
-        </div>
-
+        </div>  
+      <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
         <DataEntriesSection dataEntryCode={match.params.dataEntryCode} period={match.params.period} orgUnit={orgUnit} />
         {orgUnit && <InvoiceLinksSection orgUnit={orgUnit} period={period} />}
       </div>
+      
+
       <div>
         {formData && (
           <FormDataContext.Provider value={formData}>

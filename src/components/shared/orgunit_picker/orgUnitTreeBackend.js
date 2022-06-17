@@ -9,6 +9,7 @@ export const setPeriod = (argPeriod) => {
 
 const loadedOrgUnitsById = {};
 let contractsByOrgUnitId = {};
+let contractsByLevelUid = {};
 const defaultOrgUnitFields =
   "id,name,ancestors[id,name],children[id,name,ancestors[id,name],children[id,name,ancestors[id,name],children]]";
 
@@ -17,6 +18,17 @@ const getRootData = async (id, type = "source") => {
     const contractService = PluginRegistry.extension("contracts.service");
     const allContracts = await contractService.findAll();
     contractsByOrgUnitId = _.groupBy(allContracts, (c) => c.orgUnit.id);
+
+    for (let contract of allContracts.filter((c) => c.matchPeriod(currentPeriod))) {
+      debugger;
+      if (contract.orgUnit && contract.orgUnit.ancestors) {
+        for (let ancestor of contract.orgUnit.ancestors) {
+          contractsByLevelUid[ancestor.id] ||= 0;
+          contractsByLevelUid[ancestor.id] += 1;
+        }
+      }
+    }
+  
   }
 
   const d2 = await getInstance();
@@ -69,7 +81,7 @@ const request = async (value, count, source, version) => {
 };
 
 const label = (data) => {
-  return data.name;
+  return data.name + (contractsByLevelUid[data.id] ? " (" + contractsByLevelUid[data.id] + ")": "");
 };
 
 const search = (input1, input2, type) => {

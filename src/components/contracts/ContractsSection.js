@@ -9,7 +9,7 @@ const ContractsSection = ({ orgUnit, orgUnitSectionStyle }) => {
     <OrgunitRelatedSection messageKey={"dataEntry.activeContracts"} orgUnitSectionStyle={orgUnitSectionStyle}>
       {orgUnit.activeContracts &&
         orgUnit.activeContracts.map((c) => (
-          <div>
+          <div  style={{paddingTop : "0px"}}>
             <ContractSummary orgUnit={orgUnit} contract={c} />
           </div>
         ))}

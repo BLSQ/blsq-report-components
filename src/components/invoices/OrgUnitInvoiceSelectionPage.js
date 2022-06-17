@@ -88,7 +88,7 @@ const OrgUnitInvoiceSelectionPage = ({ history, match, periodFormat, dhis2, curr
       <Grid container>
         <Grid item>{orgUnit && <InvoiceLinksSection orgUnit={orgUnit} period={period} />}</Grid>
         <Grid item style={{ marginLeft: "20px" }}>
-          <DataEntriesSection period={period} orgUnit={orgUnit} periodFormat={periodFormat} />
+          <DataEntriesSection period={period} orgUnit={orgUnit} />
         </Grid>
       </Grid>
     </Paper>

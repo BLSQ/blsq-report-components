@@ -190,36 +190,23 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
           })}
       </div>
 
-      {orgUnit && (
-        <React.Fragment>
-          <ContractsSection orgUnit={orgUnit} />
-          {linkedContracts && linkedContracts.length > 1 && (
-            <div>
-              <LinkedContract period={quarterPeriod} orgUnit={orgUnit} linkedContracts={linkedContracts} />
-            </div>
+      <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+        <div>
+          {orgUnit && (
+            <React.Fragment>
+              <ContractsSection orgUnit={orgUnit} />
+              {linkedContracts && linkedContracts.length > 1 && (
+                <div>
+                  <LinkedContract period={quarterPeriod} orgUnit={orgUnit} linkedContracts={linkedContracts} />
+                </div>
+              )}
+            </React.Fragment>
           )}
-        </React.Fragment>
-      )}
+        </div>
 
-      <Grid container>
-        <Grid item xs={3}>
-          <h2>{t("dataEntry.dataEntries")}</h2>
-          <table>
-            <tbody>
-              <DataEntriesSection
-                dataEntryCode={match.params.dataEntryCode}
-                period={match.params.period}
-                orgUnit={orgUnit}
-                periodFormat={periodFormat}
-              />
-            </tbody>
-          </table>
-        </Grid>
-        <Grid item>
-          <h2>{t("dataEntry.invoices")}</h2>
-          {orgUnit && <InvoiceLinksSection orgUnit={orgUnit} period={period} />}
-        </Grid>
-      </Grid>
+        <DataEntriesSection dataEntryCode={match.params.dataEntryCode} period={match.params.period} orgUnit={orgUnit} />
+        {orgUnit && <InvoiceLinksSection orgUnit={orgUnit} period={period} />}
+      </div>
       <div>
         {formData && (
           <FormDataContext.Provider value={formData}>

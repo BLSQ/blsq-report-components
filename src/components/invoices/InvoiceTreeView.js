@@ -72,8 +72,7 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, classes, onPeriodCha
             />
             <DataEntriesSection
               orgUnit={selectedOrgUnits[0]}
-              period={searchPeriod}
-              periodFormat={periodFormat}
+              period={searchPeriod}             
               orgUnitSectionStyle={{
                 marginLeft: "20px",
                 marginTop: "-10px",

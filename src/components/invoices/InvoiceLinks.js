@@ -53,16 +53,17 @@ const InvoiceLinks = ({ t, orgUnit, period, hideCurrentInvoice, invoiceCode, max
 
   return (
     <>
-      {!showAll && <InvoiceButton invoiceDataLinks={invoiceDataLinks} orgUnit={orgUnit}/>}
+      {!showAll && <InvoiceButton invoiceDataLinks={invoiceDataLinks} orgUnit={orgUnit} />}
 
-      {showAll &&
-        invoiceDataLinks.map((link, linkIndex) => (
-          <List key={link.invoiceName + "-" + linkIndex}>
-            <li >
+      {showAll && (
+        <List  style={{paddingTop : "0px"}}>
+          {invoiceDataLinks.map((link, linkIndex) => (
+            <li key={link.invoiceName + "-" + linkIndex}>
               <InvoiceAnchors invoiceDataLink={link} />
             </li>
-          </List>
-        ))}
+          ))}
+        </List>
+      )}
     </>
   );
 };

@@ -1,22 +1,21 @@
 import React from "react";
 import DatePeriods from "../../../support/DatePeriods";
-import { Button, Typography } from "@material-ui/core";
+import { Button, List, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
 const DataEntryLinks = ({ dataEntries, dataEntryCode, period, orgUnit, periodFormat }) => {
   return (
-    <>
-      {dataEntries.map((dataEntry) => {
+    <List style={{paddingTop : "0px"}}>
+    {dataEntries.map((dataEntry) => {
         const isCurrent = dataEntry.dataEntryType.code === dataEntryCode && dataEntry.period === period;
         return (
-          <tr>
-            <td>
-              {" "}
+          <li style={{display: "flex"}}>
+            <div>
               <Typography variant="overline" gutterBottom>
                 {dataEntry.dataEntryType.name}
               </Typography>
-            </td>
-            <td>
+            </div>
+            <div>
               <Button
                 key={dataEntry.dataEntryType.code + "-" + dataEntry.period + "-" + orgUnit.id}
                 variant="text"
@@ -29,11 +28,11 @@ const DataEntryLinks = ({ dataEntries, dataEntryCode, period, orgUnit, periodFor
               >
                 {DatePeriods.displayName(dataEntry.period, periodFormat[DatePeriods.detect(dataEntry.period)])}
               </Button>
-            </td>
-          </tr>
+            </div>
+          </li>
         );
       })}
-    </>
+    </List>
   );
 };
 

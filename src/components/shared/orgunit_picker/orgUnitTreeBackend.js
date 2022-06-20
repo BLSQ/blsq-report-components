@@ -27,7 +27,6 @@ const getRootData = async (id, type = "source") => {
         }
       }
     }
-  
   }
 
   const d2 = await getInstance();
@@ -68,15 +67,16 @@ const getChildrenData = async (id) => {
   return withHasChildren(resp.organisationUnits);
 };
 
-
 const getOrgUnitById = async (id) => {
+  const d2 = await getInstance();
+  const api = await d2.Api.getApi();
   const resp = await api.get("organisationUnits", {
-    filter: "id" + id,
+    filter: "id:eq:" + id,
     fields: defaultOrgUnitFields,
     paging: false,
   });
   return withHasChildren(resp.organisationUnits);
-}
+};
 
 const request = async (value, count, source, version) => {
   const d2 = await getInstance();

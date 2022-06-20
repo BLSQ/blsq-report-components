@@ -4,8 +4,6 @@ import { setPeriod, treeProps } from "./orgUnitTreeBackend";
 import ContractSummary from "../contracts/ContractSummary";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 
-
-
 const formatInitialSelectedIds = (selection) => {
   if (!selection) return [];
   if (!Array.isArray(selection)) return [selection.id];
@@ -13,14 +11,13 @@ const formatInitialSelectedIds = (selection) => {
 };
 
 const formatInitialSelectedParents = (selection) => {
-  return new Map();
-  /*const selectedParents = new Map();
+  const selectedParents = new Map();
   const parentsMap = new Map();
   selectedParents.set(selection.id, parentsMap);
   for (const ancestor of selection.ancestors) {
     parentsMap.set(ancestor.id, ancestor);
   }
-  return selectedParents;*/
+  return selectedParents;
 };
 
 const makeDropDownText = (orgUnit) => {
@@ -50,22 +47,28 @@ const OrgUnitTreePicker = ({ initialSelection, onChange, period }) => {
 
   const [selectedOrgUnitsIds, setSelectedOrgUnitsIds] = useState(formatInitialSelectedIds(initialSelection));
   // Using this value to generate TruncatedTree and tell the Treeview which nodes are already expanded
-  const formattedSelection = formatInitialSelectedParents(initialSelection);
-  const [selectedOrgUnitParents, setSelectedOrgUnitParents] = useState(formattedSelection);
+  // const formattedSelection = formatInitialSelectedParents(initialSelection);
+  const [selectedOrgUnitParents, setSelectedOrgUnitParents] = useState(null);
 
-  const fetchSelectionQuery = useQuery(["fetchSelectionQuery",initialSelection], async () => {
-    const rootData = await treeProps.getOrgUnitById(initialSelection)
-    debugger;
-    return {
-      preselected: initialSelection,
-      preexpanded: rootData,
+  const fetchSelectionQuery = useQuery("fetchSelectionQuery", async () => {
+    if (initialSelection) {
+      const rootData = await treeProps.getOrgUnitById(initialSelection);
+      let parents;
+      if (rootData[0] && rootData[0].ancestors.length) {
+        parents = formatInitialSelectedParents(rootData[0]);
+        setSelectedOrgUnitParents(parents);
+      }
+      return {
+        preselected: initialSelection,
+        preexpanded: rootData,
+      };
     }
   });
-  
+
+  const preselected = fetchSelectionQuery?.data?.preselected;
+  const preexpanded = fetchSelectionQuery?.data?.preexpanded;
 
   const onUpdate = (orgUnitIds, parentsData, orgUnits) => {
-    console.log(formattedSelection);
-    debugger;
     setSelectedOrgUnitsIds(orgUnitIds);
     setSelectedOrgUnitParents(parentsData);
     if (orgUnits) {
@@ -74,15 +77,15 @@ const OrgUnitTreePicker = ({ initialSelection, onChange, period }) => {
     if (onChange) {
       onChange(orgUnits);
     }
-  };  
+  };
 
   return (
     <div>
       <TreeViewWithSearch
         {...treeProps}
         makeDropDownText={makeDropDownText}
-        preselected={selectedOrgUnitsIds[0]}
-        preexpanded={selectedOrgUnitParents}
+        preselected={preselected}
+        preexpanded={preexpanded}
         selectedData={selectedOrgUnits}
         onUpdate={onUpdate}
       />

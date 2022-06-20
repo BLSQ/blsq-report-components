@@ -88,7 +88,7 @@
     "notistack": "^0.9.17",
     "qs": "^6.9.4",
     "react-query": "^3.34.12",
-    "react-redux": "^7.2.1",
+    "react-redux": "^8.0.2",
     "react-router-redux": "^4.0.8",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0"

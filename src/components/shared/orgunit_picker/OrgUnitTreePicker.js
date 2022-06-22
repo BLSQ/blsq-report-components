@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TreeViewWithSearch } from "bluesquare-components";
 import { setPeriod, treeProps } from "./orgUnitTreeBackend";
 import ContractSummary from "../contracts/ContractSummary";
 import { useQuery, useMutation, useQueryClient } from "react-query";
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 const formatInitialSelectedIds = (selection) => {
   if (!selection) return [];
@@ -17,6 +21,8 @@ const formatInitialSelectedParents = (selection) => {
   for (const ancestor of selection.ancestors) {
     parentsMap.set(ancestor.id, ancestor);
   }
+  // if not there, a parent is missing
+  parentsMap.set(selection.id, selection);
   return selectedParents;
 };
 
@@ -44,33 +50,8 @@ const OrgUnitTreePicker = ({ initialSelection, onChange, period }) => {
   setPeriod(period);
 
   const [selectedOrgUnits, setSelectedOrgUnits] = useState(initialSelection);
-
-  const [selectedOrgUnitsIds, setSelectedOrgUnitsIds] = useState(formatInitialSelectedIds(initialSelection));
-  // Using this value to generate TruncatedTree and tell the Treeview which nodes are already expanded
-  // const formattedSelection = formatInitialSelectedParents(initialSelection);
-  const [selectedOrgUnitParents, setSelectedOrgUnitParents] = useState(null);
-
-  const fetchSelectionQuery = useQuery("fetchSelectionQuery", async () => {
-    if (initialSelection) {
-      const rootData = await treeProps.getOrgUnitById(initialSelection);
-      let parents;
-      if (rootData[0] && rootData[0].ancestors.length) {
-        parents = formatInitialSelectedParents(rootData[0]);
-        setSelectedOrgUnitParents(parents);
-      }
-      return {
-        preselected: initialSelection,
-        preexpanded: rootData,
-      };
-    }
-  });
-
-  const preselected = fetchSelectionQuery?.data?.preselected;
-  const preexpanded = fetchSelectionQuery?.data?.preexpanded;
-
   const onUpdate = (orgUnitIds, parentsData, orgUnits) => {
-    setSelectedOrgUnitsIds(orgUnitIds);
-    setSelectedOrgUnitParents(parentsData);
+    console.log("onUpdate", orgUnitIds, parentsData, orgUnits)
     if (orgUnits) {
       setSelectedOrgUnits(orgUnits);
     }
@@ -78,17 +59,60 @@ const OrgUnitTreePicker = ({ initialSelection, onChange, period }) => {
       onChange(orgUnits);
     }
   };
+  const fetchSelectionQuery = useQuery("fetchSelectionQuery", async () => {
+    if (initialSelection) {
+      const rootData = await treeProps.getOrgUnitById(initialSelection);
+      if (rootData[0] && rootData[0].ancestors.length) {
+        const loadedAncestors = [];
+        for (let ancestor of rootData[0].ancestors) {
+          let loadedAncestor = await treeProps.getOrgUnitById(ancestor.id);
+          loadedAncestors.push(loadedAncestor[0]);
+        }
+        rootData[0].ancestors = loadedAncestors;
+      }
+      let parents;
+      if (rootData[0] && rootData[0].ancestors.length) {
+        parents = formatInitialSelectedParents(rootData[0]);
+      }
+      return {
+        rootData: rootData,
+        preselected: initialSelection,
+        preexpanded: parents,
+      };
+    }
+  });
 
+  const preselected = fetchSelectionQuery?.data?.preselected;
+  const preexpanded = fetchSelectionQuery?.data?.preexpanded;
+
+  useEffect(() => {
+    if (preselected) {
+      onUpdate(undefined, undefined, fetchSelectionQuery?.data?.rootData);
+    }
+  }, [preselected]);
+
+  if (preselected || preexpanded) {
+    console.log("preselected", preselected, " preexpanded", preexpanded);
+  }
+  if (initialSelection && preselected == undefined) {
+    return <span>Loading...</span>;
+  }
   return (
     <div>
-      <TreeViewWithSearch
-        {...treeProps}
-        makeDropDownText={makeDropDownText}
-        preselected={preselected}
-        preexpanded={preexpanded}
-        selectedData={selectedOrgUnits}
-        onUpdate={onUpdate}
-      />
+      {fetchSelectionQuery.status === "loading" ? (
+        <span>Loading...</span>
+      ) : fetchSelectionQuery.status === "error" ? (
+        <span>Error: {error.message}</span>
+      ) : (
+        <TreeViewWithSearch
+          {...treeProps}
+          makeDropDownText={makeDropDownText}
+          preselected={preselected}
+          preexpanded={preexpanded}
+          selectedData={selectedOrgUnits}
+          onUpdate={onUpdate}
+        />
+      )}
     </div>
   );
 };

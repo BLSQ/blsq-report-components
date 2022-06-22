@@ -24,10 +24,31 @@ const LocationBreadCrumb = ({ orgUnit, period }) => {
   );
 };
 
+const OrgUnitDetails = ({ orgUnit, searchPeriod, invoiceLinksProps }) => {
+  return (
+    <div>
+      <h2>{orgUnit.name}</h2>
+      <LocationBreadCrumb orgUnit={orgUnit} period={searchPeriod} />
+      <ContractsSection
+        orgUnit={orgUnit}
+      />
+      <InvoiceLinksSection
+        orgUnit={orgUnit}
+        period={searchPeriod}
+        invoiceLinksProps={invoiceLinksProps}
+      />
+      <DataEntriesSection
+        orgUnit={orgUnit}
+        period={searchPeriod}
+      />
+    </div>
+  );
+};
+
 const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, classes, onPeriodChange, periodFormat }) => {
   const queryParams = anchorQueryParams();
   const ou = queryParams.get("ou");
-  
+
   const [selectedOrgUnits, setSelectedOrgUnits] = useState([]);
 
   const onOrgUnitChange = (orgunits) => {
@@ -51,35 +72,12 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, classes, onPeriodCha
         <div style={{ margin: "10px", width: "500px" }}>
           <OrgUnitTreePicker onChange={onOrgUnitChange} initialSelection={ou} period={searchPeriod} />
         </div>
-        {selectedOrgUnits && selectedOrgUnits.length > 0 && (
-          <div>
-            <h2>{selectedOrgUnits[0].name}</h2>
-            <LocationBreadCrumb orgUnit={selectedOrgUnits[0]} period={searchPeriod} />
-            <ContractsSection
-              orgUnit={selectedOrgUnits[0]}
-              orgUnitSectionStyle={{
-                marginLeft: "20px",
-                marginTop: "-10px",
-              }}
-            />
-            <InvoiceLinksSection
-              orgUnit={selectedOrgUnits[0]}
-              period={searchPeriod}
-              invoiceLinksProps={invoiceLinksProps}
-              orgUnitSectionStyle={{
-                marginLeft: "20px",
-                marginTop: "-10px",
-              }}
-            />
-            <DataEntriesSection
-              orgUnit={selectedOrgUnits[0]}
-              period={searchPeriod}             
-              orgUnitSectionStyle={{
-                marginLeft: "20px",
-                marginTop: "-10px",
-              }}
-            />
-          </div>
+        {selectedOrgUnits && selectedOrgUnits[0] && (
+          <OrgUnitDetails
+            orgUnit={selectedOrgUnits[0]}
+            searchPeriod={searchPeriod}
+            invoiceLinksProps={invoiceLinksProps}
+          />
         )}
       </div>
     </>

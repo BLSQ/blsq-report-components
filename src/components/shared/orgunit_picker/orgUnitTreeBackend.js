@@ -1,3 +1,4 @@
+import React from "react"
 import { getInstance } from "d2/lib/d2";
 import PluginRegistry from "../../core/PluginRegistry";
 
@@ -90,7 +91,12 @@ const request = async (value, count, source, version) => {
 };
 
 const label = (data) => {
-  return data.name + (contractsByLevelUid[data.id] ? " (" + contractsByLevelUid[data.id] + ")": "");
+  const activeContractsDecorator = data.activeContracts && data.activeContracts.length > 0
+  const contractsUnder = contractsByLevelUid[data.id] ? " (" + contractsByLevelUid[data.id] + ")" : "";
+  if (activeContractsDecorator) {
+    return <span><b>{data.name}</b>{contractsUnder}</span>
+  }
+  return  data.name + contractsUnder  
 };
 
 const search = (input1, input2, type) => {
@@ -112,5 +118,5 @@ export const treeProps = {
   parseNodeIds: parseNodeIds,
   toggleOnLabelClick: false,
   isSelectable: () => true,
-  getOrgUnitById
+  getOrgUnitById,
 };

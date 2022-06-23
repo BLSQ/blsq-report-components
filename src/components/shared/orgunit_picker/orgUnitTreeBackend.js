@@ -8,9 +8,15 @@ export const setPeriod = (argPeriod) => {
 };
 
 let user;
+let topLevel;
 export const setUser = (argUser) => {
-  console.log(argUser);
   user = argUser;
+  if (user) {
+    const levels = user.dataViewOrganisationUnits.map((o) => {
+      return o.ancestors ? o.ancestors.length : 0;
+    });
+    topLevel = Math.min(...levels) + 1;
+  }
 };
 
 const loadedOrgUnitsById = {};
@@ -35,7 +41,7 @@ const getRootData = async (id, type = "source") => {
     }
   }
 
-  const resp = await getFilteredOrgUnits("level:eq:3");
+  const resp = await getFilteredOrgUnits("level:eq:" + (topLevel + 1));
 
   return withHasChildren(resp.organisationUnits);
 };
@@ -132,7 +138,7 @@ const search = (input1, input2, type) => {
 
 const parseNodeIds = (orgUnit) => {
   const parsed = orgUnit.ancestors
-    .slice(2)
+    .slice(topLevel - 1)
     .map((a) => [a.id, a])
     .concat([[orgUnit.id, orgUnit]]);
   return new Map(parsed);

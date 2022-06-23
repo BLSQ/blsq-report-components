@@ -32,7 +32,7 @@ const OrgUnitDetails = ({ orgUnit, searchPeriod, invoiceLinksProps }) => {
   );
 };
 
-const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, classes, onPeriodChange, periodFormat }) => {
+const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, classes, onPeriodChange, periodFormat, currentUser }) => {
   const queryParams = anchorQueryParams();
   const ou = queryParams.get("ou");
 
@@ -57,7 +57,12 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, classes, onPeriodCha
       <br />
       <div style={{ display: "flex" }}>
         <div style={{ margin: "10px", width: "500px" }}>
-          <OrgUnitTreePicker onChange={onOrgUnitChange} initialSelection={ou} period={searchPeriod} />
+          <OrgUnitTreePicker
+            onChange={onOrgUnitChange}
+            initialSelection={ou}
+            period={searchPeriod}
+            user={currentUser}
+          />
         </div>
         {selectedOrgUnits && selectedOrgUnits[0] && (
           <OrgUnitDetails

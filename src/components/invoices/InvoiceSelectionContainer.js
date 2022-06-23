@@ -150,6 +150,7 @@ const InvoiceSelectionContainer = (props) => {
             classes={classes}
             onPeriodChange={onPeriodChange}
             periodFormat={periodFormat}
+            currentUser={currentUser}
           />
         )}
         {viewType === "table" && (

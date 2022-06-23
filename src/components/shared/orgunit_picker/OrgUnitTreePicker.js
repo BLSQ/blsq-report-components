@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { TreeViewWithSearch } from "bluesquare-components";
-import { setPeriod, treeProps } from "./orgUnitTreeBackend";
+import { setPeriod, treeProps, setUser } from "./orgUnitTreeBackend";
 import ContractSummary from "../contracts/ContractSummary";
 import { useQuery, useMutation, useQueryClient } from "react-query";
+import { useSelector } from "react-redux";
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -46,12 +47,14 @@ const makeDropDownText = (orgUnit) => {
   );
 };
 
-const OrgUnitTreePicker = ({ initialSelection, onChange, period }) => {
+const OrgUnitTreePicker = ({ initialSelection, onChange, period, user }) => {
   setPeriod(period);
+  const currentUser = useSelector((state) => state.currentUser.profile);
+  setUser(currentUser);
 
   const [selectedOrgUnits, setSelectedOrgUnits] = useState(initialSelection);
   const onUpdate = (orgUnitIds, parentsData, orgUnits) => {
-    console.log("onUpdate", orgUnitIds, parentsData, orgUnits)
+    console.log("onUpdate", orgUnitIds, parentsData, orgUnits);
     if (orgUnits) {
       setSelectedOrgUnits(orgUnits);
     }
@@ -61,11 +64,11 @@ const OrgUnitTreePicker = ({ initialSelection, onChange, period }) => {
   };
   const fetchSelectionQuery = useQuery("fetchSelectionQuery", async () => {
     if (initialSelection) {
-      const rootData = await treeProps.getOrgUnitById(initialSelection);
+      const rootData = await treeProps.getOrgUnitById(initialSelection, currentUser);
       if (rootData[0] && rootData[0].ancestors.length) {
         const loadedAncestors = [];
         for (let ancestor of rootData[0].ancestors) {
-          let loadedAncestor = await treeProps.getOrgUnitById(ancestor.id);
+          let loadedAncestor = await treeProps.getOrgUnitById(ancestor.id, currentUser);
           loadedAncestors.push(loadedAncestor[0]);
         }
         rootData[0].ancestors = loadedAncestors;

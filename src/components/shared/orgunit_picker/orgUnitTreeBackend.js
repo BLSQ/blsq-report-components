@@ -1,11 +1,16 @@
-import React from "react"
+import React from "react";
 import { getInstance } from "d2/lib/d2";
 import PluginRegistry from "../../core/PluginRegistry";
 
-let currentPeriod = undefined;
-
+let currentPeriod;
 export const setPeriod = (argPeriod) => {
   currentPeriod = argPeriod;
+};
+
+let user;
+export const setUser = (argUser) => {
+  console.log(argUser);
+  user = argUser;
 };
 
 const loadedOrgUnitsById = {};
@@ -30,13 +35,7 @@ const getRootData = async (id, type = "source") => {
     }
   }
 
-  const d2 = await getInstance();
-  const api = await d2.Api.getApi();
-  const resp = await api.get("organisationUnits", {
-    filter: "level:eq:1",
-    fields: defaultOrgUnitFields,
-    paging: false,
-  });
+  const resp = await getFilteredOrgUnits("level:eq:3");
 
   return withHasChildren(resp.organisationUnits);
 };
@@ -68,35 +67,62 @@ const getChildrenData = async (id) => {
   return withHasChildren(resp.organisationUnits);
 };
 
-const getOrgUnitById = async (id) => {
+const getOrgUnitById = async (id, currentUser) => {
   const d2 = await getInstance();
   const api = await d2.Api.getApi();
+  let userOrgUnitsFilter;
+  const orgUnits = currentUser.dataViewOrganisationUnits;
+  if (orgUnits && orgUnits.length === 1) {
+    userOrgUnitsFilter = "&path:like:" + orgUnits[0].id;
+  } else if (orgUnits && orgUnits.length > 0) {
+    userOrgUnitsFilter = "&filter=ancestors.id:in:[" + orgUnits.map((ou) => ou.id).join(",") + "]";
+  }
   const resp = await api.get("organisationUnits", {
-    filter: "id:eq:" + id,
+    filter: "id:eq:" + id + userOrgUnitsFilter,
     fields: defaultOrgUnitFields,
     paging: false,
   });
   return withHasChildren(resp.organisationUnits);
 };
 
-const request = async (value, count, source, version) => {
+const getFilteredOrgUnits = async (filterStart) => {
   const d2 = await getInstance();
   const api = await d2.Api.getApi();
+  
+  let userOrgUnitsFilter;
+  const orgUnits = user.dataViewOrganisationUnits;
+  if (orgUnits && orgUnits.length === 1) {
+    userOrgUnitsFilter = ["path:like:" + orgUnits[0].id];
+  } else if (orgUnits && orgUnits.length > 0) {
+    userOrgUnitsFilter = ["ancestors.id:in:[" + orgUnits.map((ou) => ou.id).join(",") + "]"];
+  }
+  debugger;
   const resp = await api.get("organisationUnits", {
-    filter: "name:ilike:" + value,
+    filter: userOrgUnitsFilter.concat([filterStart]),
     fields: defaultOrgUnitFields,
+    paging: false,
   });
+  return resp;
+};
+
+const request = async (value, count, source, version) => {
+  const resp = await getFilteredOrgUnits("name:ilike:" + value);
 
   return withHasChildren(resp.organisationUnits);
 };
 
 const label = (data) => {
-  const activeContractsDecorator = data.activeContracts && data.activeContracts.length > 0
+  const activeContractsDecorator = data.activeContracts && data.activeContracts.length > 0;
   const contractsUnder = contractsByLevelUid[data.id] ? " (" + contractsByLevelUid[data.id] + ")" : "";
   if (activeContractsDecorator) {
-    return <span><b>{data.name}</b>{contractsUnder}</span>
+    return (
+      <span>
+        <b>{data.name}</b>
+        {contractsUnder}
+      </span>
+    );
   }
-  return  data.name + contractsUnder  
+  return data.name + contractsUnder;
 };
 
 const search = (input1, input2, type) => {
@@ -105,7 +131,10 @@ const search = (input1, input2, type) => {
 };
 
 const parseNodeIds = (orgUnit) => {
-  const parsed = orgUnit.ancestors.map((a) => [a.id, a]).concat([[orgUnit.id, orgUnit]]);
+  const parsed = orgUnit.ancestors
+    .slice(2)
+    .map((a) => [a.id, a])
+    .concat([[orgUnit.id, orgUnit]]);
   return new Map(parsed);
 };
 

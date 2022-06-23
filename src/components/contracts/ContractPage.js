@@ -36,6 +36,7 @@ import linksStyles from "../styles/links";
 import Table from "../shared/Table";
 import Filter from "../shared/Filter";
 import { filtersConfig, activeToday } from "./filters";
+import AncestorsBreadcrumbs from "../shared/AncestorsBreadcrumb";
 
 const styles = (theme) => ({
   ...linksStyles(theme),
@@ -176,13 +177,7 @@ const ContractPage = ({ match, location, t, history, currentUser }) => {
           <LocationOnIcon color="secondary" />
           &nbsp;
           <Typography className={classes.wrapIcon} color="secondary">
-            {orgUnit &&
-              orgUnit.ancestors.slice(1).map((a, index) => (
-                <span>
-                  <a href={"./index.html#/contracts?under_orgunit=" + a.id}>{a.name}</a>
-                  {index + 1 < orgUnit.ancestors.length - 1 && " > "}
-                </span>
-              ))}
+            <AncestorsBreadcrumbs orgUnit={orgUnit} linkHead={"./index.html#/contracts?under_orgunit="} />
           </Typography>
           {orgUnit && (
             <Button

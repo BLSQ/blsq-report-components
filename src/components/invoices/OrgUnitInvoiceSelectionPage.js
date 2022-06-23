@@ -8,6 +8,7 @@ import { Paper, Grid } from "@material-ui/core";
 import PluginRegistry from "../core/PluginRegistry";
 import InvoiceLinksSection from "./InvoiceLinksSection";
 import DataEntriesSection from "../dataentry/DataEntriesSection";
+import AncestorsBreadcrumb from "../shared/AncestorsBreadcrumb";
 
 const OrgUnitInvoiceSelectionPage = ({ history, match, periodFormat, dhis2, currentUser, invoices }) => {
   const [error, setError] = useState(undefined);
@@ -74,15 +75,7 @@ const OrgUnitInvoiceSelectionPage = ({ history, match, periodFormat, dhis2, curr
       </div>
 
       <div style={{ fontFamily: "monospace" }}>
-        {orgUnit &&
-          orgUnit.ancestors.slice(1, orgUnit.ancestors.length - 1).map((ancestor, index) => {
-            return (
-              <span key={"ancestor" + index}>
-                <Link to={"/select/?q=&period=" + quarterPeriod + "&parent=" + ancestor.id}>{ancestor.name}</Link>
-                {index < orgUnit.ancestors.length - 3 && "  >  "}
-              </span>
-            );
-          })}
+        <AncestorsBreadcrumb orgUnit={orgUnit} linkHead={`select/?q=&period=" + ${quarterPeriod} + "&parent=`} />
       </div>
 
       <Grid container>

@@ -3,23 +3,19 @@ import OrgUnitTreePicker from "../shared/orgunit_picker/OrgUnitTreePicker";
 import PeriodPicker from "../shared/PeriodPicker";
 import { FormControl } from "@material-ui/core";
 import { anchorQueryParams, urlWith } from "../shared/tables/urlParams";
-import { Link } from "react-router-dom";
 import ContractsSection from "../contracts/ContractsSection";
 import DataEntriesSection from "../dataentry/DataEntriesSection";
 import InvoiceLinksSection from "./InvoiceLinksSection";
+import AncestorsBreadcrumbs from "../shared/AncestorsBreadcrumb";
 
 const LocationBreadCrumb = ({ orgUnit, period }) => {
   return (
     <div style={{ fontFamily: "monospace", marginLeft: "20px" }}>
-      {orgUnit &&
-        orgUnit.ancestors.slice(1, orgUnit.ancestors.length - 1).map((ancestor, index) => {
-          return (
-            <span key={"ancestor" + index}>
-              <Link to={"/select/?q=&period=" + period + "&ou=" + ancestor.id + "&mode=tree"}>{ancestor.name}</Link>
-              {index < orgUnit.ancestors.length - 3 && "  >  "}
-            </span>
-          );
-        })}
+      <AncestorsBreadcrumbs
+        orgUnit={orgUnit}
+        linkHead={`/select/?q=&period=" + ${period} + "&ou=`}
+        linkEnd={"&mode=tree"}
+      />
     </div>
   );
 };
@@ -29,18 +25,9 @@ const OrgUnitDetails = ({ orgUnit, searchPeriod, invoiceLinksProps }) => {
     <div>
       <h2>{orgUnit.name}</h2>
       <LocationBreadCrumb orgUnit={orgUnit} period={searchPeriod} />
-      <ContractsSection
-        orgUnit={orgUnit}
-      />
-      <InvoiceLinksSection
-        orgUnit={orgUnit}
-        period={searchPeriod}
-        invoiceLinksProps={invoiceLinksProps}
-      />
-      <DataEntriesSection
-        orgUnit={orgUnit}
-        period={searchPeriod}
-      />
+      <ContractsSection orgUnit={orgUnit} />
+      <InvoiceLinksSection orgUnit={orgUnit} period={searchPeriod} invoiceLinksProps={invoiceLinksProps} />
+      <DataEntriesSection orgUnit={orgUnit} period={searchPeriod} />
     </div>
   );
 };

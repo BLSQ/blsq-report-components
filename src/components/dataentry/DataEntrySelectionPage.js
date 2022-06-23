@@ -15,6 +15,7 @@ import { buildFormData } from "./forms";
 import ContractsSection from "../contracts/ContractsSection";
 import DataEntriesSection from "./DataEntriesSection";
 import InvoiceLinksSection from "../invoices/InvoiceLinksSection";
+import AncestorsBreadcrumbs from "../shared/AncestorsBreadcrumb";
 
 const checkOverlaps = (contracts) => {
   for (let contract1 of contracts) {
@@ -179,33 +180,24 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
       </div>
 
       <div style={{ fontFamily: "monospace" }}>
-        {orgUnit &&
-          orgUnit.ancestors.slice(1, orgUnit.ancestors.length - 1).map((ancestor, index) => {
-            return (
-              <span key={"ancestor" + index}>
-                <Link to={"/select/?q=&period=" + quarterPeriod + "&parent=" + ancestor.id}>{ancestor.name}</Link>
-                {index < orgUnit.ancestors.length - 3 && "  >  "}
-              </span>
-            );
-          })}
+        <AncestorsBreadcrumbs orgUnit={orgUnit} linkHead={`/select/?q=&period=${quarterPeriod}&parent=`} />
       </div>
       <div>
-          {orgUnit && (
-            <div>
-              <ContractsSection orgUnit={orgUnit} />
-              {linkedContracts && linkedContracts.length > 1 && (
-                <div>
-                  <LinkedContract period={quarterPeriod} orgUnit={orgUnit} linkedContracts={linkedContracts} />
-                </div>
-              )}
-            </div>
-          )}
-        </div>  
+        {orgUnit && (
+          <div>
+            <ContractsSection orgUnit={orgUnit} />
+            {linkedContracts && linkedContracts.length > 1 && (
+              <div>
+                <LinkedContract period={quarterPeriod} orgUnit={orgUnit} linkedContracts={linkedContracts} />
+              </div>
+            )}
+          </div>
+        )}
+      </div>
       <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
         <DataEntriesSection dataEntryCode={match.params.dataEntryCode} period={match.params.period} orgUnit={orgUnit} />
         {orgUnit && <InvoiceLinksSection orgUnit={orgUnit} period={period} />}
       </div>
-      
 
       <div>
         {formData && (

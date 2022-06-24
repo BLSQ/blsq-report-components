@@ -25,9 +25,11 @@ const OrgUnitDetails = ({ orgUnit, searchPeriod, invoiceLinksProps }) => {
     <div>
       <h2>{orgUnit.name}</h2>
       <LocationBreadCrumb orgUnit={orgUnit} period={searchPeriod} />
-      <ContractsSection orgUnit={orgUnit} />
-      <InvoiceLinksSection orgUnit={orgUnit} period={searchPeriod} invoiceLinksProps={invoiceLinksProps} />
-      <DataEntriesSection orgUnit={orgUnit} period={searchPeriod} />
+      <div style={{ marginLeft: "20px" }}>
+        <ContractsSection orgUnit={orgUnit} />
+        <InvoiceLinksSection orgUnit={orgUnit} period={searchPeriod} invoiceLinksProps={invoiceLinksProps} />
+        <DataEntriesSection orgUnit={orgUnit} period={searchPeriod} />
+      </div>
     </div>
   );
 };

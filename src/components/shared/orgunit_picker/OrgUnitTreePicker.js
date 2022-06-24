@@ -1,31 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { TreeViewWithSearch } from "bluesquare-components";
-import { setPeriod, treeProps, setUser } from "./orgUnitTreeBackend";
+import { setPeriod, treeProps, setUser, formatInitialSelectedParents } from "./orgUnitTreeBackend";
 import ContractSummary from "../contracts/ContractSummary";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
-const formatInitialSelectedIds = (selection) => {
-  if (!selection) return [];
-  if (!Array.isArray(selection)) return [selection.id];
-  return selection.map((ou) => ou.id);
-};
-
-const formatInitialSelectedParents = (selection) => {
-  const selectedParents = new Map();
-  const parentsMap = new Map();
-  selectedParents.set(selection.id, parentsMap);
-  for (const ancestor of selection.ancestors) {
-    parentsMap.set(ancestor.id, ancestor);
-  }
-  // if not there, a parent is missing
-  parentsMap.set(selection.id, selection);
-  return selectedParents;
-};
 
 const makeDropDownText = (orgUnit) => {
   return (
@@ -73,7 +53,7 @@ const OrgUnitTreePicker = ({ initialSelection, onChange, period, user }) => {
         }
         rootData[0].ancestors = loadedAncestors;
       }
-      let parents;
+      let parents = new Map();
       if (rootData[0] && rootData[0].ancestors.length) {
         parents = formatInitialSelectedParents(rootData[0]);
       }
@@ -94,9 +74,6 @@ const OrgUnitTreePicker = ({ initialSelection, onChange, period, user }) => {
     }
   }, [preselected]);
 
-  if (preselected || preexpanded) {
-    console.log("preselected", preselected, " preexpanded", preexpanded);
-  }
   if (initialSelection && preselected == undefined) {
     return <span>Loading...</span>;
   }

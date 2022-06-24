@@ -25,6 +25,18 @@ let contractsByLevelUid = {};
 const defaultOrgUnitFields =
   "id,name,ancestors[id,name],children[id,name,ancestors[id,name],children[id,name,ancestors[id,name],children]]";
 
+export const formatInitialSelectedParents = (selection) => {
+  const selectedParents = new Map();
+  const parentsMap = new Map();
+  selectedParents.set(selection.id, parentsMap);
+  for (const ancestor of selection.ancestors.slice(topLevel - 1)) {
+    parentsMap.set(ancestor.id, ancestor);
+  }
+  // if not there, a parent is missing
+  parentsMap.set(selection.id, selection);
+  return selectedParents;
+};
+
 const getRootData = async (id, type = "source") => {
   if (Object.keys(contractsByOrgUnitId).length === 0) {
     const contractService = PluginRegistry.extension("contracts.service");
@@ -41,7 +53,14 @@ const getRootData = async (id, type = "source") => {
     }
   }
 
-  const resp = await getFilteredOrgUnits("level:eq:" + (topLevel + 1));
+  const d2 = await getInstance();
+  const api = await d2.Api.getApi();
+
+  const resp = await api.get("organisationUnits", {
+    filter: "id:in:[" + user.dataViewOrganisationUnits.map((ou) => ou.id).join(",") + "]",
+    fields: defaultOrgUnitFields,
+    paging: false,
+  });
 
   return withHasChildren(resp.organisationUnits);
 };
@@ -73,18 +92,12 @@ const getChildrenData = async (id) => {
   return withHasChildren(resp.organisationUnits);
 };
 
-const getOrgUnitById = async (id, currentUser) => {
+const getOrgUnitById = async (id) => {
   const d2 = await getInstance();
   const api = await d2.Api.getApi();
-  let userOrgUnitsFilter;
-  const orgUnits = currentUser.dataViewOrganisationUnits;
-  if (orgUnits && orgUnits.length === 1) {
-    userOrgUnitsFilter = "&path:like:" + orgUnits[0].id;
-  } else if (orgUnits && orgUnits.length > 0) {
-    userOrgUnitsFilter = "&filter=ancestors.id:in:[" + orgUnits.map((ou) => ou.id).join(",") + "]";
-  }
+  
   const resp = await api.get("organisationUnits", {
-    filter: "id:eq:" + id + userOrgUnitsFilter,
+    filter: "id:eq:" + id ,
     fields: defaultOrgUnitFields,
     paging: false,
   });
@@ -94,7 +107,7 @@ const getOrgUnitById = async (id, currentUser) => {
 const getFilteredOrgUnits = async (filterStart) => {
   const d2 = await getInstance();
   const api = await d2.Api.getApi();
-  
+
   let userOrgUnitsFilter;
   const orgUnits = user.dataViewOrganisationUnits;
   if (orgUnits && orgUnits.length === 1) {
@@ -102,7 +115,7 @@ const getFilteredOrgUnits = async (filterStart) => {
   } else if (orgUnits && orgUnits.length > 0) {
     userOrgUnitsFilter = ["ancestors.id:in:[" + orgUnits.map((ou) => ou.id).join(",") + "]"];
   }
-  debugger;
+  
   const resp = await api.get("organisationUnits", {
     filter: userOrgUnitsFilter.concat([filterStart]),
     fields: defaultOrgUnitFields,

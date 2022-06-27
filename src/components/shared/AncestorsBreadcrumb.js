@@ -9,7 +9,7 @@ const AncestorsBreadcrumbs = ({orgUnit, linkHead, linkEnd}) => {
 
   return (
     <>
-      {orgUnit &&
+      {orgUnit && orgUnit.ancestors && 
         orgUnit.ancestors.slice(1, orgUnit.ancestors.length - 1).map((ancestor, index) => {
           return (
             <span key={"ancestor" + index}>

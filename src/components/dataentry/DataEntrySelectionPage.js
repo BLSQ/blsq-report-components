@@ -180,7 +180,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
       </div>
 
       <div style={{ fontFamily: "monospace" }}>
-        <AncestorsBreadcrumbs orgUnit={orgUnit} linkHead={`/select/?q=&period=${quarterPeriod}&parent=`} />
+        <AncestorsBreadcrumbs orgUnit={orgUnit} link={(ancestor) => `/select/?q=&period=${quarterPeriod}&parent=${ancestor.id}`} />
       </div>
       <div>
         {orgUnit && (

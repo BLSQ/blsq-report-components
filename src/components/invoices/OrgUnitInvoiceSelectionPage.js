@@ -75,7 +75,7 @@ const OrgUnitInvoiceSelectionPage = ({ history, match, periodFormat, dhis2, curr
       </div>
 
       <div style={{ fontFamily: "monospace" }}>
-        <AncestorsBreadcrumb orgUnit={orgUnit} linkHead={`select/?q=&period=" + ${quarterPeriod} + "&parent=`} />
+        <AncestorsBreadcrumb orgUnit={orgUnit} link={a => `/select/?q=&period=${quarterPeriod}&parent=${a.id}`} />
       </div>
 
       <Grid container>

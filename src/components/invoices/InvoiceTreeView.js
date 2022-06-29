@@ -13,8 +13,7 @@ const LocationBreadCrumb = ({ orgUnit, period }) => {
     <div style={{ fontFamily: "monospace", marginLeft: "20px" }}>
       <AncestorsBreadcrumbs
         orgUnit={orgUnit}
-        linkHead={`/select/?q=&period=" + ${period} + "&ou=`}
-        linkEnd={"&mode=tree"}
+        link={(ancestor) => `/select/?q=&period=${period}&ou=${ancestor.id}&mode=tree`}
       />
     </div>
   );

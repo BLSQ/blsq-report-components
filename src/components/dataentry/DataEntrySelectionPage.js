@@ -2,18 +2,20 @@ import React, { useEffect, useState } from "react";
 import DatePeriods from "../../support/DatePeriods";
 import PluginRegistry from "../core/PluginRegistry";
 import { Link } from "react-router-dom";
-import { Button, Paper, Typography, Chip, Grid, IconButton } from "@material-ui/core";
+import { Button, Paper, Grid } from "@material-ui/core";
 import AssignmentIcon from "@material-ui/icons/Assignment";
-import InfoIcon from "@material-ui/icons/Info";
 import { Alert } from "@material-ui/lab";
 
 import FormDataContext from "./FormDataContext";
-import InvoiceLinks from "../invoices/InvoiceLinks";
 import { useTranslation } from "react-i18next";
 import { withRouter } from "react-router";
 import PeriodPicker from "../shared/PeriodPicker";
 import LinkedContract from "./LinkedContract";
 import { buildFormData } from "./forms";
+import ContractsSection from "../contracts/ContractsSection";
+import DataEntriesSection from "./DataEntriesSection";
+import InvoiceLinksSection from "../invoices/InvoiceLinksSection";
+import AncestorsBreadcrumbs from "../shared/AncestorsBreadcrumb";
 
 const checkOverlaps = (contracts) => {
   for (let contract1 of contracts) {
@@ -27,19 +29,22 @@ const checkOverlaps = (contracts) => {
 };
 
 const ErrorTogglable = ({ generalError }) => {
-  const lines = generalError.message.split("\n");
+  const message = generalError.message
+    ? generalError.message
+    : "Sorry something went wrong : \n" + JSON.stringify(generalError);
+  const lines = message.split("\n");
   const [fullDisplay, setFullDisplay] = useState(false);
   return (
     <div>
       <pre style={{ color: "red" }} title={generalError.stack}>
-        {fullDisplay ? generalError.message : lines[0]}
+        {fullDisplay ? message : lines[0]}
       </pre>{" "}
       {lines.length > 1 && <Button onClick={() => setFullDisplay(!fullDisplay)}>...</Button>}
     </div>
   );
 };
 const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const dataEntryRegistry = PluginRegistry.extension("dataentry.dataEntries");
   const [orgUnit, setOrgUnit] = useState(undefined);
   const [dataEntries, setDataEntries] = useState(undefined);
@@ -148,7 +153,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
 
   return (
     <Paper style={{ minHeight: "90vh", paddingLeft: "14px", paddingTop: "1px" }}>
-      {generalError && <ErrorTogglable generalError={generalError}></ErrorTogglable>}
+      {generalError && <ErrorTogglable generalError={generalError} />}
       {error && (
         <div>
           <Link to={error.link}>{error.message}</Link>
@@ -175,100 +180,25 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
       </div>
 
       <div style={{ fontFamily: "monospace" }}>
-        {orgUnit &&
-          orgUnit.ancestors.slice(1, orgUnit.ancestors.length - 1).map((ancestor, index) => {
-            return (
-              <span key={"ancestor" + index}>
-                <Link to={"/select/?q=&period=" + quarterPeriod + "&parent=" + ancestor.id}>{ancestor.name}</Link>
-                {index < orgUnit.ancestors.length - 3 && "  >  "}
-              </span>
-            );
-          })}
+        <AncestorsBreadcrumbs orgUnit={orgUnit} link={(ancestor) => `/select/?q=&period=${quarterPeriod}&parent=${ancestor.id}`} />
+      </div>
+      <div>
+        {orgUnit && (
+          <div>
+            <ContractsSection orgUnit={orgUnit} />
+            {linkedContracts && linkedContracts.length > 1 && (
+              <div>
+                <LinkedContract period={quarterPeriod} orgUnit={orgUnit} linkedContracts={linkedContracts} />
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+      <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+        <DataEntriesSection dataEntryCode={match.params.dataEntryCode} period={match.params.period} orgUnit={orgUnit} />
+        {orgUnit && <InvoiceLinksSection orgUnit={orgUnit} period={period} />}
       </div>
 
-      {orgUnit && orgUnit.activeContracts && (
-        <React.Fragment>
-          <div>
-            {t("dataEntry.contractFrom")} <code>{orgUnit.activeContracts[0].startPeriod}</code>{" "}
-            {t("dataEntry.contractTo")} <code>{orgUnit.activeContracts[0].endPeriod}</code>{" "}
-            <Link
-              to={
-                "/contracts/" +
-                ((orgUnit.activeContracts[0] &&
-                  orgUnit.activeContracts[0].fieldValues &&
-                  orgUnit.activeContracts[0].fieldValues.contract_main_orgunit) ||
-                  orgUnit.id)
-              }
-            >
-              <IconButton>
-                <InfoIcon color="action" />
-              </IconButton>
-            </Link>{" "}
-            {orgUnit.activeContracts[0].codes.map((c, index) => (
-              <Chip key={c + "_" + index} label={c} style={{ margin: "5px" }} />
-            ))}
-          </div>
-          {linkedContracts && linkedContracts.length > 1 && (
-            <div>
-              <LinkedContract period={quarterPeriod} orgUnit={orgUnit} linkedContracts={linkedContracts} />
-            </div>
-          )}
-        </React.Fragment>
-      )}
-
-      <Grid container>
-        <Grid item xs={3}>
-          <h2>{t("dataEntry.dataEntries")}</h2>
-          <table>
-            <tbody>
-              {dataEntries &&
-                dataEntries.map((dataEntry) => {
-                  const isCurrent =
-                    dataEntry.dataEntryType.code == match.params.dataEntryCode &&
-                    dataEntry.period == match.params.period;
-                  return (
-                    <tr>
-                      <td>
-                        {" "}
-                        <Typography variant="overline" gutterBottom>
-                          {dataEntry.dataEntryType.name}
-                        </Typography>
-                      </td>
-                      <td>
-                        <Button
-                          key={dataEntry.dataEntryType.code + "-" + dataEntry.period + "-" + orgUnit.id}
-                          variant="text"
-                          color="primary"
-                          size="small"
-                          component={Link}
-                          style={isCurrent ? { backgroundColor: "lightyellow" } : {}}
-                          to={"/dataEntry/" + orgUnit.id + "/" + dataEntry.period + "/" + dataEntry.dataEntryType.code}
-                          title={dataEntry.period}
-                        >
-                          {DatePeriods.displayName(
-                            dataEntry.period,
-                            periodFormat[DatePeriods.detect(dataEntry.period)],
-                          )}
-                        </Button>
-                      </td>
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </table>
-        </Grid>
-        <Grid item>
-          <h2>{t("dataEntry.invoices")}</h2>
-          {orgUnit && (
-            <InvoiceLinks
-              t={t}
-              orgUnit={orgUnit}
-              period={period}
-              invoices={PluginRegistry.extension("invoices.invoices")}
-            />
-          )}
-        </Grid>
-      </Grid>
       <div>
         {formData && (
           <FormDataContext.Provider value={formData}>

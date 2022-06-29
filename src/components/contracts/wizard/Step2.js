@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MUIDataTable from "mui-datatables";
 import PluginRegistry from "../../core/PluginRegistry";
-import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
+import { createTheme, MuiThemeProvider } from "@material-ui/core";
 
 function isIsoDate(str) {
   const isMatchingYYYYMMDD = /\d{4}-\d{2}-\d{2}/.test(str);

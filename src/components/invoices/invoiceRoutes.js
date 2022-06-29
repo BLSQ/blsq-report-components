@@ -50,6 +50,7 @@ const invoiceRoutes = (props) => {
         const params = new URLSearchParams(routerProps.location.search.substring(1));
         const period = params.get("period");
         const parent = params.get("parent");
+        const viewType = params.get("mode") || "table";
         let ouSearchValue = params.get("q");
         if (!ouSearchValue) {
           ouSearchValue = "";
@@ -69,6 +70,7 @@ const invoiceRoutes = (props) => {
             topLevelsOrgUnits={props.topLevelsOrgUnits}
             parent={parent}
             ouSearchValue={ouSearchValue}
+            viewType={viewType}
           />
         );
       }}

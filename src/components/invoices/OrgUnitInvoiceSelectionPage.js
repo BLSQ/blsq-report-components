@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import DatePeriods from "../../support/DatePeriods";
@@ -7,10 +6,11 @@ import PeriodPicker from "../shared/PeriodPicker";
 import { Link } from "react-router-dom";
 import { Paper, Grid } from "@material-ui/core";
 import PluginRegistry from "../core/PluginRegistry";
-import InvoiceLinks from "./InvoiceLinks";
+import InvoiceLinksSection from "./InvoiceLinksSection";
+import DataEntriesSection from "../dataentry/DataEntriesSection";
+import AncestorsBreadcrumb from "../shared/AncestorsBreadcrumb";
 
 const OrgUnitInvoiceSelectionPage = ({ history, match, periodFormat, dhis2, currentUser, invoices }) => {
-  const { t, i18n } = useTranslation();
   const [error, setError] = useState(undefined);
 
   const period = match.params.period;
@@ -75,21 +75,13 @@ const OrgUnitInvoiceSelectionPage = ({ history, match, periodFormat, dhis2, curr
       </div>
 
       <div style={{ fontFamily: "monospace" }}>
-        {orgUnit &&
-          orgUnit.ancestors.slice(1, orgUnit.ancestors.length - 1).map((ancestor, index) => {
-            return (
-              <span key={"ancestor" + index}>
-                <Link to={"/select/?q=&period=" + quarterPeriod + "&parent=" + ancestor.id}>{ancestor.name}</Link>
-                {index < orgUnit.ancestors.length - 3 && "  >  "}
-              </span>
-            );
-          })}
+        <AncestorsBreadcrumb orgUnit={orgUnit} link={a => `/select/?q=&period=${quarterPeriod}&parent=${a.id}`} />
       </div>
 
       <Grid container>
-        <Grid item>
-          <h2>{t("dataEntry.invoices")}</h2>
-          {orgUnit && <InvoiceLinks t={t} orgUnit={orgUnit} period={period} maxInvoiceLength={100} />}
+        <Grid item>{orgUnit && <InvoiceLinksSection orgUnit={orgUnit} period={period} />}</Grid>
+        <Grid item style={{ marginLeft: "20px" }}>
+          <DataEntriesSection period={period} orgUnit={orgUnit} />
         </Grid>
       </Grid>
     </Paper>

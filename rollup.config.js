@@ -20,6 +20,7 @@ export default {
   external: [
       ...Object.keys(pkg.dependencies || {}),
       ...Object.keys(pkg.peerDependencies || {}),
+      "bluesquare-components",
       "i18next",
       "papaparse",
       "mui-datatables",

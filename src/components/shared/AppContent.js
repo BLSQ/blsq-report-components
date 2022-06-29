@@ -107,6 +107,7 @@ class AppContent extends React.Component {
       dispatch,
       drawerOpen,
       period,
+      children
     } = this.props;
 
     const frequency = period.includes("S") ? "sixMonthly" : "quarterly";
@@ -130,6 +131,7 @@ class AppContent extends React.Component {
         })}
       >
         {(!currentUser || isLoading) && <LoadingSpinner fixed />}
+        {children}
         <div className={classes.drawerHeader + " no-print"} />
         {currentUser && (
           <Switch>
@@ -150,8 +152,8 @@ AppContent.propTypes = {
   dhis2: PropTypes.object.isRequired,
   config: PropTypes.object.isRequired,
   invoices: PropTypes.any.isRequired,
-  incentivesDescriptors: PropTypes.any.isRequired,
-  dataElementGroups: PropTypes.any.isRequired,
+  incentivesDescriptors: PropTypes.any,
+  dataElementGroups: PropTypes.any,
   currentUser: PropTypes.object,
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,

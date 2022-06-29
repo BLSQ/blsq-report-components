@@ -122,7 +122,9 @@
       "title": "Recherche de rapports & factures"
     },
     "refineYourQuery": "Il y a plus de résultats, si besoin, affinez vos critères de recherche.",
-    "displayStatus": "{{displayCount}} unités affichées, {{omitedCount}} sans facture."
+    "displayStatus": "{{displayCount}} unités affichées, {{omitedCount}} sans facture.",
+    "toggleTreeView": "Passer en arborescence",
+    "toggleTableView": "Passer en vue tableau"
   },
   "invoicing": {
     "job": {
@@ -137,6 +139,7 @@
   "limit_org_unit_under": "Limiter aux unités d'organisation enfant de ...",
   "missing_invoice_types": "Facture introuvable...",
   "name": "Nom",
+  "noActiveContracts": "Pas de contrats pour cette période",
   "noResult": "Aucun résultat",
   "orgUnit": "Unité d'organisation",
   "orgUnit_name": "Nom d'unité d'organisation",

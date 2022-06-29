@@ -9,8 +9,8 @@
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
   "engines": {
-    "node": ">=12",
-    "npm": ">=6"
+    "node": ">=14.17.0",
+    "npm": ">=7"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -37,8 +37,6 @@
     "@babel/preset-react": "^7.9.4",
     "@babel/runtime": "^7.9.6",
     "@date-io/moment": "2.13.1",
-    "@material-ui/core": "4.11.0",
-    "@material-ui/icons": "4.9.1",
     "@rollup/plugin-babel": "^5.0.0",
     "@rollup/plugin-commonjs": "^11.1.0",
     "@rollup/plugin-json": "^4.0.3",
@@ -73,6 +71,7 @@
     "react-router-dom": "^4.3.1",
     "react-scripts": "3.4.4",
     "react-select": "^3.1.0",
+    "react-table": "7.8.0",
     "react-test-renderer": "^16.6.3",
     "recharts": "1.8.5",
     "rollup": "^2.10.0"
@@ -81,12 +80,16 @@
     "dist"
   ],
   "dependencies": {
-    "@material-ui/lab": "^4.0.0-alpha.56",
+    "@material-ui/core": "^4.11.4",
+    "@material-ui/icons": "^4.2.1",
+    "@material-ui/lab": "^4.0.0-alpha.48",
     "@material-ui/pickers": "^3.2.10",
+    "bluesquare-components": "https://github.com/BLSQ/bluesquare-components",
     "history": "^5.0.0",
     "moment": "^2.27.0",
     "notistack": "^0.9.17",
     "qs": "^6.9.4",
+    "react-intl": "^5.10.16",
     "react-query": "^3.34.12",
     "react-redux": "^7.2.1",
     "react-router-redux": "^4.0.8",

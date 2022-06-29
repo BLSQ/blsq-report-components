@@ -2,13 +2,22 @@ import React from "react";
 import { getInstance } from "d2/lib/d2";
 import PluginRegistry from "../../core/PluginRegistry";
 
+let loadedOrgUnitsById = {};
+let contractsByOrgUnitId = {};
+let contractsByLevelUid = {};
 let currentPeriod;
+let user;
+let topLevel;
+
 export const setPeriod = (argPeriod) => {
+  if (argPeriod !== currentPeriod) {
+    loadedOrgUnitsById = {};
+    contractsByOrgUnitId = {};
+    contractsByLevelUid = {};
+  }
   currentPeriod = argPeriod;
 };
 
-let user;
-let topLevel;
 export const setUser = (argUser) => {
   user = argUser;
   if (user) {
@@ -19,9 +28,6 @@ export const setUser = (argUser) => {
   }
 };
 
-const loadedOrgUnitsById = {};
-let contractsByOrgUnitId = {};
-let contractsByLevelUid = {};
 const defaultOrgUnitFields =
   "id,name,ancestors[id,name],children[id,name,ancestors[id,name],children[id,name,ancestors[id,name],children]]";
 
@@ -95,9 +101,9 @@ const getChildrenData = async (id) => {
 const getOrgUnitById = async (id) => {
   const d2 = await getInstance();
   const api = await d2.Api.getApi();
-  
+
   const resp = await api.get("organisationUnits", {
-    filter: "id:eq:" + id ,
+    filter: "id:eq:" + id,
     fields: defaultOrgUnitFields,
     paging: false,
   });
@@ -115,7 +121,7 @@ const getFilteredOrgUnits = async (filterStart) => {
   } else if (orgUnits && orgUnits.length > 0) {
     userOrgUnitsFilter = ["ancestors.id:in:[" + orgUnits.map((ou) => ou.id).join(",") + "]"];
   }
-  
+
   const resp = await api.get("organisationUnits", {
     filter: userOrgUnitsFilter.concat([filterStart]),
     fields: defaultOrgUnitFields,

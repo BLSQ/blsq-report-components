@@ -74,11 +74,11 @@ const OrgUnitTreePicker = ({ initialSelection, onChange, period, user }) => {
     }
   }, [preselected]);
 
-  if (initialSelection && preselected == undefined) {
+  if (initialSelection && fetchSelectionQuery.isFetching) {
     return <span>Loading...</span>;
   }
   return (
-    <div>
+    <div key={period}>
       {fetchSelectionQuery.status === "loading" ? (
         <span>Loading...</span>
       ) : fetchSelectionQuery.status === "error" ? (

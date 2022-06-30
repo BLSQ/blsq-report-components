@@ -139,8 +139,6 @@ const InvoiceSelectionContainer = (props) => {
         </Button>
       </div>
       <br />
-      <br />
-      <br />
       <div className={classes.filters}>
         {viewType === "tree" && (
           <InvoiceTreeView

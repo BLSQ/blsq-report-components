@@ -177,7 +177,7 @@ const ContractPage = ({ match, location, t, history, currentUser }) => {
           <LocationOnIcon color="secondary" />
           &nbsp;
           <Typography className={classes.wrapIcon} color="secondary">
-            <AncestorsBreadcrumbs orgUnit={orgUnit} link={(ancestor) => `/contracts?under_orgunit=${ancestor.id}`} />
+            <AncestorsBreadcrumbs orgUnit={orgUnit} link={(ancestor) => `/contracts?under_orgunit=${ancestor.id}`}/>
           </Typography>
           {orgUnit && (
             <Button

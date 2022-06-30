@@ -9,6 +9,7 @@ import PluginRegistry from "../core/PluginRegistry";
 import InvoiceLinksSection from "./InvoiceLinksSection";
 import DataEntriesSection from "../dataentry/DataEntriesSection";
 import AncestorsBreadcrumb from "../shared/AncestorsBreadcrumb";
+import CoordinatesSection from "../pyramid/CoordinatesSection"
 
 const OrgUnitInvoiceSelectionPage = ({ history, match, periodFormat, dhis2, currentUser, invoices }) => {
   const [error, setError] = useState(undefined);
@@ -83,7 +84,10 @@ const OrgUnitInvoiceSelectionPage = ({ history, match, periodFormat, dhis2, curr
         <Grid item style={{ marginLeft: "20px" }}>
           <DataEntriesSection period={period} orgUnit={orgUnit} />
         </Grid>
+
       </Grid>
+      {orgUnit && <CoordinatesSection orgUnit={orgUnit} />}
+
     </Paper>
   );
 };

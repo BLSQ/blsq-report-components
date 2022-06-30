@@ -111,7 +111,10 @@
     "level3": "Level 3",
     "level4": "Level 4",
     "level5": "Level 5"
-  },  
+  }, 
+  "pyramid":{
+    "signalitic" : "Signalitic"
+  }, 
   "create": "Create",
   "edit": "Edit",
   "delete": "Delete",

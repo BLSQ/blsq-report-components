@@ -1,3 +1,13 @@
+# @blsq/blsq-report-components@1.1.1
+
+- [invoices] Adds a signalic section with map and photo if available
+- [invoices] Fixes a off by one error in the breadcrumb
+- [invoices] tree view : fixes cases where contracts where not yet loaded (bookmarked ?ou= param)
+
+# @blsq/blsq-report-components@1.1.0
+
+- [invoices] add a tree based navigation to find orgunits
+
 # @blsq/blsq-report-components@1.0.112
 
 - [contracts] add possibility to cache calculations during contract validations

@@ -108,6 +108,9 @@
     "level4": "Niveau 4",
     "level5": "Niveau 5"
   },  
+  "pyramid":{
+    "signalitic" : "Signalitique"
+  },
   "create": "Créer",
   "edit": "Editer",
   "delete": "Supprimer",

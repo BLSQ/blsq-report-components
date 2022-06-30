@@ -6,7 +6,7 @@ const OrgunitRelatedSection = ({ messageKey, children, orgUnitSectionStyle }) =>
   return (
     <div style={orgUnitSectionStyle ? orgUnitSectionStyle : { margin: "inherit" }}>
       <h3>{t(messageKey)}</h3>
-      {children}
+      <div style={{ margin: "inherit" }}>{children}</div>
     </div>
   );
 };

@@ -7,6 +7,7 @@ import ContractsSection from "../contracts/ContractsSection";
 import DataEntriesSection from "../dataentry/DataEntriesSection";
 import InvoiceLinksSection from "./InvoiceLinksSection";
 import AncestorsBreadcrumbs from "../shared/AncestorsBreadcrumb";
+import CoordinatesSection from "../pyramid/CoordinatesSection";
 
 const LocationBreadCrumb = ({ orgUnit, period }) => {
   return (
@@ -24,10 +25,11 @@ const OrgUnitDetails = ({ orgUnit, searchPeriod, invoiceLinksProps }) => {
     <div>
       <h2>{orgUnit.name}</h2>
       <LocationBreadCrumb orgUnit={orgUnit} period={searchPeriod} />
-      <div style={{ marginLeft: "20px" }}>
-        <ContractsSection orgUnit={orgUnit} />
-        <InvoiceLinksSection orgUnit={orgUnit} period={searchPeriod} invoiceLinksProps={invoiceLinksProps} />
-        <DataEntriesSection orgUnit={orgUnit} period={searchPeriod} />
+      <div style={{ marginLeft: "20px",  }}>
+          <ContractsSection orgUnit={orgUnit} />
+          <InvoiceLinksSection orgUnit={orgUnit} period={searchPeriod} invoiceLinksProps={invoiceLinksProps} />
+          <DataEntriesSection orgUnit={orgUnit} period={searchPeriod} />
+          <CoordinatesSection orgUnit={orgUnit} />
       </div>
     </div>
   );

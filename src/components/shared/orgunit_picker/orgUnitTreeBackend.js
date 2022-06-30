@@ -43,7 +43,7 @@ export const formatInitialSelectedParents = (selection) => {
   return selectedParents;
 };
 
-const getRootData = async (id, type = "source") => {
+const initiliazeContractsCache = async () => {
   if (Object.keys(contractsByOrgUnitId).length === 0) {
     const contractService = PluginRegistry.extension("contracts.service");
     const allContracts = await contractService.findAll();
@@ -58,6 +58,11 @@ const getRootData = async (id, type = "source") => {
       }
     }
   }
+};
+
+const getRootData = async (id, type = "source") => {
+
+  await initiliazeContractsCache()
 
   const d2 = await getInstance();
   const api = await d2.Api.getApi();
@@ -99,6 +104,8 @@ const getChildrenData = async (id) => {
 };
 
 const getOrgUnitById = async (id) => {
+  await initiliazeContractsCache()
+
   const d2 = await getInstance();
   const api = await d2.Api.getApi();
 

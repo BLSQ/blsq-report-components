@@ -7,9 +7,7 @@ const InvoiceLinksSection = ({ invoiceLinksProps, orgUnit, period, orgUnitSectio
   const { t } = useTranslation();
   return (
     <OrgunitRelatedSection messageKey="dataEntry.invoices" orgUnitSectionStyle={orgUnitSectionStyle}>
-      <div>
         <InvoiceLinks {...invoiceLinksProps} t={t} orgUnit={orgUnit} period={period} maxInvoiceLength={100} />
-      </div>
     </OrgunitRelatedSection>
   );
 };

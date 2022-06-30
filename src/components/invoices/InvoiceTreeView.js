@@ -52,7 +52,7 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, classes, onPeriodCha
   };
 
   return (
-    <>
+    <div style={{margin: 0}}>
       <FormControl className={classes.periodContainer}>
         <PeriodPicker period={searchPeriod} onPeriodChange={onPeriodChange} periodFormat={periodFormat} />
       </FormControl>
@@ -75,7 +75,7 @@ const InvoiceTreeView = ({ invoiceLinksProps, searchPeriod, classes, onPeriodCha
           />
         )}
       </div>
-    </>
+    </div>
   );
 };
 

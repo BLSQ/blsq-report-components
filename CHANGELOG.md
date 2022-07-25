@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.1.2
+
+- [contracts] fix contracts import wizard (error on createMuiTheme)
+
 # @blsq/blsq-report-components@1.1.1
 
 - [invoices] Adds a signalic section with map and photo if available

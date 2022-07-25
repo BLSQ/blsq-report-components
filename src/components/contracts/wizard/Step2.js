@@ -17,6 +17,14 @@ function isIsoDate(str) {
   }
 }
 
+const getMuiTheme = () =>
+  createTheme({
+    overrides: {
+      MuiTableCell: { whiteSpace: "nowrap" },
+      MUIDataTableBodyCell: { root: { whiteSpace: "nowrap" } },
+    },
+  });
+
 const Step2 = ({ contractsToImport, dhis2, setValidatedContracts, setIsLoading }) => {
   const contractService = PluginRegistry.extension("contracts.service");
   const [contracts, setContracts] = useState(undefined);
@@ -178,14 +186,6 @@ const Step2 = ({ contractsToImport, dhis2, setValidatedContracts, setIsLoading }
     setRowsSelected(rowsSelected);
     setValidatedContracts(rowsSelected.map((index) => contracts[index]));
   };
-
-  const getMuiTheme = () =>
-    createMuiTheme({
-      overrides: {
-        MuiTableCell: { whiteSpace: "nowrap" },
-        MUIDataTableBodyCell: { root: { whiteSpace: "nowrap" } },
-      },
-    });
 
   return (
     <div style={{ maxWidth: "95%" }}>

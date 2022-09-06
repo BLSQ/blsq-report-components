@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.1.3
+
+- [contracts] display the label of the option in contract summary component
+
 # @blsq/blsq-report-components@1.1.2
 
 - [contracts] fix contracts import wizard (error on createMuiTheme)

@@ -26,7 +26,7 @@ export const contractsTableColumns = (
 ) => {
   const hasSubContractEnabled = !!contractFields.find((c) => c.code == "contract_main_orgunit");
 
-  const columns = [
+  let columns = [
     {
       name: "id",
       label: t("id"),
@@ -256,6 +256,47 @@ export const contractsTableColumns = (
       });
     }
   });
+
+  let notStandardFields = [
+    {
+      name: "fieldValues.storedBy",
+      label: t("contracts.created_by"),
+      options: {
+        filter: true,
+        display: true,
+        sort: true
+      },
+    },
+    {
+      name: "fieldValues.createdDate",
+      label: t("contracts.created_at"),
+      options: {
+        filter: true,
+        display: true,
+        sort: true
+      }
+    },
+    {
+      name: "fieldValues.lastUpdatedBy",
+      label: t("contracts.updated_by"),
+      options: {
+        filter: true,
+        display: true,
+        sort: true
+      }
+    },
+    {
+      name: "fieldValues.lastUpdatedDate",
+      label: t("contracts.updated_at"),
+      options: {
+        filter: true,
+        display: true,
+        sort: true
+      }
+    }
+  ];
+
+  columns = columns.concat(notStandardFields);
   columns.push({
     name: "id",
     label: t("table.actions.title"),
@@ -288,11 +329,10 @@ export const contractsTableColumns = (
             {!isDetail && (
               <Tooltip placement="bottom" title={t("contracts.seeOrgUnit")} arrow>
                 <Link
-                  to={`/contracts/${
-                    contract.fieldValues.contract_main_orgunit
-                      ? contract.fieldValues.contract_main_orgunit
-                      : contract.orgUnit.id
-                  }`}
+                  to={`/contracts/${contract.fieldValues.contract_main_orgunit
+                    ? contract.fieldValues.contract_main_orgunit
+                    : contract.orgUnit.id
+                    }`}
                   className={classes.marginLeft}
                 >
                   <IconButton size="small">

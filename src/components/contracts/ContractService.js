@@ -2,6 +2,7 @@ import Contract from "./Contract";
 import PluginRegistry from "../core/PluginRegistry";
 import { getOrgUnitCoverage, checkSubContractCoverage, checkNonVisibleOverlap, getOverlaps } from "./utils/index";
 import { getStartDateFromPeriod, getEndDateFromPeriod, getQuarterFromDate } from "./utils/periodsUtils";
+import moment from "moment";
 
 class ContractService {
   constructor(api, program, allEventsSqlViewId) {
@@ -36,6 +37,12 @@ class ContractService {
       path: event.orgUnitPath,
       ancestors: event.ancestors || [],
     };
+
+    contract.storedBy = event.storedBy && event.storedBy.username;
+    contract.lastUpdatedBy = event.lastUpdatedBy && event.lastUpdatedBy.username;
+    contract.createdDate = event.createdDate;
+    contract.lastUpdatedDate = event.lastUpdatedDate;
+
     return new Contract(contract);
   }
 
@@ -124,6 +131,7 @@ class ContractService {
           name: row[nameIndex],
         });
       }
+
       return {
         event: row[indexes.event_id],
         orgUnit: row[indexes.org_unit_id],
@@ -133,11 +141,14 @@ class ContractService {
         program: row[indexes.program_id],
         programStage: row[indexes.program_stage_id],
         dataValues: dataValues,
+        storedBy: row[indexes.stored_by] && row[indexes.stored_by]['value'] && JSON.parse(row[indexes.stored_by]['value']),
+        lastUpdatedBy: row[indexes.lastupdated_by] && row[indexes.lastupdated_by]['value'] && JSON.parse(row[indexes.lastupdated_by]['value']),
+        createdDate: row[indexes.created_date] && moment(row[indexes.created_date]).format("DD/MM/YYYY HH:mm:ss"),
+        lastUpdatedDate: row[indexes.lastupdated_date] && moment(row[indexes.lastupdated_date]).format("DD/MM/YYYY HH:mm:ss")
       };
     });
 
     const contracts = events.map((e) => this.toContract(e));
-
     return contracts;
   }
 
@@ -276,7 +287,7 @@ class ContractService {
 
   getEvent = (contractInfo, orgUnitId, contractId) => {
     const dataValues = [];
-    const ignoredFields = ["id", "orgUnit"];
+    const ignoredFields = ["id", "orgUnit", "createdDate", "lastUpdatedDate", "storedBy", "lastUpdatedBy"];
 
     Object.keys(contractInfo).forEach((fieldKey) => {
       if (!ignoredFields.includes(fieldKey)) {
@@ -284,11 +295,11 @@ class ContractService {
         if (dataElement === undefined) {
           throw new Error(
             "no mapping for field " +
-              fieldKey +
-              " vs " +
-              Object.values(this.mappings)
-                .map((m) => m.code)
-                .join(","),
+            fieldKey +
+            " vs " +
+            Object.values(this.mappings)
+              .map((m) => m.code)
+              .join(","),
           );
         }
         let value = contractInfo[fieldKey];

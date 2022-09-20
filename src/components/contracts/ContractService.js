@@ -131,6 +131,10 @@ class ContractService {
           name: row[nameIndex],
         });
       }
+      const storedBy = row[indexes.stored_by] && row[indexes.stored_by]['value'] && JSON.parse(row[indexes.stored_by]['value']);
+      const lastUpdatedBy = row[indexes.lastupdated_by] && row[indexes.lastupdated_by]['value'] && JSON.parse(row[indexes.lastupdated_by]['value']);
+      const createdDate = row[indexes.created_date] && moment(row[indexes.created_date]).format("DD/MM/YYYY HH:mm:ss");
+      const lastUpdatedDate = row[indexes.lastupdated_date] && moment(row[indexes.lastupdated_date]).format("DD/MM/YYYY HH:mm:ss");
 
       return {
         event: row[indexes.event_id],
@@ -141,10 +145,10 @@ class ContractService {
         program: row[indexes.program_id],
         programStage: row[indexes.program_stage_id],
         dataValues: dataValues,
-        storedBy: row[indexes.stored_by] && row[indexes.stored_by]['value'] && JSON.parse(row[indexes.stored_by]['value']),
-        lastUpdatedBy: row[indexes.lastupdated_by] && row[indexes.lastupdated_by]['value'] && JSON.parse(row[indexes.lastupdated_by]['value']),
-        createdDate: row[indexes.created_date] && moment(row[indexes.created_date]).format("DD/MM/YYYY HH:mm:ss"),
-        lastUpdatedDate: row[indexes.lastupdated_date] && moment(row[indexes.lastupdated_date]).format("DD/MM/YYYY HH:mm:ss")
+        storedBy: storedBy,
+        lastUpdatedBy: lastUpdatedBy,
+        createdDate: createdDate,
+        lastUpdatedDate: lastUpdatedDate
       };
     });
 

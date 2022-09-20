@@ -37,9 +37,8 @@ class ContractService {
       path: event.orgUnitPath,
       ancestors: event.ancestors || [],
     };
-
-    contract.storedBy = event.storedBy && event.storedBy.username;
-    contract.lastUpdatedBy = event.lastUpdatedBy && event.lastUpdatedBy.username;
+    contract.storedBy = event.storedBy;
+    contract.lastUpdatedBy = event.lastUpdatedBy;
     contract.createdDate = event.createdDate;
     contract.lastUpdatedDate = event.lastUpdatedDate;
 
@@ -115,12 +114,16 @@ class ContractService {
       } catch (err) {
         throw new Error("failed to parse : " + row[indexes.data_values].value + " " + err.message);
       }
+
       const dataValues = Object.keys(dataVals).map((k) => {
         return {
           dataElement: k,
           ...dataVals[k],
+          lastUpdatedBy: dataVals && dataVals[k]["lastUpdatedByUserInfo"] && dataVals[k]["lastUpdatedByUserInfo"]["username"],
+          storedBy: dataVals && dataVals[k]["createdByUserInfo"] && dataVals[k]["createdByUserInfo"]["username"]
         };
       });
+
       const ancestors = [];
       const level = row[indexes.level];
       for (var i = 1; i <= level; i += 1) {
@@ -131,10 +134,11 @@ class ContractService {
           name: row[nameIndex],
         });
       }
-      const storedBy = row[indexes.stored_by] && row[indexes.stored_by]['value'] && JSON.parse(row[indexes.stored_by]['value']);
-      const lastUpdatedBy = row[indexes.lastupdated_by] && row[indexes.lastupdated_by]['value'] && JSON.parse(row[indexes.lastupdated_by]['value']);
-      const createdDate = row[indexes.created_date] && moment(row[indexes.created_date]).format("DD/MM/YYYY HH:mm:ss");
-      const lastUpdatedDate = row[indexes.lastupdated_date] && moment(row[indexes.lastupdated_date]).format("DD/MM/YYYY HH:mm:ss");
+      const additionalInfos = dataValues[0];
+      const storedBy = additionalInfos.storedBy;
+      const lastUpdatedBy = additionalInfos.lastUpdatedBy;
+      const createdDate = moment(additionalInfos.created).format("DD/MM/YYYY HH:mm:ss");
+      const lastUpdatedDate = moment(additionalInfos.lastUpdated).format("DD/MM/YYYY HH:mm:ss");
 
       return {
         event: row[indexes.event_id],

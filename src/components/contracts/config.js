@@ -263,7 +263,7 @@ export const contractsTableColumns = (
       label: t("contracts.created_by"),
       options: {
         filter: true,
-        display: true,
+        display: false,
         sort: true
       },
     },
@@ -272,7 +272,7 @@ export const contractsTableColumns = (
       label: t("contracts.created_at"),
       options: {
         filter: true,
-        display: true,
+        display: false,
         sort: true
       }
     },

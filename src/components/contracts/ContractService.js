@@ -119,8 +119,8 @@ class ContractService {
         return {
           dataElement: k,
           ...dataVals[k],
-          lastUpdatedBy: dataVals && dataVals[k]["lastUpdatedByUserInfo"] && dataVals[k]["lastUpdatedByUserInfo"]["username"],
-          storedBy: dataVals && dataVals[k]["createdByUserInfo"] && dataVals[k]["createdByUserInfo"]["username"]
+          lastUpdatedBy: dataVals[k].lastUpdatedByUserInfo?.username ?? "",
+          storedBy: dataVals[k].createdByUserInfo?.username ?? "",
         };
       });
 
@@ -152,7 +152,7 @@ class ContractService {
         storedBy: storedBy,
         lastUpdatedBy: lastUpdatedBy,
         createdDate: createdDate,
-        lastUpdatedDate: lastUpdatedDate
+        lastUpdatedDate: lastUpdatedDate,
       };
     });
 

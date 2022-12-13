@@ -95,9 +95,11 @@ class ContractService {
       "sqlViews/" + this.allEventsSqlViewId + "/data.json?var=programId:" + this.program.id + "&paging=false",
     );
     const indexes = {};
-    rawEvents.listGrid.headers.forEach((h, index) => (indexes[h.name] = index));
+    const headers = rawEvents.listGrid ? rawEvents.listGrid.headers : rawEvents.headers;
+    const rows = rawEvents.listGrid ? rawEvents.listGrid.rows : rawEvents.rows;
+    headers.forEach((h, index) => (indexes[h.name] = index));
 
-    events = rawEvents.listGrid.rows.map((row) => {
+    events = rows.map((row) => {
       let dataVals = [];
       try {
         if (typeof row[indexes.data_values] === "string" || row[indexes.data_values] instanceof String) {

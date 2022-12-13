@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.1.4
+
+- [contracts] make sqlView payload parsing compatible with 2.30 and 2.36+
+
 # @blsq/blsq-report-components@1.1.3
 
 - [contracts] display the label of the option in contract summary component
@@ -65,10 +69,10 @@
 
 # @blsq/blsq-report-components@1.0.102
 
- - [dataentry] add support for visible and ordered rows via decision tables
- - [invoice] add support for visible and ordered rows via decision tables
- - [dataentry] add support for `if (` and `if(` (was only supporting `IF(`)
- - [dataentry] improve error message display when hesabu expressions are not working as expected
+- [dataentry] add support for visible and ordered rows via decision tables
+- [invoice] add support for visible and ordered rows via decision tables
+- [dataentry] add support for `if (` and `if(` (was only supporting `IF(`)
+- [dataentry] improve error message display when hesabu expressions are not working as expected
 
 # @blsq/blsq-report-components@1.0.101
 
@@ -94,7 +98,7 @@
 
 # @blsq/blsq-report-components@1.0.87
 
-- [invoices] Allow to show orgunit that have only a data entry and no invoice. 
+- [invoices] Allow to show orgunit that have only a data entry and no invoice.
 
 # @blsq/blsq-report-components@1.0.86
 
@@ -107,7 +111,7 @@
 
 # @blsq/blsq-report-components@1.0.84
 
-- [contracts] Removes show all filter depending on pbf settings 
+- [contracts] Removes show all filter depending on pbf settings
 
 # @blsq/blsq-report-components@1.0.83
 
@@ -188,45 +192,44 @@
 
 # @blsq/blsq-report-components@1.0.66
 
- - [contracts] fix contract page when no contract
- - [completeness] allow to filter on contracts code
+- [contracts] fix contract page when no contract
+- [completeness] allow to filter on contracts code
 
 # @blsq/blsq-report-components@1.0.65
 
- - [completeness] Bookmarkable filters
- - [completeness] Allow to filter based on incomplete/complete status
+- [completeness] Bookmarkable filters
+- [completeness] Allow to filter based on incomplete/complete status
 
 # @blsq/blsq-report-components@1.0.64
- 
- - [contracts] Allow to mass update contracts fields with the wizard
+
+- [contracts] Allow to mass update contracts fields with the wizard
 
 # @blsq/blsq-report-components@1.0.61
 
- - [sync-dataset] Fix add missing data elements (broken since 1.0.60)
-
+- [sync-dataset] Fix add missing data elements (broken since 1.0.60)
 
 # @blsq/blsq-report-components@1.0.61
 
- - [contracts] Assign organisation unit to contract program when creating/importing contracts.
+- [contracts] Assign organisation unit to contract program when creating/importing contracts.
 
 # @blsq/blsq-report-components@1.0.60
 
- - [dataentry] Allow multiple dataset and offer complete button where we can pass a dataSetId
+- [dataentry] Allow multiple dataset and offer complete button where we can pass a dataSetId
 
 # @blsq/blsq-report-components@1.0.59
 
- - [dataentry] Allow [navigation](https://github.com/BLSQ/blsq-report-components/pull/127) between subcontract or main contracts.
- - [contracts] Allow to create contract with prefilled fields of latest [contract](https://github.com/BLSQ/blsq-report-components/pull/126)
+- [dataentry] Allow [navigation](https://github.com/BLSQ/blsq-report-components/pull/127) between subcontract or main contracts.
+- [contracts] Allow to create contract with prefilled fields of latest [contract](https://github.com/BLSQ/blsq-report-components/pull/126)
 
 # @blsq/blsq-report-components@1.0.58
 
- - [dataentry] Add period picker in header bar
+- [dataentry] Add period picker in header bar
 
 # @blsq/blsq-report-components@1.0.57
 
- - [general] Allow to contribute to a page header via PortalHeader
- - [completeness] Orgunit situation add columns for user and date of completeness, links, and parent level's names.
- - [completeness] Allow data entry to give dataSetIds instead of a single dataSetId to support for example quality forms splitted by sections
+- [general] Allow to contribute to a page header via PortalHeader
+- [completeness] Orgunit situation add columns for user and date of completeness, links, and parent level's names.
+- [completeness] Allow data entry to give dataSetIds instead of a single dataSetId to support for example quality forms splitted by sections
 
 # @blsq/blsq-report-components@1.0.56
 
@@ -235,20 +238,20 @@
 - [general] Upgrade some vulnerable dependencies.
 
 # @blsq/blsq-report-components@1.0.55
- 
- - [dataentry] Full decision support (start/end periods, *, in:level_x)
+
+- [dataentry] Full decision support (start/end periods, \*, in:level_x)
 
 # @blsq/blsq-report-components@1.0.54
- 
- - [invoices] Allow calculations for orgunits not present in the invoice.
+
+- [invoices] Allow calculations for orgunits not present in the invoice.
 
 # @blsq/blsq-report-components@1.0.53
- 
- - [completeness] Fix incorrect completeness status on newer dhis2
+
+- [completeness] Fix incorrect completeness status on newer dhis2
 
 # @blsq/blsq-report-components@1.0.52
 
- - [dataentry] Fix lag and disappearing values when typing [fast](https://github.com/BLSQ/blsq-report-components/pull/114)
+- [dataentry] Fix lag and disappearing values when typing [fast](https://github.com/BLSQ/blsq-report-components/pull/114)
 
 # @blsq/blsq-report-components@1.0.51
 
@@ -259,15 +262,15 @@
 - [invoices] Add support for "consecutive" [invoices](https://github.com/BLSQ/blsq-report-components/pull/87)
 
 # @blsq/blsq-report-components@1.0.49
- 
+
 - [completeness] a first screen on [completeness](https://github.com/BLSQ/blsq-report-components/pull/113) based on contracts and dataset complete events.
 
 # @blsq/blsq-report-components@1.0.48
- 
-- [contracts] Add a screen to sync organisation unit groups with their "active or nearest" contract.  
+
+- [contracts] Add a screen to sync organisation unit groups with their "active or nearest" contract.
 
 # @blsq/blsq-report-components@1.0.47
- 
+
 - [dataentry] Small improvements on sync screen (tooltip, deal with "undefined" state mapping)
 
 # @blsq/blsq-report-components@1.0.46
@@ -276,10 +279,10 @@
 
 # @blsq/blsq-report-components@1.0.45
 
- - [dataentry] Add CONCATENATE function.
- - [dataentry] Allow to express if dataset is completable (eg any warnings left).
- - [dataentry] Allow to style HesabuFormula (eg display in red).
- - [invoices] Make lock/unlock button less error prone by [showing a confirmation dialog](https://github.com/BLSQ/blsq-report-components/pull/109) and description of what will be locked.
+- [dataentry] Add CONCATENATE function.
+- [dataentry] Allow to express if dataset is completable (eg any warnings left).
+- [dataentry] Allow to style HesabuFormula (eg display in red).
+- [invoices] Make lock/unlock button less error prone by [showing a confirmation dialog](https://github.com/BLSQ/blsq-report-components/pull/109) and description of what will be locked.
 
 # @blsq/blsq-report-components@1.0.44
 

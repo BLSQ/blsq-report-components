@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.1.5
+
+- [invoices] first [fix](https://community.dhis2.org/t/api-datavaluesets-dont-allow-to-mix-dataset-and-dataelementgroup-anymore/51517) to make seperate query for dataSets and dataElementGroups
+
 # @blsq/blsq-report-components@1.1.4
 
 - [contracts] make sqlView payload parsing compatible with 2.30 and 2.36+

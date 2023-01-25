@@ -2,8 +2,7 @@ import { init, getInstance, getManifest } from "d2/lib/d2";
 import DatePeriods from "./DatePeriods";
 import PeriodsResolver from "../components/invoices/support/PeriodsResolver";
 
-const ORGUNIT_FIELDS =
-  "[id,name,ancestors[id,name],organisationUnitGroups[id,name,code]]";
+const ORGUNIT_FIELDS = "[id,name,ancestors[id,name],organisationUnitGroups[id,name,code]]";
 
 class Dhis2 {
   /**
@@ -15,8 +14,7 @@ class Dhis2 {
     this.url = options.url || process.env.REACT_APP_DHIS2_URL;
     this.user = options.user || process.env.REACT_APP_USER;
     this.password = options.password || process.env.REACT_APP_PASSWORD;
-    this.contractGroupId =
-      options.contractGroupId || process.env.REACT_APP_CONTRACT_OU_GROUP;
+    this.contractGroupId = options.contractGroupId || process.env.REACT_APP_CONTRACT_OU_GROUP;
     this.cache = [];
     this.userId = "";
     this.baseUrl = "..";
@@ -24,9 +22,7 @@ class Dhis2 {
     this.version = "";
     this.forceHttps = options.forceHttps;
     this.categoryComboId = options.categoryComboId;
-    this.periodResolver = options.periodResolver
-      ? options.periodResolver
-      : new PeriodsResolver();
+    this.periodResolver = options.periodResolver ? options.periodResolver : new PeriodsResolver();
     if (options.disableInitialize) {
       return;
     }
@@ -48,10 +44,7 @@ class Dhis2 {
     const mydhis2 = this;
     this.d2 = getManifest("./manifest.webapp")
       .then((manifest) => {
-        let baseUrl =
-          process.env.NODE_ENV === "production"
-            ? manifest.getBaseUrl()
-            : this.url;
+        let baseUrl = process.env.NODE_ENV === "production" ? manifest.getBaseUrl() : this.url;
         if (this.forceHttps) {
           baseUrl = baseUrl.replace("http://", "https://");
         }
@@ -94,10 +87,7 @@ class Dhis2 {
   currentUserRaw() {
     return getInstance().then((d2) =>
       d2.Api.getApi().get(
-        "/me?fields=:all,organisationUnits" +
-          ORGUNIT_FIELDS +
-          ",dataViewOrganisationUnits" +
-          ORGUNIT_FIELDS,
+        "/me?fields=:all,organisationUnits" + ORGUNIT_FIELDS + ",dataViewOrganisationUnits" + ORGUNIT_FIELDS,
       ),
     );
   }
@@ -121,15 +111,11 @@ class Dhis2 {
   }
 
   getDefaultCategoryCombo() {
-    var categoryUrl =
-      "categoryCombos?filter=name:eq:default&fields=id,name,categoryOptionCombos[id,name]";
+    var categoryUrl = "categoryCombos?filter=name:eq:default&fields=id,name,categoryOptionCombos[id,name]";
     return getInstance().then((d2) => d2.Api.getApi().get(categoryUrl));
   }
   getCategoryComboById() {
-    var categoryUrl =
-      "categoryCombos/" +
-      this.categoryComboId +
-      ".json?fields=id,name,categoryOptionCombos[id,name,*]";
+    var categoryUrl = "categoryCombos/" + this.categoryComboId + ".json?fields=id,name,categoryOptionCombos[id,name,*]";
     return getInstance().then((d2) => d2.Api.getApi().get(categoryUrl));
   }
   getDataSet(dataSetId) {
@@ -142,9 +128,7 @@ class Dhis2 {
 
   getDataElementGroup(dataElementGroupId) {
     var dataElementGroupUrl =
-      "/dataElementGroups/" +
-      dataElementGroupId +
-      "?fields=:all,dataElements[id,name,shortName]";
+      "/dataElementGroups/" + dataElementGroupId + "?fields=:all,dataElements[id,name,shortName]";
     return getInstance().then((d2) => d2.Api.getApi().get(dataElementGroupUrl));
   }
 
@@ -181,26 +165,14 @@ class Dhis2 {
           dataSet.organisationUnits.map((ou) => ou.name).join(" , "),
       );
     }
-    const allowedOrgunitQuery = allowedOrgunitIds
-      .map((ou) => "&orgUnit=" + ou.id)
-      .join("");
+    const allowedOrgunitQuery = allowedOrgunitIds.map((ou) => "&orgUnit=" + ou.id).join("");
     var dataSetUrl =
-      "/dataValueSets?dataSet=" +
-      dataSet.id +
-      periods.map((pe) => "&period=" + pe).join("") +
-      allowedOrgunitQuery;
+      "/dataValueSets?dataSet=" + dataSet.id + periods.map((pe) => "&period=" + pe).join("") + allowedOrgunitQuery;
     return getInstance().then((d2) => d2.Api.getApi().get(dataSetUrl));
   }
 
   getFileDataValue(value, url) {
-    var fileUrl =
-      url +
-      "/api/dataValues/files?de=" +
-      value.de +
-      "&ou=" +
-      value.ou +
-      "&pe=" +
-      value.pe;
+    var fileUrl = url + "/api/dataValues/files?de=" + value.de + "&ou=" + value.ou + "&pe=" + value.pe;
     return fileUrl;
   }
 
@@ -217,9 +189,7 @@ class Dhis2 {
 
   getOrgunit(orgunitid) {
     var getOuUrl =
-      "organisationUnits/" +
-      orgunitid +
-      "?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]";
+      "organisationUnits/" + orgunitid + "?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]";
     return getInstance().then((d2) => d2.Api.getApi().get(getOuUrl));
   }
 
@@ -241,9 +211,8 @@ class Dhis2 {
     return getInstance()
       .then((d2) => d2.Api.getApi().get(getOuUrl))
       .then((response) => {
-        const contractGroup = response.organisationUnitGroups.find(
-          (orgUnitgroup) =>
-            orgUnitgroup.organisationUnits.some((ou) => ou.id === orgUnitId),
+        const contractGroup = response.organisationUnitGroups.find((orgUnitgroup) =>
+          orgUnitgroup.organisationUnits.some((ou) => ou.id === orgUnitId),
         );
         return contractGroup.organisationUnits;
       });
@@ -275,9 +244,7 @@ class Dhis2 {
 
   searchOrgunits(name, orgunits, contractGroup, parentid, pageSize = 50) {
     var searchOuUrl =
-      "organisationUnits?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]" +
-      "&pageSize=" +
-      pageSize;
+      "organisationUnits?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]" + "&pageSize=" + pageSize;
 
     if (name && name != "") {
       searchOuUrl += "&filter=name:ilike:" + name;
@@ -288,10 +255,7 @@ class Dhis2 {
     if (orgunits && orgunits.length === 1) {
       searchOuUrl += "&filter=path:like:" + orgunits[0].id;
     } else if (orgunits && orgunits.length > 0) {
-      searchOuUrl +=
-        "&filter=ancestors.id:in:[" +
-        orgunits.map((ou) => ou.id).join(",") +
-        "]";
+      searchOuUrl += "&filter=ancestors.id:in:[" + orgunits.map((ou) => ou.id).join(",") + "]";
     }
     if (parentid) {
       searchOuUrl += "&filter=path:like:" + parentid;
@@ -309,10 +273,7 @@ class Dhis2 {
   }
 
   getDataElementNames(dataElementGroup) {
-    var dataElementsUrl =
-      "dataElementGroups/" +
-      dataElementGroup +
-      ".json?fields=dataElements[id,name]";
+    var dataElementsUrl = "dataElementGroups/" + dataElementGroup + ".json?fields=dataElements[id,name]";
 
     return getInstance().then((d2) => d2.Api.getApi().get(dataElementsUrl));
   }
@@ -336,12 +297,7 @@ class Dhis2 {
   }
 
   buildInvoiceRequest(orgUnits, period, invoiceType, orgUnitId) {
-    const resolvedPeriods = this.periodResolver.resolvePeriods(
-      orgUnits,
-      period,
-      invoiceType,
-      orgUnitId,
-    );
+    const resolvedPeriods = this.periodResolver.resolvePeriods(orgUnits, period, invoiceType, orgUnitId);
 
     return {
       orgUnit: orgUnits.filter((orgUnit) => orgUnit.id === orgUnitId)[0],
@@ -366,12 +322,8 @@ class Dhis2 {
       orgUnits = request.orgUnits;
     }
 
-    const degQuery = request.invoiceType.dataElementGroups
-      .map((deg) => "dataElementGroup=" + deg)
-      .join("&");
-    const dsQuery = request.invoiceType.dataSets
-      .map((ds) => "dataSet=" + ds)
-      .join("&");
+    const degQuery = request.invoiceType.dataElementGroups.map((deg) => "dataElementGroup=" + deg).join("&");
+    const dsQuery = request.invoiceType.dataSets.map((ds) => "dataSet=" + ds).join("&");
     const periods = [request.year]
       .concat(request.monthlyPeriods)
       .concat(request.quarterPeriods)
@@ -379,19 +331,21 @@ class Dhis2 {
       .concat(request.yearlyJulyPeriods);
     const periodsQuery = periods.map((p) => "&period=" + p).join("");
 
-    const dataValuesUrl =
-      "dataValueSets?" + degQuery + "&" + dsQuery + periodsQuery;
+    const dataValuesUrl = "dataValueSets?" + periodsQuery;
 
     return getInstance()
       .then((d2) => {
         const queries = [];
         orgUnits.eachSlice(200, (orgUnitsSlice) => {
-          const orgUnitsQuery = orgUnitsSlice
-            .map((orgUnit) => "orgUnit=" + orgUnit.id)
-            .join("&");
-          queries.push(dataValuesUrl + "&" + orgUnitsQuery);
+          const orgUnitsQuery = orgUnitsSlice.map((orgUnit) => "orgUnit=" + orgUnit.id).join("&");
+          if (request.invoiceType.dataElementGroups && request.invoiceType.dataElementGroups.length > 0) {
+            queries.push(dataValuesUrl + "&" + orgUnitsQuery + "&" + degQuery);
+          }
+          if (request.invoiceType.dataSets && request.invoiceType.dataSets.length > 0) {
+            queries.push(dataValuesUrl + "&" + orgUnitsQuery + "&" + dsQuery);
+          }
         });
-
+        debugger;
         return Promise.all(queries.map((query) => d2.Api.getApi().get(query)));
       })
       .then((results) => {
@@ -407,51 +361,35 @@ class Dhis2 {
 
   organisationUnit(id) {
     const organisationUnitsUrl =
-      "/organisationUnits/" +
-      id +
-      ".json?fields=id,name,organisationUnitGroups[id,name],level,path,ancestors[id,name]";
-    return getInstance().then((d2) =>
-      d2.Api.getApi().get(organisationUnitsUrl),
-    );
+      "/organisationUnits/" + id + ".json?fields=id,name,organisationUnitGroups[id,name],level,path,ancestors[id,name]";
+    return getInstance().then((d2) => d2.Api.getApi().get(organisationUnitsUrl));
   }
 
   organisationUnits(extraFields, extra) {
-    const defaultFields =
-      "fields=id,name,organisationUnitGroups[id,name],level,path,ancestors[id,name]";
+    const defaultFields = "fields=id,name,organisationUnitGroups[id,name],level,path,ancestors[id,name]";
     let fields = defaultFields;
     if (extraFields) {
       fields = defaultFields + "," + extraFields;
     }
     const organisationUnitsUrl = "/organisationUnits.json?" + fields + extra;
-    return getInstance().then((d2) =>
-      d2.Api.getApi().get(organisationUnitsUrl + extra + "&paging=false"),
-    );
+    return getInstance().then((d2) => d2.Api.getApi().get(organisationUnitsUrl + extra + "&paging=false"));
   }
 
   organisationUnitGroupSets() {
     const organisationUnitsUrl =
       "/organisationUnitGroupSets.json?fields=id,name,organisationUnitGroups[id,name]&paging=false";
-    return getInstance().then((d2) =>
-      d2.Api.getApi().get(organisationUnitsUrl),
-    );
+    return getInstance().then((d2) => d2.Api.getApi().get(organisationUnitsUrl));
   }
 
   removeFromGroup(orgUnitId, group) {
     return getInstance().then((d2) =>
-      d2.Api.getApi().delete(
-        "organisationUnitGroups/" + group + "/organisationUnits/" + orgUnitId,
-      ),
+      d2.Api.getApi().delete("organisationUnitGroups/" + group + "/organisationUnits/" + orgUnitId),
     );
   }
 
   addToGroup(orgUnitId, targetGroup) {
     return getInstance().then((d2) =>
-      d2.Api.getApi().post(
-        "organisationUnitGroups/" +
-          targetGroup +
-          "/organisationUnits/" +
-          orgUnitId,
-      ),
+      d2.Api.getApi().post("organisationUnitGroups/" + targetGroup + "/organisationUnits/" + orgUnitId),
     );
   }
   /**

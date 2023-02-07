@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.1.6
+
+- [invoices] fix [previous bug](https://community.dhis2.org/t/api-datavaluesets-dont-allow-to-mix-dataset-and-dataelementgroup-anymore/51517) where datavalues can be loaded twice once via the deg and once via the ds causing double amounts
+
 # @blsq/blsq-report-components@1.1.5
 
 - [invoices] first [fix](https://community.dhis2.org/t/api-datavaluesets-dont-allow-to-mix-dataset-and-dataelementgroup-anymore/51517) to make seperate query for dataSets and dataElementGroups

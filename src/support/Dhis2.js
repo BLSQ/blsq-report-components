@@ -355,6 +355,8 @@ class Dhis2 {
             dataValues = dataValues.concat(result.dataValues);
           }
         });
+        // datavalue can have been loaded in deg and ds, might cause doubled amounts
+        dataValues = _.uniqWith(dataValues, _.isEqual);
         return { dataValues };
       });
   }

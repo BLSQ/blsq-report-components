@@ -345,7 +345,6 @@ class Dhis2 {
             queries.push(dataValuesUrl + "&" + orgUnitsQuery + "&" + dsQuery);
           }
         });
-        debugger;
         return Promise.all(queries.map((query) => d2.Api.getApi().get(query)));
       })
       .then((results) => {

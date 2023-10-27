@@ -84,7 +84,7 @@
     "@material-ui/icons": "^4.2.1",
     "@material-ui/lab": "^4.0.0-alpha.48",
     "@material-ui/pickers": "^3.2.10",
-    "bluesquare-components": "https://github.com/BLSQ/bluesquare-components",
+    "bluesquare-components": "https://github.com/BLSQ/bluesquare-components#a6cc1cba06dba41b5f2ac3b247af79803047334c",
     "history": "^5.0.0",
     "moment": "^2.27.0",
     "notistack": "^0.9.17",

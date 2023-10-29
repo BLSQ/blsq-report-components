@@ -2,6 +2,7 @@ import Contract from "./Contract";
 import PluginRegistry from "../core/PluginRegistry";
 import { getOrgUnitCoverage, checkSubContractCoverage, checkNonVisibleOverlap, getOverlaps } from "./utils/index";
 import { getStartDateFromPeriod, getEndDateFromPeriod, getQuarterFromDate } from "./utils/periodsUtils";
+import moment from "moment";
 
 class ContractService {
   constructor(api, program, allEventsSqlViewId) {
@@ -36,6 +37,11 @@ class ContractService {
       path: event.orgUnitPath,
       ancestors: event.ancestors || [],
     };
+    contract.storedBy = event.storedBy;
+    contract.lastUpdatedBy = event.lastUpdatedBy;
+    contract.createdDate = event.createdDate;
+    contract.lastUpdatedDate = event.lastUpdatedDate;
+
     return new Contract(contract);
   }
 
@@ -110,12 +116,16 @@ class ContractService {
       } catch (err) {
         throw new Error("failed to parse : " + row[indexes.data_values].value + " " + err.message);
       }
+
       const dataValues = Object.keys(dataVals).map((k) => {
         return {
           dataElement: k,
           ...dataVals[k],
+          lastUpdatedBy: dataVals[k].lastUpdatedByUserInfo?.username ?? "",
+          storedBy: dataVals[k].createdByUserInfo?.username ?? "",
         };
       });
+
       const ancestors = [];
       const level = row[indexes.level];
       for (var i = 1; i <= level; i += 1) {
@@ -126,6 +136,12 @@ class ContractService {
           name: row[nameIndex],
         });
       }
+      const additionalInfos = dataValues[0];
+      const storedBy = additionalInfos.storedBy;
+      const lastUpdatedBy = additionalInfos.lastUpdatedBy;
+      const createdDate = moment(additionalInfos.created).format("DD/MM/YYYY HH:mm:ss");
+      const lastUpdatedDate = moment(additionalInfos.lastUpdated).format("DD/MM/YYYY HH:mm:ss");
+
       return {
         event: row[indexes.event_id],
         orgUnit: row[indexes.org_unit_id],
@@ -135,11 +151,14 @@ class ContractService {
         program: row[indexes.program_id],
         programStage: row[indexes.program_stage_id],
         dataValues: dataValues,
+        storedBy: storedBy,
+        lastUpdatedBy: lastUpdatedBy,
+        createdDate: createdDate,
+        lastUpdatedDate: lastUpdatedDate,
       };
     });
 
     const contracts = events.map((e) => this.toContract(e));
-
     return contracts;
   }
 
@@ -278,7 +297,7 @@ class ContractService {
 
   getEvent = (contractInfo, orgUnitId, contractId) => {
     const dataValues = [];
-    const ignoredFields = ["id", "orgUnit"];
+    const ignoredFields = ["id", "orgUnit", "createdDate", "lastUpdatedDate", "storedBy", "lastUpdatedBy"];
 
     Object.keys(contractInfo).forEach((fieldKey) => {
       if (!ignoredFields.includes(fieldKey)) {
@@ -286,11 +305,11 @@ class ContractService {
         if (dataElement === undefined) {
           throw new Error(
             "no mapping for field " +
-              fieldKey +
-              " vs " +
-              Object.values(this.mappings)
-                .map((m) => m.code)
-                .join(","),
+            fieldKey +
+            " vs " +
+            Object.values(this.mappings)
+              .map((m) => m.code)
+              .join(","),
           );
         }
         let value = contractInfo[fieldKey];

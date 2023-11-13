@@ -24,19 +24,16 @@ import PluginRegistry from "../core/PluginRegistry";
 export const endAtFilter = {
   id: "contract_end_date_eq",
   key: "contracts.endsAt",
-  type: "date",
+  type: "monthlyPeriod",
   column: 3,
   value: null,
-  /* value is a string like "12/31/2020"*/
+  /* value is a string like "202001"*/
   onFilter: (value, contracts) => {
     if (!value) {
       return contracts;
     }
-    const filterPeriodCompents = value.split("/");
-    const filterPeriod = filterPeriodCompents[2] + filterPeriodCompents[0];
-
     const filteredContracts = contracts.filter((c) => {
-      return c.endPeriod == filterPeriod;
+      return c.endPeriod == value;
     });
     return filteredContracts;
   },
@@ -46,7 +43,7 @@ export const endAtFilter = {
 export const activeAtFilter = {
   id: "active_at",
   key: "contracts.activeAt",
-  type: "date",
+  type: "monthlyPeriod",
   column: 2,
   value: null,
   onFilter: (value, contracts) => {
@@ -54,8 +51,7 @@ export const activeAtFilter = {
       return contracts;
     }
     const filteredContracts = contracts.filter((c) => {
-      const contractDates = getContractDates(c);
-      return moment(value).isBetween(contractDates.startDate, contractDates.endDate);
+      return c.matchPeriod(value)
     });
     return filteredContracts;
   },
@@ -160,13 +156,15 @@ const defaultFilters = (currentUser) => {
       id: "only_sub_contracts",
       key: "contracts.onlySubContracts",
       type: "checkbox",
-      column: 2,
+      column: 1,
       value: false,
       onFilter: (onlySubContracts, contracts, contractsOverlaps) => {
         if (!onlySubContracts) {
           return contracts;
         }
-        return contracts.filter((c) => c.fieldValues.contract_main_orgunit && c.fieldValues.contract_main_orgunit !== "");
+        return contracts.filter(
+          (c) => c.fieldValues.contract_main_orgunit && c.fieldValues.contract_main_orgunit !== "",
+        );
       },
       urlEncode: (value) => (value ? "true" : "false"),
       urlDecode: (value) => value === "true",

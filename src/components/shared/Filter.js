@@ -195,11 +195,17 @@ const Filter = ({ filter, setFilterValue, onSearch, t }) => {
     }
 
     case "monthlyPeriod": {
+      let cleanedValue = filter.value;
+      // previously was a date picker with a date formatter dd/mm/YYYY
+      /// so we need to turn it into a YYYYmm period
+      if (cleanedValue && cleanedValue.includes("/")) {
+        cleanedValue = filter.value.split("/").slice(1).reverse().join("");
+      }
       return (
         <div style={{ marginTop: "5px" }}>
           <PeriodPicker
             fieldName={t(filter.key)}
-            currentPeriod={filter.value}
+            currentPeriod={cleanedValue}
             mode="active"
             onPeriodChange={(p) => setFilterValue(filter.id, p)}
           ></PeriodPicker>

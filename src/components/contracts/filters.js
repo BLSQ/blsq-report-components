@@ -50,8 +50,15 @@ export const activeAtFilter = {
     if (!value) {
       return contracts;
     }
+    let cleanedValue = value
+    // previously was a date picker with a date formatter dd/mm/YYYY
+    /// so we need to turn it into a YYYYmm period
+    if (value.includes("/")) {
+      cleanedValue = value.split("/").slice(1).reverse().join("")
+      debugger
+    }
     const filteredContracts = contracts.filter((c) => {
-      return c.matchPeriod(value)
+      return c.matchPeriod(cleanedValue)
     });
     return filteredContracts;
   },

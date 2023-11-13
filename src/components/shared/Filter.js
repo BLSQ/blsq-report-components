@@ -21,6 +21,7 @@ import InfoIcon from "@material-ui/icons/Info";
 import Clear from "@material-ui/icons/Clear";
 import { KeyboardDatePicker } from "@material-ui/pickers";
 import OuSearch from "./OuSearch";
+import PeriodPicker from "../contracts/PeriodPicker";
 
 const styles = (theme) => ({
   formControl: {
@@ -61,10 +62,7 @@ const Filter = ({ filter, setFilterValue, onSearch, t }) => {
     case "search": {
       return (
         <FormControl className={classes.formControl}>
-          <InputLabel
-            shrink={filter.value !== ""}
-            className={classes.searchLabel}
-          >
+          <InputLabel shrink={filter.value !== ""} className={classes.searchLabel}>
             {t(filter.key)}
           </InputLabel>
           <Input
@@ -111,12 +109,7 @@ const Filter = ({ filter, setFilterValue, onSearch, t }) => {
               className: classes.input,
             }}
             value={filter.value === "" ? null : filter.value}
-            onChange={(newValue) =>
-              setFilterValue(
-                filter.id,
-                newValue ? newValue.format("MM/DD/YYYY") : null,
-              )
-            }
+            onChange={(newValue) => setFilterValue(filter.id, newValue ? newValue.format("MM/DD/YYYY") : null)}
           />
 
           {filter.value && (
@@ -134,11 +127,9 @@ const Filter = ({ filter, setFilterValue, onSearch, t }) => {
       );
     }
     case "select": {
-      let shrink =
-        (filter.value && filter.value !== "") || selectInputValue !== "";
+      let shrink = (filter.value && filter.value !== "") || selectInputValue !== "";
       if (filter.multi) {
-        shrink =
-          (filter.value && filter.value.length > 0) || selectInputValue !== "";
+        shrink = (filter.value && filter.value.length > 0) || selectInputValue !== "";
       }
       return (
         <FormControl className={classes.formControl}>
@@ -183,9 +174,7 @@ const Filter = ({ filter, setFilterValue, onSearch, t }) => {
             <Checkbox
               color="primary"
               checked={filter.value === true}
-              onChange={(event) =>
-                setFilterValue(filter.id, event.target.checked)
-              }
+              onChange={(event) => setFilterValue(filter.id, event.target.checked)}
               value={filter.value}
             />
           }
@@ -198,17 +187,35 @@ const Filter = ({ filter, setFilterValue, onSearch, t }) => {
         <OuSearch
           defaultValue={filter.value}
           label={t("limit_org_unit_under")}
-          onChange={
-            (orgunit) => {
-              setFilterValue(filter.id, orgunit ? orgunit.id : undefined)
-            }
-          }
+          onChange={(orgunit) => {
+            setFilterValue(filter.id, orgunit ? orgunit.id : undefined);
+          }}
         />
-      )
+      );
+    }
+
+    case "monthlyPeriod": {
+      let cleanedValue = filter.value;
+      // previously was a date picker with a date formatter dd/mm/YYYY
+      /// so we need to turn it into a YYYYmm period
+      if (cleanedValue && cleanedValue.includes("/")) {
+        cleanedValue = filter.value.split("/").slice(1).reverse().join("");
+      }
+      return (
+        <div style={{ marginTop: "5px" }}>
+          <PeriodPicker
+            fieldName={t(filter.key)}
+            currentPeriod={cleanedValue}
+            mode="active"
+            onPeriodChange={(p) => setFilterValue(filter.id, p)}
+          ></PeriodPicker>
+          <br></br>
+        </div>
+      );
     }
 
     default:
-      return "unsupported "+filter.type;
+      return "unsupported " + filter.type;
   }
 };
 Filter.defaultProps = {

@@ -171,6 +171,12 @@ describe("FunctionRegistry", () => {
         it("divide a by b", () => {
             expect(safeDiv(8, 10)).toEqual(0.8)
         })
+        it("divide NaN by b", () => {
+            expect(safeDiv(NaN, 10)).toEqual(0)
+        })
+        it("divide a by NaN", () => {
+            expect(safeDiv(10, NaN)).toEqual(0)
+        })
     })
 
     describe("ABS", () => {

@@ -1,8 +1,12 @@
 
-# @blsq/blsq-report-components
+# @blsq/blsq-report-components@1.1.8
 
 - [dateentry] solve problems with NaN in safediv function
 - [dateentry] solve problems single equals not turned into == leading to "SyntaxError: invalid assignment left-hand side"
+
+# @blsq/blsq-report-components@1.1.7
+
+- [dataentry] allow to overide the iaso url (for local hosting)
 
 # @blsq/blsq-report-components@1.1.6
 

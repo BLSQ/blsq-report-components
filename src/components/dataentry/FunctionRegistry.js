@@ -2,7 +2,7 @@ import _ from "lodash"
 
 
 export const SAFE_DIV = (a, b) => {
-    if (b !== 0) {
+    if (!isNaN(a) && !isNaN(b) && a!== undefined && b !== 0) {
         return a / b;
     }
     return 0;

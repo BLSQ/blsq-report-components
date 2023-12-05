@@ -13,6 +13,8 @@ export const defaultSubstitutions = () => {
 export const fixIfStatement = (expression) => {
   expression = expression.replace("if (", "IF(");
   expression = expression.replace("if(", "IF(");
+  expression = expression.split(" = ").join(" == ");
+  expression = expression.split(" =0").join(" == 0");
   return expression;
 };
 export const generateGetterSetterForState = (hesabuPackage, activity, state, orgunitid, period) => {
@@ -27,6 +29,7 @@ export const generateGetterSetterForState = (hesabuPackage, activity, state, org
   );
   codes.push("         const v = calculator.indexedValues()[k]");
   codes.push('         if(v && v[0].value == "") { return 0 }');
+  codes.push('         if(v && v[0].value == " ") { return 0 }');
   codes.push("         if(v) { return parseFloat(v[0].value) }");
   codes.push("    }");
   codes.push(`   return calculator.field_${field_name} == undefined ? 0 : this.field_${field_name}`);
@@ -54,6 +57,7 @@ export const generateGetterSetterForStateQuarterly = (hesabuPackage, activity, s
   );
   codes.push("         const v = calculator.indexedValues()[k]");
   codes.push('         if(v && v[0].value == "") { return 0 }');
+  codes.push('         if(v && v[0].value == " ") { return 0 }');
   codes.push("         if(v) { return parseFloat(v[0].value) }");
   codes.push("    }");
   codes.push(`   return calculator.field_${field_name} == undefined ? 0 : this.field_${field_name}`);
@@ -81,6 +85,7 @@ export const generateGetterSetterForStateLevel1Quarterly = (hesabuPackage, activ
   );
   codes.push("         const v = calculator.indexedValues()[k]");
   codes.push('         if(v && v[0].value == "") { return 0 }');
+  codes.push('         if(v && v[0].value == " ") { return 0 }');
   codes.push("         if(v) { return parseFloat(v[0].value) }");
   codes.push("    }");
   codes.push(`   return calculator.field_${field_name} == undefined ? 0 : this.field_${field_name}`);
@@ -124,8 +129,6 @@ export const generateActivityFormula = (
   stateOrFormulaCodes,
   states,
 ) => {
-  let expandedformula = "" + formula.expression;
-  expandedformula = fixIfStatement(expandedformula);
   const substitutions = defaultSubstitutions();
   for (let substit of stateOrFormulaCodes) {
     substitutions[substit] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`;
@@ -138,7 +141,6 @@ export const generateActivityFormula = (
     substitutions[
       substit + "_quarterly"
     ] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_quarterly_${orgunitid}_${period}()`;
-
   }
   if (hesabuPackage.activity_decision_tables) {
     for (let rawDecisionTable of hesabuPackage.activity_decision_tables) {
@@ -160,10 +162,12 @@ export const generateActivityFormula = (
   for (let substit of states) {
     substit = substit + "_level_1_quarterly";
     substitutions[substit] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`;
-
   }
 
-  const tokens = tokenize(formula.expression);
+  let expandedformula = "" + formula.expression;
+  expandedformula = fixIfStatement(expandedformula);
+
+  const tokens = tokenize(expandedformula);
 
   expandedformula = tokens.map((token) => substitutions[token] || token).join("");
 
@@ -321,9 +325,8 @@ export const generateCode = (
     ),
   );
 
-  
   const states = stateOrFormulaCodes.filter((k) => !allFormulaCodes.includes(k));
- 
+
   for (let period of DatePeriods.split(invoicePeriod, hesabuPackage.frequency)) {
     for (let activity of hesabuPackage.activities) {
       // states getter/setter

@@ -1,4 +1,5 @@
 import _ from "lodash"
+import { fixIfStatement } from "./CodeGenerator";
 
 
 export const SAFE_DIV = (a, b) => {
@@ -102,8 +103,43 @@ const CONCATENATE = (...args) => {
     return args.join("")
 }
 
+const cachedExpressionEvaluator = {}
+const EVAL_ARRAY = (...args) => {
+
+    // [ "a", […], 
+    //   "b", […], 
+    //   "IFF(a == 1, 0, b)" 
+    // ]
+    const identifier_a = args[0]
+    const values_a = args[1]
+    const identifier_b = args[2]
+    const values_b = args[3]
+    const expression = args[4]
+    const results = []
+
+    const fixedExpression = fixIfStatement(expression)
+    if (cachedExpressionEvaluator[expression] == undefined) {
+        const code = `
+        function subeval(${identifier_a}, ${identifier_b}) {
+             return ${fixedExpression}
+        }
+
+        return subeval
+        `
+        const calculatorEval = new Function(...functionKeys, code)(...functionValues);
+        cachedExpressionEvaluator[expression]= calculatorEval
+    }
+    const subEval = cachedExpressionEvaluator[expression]
+    for (const [i, value_a] of values_a.entries()) {
+        const value_b = values_b[i]
+        const calculatedValue = subEval(value_a, value_b)
+        results.push(calculatedValue)
+    }
+    return results
+}
+
 // https://github.com/BLSQ/go-hesabu/blob/master/hesabu/registry.go#L26
-// missing stdevp, TRUNC, CAL_DAYS_IN_MONTH, eval_array
+// missing stdevp, TRUNC, CAL_DAYS_IN_MONTH
 
 
 export const functions = {
@@ -139,5 +175,10 @@ export const functions = {
     "max": MAX,
     "CONCATENATE":CONCATENATE,
     "concatenate":CONCATENATE,
+    "EVAL_ARRAY": EVAL_ARRAY,
+    "eval_array": EVAL_ARRAY
 
 }
+
+const functionKeys = Object.keys(functions);
+const functionValues = Object.values(functions);

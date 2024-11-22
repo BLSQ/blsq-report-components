@@ -193,9 +193,14 @@ export const generateActivityFormula = (
   }
 
   const codes = [];
+  const key = `${hesabuPackage.code}_${activity.code}_${formula.code}_${orgunitid}_${period}`
   codes.push("/* " + formula.expression + "*/");
-  codes.push(`${hesabuPackage.code}_${activity.code}_${formula.code}_${orgunitid}_${period}: () => {`);
-  codes.push("  return " + expandedformula);
+  codes.push(`${key}: () => {`);
+  codes.push(` if (calculator.getCachedCalculations()["${key}"] == undefined) {`)
+  codes.push("    const value = " + expandedformula+";");
+  codes.push(`    calculator.getCachedCalculations()["${key}"] = value`);
+  codes.push(" } ");
+  codes.push(` return calculator.getCachedCalculations()["${key}"]`)
   codes.push("},");
   return codes.join("\n");
 };
@@ -300,8 +305,14 @@ export const generateCode = (
   orgUnit,
 ) => {
   let codes = ["calculator = { "];
+  codes.push(`getCachedCalculations: function () { 
+    if (calculator.field_cachedCalculations == undefined) {
+      calculator.field_cachedCalculations = {}
+    }
+    return calculator.field_cachedCalculations },`);
+  codes.push("resetCachedCalculations: function (val) { calculator.field_cachedCalculations = {}}, ");
 
-  codes.push("setIndexedValues: function (val) { calculator.field_indexedValues = val}, ");
+  codes.push("setIndexedValues: function (val) { calculator.field_indexedValues = val;}, ");
   codes.push("indexedValues: function () { return calculator.field_indexedValues}, ");
 
   codes.push("setDefaultCoc: function (val) { calculator.field_defaultCoc = val}, ");

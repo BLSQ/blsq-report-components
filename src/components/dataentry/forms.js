@@ -289,6 +289,7 @@ export const buildFormData = async ({
         }
         if (calculator) {
           calculator.setIndexedValues(newIndexedValues);
+          calculator.resetCachedCalculations()
         }
         this.valids[key] = true;
         this.errors[key] = undefined;

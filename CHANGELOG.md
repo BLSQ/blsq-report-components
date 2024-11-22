@@ -1,3 +1,6 @@
+# @blsq/blsq-report-components@1.1.10
+- [dataentry] add support for EVAL_ARRAY
+- [dataentry] add a caching mechanism to not recalculate over and over package activity formulas (clear the cache once a value is modifed)
 
 # @blsq/blsq-report-components@1.1.8
 

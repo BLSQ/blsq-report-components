@@ -51,7 +51,11 @@
     "contract_main_orgunit_id": "Id de l'unité d'organisation principale",
     "massUpdate": "Update en masse",
     "warnings": "Warnings",
-    "showAll": "Montrer les contrats non éditable"
+    "showAll": "Montrer les contrats non éditable",
+    "created_at" : "Créé le",
+    "created_by" : "Créé par",
+    "updated_at" : "Modifié le",
+    "updated_by" : "Modifié par"
   },
   "dataEntry": {
     "accessAndApproval": "Workflow d'approbation et droit d'accès",

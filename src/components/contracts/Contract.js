@@ -28,7 +28,7 @@ class Contract {
     const startMonthPeriods = DatePeriods.split(period, "monthly");
 
     return startMonthPeriods.some(
-      (startMonthPeriod) => this.startPeriod <= startMonthPeriod && startMonthPeriod <= this.endPeriod,
+      (startMonthPeriod) => this.startPeriod <= startMonthPeriod && (this.endPeriod == undefined || startMonthPeriod <= this.endPeriod),
     );
   }
   overlaps(contract) {

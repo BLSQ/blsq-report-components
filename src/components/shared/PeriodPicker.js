@@ -3,48 +3,9 @@ import PropTypes from "prop-types";
 import { InputLabel, FormControl, Select, MenuItem, makeStyles } from "@material-ui/core";
 
 import { withTranslation } from "react-i18next";
-import moment from "moment";
 
 import DatePeriods from "../../support/DatePeriods";
 
-const buildPeriods = (period, periodDelta, min, max) => {
-  const periods = [];
-  Array(periodDelta.before)
-    .fill()
-    .forEach((x, i) => {
-      const currentQuarter = i === 0 ? period : periods[0];
-      if (currentQuarter) {
-        const previousQuarter = DatePeriods.previousQuarter(currentQuarter);
-        const isValidPeriod =
-          min === ""
-            ? true
-            : moment(previousQuarter, "YYYY[Q]Q")
-                .startOf("quarter")
-                .isAfter(moment(min, "YYYY[Q]Q").startOf("quarter"));
-        if (isValidPeriod) {
-          periods.unshift(previousQuarter);
-        }
-      }
-    });
-  periods.push(period);
-  Array(periodDelta.after)
-    .fill()
-    .forEach((x, i) => {
-      const currentIndex = periods.length - 1;
-      const currentQuarter = i === 0 ? period : periods[currentIndex];
-      if (currentQuarter) {
-        const nextQuarter = DatePeriods.nextQuarter(currentQuarter);
-        const isValidPeriod =
-          max === ""
-            ? true
-            : moment(nextQuarter, "YYYY[Q]Q").endOf("quarter").isBefore(moment(max, "YYYY[Q]Q").endOf("quarter"));
-        if (isValidPeriod) {
-          periods.push(nextQuarter);
-        }
-      }
-    });
-  return periods;
-};
 
 const styles = (theme) => ({
   formControl: {
@@ -66,7 +27,7 @@ const useStyles2 = makeStyles((theme) => ({
 
 const useStyles = makeStyles((theme) => styles(theme));
 const PeriodPicker = ({ disableInputLabel, variant, period, periodFormat, t, onPeriodChange, periodDelta, labelKey, min, max, renderPeriod }) => {
-  const periods = buildPeriods(period, periodDelta, min, max);
+  const periods = DatePeriods.buildPeriods(period, periodDelta, min, max);
   const classes = variant == "white" ? useStyles2() : useStyles();
   const displayPeriod = (dhis2period) =>
     renderPeriod === null ? DatePeriods.displayName(dhis2period, periodFormat.quarterly) : renderPeriod(dhis2period);

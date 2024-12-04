@@ -1,3 +1,5 @@
+import moment from "moment";
+
 let MONTH_NAMES = [];
 
 const MONTH_TO_QUARTER = {
@@ -12,17 +14,17 @@ const MONTH_TO_QUARTER = {
   9: "3",
   10: "4",
   11: "4",
-  12: "4"
+  12: "4",
 };
 
 const SIX_MONTHLY_TO_MONTHS = {
   1: [1, 2, 3, 4, 5, 6],
-  2: [7, 8, 9, 10, 11, 12]
+  2: [7, 8, 9, 10, 11, 12],
 };
 
 const QUARTER_BY_SIX_MONTHLY = {
   1: [1, 2],
-  2: [3, 4]
+  2: [3, 4],
 };
 
 const MONTH_NAMES_FR = [
@@ -37,7 +39,7 @@ const MONTH_NAMES_FR = [
   "Septembre",
   "Octobre",
   "Novembre",
-  "Décembre"
+  "Décembre",
 ];
 
 const MONTH_NAMES_EN = [
@@ -52,16 +54,54 @@ const MONTH_NAMES_EN = [
   "September",
   "October",
   "November",
-  "December"
+  "December",
 ];
 
 let MONTH_NAMES_BY_QUARTER = {};
 
 const MONTH_NUMBER_BY_QUARTER = {
-  "1": ["1", "2", "3"],
-  "2": ["4", "5", "6"],
-  "3": ["7", "8", "9"],
-  "4": ["10", "11", "12"]
+  1: ["1", "2", "3"],
+  2: ["4", "5", "6"],
+  3: ["7", "8", "9"],
+  4: ["10", "11", "12"],
+};
+
+const MONTH_NUMBER_BY_QUARTER_NOV = {
+  1: [{ month:"11", yearOffset:-1}, { month:"12", yearOffset:-1}, { month:"01", yearOffset:0}],
+  2: [{ month:"02", yearOffset:0}, { month:"03", yearOffset:0}, { month:"04", yearOffset:0}],
+  3: [{ month:"05", yearOffset:0}, { month:"06", yearOffset:0}, { month:"07", yearOffset:0}],
+  4: [{ month:"08", yearOffset:0}, { month:"09", yearOffset:0}, { month:"10", yearOffset:0}],
+};
+
+const QUARTER_NOV_BY_MONTH = {
+  1: { quarterNov: 1, yearOffset: 0 },
+  2: { quarterNov: 2, yearOffset: 0 },
+  3: { quarterNov: 2, yearOffset: 0 },
+  4: { quarterNov: 2, yearOffset: 0 },
+  5: { quarterNov: 3, yearOffset: 0 },
+  6: { quarterNov: 3, yearOffset: 0 },
+  7: { quarterNov: 3, yearOffset: 0 },
+  8: { quarterNov: 4, yearOffset: 0 },
+  9: { quarterNov: 4, yearOffset: 0 },
+  10: { quarterNov: 4, yearOffset: 0 },
+  11: { quarterNov: 1, yearOffset: 1 },
+  12: { quarterNov: 1, yearOffset: 1 },
+};
+
+const QUARTER_TO_QUARTER_NOV = {
+  1: [
+    { quarterNov: 1, yearOffset: 0 },
+    { quarterNov: 2, yearOffset: 0 },
+  ],
+  2: [
+    { quarterNov: 2, yearOffset: 0 },
+    { quarterNov: 3, yearOffset: 0 },
+  ],
+  3: [{ quarterNov: 4 }, { quarterNov: 1, yearOffset: 1 }],
+  4: [
+    { quarterNov: 4, yearOffset: 0 },
+    { quarterNov: 1, yearOffset: 1 },
+  ],
 };
 
 let eduQuarterNames = {};
@@ -69,6 +109,7 @@ let eduQuarterNames = {};
 const YEARLY = "yearly";
 const MONTHLY = "monthly";
 const QUARTERLY = "quarterly";
+const QUARTERLY_NOV = "quarterlyNov";
 const SIX_MONTHLY = "sixMonthly";
 const FINANCIAL_JULY = "financialJuly";
 const QUARTERLY_FIRST_MONTHS = "quarterlyFirstMonths";
@@ -78,10 +119,11 @@ const SUPPORTED_PERIOD_TYPES = [
   YEARLY,
   MONTHLY,
   QUARTERLY,
+  QUARTERLY_NOV,
   SIX_MONTHLY,
   FINANCIAL_JULY,
   QUARTERLY_FIRST_MONTHS,
-  QUARTERLY_TWO_LAST_MONTHS
+  QUARTERLY_TWO_LAST_MONTHS,
 ];
 
 const FORMAT_FY_JULY_QUARTER = "fyJulyQuarter";
@@ -103,28 +145,28 @@ const SUPPORTED_FORMATS = [
   FORMAT_SIX_MONTH,
   FORMAT_EDU_QUARTER,
   FORMAT_QUARTER_FIRST_MONTHS,
-  FORMAT_QUARTER_TWO_LAST_MONTHS
+  FORMAT_QUARTER_TWO_LAST_MONTHS,
 ];
 
 class DatePeriods {
   static setLocale(local) {
     const translations = local === "fr" ? MONTH_NAMES_FR : MONTH_NAMES_EN;
-    this.setMonthTranslations(translations)
+    this.setMonthTranslations(translations);
   }
 
   static setMonthTranslations(translations) {
     MONTH_NAMES = translations;
     MONTH_NAMES_BY_QUARTER = {
-      "1": [MONTH_NAMES[0], MONTH_NAMES[1], MONTH_NAMES[2]],
-      "2": [MONTH_NAMES[3], MONTH_NAMES[4], MONTH_NAMES[5]],
-      "3": [MONTH_NAMES[6], MONTH_NAMES[7], MONTH_NAMES[8]],
-      "4": [MONTH_NAMES[9], MONTH_NAMES[10], MONTH_NAMES[11]]
+      1: [MONTH_NAMES[0], MONTH_NAMES[1], MONTH_NAMES[2]],
+      2: [MONTH_NAMES[3], MONTH_NAMES[4], MONTH_NAMES[5]],
+      3: [MONTH_NAMES[6], MONTH_NAMES[7], MONTH_NAMES[8]],
+      4: [MONTH_NAMES[9], MONTH_NAMES[10], MONTH_NAMES[11]],
     };
     eduQuarterNames = {
       4: "T1 - " + MONTH_NAMES[8] + " - " + MONTH_NAMES[11],
       1: "T2 - " + MONTH_NAMES[0] + " - " + MONTH_NAMES[2],
       2: "T3 - " + MONTH_NAMES[3] + " - " + MONTH_NAMES[5],
-      3: "XX - " + MONTH_NAMES[6] + " - " + MONTH_NAMES[7]
+      3: "XX - " + MONTH_NAMES[6] + " - " + MONTH_NAMES[7],
     };
   }
 
@@ -133,6 +175,12 @@ class DatePeriods {
   }
   static month2quarter(month) {
     return MONTH_TO_QUARTER[month];
+  }
+
+  static month2quarterNov(year, month) {
+    const quarterDef = QUARTER_NOV_BY_MONTH["" + month];
+    year = year + quarterDef.yearOffset;
+    return year + "NovQ" + quarterDef.quarterNov;
   }
   static dhis2MonthPeriod(year, month) {
     return year + "" + this.padMonth(month);
@@ -148,6 +196,15 @@ class DatePeriods {
   static monthsInQuarter(quarterIntOrString) {
     let quarter = "" + quarterIntOrString;
     let months = MONTH_NUMBER_BY_QUARTER[quarter];
+    if (months === undefined) {
+      debugger
+      throw new Error("Doesn't appear to be a quarter" + quarter);
+    }
+    return months;
+  }
+
+  static monthsInQuarterNov(quarter) {
+    let months = MONTH_NUMBER_BY_QUARTER_NOV[quarter];
     if (months === undefined) {
       throw new Error("Doesn't appear to be a quarter" + quarter);
     }
@@ -168,11 +225,7 @@ class DatePeriods {
   static currentQuarter() {
     let currentDate = new Date();
     currentDate.setMonth(currentDate.getMonth() - 2);
-    return (
-      currentDate.getFullYear() +
-      "Q" +
-      this.quarterByMonth(currentDate.getMonth() + 1)
-    );
+    return currentDate.getFullYear() + "Q" + this.quarterByMonth(currentDate.getMonth() + 1);
   }
 
   static monthName(period) {
@@ -200,9 +253,7 @@ class DatePeriods {
 
   static monthlyNameFormat(months, yearPeriod) {
     return (
-      [months[0], months[months.length - 1]]
-        .map(monthPeriod => this.monthName(monthPeriod))
-        .join(" - ") +
+      [months[0], months[months.length - 1]].map((monthPeriod) => this.monthName(monthPeriod)).join(" - ") +
       " " +
       yearPeriod
     );
@@ -228,9 +279,7 @@ class DatePeriods {
     } else if (format === FORMAT_EDU_QUARTER) {
       return this.eduQuarterName(dhis2period);
     }
-    throw new Error(
-      "unsupported format '" + format + "' see " + SUPPORTED_FORMATS.join(",")
-    );
+    throw new Error("unsupported format '" + format + "' see " + SUPPORTED_FORMATS.join(","));
   }
 
   static eduQuarterName(period) {
@@ -244,19 +293,17 @@ class DatePeriods {
   }
 
   static period2QuarterName(dhis2period) {
+    debugger
     const yearPeriod = this.split(dhis2period, YEARLY)[0];
+    debugger
     const quarterPeriod = this.split(dhis2period, QUARTERLY)[0];
+    debugger
     const monthsPeriod = this.split(quarterPeriod, MONTHLY);
     return this.monthlyNameFormat(monthsPeriod, yearPeriod);
   }
 
   static period2FinancialYearJulyQuarterName(dhis2period) {
-    return (
-      this.financialJulyQuarterName(dhis2period) +
-      " (" +
-      this.period2QuarterName(dhis2period) +
-      ")"
-    );
+    return this.financialJulyQuarterName(dhis2period) + " (" + this.period2QuarterName(dhis2period) + ")";
   }
 
   static financialJulyQuarterName(dhis2period) {
@@ -276,11 +323,15 @@ class DatePeriods {
   }
 
   static formatValues(dhis2period) {
+    debugger
     const quarterPeriod = this.split(dhis2period, QUARTERLY)[0];
+    debugger
     const monthDhis2Periods = this.split(quarterPeriod, MONTHLY);
-    const monthPeriod =
-      this.detect(dhis2period) == MONTHLY ? dhis2period : monthDhis2Periods[0];
+    debugger
+    const monthPeriod = this.detect(dhis2period) == MONTHLY ? dhis2period : monthDhis2Periods[0];
+    debugger
     const yearPeriod = this.split(dhis2period, YEARLY)[0];
+    debugger
 
     let year = parseInt(yearPeriod, 0);
     let quarterNumber = parseInt(quarterPeriod.slice(5), 0);
@@ -304,12 +355,8 @@ class DatePeriods {
       financialQuarterNumber: financialQuarterNumber,
       monthNumber: monthNumber,
       monthName: this.monthName(monthPeriod),
-      monthQuarterStart: monthDhis2Periods[0]
-        ? this.monthName(monthDhis2Periods[0])
-        : "",
-      monthQuarterEnd: monthDhis2Periods[2]
-        ? this.monthName(monthDhis2Periods[2])
-        : ""
+      monthQuarterStart: monthDhis2Periods[0] ? this.monthName(monthDhis2Periods[0]) : "",
+      monthQuarterEnd: monthDhis2Periods[2] ? this.monthName(monthDhis2Periods[2]) : "",
     };
 
     return subs;
@@ -320,23 +367,21 @@ class DatePeriods {
   }
 
   static substituteStr(str, data) {
-    var output = str.replace(/(\${([^}]+)})/g, function(match) {
+    var output = str.replace(/(\${([^}]+)})/g, function (match) {
       let key = match.replace(/\${/, "").replace(/}/, "");
       if (data[key] !== undefined) {
         return data[key];
       } else {
-        throw new Error(
-          "unknown placeholder :'" +
-            key +
-            "' only knows " +
-            JSON.stringify(data)
-        );
+        throw new Error("unknown placeholder :'" + key + "' only knows " + JSON.stringify(data));
       }
     });
     return output;
   }
 
   static next(period) {
+    if (period.includes("NovQ")) {
+      return this.nextNovQuarter(period);
+    }
     if (period.includes("Q")) {
       return this.nextQuarter(period);
     }
@@ -357,6 +402,9 @@ class DatePeriods {
   }
 
   static previous(period) {
+    if (period.includes("NovQ")) {
+      return this.previousNovQuarter(period);
+    }
     if (period.includes("Q")) {
       return this.previousQuarter(period);
     }
@@ -377,6 +425,9 @@ class DatePeriods {
   }
 
   static detect(dhis2Period) {
+    if (dhis2Period.includes("NovQ")) {
+      return QUARTERLY_NOV;
+    }
     if (dhis2Period.includes("Q")) {
       return QUARTERLY;
     }
@@ -451,6 +502,19 @@ class DatePeriods {
     return year + "Q" + quarter;
   }
 
+  /* 2016NovQ1*/
+  static nextNovQuarter(period) {
+    let year = parseInt(period.slice(0, 4), 0);
+    let quarter = parseInt(period.slice(8, 9), 0);
+    if (quarter === 4) {
+      year += 1;
+      quarter = 1;
+    } else if (quarter < 4) {
+      quarter += 1;
+    }
+    return year + "NovQ" + quarter;
+  }
+
   static nextSixMonth(period) {
     let year = parseInt(period.slice(0, 4), 0);
     let sixMonth = parseInt(period.slice(5, 6), 0);
@@ -473,6 +537,19 @@ class DatePeriods {
       quarter -= 1;
     }
     return year + "Q" + quarter;
+  }
+
+  /* 2016NovQ1*/
+  static previousNovQuarter(period) {
+    let year = parseInt(period.slice(0, 4), 0);
+    let quarter = parseInt(period.slice(8, 9), 0);
+    if (quarter === 1) {
+      year -= 1;
+      quarter = 4;
+    } else if (quarter > 1) {
+      quarter -= 1;
+    }
+    return year + "NovQ" + quarter;
   }
 
   static previousSixMonth(period) {
@@ -505,8 +582,12 @@ class DatePeriods {
   }
 
   static split(period, splitType) {
+   // console.log(period, splitType)
     if (period === undefined) {
       throw new Error("Can't split undefined period into " + splitType);
+    }
+    if (period.includes("NovQ")) {
+      return this.splitYearQuarterNov(period, splitType);
     }
     if (period.includes("Q")) {
       if (splitType === "quarterlyFirstMonths") {
@@ -531,14 +612,7 @@ class DatePeriods {
     if (period.length === 4) {
       return this.splitYear(period, splitType);
     }
-    throw new Error(
-      "don't know how to split " +
-        period +
-        " as '" +
-        splitType +
-        "' length" +
-        period.length
-    );
+    throw new Error("don't know how to split " + period + " as '" + splitType + "' length" + period.length);
   }
 
   static splitFinancialJuly(period, splitType) {
@@ -556,18 +630,17 @@ class DatePeriods {
         ["03", 1],
         ["04", 1],
         ["05", 1],
-        ["06", 1]
-      ].map(
-        month_year_offset =>
-          "" + (year + month_year_offset[1]) + month_year_offset[0]
-      );
+        ["06", 1],
+      ].map((month_year_offset) => "" + (year + month_year_offset[1]) + month_year_offset[0]);
     }
 
     if (splitType === QUARTERLY) {
-      return [["Q3", 0], ["Q4", 0], ["Q1", 1], ["Q2", 1]].map(
-        quarter_year_offset =>
-          "" + (year + quarter_year_offset[1]) + quarter_year_offset[0]
-      );
+      return [
+        ["Q3", 0],
+        ["Q4", 0],
+        ["Q1", 1],
+        ["Q2", 1],
+      ].map((quarter_year_offset) => "" + (year + quarter_year_offset[1]) + quarter_year_offset[0]);
     }
 
     if (splitType === YEARLY) {
@@ -584,27 +657,14 @@ class DatePeriods {
   static splitYear(period, splitType) {
     let year = parseInt(period.slice(0, 4), 0);
     if (splitType === MONTHLY) {
-      return [
-        "01",
-        "02",
-        "03",
-        "04",
-        "05",
-        "06",
-        "07",
-        "08",
-        "09",
-        "10",
-        "11",
-        "12"
-      ].map(month => "" + year + month);
+      return ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"].map((month) => "" + year + month);
     }
 
     if (splitType === SIX_MONTHLY) {
       return [year + "S1", year + "S2"];
     }
     if (splitType === QUARTERLY) {
-      return ["Q1", "Q2", "Q3", "Q4"].map(quarter => "" + year + quarter);
+      return ["Q1", "Q2", "Q3", "Q4"].map((quarter) => "" + year + quarter);
     }
     if (splitType === YEARLY) {
       return ["" + year];
@@ -624,19 +684,51 @@ class DatePeriods {
     let year = parseInt(period.slice(0, 4), 0);
     let quarter = parseInt(period.slice(5, 6), 0);
     let months = this.monthsInQuarter(quarter);
-    return [
-      this.dhis2MonthPeriod(year, months[1]),
-      this.dhis2MonthPeriod(year, months[2])
-    ];
+    return [this.dhis2MonthPeriod(year, months[1]), this.dhis2MonthPeriod(year, months[2])];
+  }
+
+  static splitYearQuarterNov(period, splitType) {
+    let year = parseInt(period.slice(0, 4), 0);
+    let quarter = parseInt(period.slice(8, 9), 0);
+    if (splitType === MONTHLY) {
+      const monthsDefs = this.monthsInQuarterNov(quarter)
+      const results = monthsDefs.map(monthDef => {
+        return this.dhis2MonthPeriod(year + monthDef.yearOffset,parseInt(monthDef.month))
+      })
+      return results
+    }
+
+    if (splitType === SIX_MONTHLY) {
+      return [quarter < 3 ? year + "S1" : year + "S2"];
+    }
+
+    if (splitType === QUARTERLY) {
+      const firstQuarter = year+"Q"+quarter
+      const secondQuarter = this.previous(firstQuarter)
+      const quarters = [secondQuarter, firstQuarter]
+      quarters.sort()
+      return quarters;
+    }
+    if (splitType === YEARLY) {
+      return ["" + year];
+    }
+    if (splitType === FINANCIAL_JULY) {
+      return quarter < 3 ? ["" + (year - 1) + "July"] : ["" + year + "July"];
+    }
+    this.unsupportedSplitType(period, splitType);
   }
 
   static splitYearQuarter(period, splitType) {
     let year = parseInt(period.slice(0, 4), 0);
     let quarter = parseInt(period.slice(5, 6), 0);
+
+    if (splitType === QUARTERLY_NOV) {
+      const quarterDefs = QUARTER_TO_QUARTER_NOV["" + quarter];
+      return quarterDefs.map((qdef) => [year + qdef.yearOffset + "NovQ" + qdef.quarterNov]);
+    }
+    
     if (splitType === MONTHLY) {
-      return this.monthsInQuarter(quarter).map(month =>
-        this.dhis2MonthPeriod(year, month)
-      );
+      return this.monthsInQuarter(quarter).map((month) => this.dhis2MonthPeriod(year, parseInt(month)));
     }
 
     if (splitType === SIX_MONTHLY) {
@@ -659,9 +751,7 @@ class DatePeriods {
     let year = parseInt(period.slice(0, 4), 0);
     let semester = parseInt(period.slice(5, 6), 0);
     if (splitType === MONTHLY) {
-      return SIX_MONTHLY_TO_MONTHS[semester].map(month =>
-        this.dhis2MonthPeriod(year, month)
-      );
+      return SIX_MONTHLY_TO_MONTHS[semester].map((month) => this.dhis2MonthPeriod(year, month));
     }
     if (splitType === SIX_MONTHLY) {
       return [period];
@@ -692,6 +782,10 @@ class DatePeriods {
       const quarter = this.month2quarter(month);
       return ["" + year + "Q" + quarter];
     }
+    if (splitType === QUARTERLY_NOV) {
+      return [this.month2quarterNov(year, month)];
+    }
+
     if (splitType === SIX_MONTHLY) {
       if (month < 7) {
         return [year + "S1"];
@@ -709,9 +803,7 @@ class DatePeriods {
   }
 
   static monthlyPeriods(year, quarter) {
-    return this.monthsInQuarter(quarter).map(month =>
-      this.dhis2MonthPeriod(year, month)
-    );
+    return this.monthsInQuarter(quarter).map((month) => this.dhis2MonthPeriod(year, month));
   }
 
   static unsupportedSplitType(period, splitType) {
@@ -721,7 +813,7 @@ class DatePeriods {
         ", unknown splitType " +
         splitType +
         " only knows " +
-        SUPPORTED_PERIOD_TYPES.join(", ")
+        SUPPORTED_PERIOD_TYPES.join(", "),
     );
   }
 
@@ -752,6 +844,50 @@ class DatePeriods {
     }
     return nextPeriods;
   }
+
+  /* min/max are
+
+  returns an array of periods with  periodDelta.before periods and the period and periodDelta.after periods
+  but limit the periods to stays in the "limit" of min and max
+
+
+  */
+  static buildPeriods = (period, periodDelta, min, max) => {
+    const periods = [];    
+    Array(periodDelta.before)
+      .fill()
+      .forEach((x, i) => {
+        const currentPeriod = i === 0 ? period : periods[0];
+        if (currentPeriod) {
+          const previousPeriod = this.previous(currentPeriod);
+          const isValidPeriod =
+            min === "" || min == undefined
+              ? true
+              : previousPeriod > min;
+          if (isValidPeriod) {
+            periods.unshift(previousPeriod);
+          }
+        }
+      });
+    periods.push(period);
+    Array(periodDelta.after)
+      .fill()
+      .forEach((x, i) => {
+        const currentIndex = periods.length - 1;
+        const currentPeriod = i === 0 ? period : periods[currentIndex];
+        if (currentPeriod) {
+          const nextPeriod = this.next(currentPeriod);
+          const isValidPeriod =
+            max === "" || max == undefined
+              ? true
+              : nextPeriod < max
+          if (isValidPeriod) {
+            periods.push(nextPeriod);
+          }
+        }
+      });
+    return periods;
+  };
 }
 
 export default DatePeriods;

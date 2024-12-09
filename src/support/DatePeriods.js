@@ -148,10 +148,20 @@ const SUPPORTED_FORMATS = [
   FORMAT_QUARTER_TWO_LAST_MONTHS,
 ];
 
+let defaultQuarterFrequency = QUARTERLY;
+
 class DatePeriods {
   static setLocale(local) {
     const translations = local === "fr" ? MONTH_NAMES_FR : MONTH_NAMES_EN;
     this.setMonthTranslations(translations);
+  }
+
+  static setDefaultQuarterFrequency(frequency) {
+    defaultQuarterFrequency = frequency
+  }
+
+  static getDefaultQuarterFrequency() {
+    defaultQuarterFrequency
   }
 
   static setMonthTranslations(translations) {
@@ -197,7 +207,6 @@ class DatePeriods {
     let quarter = "" + quarterIntOrString;
     let months = MONTH_NUMBER_BY_QUARTER[quarter];
     if (months === undefined) {
-      debugger
       throw new Error("Doesn't appear to be a quarter" + quarter);
     }
     return months;
@@ -225,7 +234,12 @@ class DatePeriods {
   static currentQuarter() {
     let currentDate = new Date();
     currentDate.setMonth(currentDate.getMonth() - 2);
+    if (this.getDefaultQuarterFrequency() == QUARTERLY){
+      const currentDhis2Period = currentDate.getFullYear() + "NovQ" + this.quarterByMonth(currentDate.getMonth() + 1);
+      return currentDhis2Period
+    }
     return currentDate.getFullYear() + "Q" + this.quarterByMonth(currentDate.getMonth() + 1);
+    
   }
 
   static monthName(period) {
@@ -260,6 +274,10 @@ class DatePeriods {
   }
 
   static displayName(dhis2period, format) {
+    if (this.detect(dhis2period) == QUARTERLY_NOV) {
+      const monthlyPeriods = this.split(dhis2period, "monthly")
+      return this.monthNameYear(monthlyPeriods[0])+ " - "+this.monthNameYear(monthlyPeriods[2])
+    }
     if (format === FORMAT_FY_JULY_QUARTER) {
       return this.period2FinancialYearJulyQuarterName(dhis2period);
     } else if (format === FORMAT_YEAR) {
@@ -293,11 +311,8 @@ class DatePeriods {
   }
 
   static period2QuarterName(dhis2period) {
-    debugger
     const yearPeriod = this.split(dhis2period, YEARLY)[0];
-    debugger
     const quarterPeriod = this.split(dhis2period, QUARTERLY)[0];
-    debugger
     const monthsPeriod = this.split(quarterPeriod, MONTHLY);
     return this.monthlyNameFormat(monthsPeriod, yearPeriod);
   }
@@ -323,15 +338,10 @@ class DatePeriods {
   }
 
   static formatValues(dhis2period) {
-    debugger
     const quarterPeriod = this.split(dhis2period, QUARTERLY)[0];
-    debugger
     const monthDhis2Periods = this.split(quarterPeriod, MONTHLY);
-    debugger
     const monthPeriod = this.detect(dhis2period) == MONTHLY ? dhis2period : monthDhis2Periods[0];
-    debugger
     const yearPeriod = this.split(dhis2period, YEARLY)[0];
-    debugger
 
     let year = parseInt(yearPeriod, 0);
     let quarterNumber = parseInt(quarterPeriod.slice(5), 0);
@@ -690,6 +700,9 @@ class DatePeriods {
   static splitYearQuarterNov(period, splitType) {
     let year = parseInt(period.slice(0, 4), 0);
     let quarter = parseInt(period.slice(8, 9), 0);
+    if (splitType === QUARTERLY_NOV) {
+      return [period]
+    }
     if (splitType === MONTHLY) {
       const monthsDefs = this.monthsInQuarterNov(quarter)
       const results = monthsDefs.map(monthDef => {

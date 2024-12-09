@@ -110,7 +110,8 @@ class AppContent extends React.Component {
       children
     } = this.props;
 
-    const frequency = period.includes("S") ? "sixMonthly" : "quarterly";
+    //const frequency = period.includes("S") ? "sixMonthly" : "quarterly";
+    const frequency = period.includes("S") ? "sixMonthly" : "quarterlyNov";
     const params = {
       config,
       dhis2,

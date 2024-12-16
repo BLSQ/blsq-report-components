@@ -33,7 +33,7 @@ const PeriodPicker = ({ currentPeriod, mode, fieldName, min, max, onPeriodChange
   const visibibleQuarters = [];
   let year = minYear;
   while (year <= maxYear) {
-    DatePeriods.split("" + year, "quarterly").forEach((p) => visibibleQuarters.push(p));
+    DatePeriods.split("" + year, DatePeriods.getDefaultQuarterFrequency()).forEach((p) => visibibleQuarters.push(p));
     year = year + 1;
   }
 

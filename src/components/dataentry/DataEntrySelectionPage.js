@@ -148,7 +148,7 @@ const DataEntrySelectionPage = ({ history, match, periodFormat, dhis2 }) => {
 
   let quarterPeriod = "";
   if (period) {
-    quarterPeriod = DatePeriods.split(period, "quarterly")[0];
+    quarterPeriod = DatePeriods.split(period, DatePeriods.getDefaultQuarterFrequency())[0];
   }
 
   return (

@@ -8,11 +8,25 @@ it("calculates next quarter", () => {
   expect(DatePeriods.next("2016Q4")).toEqual("2017Q1");
 });
 
+it("calculates next nov quarter", () => {
+  expect(DatePeriods.next("2016NovQ1")).toEqual("2016NovQ2");
+  expect(DatePeriods.next("2016NovQ2")).toEqual("2016NovQ3");
+  expect(DatePeriods.next("2016NovQ3")).toEqual("2016NovQ4");
+  expect(DatePeriods.next("2016NovQ4")).toEqual("2017NovQ1");
+});
+
 it("calculates previous quarter", () => {
   expect(DatePeriods.previous("2016Q1")).toEqual("2015Q4");
   expect(DatePeriods.previous("2016Q2")).toEqual("2016Q1");
   expect(DatePeriods.previous("2016Q3")).toEqual("2016Q2");
   expect(DatePeriods.previous("2016Q4")).toEqual("2016Q3");
+});
+
+it("calculates previous nov quarter", () => {
+  expect(DatePeriods.previous("2016NovQ1")).toEqual("2015NovQ4");
+  expect(DatePeriods.previous("2016NovQ2")).toEqual("2016NovQ1");
+  expect(DatePeriods.previous("2016NovQ3")).toEqual("2016NovQ2");
+  expect(DatePeriods.previous("2016NovQ4")).toEqual("2016NovQ3");
 });
 
 it("calculates previous sixMonth period", () => {
@@ -31,11 +45,7 @@ it("calculates previous sixMonth period", () => {
 });
 
 it("split a quarter in monthly periods", () => {
-  expect(DatePeriods.monthlyPeriods("2016", "1")).toEqual([
-    "201601",
-    "201602",
-    "201603"
-  ]);
+  expect(DatePeriods.monthlyPeriods("2016", "1")).toEqual(["201601", "201602", "201603"]);
 });
 
 it("split financialJuly to month  ", () => {
@@ -51,17 +61,12 @@ it("split financialJuly to month  ", () => {
     "201703",
     "201704",
     "201705",
-    "201706"
+    "201706",
   ]);
 });
 
 it("split financialJuly to quarter  ", () => {
-  expect(DatePeriods.split("2016July", "quarterly")).toEqual([
-    "2016Q3",
-    "2016Q4",
-    "2017Q1",
-    "2017Q2"
-  ]);
+  expect(DatePeriods.split("2016July", "quarterly")).toEqual(["2016Q3", "2016Q4", "2017Q1", "2017Q2"]);
 });
 
 it("split financialJuly to month  ", () => {
@@ -69,10 +74,7 @@ it("split financialJuly to month  ", () => {
 });
 
 it("split financialJuly to month  ", () => {
-  expect(DatePeriods.split("2016July", "sixMonthly")).toEqual([
-    "2016S2",
-    "2017S1"
-  ]);
+  expect(DatePeriods.split("2016July", "sixMonthly")).toEqual(["2016S2", "2017S1"]);
 });
 
 it("split month to financialJuly ", () => {
@@ -94,18 +96,11 @@ it("split yearQuarter to financialJuly ", () => {
 });
 
 it("split yearQuarter to financialJuly ", () => {
-  expect(DatePeriods.split("2016", "financialJuly")).toEqual([
-    "2015July",
-    "2016July"
-  ]);
+  expect(DatePeriods.split("2016", "financialJuly")).toEqual(["2015July", "2016July"]);
 });
 
 it("split yearQuarter in monthly periods", () => {
-  expect(DatePeriods.split("2016Q4", "monthly")).toEqual([
-    "201610",
-    "201611",
-    "201612"
-  ]);
+  expect(DatePeriods.split("2016Q4", "monthly")).toEqual(["201610", "201611", "201612"]);
 });
 
 it("split yearQuarter in quarterly periods", () => {
@@ -124,6 +119,46 @@ it("split monthly in quarterly periods", () => {
   expect(DatePeriods.split("201611", "quarterly")).toEqual(["2016Q4"]);
 });
 
+/**
+  
+2016NovQ4	2016Q3	2016Q4
+2016NovQ3	2016Q3	2016Q2
+2016NovQ2	2016Q2	2016Q1
+2016NovQ1	2015Q4	2016Q1
+ */
+it("split quarter nov in quarterly periods", () => {
+  expect(DatePeriods.split("2016NovQ1", "quarterly")).toEqual(["2015Q4","2016Q1"]);
+  expect(DatePeriods.split("2016NovQ2", "quarterly")).toEqual(["2016Q1", "2016Q2"]);
+  expect(DatePeriods.split("2016NovQ3", "quarterly")).toEqual(["2016Q2","2016Q3"]);
+  expect(DatePeriods.split("2016NovQ4", "quarterly")).toEqual(["2016Q3", "2016Q4"]);
+  expect(DatePeriods.split("2017NovQ1", "quarterly")).toEqual(["2016Q4","2017Q1"]);
+});
+
+it("split quarterly nov in monthly periods", () => {
+  expect(DatePeriods.split("2016NovQ1", "monthly")).toEqual(["201511", "201512", "201601"]);
+  expect(DatePeriods.split("2016NovQ2", "monthly")).toEqual(["201602", "201603", "201604"]);
+  expect(DatePeriods.split("2016NovQ3", "monthly")).toEqual(["201605", "201606", "201607"]);
+  expect(DatePeriods.split("2016NovQ4", "monthly")).toEqual(["201608", "201609", "201610"]);
+  expect(DatePeriods.split("2017NovQ1", "monthly")).toEqual(["201611", "201612", "201701"]);
+});
+
+it("split monthly in quarterly nov periods", () => {
+  expect(DatePeriods.split("201611", "quarterlyNov")).toEqual(["2017NovQ1"]);
+  expect(DatePeriods.split("201612", "quarterlyNov")).toEqual(["2017NovQ1"]);
+  expect(DatePeriods.split("201701", "quarterlyNov")).toEqual(["2017NovQ1"]);
+  expect(DatePeriods.split("201702", "quarterlyNov")).toEqual(["2017NovQ2"]);
+  expect(DatePeriods.split("201703", "quarterlyNov")).toEqual(["2017NovQ2"]);
+  expect(DatePeriods.split("201704", "quarterlyNov")).toEqual(["2017NovQ2"]);
+  expect(DatePeriods.split("201705", "quarterlyNov")).toEqual(["2017NovQ3"]);
+  expect(DatePeriods.split("201706", "quarterlyNov")).toEqual(["2017NovQ3"]);
+  expect(DatePeriods.split("201707", "quarterlyNov")).toEqual(["2017NovQ3"]);
+  expect(DatePeriods.split("201708", "quarterlyNov")).toEqual(["2017NovQ4"]);
+  expect(DatePeriods.split("201709", "quarterlyNov")).toEqual(["2017NovQ4"]);
+  expect(DatePeriods.split("201710", "quarterlyNov")).toEqual(["2017NovQ4"]);
+  expect(DatePeriods.split("201711", "quarterlyNov")).toEqual(["2018NovQ1"]);
+  expect(DatePeriods.split("201712", "quarterlyNov")).toEqual(["2018NovQ1"]);
+});
+
 it("split monthly in yearly periods", () => {
   expect(DatePeriods.split("201611", "yearly")).toEqual(["2016"]);
 });
@@ -140,14 +175,8 @@ it("split quarter into in sixMonthly periods", () => {
 });
 
 it("split sixMonthly into in quarter periods", () => {
-  expect(DatePeriods.split("2016S1", "quarterly")).toEqual([
-    "2016Q1",
-    "2016Q2"
-  ]);
-  expect(DatePeriods.split("2016S2", "quarterly")).toEqual([
-    "2016Q3",
-    "2016Q4"
-  ]);
+  expect(DatePeriods.split("2016S1", "quarterly")).toEqual(["2016Q1", "2016Q2"]);
+  expect(DatePeriods.split("2016S2", "quarterly")).toEqual(["2016Q3", "2016Q4"]);
 });
 
 it("split sixMonthly into in sixMonthly periods", () => {
@@ -155,22 +184,8 @@ it("split sixMonthly into in sixMonthly periods", () => {
 });
 
 it("split sixMonth period into in months", () => {
-  expect(DatePeriods.split("2016S1", "monthly")).toEqual([
-    "201601",
-    "201602",
-    "201603",
-    "201604",
-    "201605",
-    "201606"
-  ]);
-  expect(DatePeriods.split("2016S2", "monthly")).toEqual([
-    "201607",
-    "201608",
-    "201609",
-    "201610",
-    "201611",
-    "201612"
-  ]);
+  expect(DatePeriods.split("2016S1", "monthly")).toEqual(["201601", "201602", "201603", "201604", "201605", "201606"]);
+  expect(DatePeriods.split("2016S2", "monthly")).toEqual(["201607", "201608", "201609", "201610", "201611", "201612"]);
 });
 
 it("split monthly in sixMonthly period", () => {
@@ -188,15 +203,10 @@ it("split yearly in yearly periods", () => {
 });
 
 it("split yearly in quarterly periods", () => {
-  expect(DatePeriods.split("2016", "quarterly")).toEqual([
-    "2016Q1",
-    "2016Q2",
-    "2016Q3",
-    "2016Q4"
-  ]);
+  expect(DatePeriods.split("2016", "quarterly")).toEqual(["2016Q1", "2016Q2", "2016Q3", "2016Q4"]);
 });
 
-it("split yearly in quarterly periods", () => {
+it("split yearly in monthly periods", () => {
   expect(DatePeriods.split("2016", "monthly")).toEqual([
     "201601",
     "201602",
@@ -209,7 +219,7 @@ it("split yearly in quarterly periods", () => {
     "201609",
     "201610",
     "201611",
-    "201612"
+    "201612",
   ]);
 });
 
@@ -219,6 +229,10 @@ it("detect month", () => {
 
 it("detect quarterly", () => {
   expect(DatePeriods.detect("2016Q")).toEqual("quarterly");
+});
+
+it("detect quarterly nov", () => {
+  expect(DatePeriods.detect("2016NovQ1")).toEqual("quarterlyNov");
 });
 
 it("detect yearly", () => {
@@ -274,36 +288,24 @@ it("monthsInQuarter", () => {
 });
 
 it("monthsNamesInQuarter", () => {
-  expect(DatePeriods.monthsNamesInQuarter(4)).toEqual([
-    "October",
-    "November",
-    "December"
-  ]);
+  expect(DatePeriods.monthsNamesInQuarter(4)).toEqual(["October", "November", "December"]);
 });
 
 it("period2QuarterName", () => {
-  expect(
-    DatePeriods.split("2014", "quarterly").map(q =>
-      DatePeriods.displayName(q, "quarter")
-    )
-  ).toEqual([
+  expect(DatePeriods.split("2014", "quarterly").map((q) => DatePeriods.displayName(q, "quarter"))).toEqual([
     "January - March 2014",
     "April - June 2014",
     "July - September 2014",
-    "October - December 2014"
+    "October - December 2014",
   ]);
 });
 
 it("period2FinancialYearJulyQuarterName", () => {
-  expect(
-    DatePeriods.split("2018", "quarterly").map(q =>
-      DatePeriods.displayName(q, "fyJulyQuarter")
-    )
-  ).toEqual([
+  expect(DatePeriods.split("2018", "quarterly").map((q) => DatePeriods.displayName(q, "fyJulyQuarter"))).toEqual([
     "FY 2017/2018 Quarter 3 (January - March 2018)",
     "FY 2017/2018 Quarter 4 (April - June 2018)",
     "FY 2018/2019 Quarter 1 (July - September 2018)",
-    "FY 2018/2019 Quarter 2 (October - December 2018)"
+    "FY 2018/2019 Quarter 2 (October - December 2018)",
   ]);
 });
 
@@ -311,14 +313,14 @@ it("formats quarterly", () => {
   expect(
     DatePeriods.format(
       "2019Q3",
-      "Financial year ${financialJulyYear}/${financialJulyYearPlus1} - Quarter ${financialQuarterNumber} ${monthQuarterStart}-${monthQuarterEnd}"
-    )
+      "Financial year ${financialJulyYear}/${financialJulyYearPlus1} - Quarter ${financialQuarterNumber} ${monthQuarterStart}-${monthQuarterEnd}",
+    ),
   ).toEqual("Financial year 2019/2020 - Quarter 1 July-September");
   expect(
     DatePeriods.format(
       "2019Q2",
-      "Financial year ${financialJulyYear}/${financialJulyYearPlus1} - Quarter ${financialQuarterNumber} ${monthQuarterStart}-${monthQuarterEnd}"
-    )
+      "Financial year ${financialJulyYear}/${financialJulyYearPlus1} - Quarter ${financialQuarterNumber} ${monthQuarterStart}-${monthQuarterEnd}",
+    ),
   ).toEqual("Financial year 2018/2019 - Quarter 4 April-June");
 });
 it("formats monthly periods", () => {
@@ -334,8 +336,8 @@ it("formats monthly periods", () => {
         "monthNumber: ${monthNumber} " +
         "monthName: ${monthName} " +
         "monthQuarterStart: ${monthQuarterStart} " +
-        "monthQuarterEnd: ${monthQuarterEnd} "
-    )
+        "monthQuarterEnd: ${monthQuarterEnd} ",
+    ),
   ).toEqual(
     " dhis2period: 201903 " +
       "financialJulyYear: 2018 " +
@@ -344,25 +346,18 @@ it("formats monthly periods", () => {
       "financialQuarterNumber: 3 " +
       "monthNumber: 3 monthName: March " +
       "monthQuarterStart: January " +
-      "monthQuarterEnd: March "
+      "monthQuarterEnd: March ",
   );
 });
 it("formats detects unknown token", () => {
   expect(() => {
-    DatePeriods.format(
-      "201903",
-      " dhis2period: ${dhis2period} ${unknown token}"
-    );
+    DatePeriods.format("201903", " dhis2period: ${dhis2period} ${unknown token}");
   }).toThrowError(
-    'unknown placeholder :\'unknown token\' only knows {"dhis2period":"201903","financialJulyYear":2018,"financialJulyYearPlus1":2019,"year":2019,"quarterNumber":1,"financialQuarterNumber":3,"monthNumber":3,"monthName":"March","monthQuarterStart":"January","monthQuarterEnd":"March"}'
+    'unknown placeholder :\'unknown token\' only knows {"dhis2period":"201903","financialJulyYear":2018,"financialJulyYearPlus1":2019,"year":2019,"quarterNumber":1,"financialQuarterNumber":3,"monthNumber":3,"monthName":"March","monthQuarterStart":"January","monthQuarterEnd":"March"}',
   );
 });
 it("monthYear", () => {
-  expect(
-    DatePeriods.split("2014", "monthly").map(q =>
-      DatePeriods.displayName(q, "monthYear")
-    )
-  ).toEqual([
+  expect(DatePeriods.split("2014", "monthly").map((q) => DatePeriods.displayName(q, "monthYear"))).toEqual([
     "January 2014",
     "February 2014",
     "March 2014",
@@ -374,7 +369,7 @@ it("monthYear", () => {
     "September 2014",
     "October 2014",
     "November 2014",
-    "December 2014"
+    "December 2014",
   ]);
 });
 
@@ -392,13 +387,9 @@ it("monthYear", () => {
       "Meskerem",
       "Tikimt",
       "Hidar",
-      "Tahisas"
+      "Tahisas",
     ]);
-    expect(
-      DatePeriods.split("2014", "monthly").map(q =>
-        DatePeriods.displayName(q, "monthYear")
-      )
-    ).toEqual([
+    expect(DatePeriods.split("2014", "monthly").map((q) => DatePeriods.displayName(q, "monthYear"))).toEqual([
       "Tir 2014",
       "Yekatit 2014",
       "Megabit 2014",
@@ -410,7 +401,7 @@ it("monthYear", () => {
       "Meskerem 2014",
       "Tikimt 2014",
       "Hidar 2014",
-      "Tahisas 2014"
+      "Tahisas 2014",
     ]);
   } finally {
     DatePeriods.setLocale("en");
@@ -418,19 +409,21 @@ it("monthYear", () => {
 });
 
 it("monthYear 2 ", () => {
-  expect(
-    DatePeriods.split("2014", "quarterly").map(q =>
-      DatePeriods.displayName(q, "monthYear")
-    )
-  ).toEqual(["March 2014", "June 2014", "September 2014", "December 2014"]);
+  expect(DatePeriods.split("2014", "quarterly").map((q) => DatePeriods.displayName(q, "monthYear"))).toEqual([
+    "March 2014",
+    "June 2014",
+    "September 2014",
+    "December 2014",
+  ]);
 });
 
 it("month", () => {
-  expect(
-    DatePeriods.split("2014", "quarterly").map(q =>
-      DatePeriods.displayName(q, "month")
-    )
-  ).toEqual(["March", "June", "September", "December"]);
+  expect(DatePeriods.split("2014", "quarterly").map((q) => DatePeriods.displayName(q, "month"))).toEqual([
+    "March",
+    "June",
+    "September",
+    "December",
+  ]);
 });
 
 it("monthName", () => {
@@ -439,79 +432,97 @@ it("monthName", () => {
 });
 
 it("sixMonth", () => {
-  expect(DatePeriods.displayName("2016S1", "sixMonth")).toEqual(
-    "January - June 2016"
-  );
-  expect(DatePeriods.displayName("2016S2", "sixMonth")).toEqual(
-    "July - December 2016"
-  );
+  expect(DatePeriods.displayName("2016S1", "sixMonth")).toEqual("January - June 2016");
+  expect(DatePeriods.displayName("2016S2", "sixMonth")).toEqual("July - December 2016");
 });
 
 it("eduQuarter", () => {
-  expect(DatePeriods.displayName("2016Q4", "eduQuarter")).toEqual(
-    "2016-2017 T1 - September - December"
-  );
-  expect(DatePeriods.displayName("2017Q1", "eduQuarter")).toEqual(
-    "2016-2017 T2 - January - March"
-  );
-  expect(DatePeriods.displayName("2017Q2", "eduQuarter")).toEqual(
-    "2016-2017 T3 - April - June"
-  );
-  expect(DatePeriods.displayName("2017Q3", "eduQuarter")).toEqual(
-    "2016-2017 XX - July - August"
-  );
+  expect(DatePeriods.displayName("2016Q4", "eduQuarter")).toEqual("2016-2017 T1 - September - December");
+  expect(DatePeriods.displayName("2017Q1", "eduQuarter")).toEqual("2016-2017 T2 - January - March");
+  expect(DatePeriods.displayName("2017Q2", "eduQuarter")).toEqual("2016-2017 T3 - April - June");
+  expect(DatePeriods.displayName("2017Q3", "eduQuarter")).toEqual("2016-2017 XX - July - August");
+});
+
+it("displayName novQ", () => {
+  // TODO
+  // expect(DatePeriods.displayName("2016NovQ4", "quarter")).toEqual("August - October 2016");
+  // expect(DatePeriods.displayName("2016NovQ1", "quarter")).toEqual("November - January 2016");
 });
 
 it("calculates previous periods", () => {
-  expect(DatePeriods.previousPeriods("2018Q3", 3)).toEqual([
-    "2017Q4",
-    "2018Q1",
-    "2018Q2"
-  ]);
-  expect(DatePeriods.previousPeriods("201802", 3)).toEqual([
-    "201711",
-    "201712",
-    "201801"
-  ]);
-  expect(DatePeriods.previousPeriods("2018", 3)).toEqual([
-    "2015",
-    "2016",
-    "2017"
-  ]);
+  expect(DatePeriods.previousPeriods("2018Q3", 3)).toEqual(["2017Q4", "2018Q1", "2018Q2"]);
+  expect(DatePeriods.previousPeriods("201802", 3)).toEqual(["201711", "201712", "201801"]);
+  expect(DatePeriods.previousPeriods("2018", 3)).toEqual(["2015", "2016", "2017"]);
 });
 
 it("calculates next periods", () => {
-  expect(DatePeriods.nextPeriods("2018Q3", 3)).toEqual([
-    "2018Q4",
-    "2019Q1",
-    "2019Q2"
-  ]);
-  expect(DatePeriods.nextPeriods("201802", 3)).toEqual([
-    "201803",
-    "201804",
-    "201805"
-  ]);
+  expect(DatePeriods.nextPeriods("2018Q3", 3)).toEqual(["2018Q4", "2019Q1", "2019Q2"]);
+  expect(DatePeriods.nextPeriods("201802", 3)).toEqual(["201803", "201804", "201805"]);
   expect(DatePeriods.nextPeriods("2018", 3)).toEqual(["2019", "2020", "2021"]);
 });
 
 it("split quarter in months by split type", () => {
-  expect(DatePeriods.split("2018Q4", "monthly")).toEqual([
-    "201810",
-    "201811",
-    "201812"
+  expect(DatePeriods.split("2018Q4", "monthly")).toEqual(["201810", "201811", "201812"]);
+  expect(DatePeriods.split("2018Q4", "quarterlyFirstMonths")).toEqual(["201810"]);
+  expect(DatePeriods.split("2019Q1", "quarterlyFirstMonths")).toEqual(["201901"]);
+  expect(DatePeriods.split("2018Q4", "quarterlyTwoLastMonths")).toEqual(["201811", "201812"]);
+  expect(DatePeriods.split("2019Q1", "quarterlyTwoLastMonths")).toEqual(["201902", "201903"]);
+});
+
+const testPeriodDelta = {
+  before: 5,
+  after: 2,
+};
+
+it("buildPeriods quarterly with periodDelta", () => {
+  expect(DatePeriods.buildPeriods("2018Q4", testPeriodDelta, "", "")).toEqual([
+    "2017Q3", // 1
+    "2017Q4", // 2
+    "2018Q1", // 3
+    "2018Q2", // 4
+    "2018Q3", // 5 before
+    "2018Q4", // current period
+    "2019Q1", // 1
+    "2019Q2", // 2 after
   ]);
-  expect(DatePeriods.split("2018Q4", "quarterlyFirstMonths")).toEqual([
-    "201810"
+});
+
+it("buildPeriods quarterly with periodDelta and min/max", () => {
+  expect(DatePeriods.buildPeriods("2018Q4", testPeriodDelta, "2018Q1", "2019Q2")).toEqual([
+    // excluded by min "2017Q3", // 1
+    // excluded by min "2017Q4", // 2
+    // excluded by min "2018Q1", // 3
+    "2018Q2", // 4
+    "2018Q3", // 5 before
+    "2018Q4", // current period
+    "2019Q1", // 1
+    // excluded by max "2019Q2", // 2 after
   ]);
-  expect(DatePeriods.split("2019Q1", "quarterlyFirstMonths")).toEqual([
-    "201901"
+});
+
+
+it("buildPeriods quarterlyNov with periodDelta", () => {
+  expect(DatePeriods.buildPeriods("2018NovQ4", testPeriodDelta)).toEqual([
+    "2017NovQ3", // 1
+    "2017NovQ4", // 2
+    "2018NovQ1", // 3
+    "2018NovQ2", // 4
+    "2018NovQ3", // 5 before
+    "2018NovQ4", // current period
+    "2019NovQ1", // 1
+    "2019NovQ2", // 2
   ]);
-  expect(DatePeriods.split("2018Q4", "quarterlyTwoLastMonths")).toEqual([
-    "201811",
-    "201812"
-  ]);
-  expect(DatePeriods.split("2019Q1", "quarterlyTwoLastMonths")).toEqual([
-    "201902",
-    "201903"
+});
+
+it("buildPeriods quarterlyNov with periodDelta and min/max", () => {
+  expect(DatePeriods.buildPeriods("2018NovQ4", testPeriodDelta, "2018NovQ1", "2019NovQ3")).toEqual([
+   // "2017NovQ3", // 1
+   // "2017NovQ4", // 2
+   // "2018NovQ1", // 3
+    "2018NovQ2", // 4
+    "2018NovQ3", // 5 before
+    "2018NovQ4", // current period
+    "2019NovQ1", // 1
+    "2019NovQ2", // 2
   ]);
 });

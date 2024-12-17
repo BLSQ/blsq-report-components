@@ -1,4 +1,4 @@
-import { FormControl, TextField, makeStyles } from "@material-ui/core";
+import { Divider, FormControl, MenuItem, TextField, makeStyles } from "@material-ui/core";
 import { Autocomplete, createFilterOptions } from "@material-ui/lab";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -23,14 +23,15 @@ const minYear = 1970;
 const maxYear = new Date().getFullYear() + 40;
 
 const PeriodPicker = ({ currentPeriod, mode, fieldName, min, max, onPeriodChange }) => {
-  const indexOfMonth = mode === "beginning" ? 0 : 2;
+  const indexOfMonths = mode === "active" ? [0, 1, 2] : mode === "beginning" ? [0] : [2];
   const classes = useStyles();
   const { t } = useTranslation();
-  const defaultPeriod = currentPeriod || "" + new Date().getFullYear() + (mode == "beginning" ? "01" : "12");
+  const defaultPeriod =
+    mode === "active"
+      ? currentPeriod || ""
+      : currentPeriod || "" + new Date().getFullYear() + (mode == "beginning" ? "01" : "12");
 
-  const [period, setPeriod] = useState(undefined);
-
-  const visibibleQuarters = [];
+  let visibibleQuarters = [];
   let year = minYear;
   while (year <= maxYear) {
     DatePeriods.split("" + year, DatePeriods.getDefaultQuarterFrequency()).forEach((p) => visibibleQuarters.push(p));
@@ -41,15 +42,32 @@ const PeriodPicker = ({ currentPeriod, mode, fieldName, min, max, onPeriodChange
     visibibleQuarters.reverse();
   }
 
+  if (mode === "active") {
+    const currentQuarters = DatePeriods.split(
+      DatePeriods.split(DatePeriods.currentQuarter(), "yearly")[0],
+      "quarterly",
+    );
+    visibibleQuarters = currentQuarters.concat(visibibleQuarters);
+  }
+
+  if (!["beginning", "end", "active"].includes(mode)) {
+    throw new Error("non support mode for period picker '" + mode + "'");
+  }
+  let index = 0;
+
   const visibleMonths = visibibleQuarters
-    .map((period) => {
-      const monthPeriod = DatePeriods.split(period, "monthly")[indexOfMonth];
-      return {
-        value: monthPeriod,
-        label: DatePeriods.displayName(monthPeriod, "monthYear"),
-        monthPeriod: monthPeriod,
-        quarterPeriod: period,
-      }; // +" / "+
+    .flatMap((period) => {
+      return indexOfMonths.map((indexOfMonth) => {
+        const monthPeriod = DatePeriods.split(period, "monthly")[indexOfMonth];
+        index = index + 1;
+        return {
+          value: monthPeriod,
+          label: DatePeriods.displayName(monthPeriod, "monthYear"),
+          monthPeriod: monthPeriod,
+          quarterPeriod: period,
+          index: index,
+        };
+      });
     })
     .filter((p) => {
       if (min && p.monthPeriod < min) {
@@ -60,6 +78,9 @@ const PeriodPicker = ({ currentPeriod, mode, fieldName, min, max, onPeriodChange
       }
       return true;
     });
+
+  const [period, setPeriod] = useState(undefined);
+
   const handleChange = (newperiod) => {
     setPeriod(newperiod);
     onPeriodChange(newperiod ? newperiod.monthPeriod : undefined);
@@ -72,19 +93,29 @@ const PeriodPicker = ({ currentPeriod, mode, fieldName, min, max, onPeriodChange
     },
   });
   const current = visibleMonths.filter((v) => v.monthPeriod === defaultPeriod);
-
   return (
     <FormControl>
       <Autocomplete
+        key={"periodpicker-" + currentPeriod}
         fullWidth
         noOptionsText={t("noResult")}
-        multiple={false}
-        value={period}
+        value={current[0]}
         defaultValue={current[0]}
         options={visibleMonths}
         getOptionLabel={(option) => option.label}
         getOptionSelected={(option) => option.value}
         filterOptions={filterOptions}
+        renderOption={(option, props2) => {
+          const { key, ...otherProps } = props2;
+          return (
+            <span>
+              <li key={option.index} {...otherProps} title={option.monthPeriod}>
+                {option.label}
+              </li>
+              {option.index == 12 && <hr />}
+            </span>
+          );
+        }}
         onChange={(event, newValue) => handleChange(newValue)}
         renderInput={(params) => (
           <TextField
@@ -97,6 +128,7 @@ const PeriodPicker = ({ currentPeriod, mode, fieldName, min, max, onPeriodChange
             InputLabelProps={{
               className: classes.label,
             }}
+            title={current[0]?.monthPeriod }
             placeholder=""
           />
         )}

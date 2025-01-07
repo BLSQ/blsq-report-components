@@ -55,7 +55,6 @@ export const activeAtFilter = {
     /// so we need to turn it into a YYYYmm period
     if (value.includes("/")) {
       cleanedValue = value.split("/").slice(1).reverse().join("")
-      debugger
     }
     const filteredContracts = contracts.filter((c) => {
       return c.matchPeriod(cleanedValue)

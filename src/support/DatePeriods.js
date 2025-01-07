@@ -435,7 +435,6 @@ class DatePeriods {
     if (period.includes("July")) {
       return this.previousFinancialJuly(period);
     }
-    debugger;
     throw new Error("previous : unsupported period format" + period);
   }
 

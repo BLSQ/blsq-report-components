@@ -1,4 +1,4 @@
-# @blsq/blsq-report-components@1.1.10
+# @blsq/blsq-report-components@1.1.11
 - [general] add support for ethiopian calendar v2 (quarterlyNov yearlyNov)
 
 # @blsq/blsq-report-components@1.1.10

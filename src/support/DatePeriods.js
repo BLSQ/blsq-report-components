@@ -157,7 +157,6 @@ class DatePeriods {
   }
 
   static setDefaultQuarterFrequency(frequency) {
-    console.trace("setDefaultQuarterFrequency ",frequency)
     defaultQuarterFrequency = frequency
   }
 
@@ -242,7 +241,6 @@ class DatePeriods {
     } else {
       currentDhis2Period = currentDate.getFullYear() + "Q" + this.quarterByMonth(currentDate.getMonth() + 1);
     }
-    console.trace("currentQuarter", currentDhis2Period)
     return currentDhis2Period
     
   }

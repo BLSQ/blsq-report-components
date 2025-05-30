@@ -1,3 +1,6 @@
+# @blsq/blsq-report-components@1.1.12
+- [general] add support for quarterlyNov in incentives
+
 # @blsq/blsq-report-components@1.1.11
 - [general] add support for ethiopian calendar v2 (quarterlyNov yearlyNov)
 

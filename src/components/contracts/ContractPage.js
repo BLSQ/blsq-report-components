@@ -75,7 +75,7 @@ const ContractPage = ({ match, location, t, history, currentUser }) => {
   const fetchOrgUnitQuery = useQuery("fetchOrgUnit", async () => {
     const api = await dhis2.api();
     const response = await api.get("organisationUnits/" + match.params.orgUnitId, {
-      fields: "[*],ancestors[id,name],organisationUnitGroups[id,name,code]",
+      fields: ":all,ancestors[id,name],organisationUnitGroups[id,name,code]",
     });
     setOrgUnit(response);
   });

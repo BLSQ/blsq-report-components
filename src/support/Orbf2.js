@@ -15,7 +15,6 @@ class Orbf2 {
     };
   }
   calculate(request) {
-    console.log("triggering calculations for "+JSON.stringify(request))
     const url = `${this.url}/api/invoices`;
     const body = JSON.stringify({
       pe: request.period,

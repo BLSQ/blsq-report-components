@@ -103,7 +103,7 @@ async function searchOrgunit({ searchValue, user, period, parent, contractedOrgU
       orgUnit.contracts = contractByOrgUnitId[orgUnit.id] || [];
       orgUnit.activeContracts = orgUnit.contracts.filter((c) => c.matchPeriod(period));
     });
-    orgUnitsResp.organisationUnits = _.sortBy(orgUnitsResp.organisationUnits, (o) => o.fullname);
+    orgUnitsResp.organisationUnits = _.sortBy(orgUnitsResp.organisationUnits, ["path", "fullname"]);
   }
   return orgUnitsResp;
 }

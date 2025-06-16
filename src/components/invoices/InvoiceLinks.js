@@ -41,7 +41,7 @@ const buildInvoiceLink = (orgUnit, quarterPeriod, invoiceType) => {
 const InvoiceLinks = ({ t, orgUnit, period, hideCurrentInvoice, invoiceCode, maxInvoiceLength }) => {
   const Invoices = PluginRegistry.extension("invoices.invoices");
   const invoiceTypes = buildInvoiceTypes(Invoices, orgUnit, period, hideCurrentInvoice, invoiceCode);
-  const quarterPeriod = DatePeriods.split(period, "quarterly")[0];
+  const quarterPeriod = DatePeriods.split(period, DatePeriods.getDefaultQuarterFrequency())[0];
 
   const invoiceDataLinks = invoiceTypes.map((type) => {
     return buildInvoiceLink(orgUnit, quarterPeriod, type);

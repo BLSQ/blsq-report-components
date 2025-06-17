@@ -99,6 +99,34 @@ export const generateGetterSetterForStateLevel1Quarterly = (hesabuPackage, activ
   return codes.join("\n");
 };
 
+export const generateGetterSetterForStateLevel2QuarterlyNov = (hesabuPackage, activity, state, orgUnit, period) => {
+  const quarterPeriod = DatePeriods.split(period, "quarterlyNov")[0];
+  const codes = [];
+  const parentId = orgUnit.path.split("/")[2];
+  const field_name = `${hesabuPackage.code}_${activity.code}_${state}_level_2_quarterly_nov_${orgUnit.id}_${period}`;
+  // getter
+  codes.push(`${field_name}: function(){`);
+  codes.push("    if (calculator.indexedValues()) {");
+  codes.push('         const deCoc = "' + activity[state] + "\".split('.');");
+  codes.push(
+    `         const k = [\"${parentId}\", \"${quarterPeriod}\", deCoc[0], deCoc[1] || calculator.defaultCoc()].join("-");`,
+  );
+  codes.push("         const v = calculator.indexedValues()[k]");
+  codes.push('         if(v && v[0].value == "") { return 0 }');
+  codes.push('         if(v && v[0].value == " ") { return 0 }');
+  codes.push("         if(v) { return parseFloat(v[0].value) }");
+  codes.push("    }");
+  codes.push(`   return calculator.field_${field_name} == undefined ? 0 : this.field_${field_name}`);
+  codes.push("},");
+
+  // setter
+  codes.push(`set_${field_name}: function(val){`);
+  codes.push(`   calculator.field_${field_name} = val`);
+  codes.push("},");
+
+  return codes.join("\n");
+};
+
 export const generateIsNullForState = (hesabuPackage, activity, state, orgunitid, period) => {
   const codes = [];
   const field_name = `${hesabuPackage.code}_${activity.code}_${state}_${orgunitid}_${period}`;
@@ -139,6 +167,9 @@ export const generateActivityFormula = (
       substit + "_level_1_quarterly"
     ] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_level_1_quarterly_${orgunitid}_${period}()`;
     substitutions[
+      substit + "_level_2_quarterly_nov"
+    ] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_level_2_quarterly_nov_${orgunitid}_${period}()`;
+    substitutions[
       substit + "_quarterly"
     ] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_quarterly_${orgunitid}_${period}()`;
   }
@@ -162,6 +193,10 @@ export const generateActivityFormula = (
   for (let substit of states) {
     substit = substit + "_level_1_quarterly";
     substitutions[substit] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`;
+
+    substit = substit + "_level_2_quarterly_nov";
+    substitutions[substit] = `calculator.${hesabuPackage.code}_${activity.code}_${substit}_${orgunitid}_${period}()`;
+
   }
 
   let expandedformula = "" + formula.expression;
@@ -345,6 +380,7 @@ export const generateCode = (
         codes.push(generateGetterSetterForState(hesabuPackage, activity, state, orgunitid, period));
         codes.push(generateGetterSetterForStateQuarterly(hesabuPackage, activity, state, orgunitid, period));
         codes.push(generateGetterSetterForStateLevel1Quarterly(hesabuPackage, activity, state, orgUnit, period));
+        codes.push(generateGetterSetterForStateLevel2QuarterlyNov(hesabuPackage, activity, state, orgUnit, period));
       }
 
       // state is_null
@@ -386,7 +422,7 @@ export const generateCode = (
   codes.push("}");
   codes.push("return calculator");
   const fullCode = codes.join("\n");
-  //console.log(fullCode)
+  // console.log(fullCode)
   return fullCode;
 };
 

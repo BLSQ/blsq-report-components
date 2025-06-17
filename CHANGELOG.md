@@ -1,3 +1,7 @@
+# @blsq/blsq-report-components@1.1.14
+
+- [dataentry] Add support for _level_2_quarterly_nov in data entry
+
 # @blsq/blsq-report-components@1.1.12
 - [general] add support for quarterlyNov in incentives
 

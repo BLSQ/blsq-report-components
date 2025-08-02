@@ -54,7 +54,11 @@
     "contract_main_orgunit_id": "Main org unit id",
     "massUpdate": "Mass Update",
     "warnings": "Warnings",
-    "showAll":"Show non editable contracts"
+    "showAll":"Show non editable contracts",
+    "created_at" : "Created At",
+    "created_by" : "Created by",
+    "updated_at" : "Updated At",
+    "updated_by" : "Updated by"
   }, 
   "dataEntry": {
     "accessAndApproval": "Access & Approval Workflow",

@@ -235,7 +235,7 @@ class DatePeriods {
     let currentDate = new Date();
     currentDate.setMonth(currentDate.getMonth() - 2);
     let currentDhis2Period = undefined
-    if (this.getDefaultQuarterFrequency() == QUARTERLY){
+    if (this.getDefaultQuarterFrequency() == QUARTERLY_NOV){
       currentDhis2Period = currentDate.getFullYear() + "NovQ" + this.quarterByMonth(currentDate.getMonth() + 1);
       
     } else {

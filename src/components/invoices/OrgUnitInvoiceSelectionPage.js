@@ -19,7 +19,7 @@ const OrgUnitInvoiceSelectionPage = ({ history, match, periodFormat, dhis2, curr
   const fetchOrgUnitQuery = useQuery("fetchOrgUnit", async () => {
     const api = await dhis2.api();
     const orgUnit = await api.get("organisationUnits/" + match.params.orgUnitId, {
-      fields: "[*],ancestors[id,name],organisationUnitGroups[id,name,code]",
+      fields: "id,name,*,ancestors[id,name],organisationUnitGroups[id,name,code]",
     });
 
     const contractService = PluginRegistry.extension("contracts.service");

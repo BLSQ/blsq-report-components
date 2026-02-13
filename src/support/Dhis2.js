@@ -244,7 +244,7 @@ class Dhis2 {
 
   searchOrgunits(name, orgunits, contractGroup, parentid, pageSize = 50) {
     var searchOuUrl =
-      "organisationUnits?fields=[*],ancestors[id,name],organisationUnitGroups[id,name,code]" + "&pageSize=" + pageSize;
+      "organisationUnits?fields=id,name,[*],ancestors[id,name],organisationUnitGroups[id,name,code]" + "&pageSize=" + pageSize;
 
     if (name && name != "") {
       searchOuUrl += "&filter=name:ilike:" + name;

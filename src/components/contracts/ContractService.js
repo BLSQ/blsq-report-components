@@ -339,12 +339,19 @@ class ContractService {
   }
 
   async deleteContract(contract) {
-    const res = await this.api.delete("events/" + contract.id);
+    const res = await this.api.post("tracker?async=false&importStrategy=DELETE", {
+      events: [{ event: contract.id }],
+    });
+
     return res;
   }
 
   async createContract(orgUnitIds, contract) {
-    const events = orgUnitIds.map((orgUnitId) => this.getEvent(contract.fieldValues, orgUnitId, contract.id));
+    const events = orgUnitIds.map((orgUnitId) => {
+      const event = this.getEvent(contract.fieldValues, orgUnitId, contract.id);
+      event.occurredAt = contract?.fieldValues?.contract_start_date;
+      return event;
+    });
     try {
       for (const orgUnitId of orgUnitIds) {
         await this.api.post("programs/" + this.program.id + "/organisationUnits/" + orgUnitId, { id: orgUnitId });
@@ -352,12 +359,17 @@ class ContractService {
     } catch (ignore) {
       console.log("probably no access to right to assign the orgunit", ignore.message);
     }
-    const res = await this.api.post("events", { events });
+    const res = await this.api.post("tracker?async=false&importStrategy=CREATE_AND_UPDATE", { events: events });
     return res;
   }
 
   async createContracts(contracts) {
-    const events = contracts.map((contract) => this.getEvent(contract.fieldValues, contract.orgUnit.id, contract.id));
+    const events = contracts.map((contract) => {
+      const event = this.getEvent(contract.fieldValues, contract.orgUnit.id, contract.id);
+      event.event = contract?.id;
+      event.occurredAt = contract?.fieldValues?.contract_start_date;
+      return event;
+    });
     try {
       for (const contract of contracts) {
         const orgUnitId = contract.orgUnit.id;
@@ -366,13 +378,15 @@ class ContractService {
     } catch (ignore) {
       console.log("probably no access to right to assign the orgunit", ignore.message);
     }
-    const res = await this.api.post("events", { events });
+    const res = await this.api.post("tracker?async=false&importStrategy=CREATE_AND_UPDATE", { events: events });
     return res;
   }
   async updateContract(contract) {
     const event = this.getEvent(contract.fieldValues, contract.fieldValues.orgUnit.id);
-    const res = await this.api.update(`events/${contract.id}`, {
-      event,
+    event.event = contract.id;
+    event.occurredAt = contract?.fieldValues?.contract_start_date;
+    const res = await this.api.post("tracker?async=false&importStrategy=UPDATE", {
+      events: [event],
     });
     return res;
   }

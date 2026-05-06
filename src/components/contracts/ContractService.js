@@ -137,7 +137,6 @@ class ContractService {
         dataValues: dataValues,
       };
     });
-
     const contracts = events.map((e) => this.toContract(e));
 
     return contracts;
@@ -350,6 +349,7 @@ class ContractService {
     const events = orgUnitIds.map((orgUnitId) => {
       const event = this.getEvent(contract.fieldValues, orgUnitId, contract.id);
       event.occurredAt = contract?.fieldValues?.contract_start_date;
+      event.scheduledAt = new Date();
       return event;
     });
     try {
@@ -368,6 +368,8 @@ class ContractService {
       const event = this.getEvent(contract.fieldValues, contract.orgUnit.id, contract.id);
       event.event = contract?.id;
       event.occurredAt = contract?.fieldValues?.contract_start_date;
+      event.scheduledAt = new Date();
+
       return event;
     });
     try {
@@ -385,6 +387,7 @@ class ContractService {
     const event = this.getEvent(contract.fieldValues, contract.fieldValues.orgUnit.id);
     event.event = contract.id;
     event.occurredAt = contract?.fieldValues?.contract_start_date;
+    event.scheduledAt = new Date();
     const res = await this.api.post("tracker?async=false&importStrategy=UPDATE", {
       events: [event],
     });
